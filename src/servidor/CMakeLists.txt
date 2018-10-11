@@ -6,3 +6,4 @@ list(REMOVE_ITEM libservidor_srcs "main.cpp")
 
 
 add_library(libservidor ${libservidor_srcs})
+target_link_libraries(libservidor libcomun)

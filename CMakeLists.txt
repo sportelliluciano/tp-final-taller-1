@@ -10,12 +10,12 @@ add_subdirectory(test)
 
 # Generar el cliente
 add_executable(cliente src/cliente/main.cpp)
-target_link_libraries(cliente libcliente libcomun)
+target_link_libraries(cliente libcliente)
 
 # Generar el servidor
 add_executable(servidor src/servidor/main.cpp)
-target_link_libraries(servidor libservidor libcomun)
+target_link_libraries(servidor libservidor)
 
 # Generar el editor
 add_executable(editor src/editor/main.cpp)
-target_link_libraries(editor libeditor libcomun)
+target_link_libraries(editor libeditor)

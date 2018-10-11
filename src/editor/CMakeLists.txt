@@ -6,4 +6,4 @@ list(REMOVE_ITEM libeditor_srcs "main.cpp")
 
 
 add_library(libeditor ${libeditor_srcs})
-
+target_link_libraries(libeditor libcomun)

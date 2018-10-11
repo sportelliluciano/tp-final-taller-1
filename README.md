@@ -51,13 +51,17 @@ En particular considero que no es necesario realizar fuertes pruebas unitarias s
 #### Sobre CMake
 _Esto es maravilloso._
 
-Hay varios archivos CMake tirados por ahi, en particular el importante es el de la raíz. Las librerías extra necesarias por el cliente / servidor / editor deberían agregarse ahí.
-
-Otros archivos CMake que también están tirados por ahí:
+Archivos CMake que están tirados por ahí:
+- Raíz: `./CMakeLists.txt`
+Genera cliente, servidor, editor
 - Cliente: `src/cliente/CMakeLists.txt`
+Genera libcliente [acá deberían agregarse librerías necesarias por el cliente]
 - Servidor: `src/servidor/CMakeLists.txt`
+Genera libservidor [acá deberían agregarse librerías necesarias por el servidor]
 - Editor: `src/editor/CMakeLists.txt`
+Genera libeditor [acá deberían agregarse librerías necesarias por el editor]
 - Pegamento para tener una carpeta src: `src/CMakeLists.txt`
+No hace gran cosa
 - Pruebas unitarias: `test/CMakeLists.txt`
+Genera cliente-unit-test, servidor-unit-test, editor-unit-test
 
-Estos cinco últimos no deberían modificarse... creo.
