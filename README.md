@@ -5,12 +5,12 @@
 - Nombres de clases, variables y atributos en español.
 - PascalCase para nombres de clases
 - snake_case para nombres de métodos / atributos / variables
-- Documentación estilo docblock:
+- Documentación en estilo Doxygen:
 ```cpp
 /**
- * Documentación.
+ * \brief Descripción corta de la función.
  * 
- * Más documentación.
+ * Descripción detallada de la función.
  */
 ```
 - Nombres de archivos nombre_de_clase_en_snake_case.h/.cpp
