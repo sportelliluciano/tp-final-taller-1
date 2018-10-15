@@ -1,4 +1,4 @@
-#include "common_matriz_asientos.h"
+#include "matriz_asientos.h"
 
 #include <sstream>
 #include <string>
