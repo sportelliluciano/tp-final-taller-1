@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8.11)
 
 project(dune-remake)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 include_directories(.)
 include_directories(src)
 

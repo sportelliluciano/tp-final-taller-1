@@ -17,3 +17,4 @@ target_link_libraries(libcliente libcomun ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIE
 
 # La idea de generar la librería es poder linkear más adelante con el
 #  ejecutable de pruebas unitarias.
+#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
