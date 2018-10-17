@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.11)
 add_library(libtesting testing.cpp)
 enable_testing()
 
-foreach(ejecutable servidor cliente editor)
+foreach(ejecutable servidor cliente editor modelo)
     # Cargar todos los archivos de pruebas unitarias
     file(GLOB unit_test_srcs "${ejecutable}/*.h")
 

@@ -12,18 +12,17 @@ public:
 
     void setup() override { }
 
-    bool correr_tests() override {
+    void correr_tests() override {
         // TODO
         CORRER(test_true_es_true);
-        return true;
     }
 
     void teardown() override { }
 
 private:
     // TODO
-    bool test_true_es_true() {
-        return assert(true == true, "FUCK TRUE NO ES TRUE", 0);
+    void test_true_es_true() {
+        assert(true == true, "FUCK TRUE NO ES TRUE", 0);
     }
 };
 
