@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 2.8.11)
 
 project(dune-remake)
 
+# Modo DEBUG
 set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS "-ggdb -O0 -fno-inline" CACHE STRING "" FORCE)
+#### FIN MODO DEBUG
 
 include_directories(.)
 include_directories(src)
