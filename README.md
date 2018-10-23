@@ -33,6 +33,8 @@ Con eso se deben generar los siguientes ejecutables:
 
 El cliente requiere `libsdl2-dev` y `libsdl2-image-dev` para que compile.
 
+El editor requiere 'qt5-default' para que compile.
+
 #### Sobre el versionado:
 Según escuché [Lucho] el día que presentaron el enunciado (por el final cuando ya se había ido medio curso), ellos esperan que el historial del repo sea lo más descriptivo posible, al punto de intentar mantener un commit por archivo o grupos pequeños de archivos (no hacer un gran commit alterando medio servidor entero de una). Idealmente habría un commit por archivo modificado (muerte a `git add .`).
 
