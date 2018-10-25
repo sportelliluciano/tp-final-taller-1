@@ -1,12 +1,19 @@
 #include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "cliente/a.h"
+#include <exception>
+
+#include "cliente/cliente_juego.h"
 
 int main(int argc, char *argv[]) {
-    A a;
-    SDL_Init(SDL_INIT_VIDEO);
-    std::cout << "Hola cliente" << std::endl;
-    SDL_Quit();
-    return 0;
+    try {
+        cliente::ClienteJuego cliente_juego(argc, argv);
+        return cliente_juego.ejecutar();
+    } catch (const std::exception& e) {
+        std::cerr << "Se produjo un error: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    } catch (...) {
+        std::cerr << "Se produjo un error desconocido" << std::endl;
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
 }
