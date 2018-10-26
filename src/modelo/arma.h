@@ -10,18 +10,18 @@ namespace modelo {
  */
 class Arma { 
 public:
-    Arma(int daño, int frecuencia_disparo);
+    Arma(int poder_ataque, int frecuencia_disparo);
 
     virtual int get_id() = 0;
 
-    int get_daño();
+    int get_poder_ataque();
 
     int get_frecuencia_disparo();
 
     virtual ~Arma();
 
 protected:
-    int daño, frecuencia_disparo;
+    int poder_ataque, frecuencia_disparo;
 };
 
 } // namespace modelo

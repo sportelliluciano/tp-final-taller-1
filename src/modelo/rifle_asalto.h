@@ -11,7 +11,7 @@ namespace modelo {
  */
 class RifleAsalto : public Arma { 
 public:
-    RifleAsalto(int daño, int frecuencia_disparo);
+    RifleAsalto(int poder_ataque, int frecuencia_disparo);
 
     virtual int get_id();
 
