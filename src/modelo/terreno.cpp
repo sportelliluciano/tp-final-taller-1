@@ -1,6 +1,7 @@
 #include "modelo/terreno.h"
 
 #include <cmath>
+#include <iostream>
 
 #include "modelo/a_estrella.h"
 #include "modelo/celda.h"

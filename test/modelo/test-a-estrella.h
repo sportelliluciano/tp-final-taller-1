@@ -53,6 +53,30 @@ private:
             }
         }
     }
+    void dibujar_terreno(modelo::Terreno& terreno, int i_x, int i_y, int f_x, int f_y){
+        std::cout << '\n';
+        std::cout << "  0 1 2 3 4 5 6 7 8 9 ";
+        std::cout << '\n';
+        for (int i = 0; i<10; i++){
+            std::cout << i << " ";
+            for (int j = 0; j<10 ; j++){
+                if (i_x == j && i_y == i){
+                    std::cout << "I ";    
+                } else if(f_x == j && f_y == i){
+                    std::cout << "F ";
+                } else{
+                    int c = terreno.obtener_celda(j,i).tipo();
+                    if (c==2){
+                        std::cout << "O ";    
+                    }
+                    else{
+                        std::cout << "X ";
+                    } 
+                }
+            }
+            std::cout << '\n';    
+        }
+    }
     void test_encuentra_camino_minimo_recto() {
         using namespace modelo;
         Terreno terreno(10, 10);
@@ -65,7 +89,7 @@ private:
         terreno.obtener_celda(7, 7).set_tipo(0); // Bloqueo
         terreno.obtener_celda(7, 8).set_tipo(0); // Bloqueo
         terreno.obtener_celda(7, 9).set_tipo(0); // Bloqueo
-
+        dibujar_terreno(terreno,0,4,0,9);
         // Caso 1: Línea recta
         std::vector<Posicion> resultado = terreno.buscar_camino_minimo(
             terreno.obtener_celda(0, 4), terreno.obtener_celda(0, 9));
@@ -92,13 +116,13 @@ private:
         terreno.obtener_celda(7, 7).set_tipo(0); // Bloqueo
         terreno.obtener_celda(7, 8).set_tipo(0); // Bloqueo
         terreno.obtener_celda(7, 9).set_tipo(0); // Bloqueo
-
+        dibujar_terreno(terreno,0,4,7,1);
         std::vector<Posicion> resultado = terreno.buscar_camino_minimo(
             terreno.obtener_celda(0, 4), terreno.obtener_celda(7, 1));
         
         std::vector<Posicion> resultado_esperado = {
             Posicion(1, 5), Posicion(2, 6), Posicion(3, 6), Posicion(4, 6),
-            Posicion(5, 5), Posicion(5, 4), Posicion(6, 3), Posicion(6, 2),
+            Posicion(5, 5), Posicion(6, 4), Posicion(6, 3), Posicion(6, 2),
             Posicion(7, 1)
         };
         
@@ -121,14 +145,14 @@ private:
         terreno.obtener_celda(7, 7).set_tipo(0); // Bloqueo
         terreno.obtener_celda(7, 8).set_tipo(0); // Bloqueo
         terreno.obtener_celda(7, 9).set_tipo(0); // Bloqueo
-
+        dibujar_terreno(terreno,0,4,8,8);
         std::vector<Posicion> resultado = terreno.buscar_camino_minimo(
             terreno.obtener_celda(0, 4), terreno.obtener_celda(8, 8));
         
         std::vector<Posicion> resultado_esperado = {
             Posicion(1, 5), Posicion(2, 6), Posicion(3, 6), Posicion(4, 6),
-            Posicion(5, 5), Posicion(6, 4), Posicion(6, 3), Posicion(6, 2),
-            Posicion(7, 1)
+            Posicion(5, 6), Posicion(6, 6), Posicion(7, 6), Posicion(8, 6),
+            Posicion(8, 7), Posicion(8, 8)
         };
         
         verificar_igualdad_camino(resultado, resultado_esperado);
