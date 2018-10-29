@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 
 #include "cliente/video/error_sdl.h"
+#include "cliente/video/log.h"
 #include "cliente/video/textura.h"
 
 namespace cliente {
@@ -19,6 +20,8 @@ const Textura& AdministradorTexturas::cargar_imagen(const char *img) {
     if (!superficie)
         throw ErrorSDL("SDL_LoadBMP");
     
+    SDL_SetColorKey(superficie, SDL_TRUE, 0);
+    
     SDL_Texture *textura = SDL_CreateTextureFromSurface(renderer, superficie);
     SDL_FreeSurface(superficie);
 
@@ -26,6 +29,8 @@ const Textura& AdministradorTexturas::cargar_imagen(const char *img) {
         throw ErrorSDL("SDL_CreateTextureFromSurface");
 
     texturas.emplace(img, Textura(renderer, textura));
+    
+    log_depuracion("Cargado %s", img);
     return texturas.find(img)->second;
 }
 

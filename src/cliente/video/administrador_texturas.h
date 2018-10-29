@@ -1,6 +1,7 @@
 #ifndef _ADMINISTRADOR_TEXTURAS_H_
 #define _ADMINISTRADOR_TEXTURAS_H_
 
+#include <string>
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
@@ -39,7 +40,7 @@ public:
 
 private:
     SDL_Renderer *renderer;
-    std::unordered_map<const char*, Textura> texturas;
+    std::unordered_map<std::string, Textura> texturas;
 };
 
 } // namespace cliente
