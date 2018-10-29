@@ -1,0 +1,85 @@
+[
+    {
+        "id": "defecto",
+        "nombre": "-",
+        "energia": 0,
+        "costo": 0,
+        "dimensiones": [1, 1],
+        "puntos_estructura": 1000,
+        "requiere": [ "centro_construccion" ],
+        "capacidad_especia": 0
+    },
+    {
+        "id": "centro_construccion",
+        "nombre": "Centro de Construcción",
+        "energia": 0,
+        "costo": 0,
+        "dimensiones": [3, 3],
+        "puntos_estructura": 3000,
+        "requiere": [ ],
+        "sprite_construido": "001a44ee.bmp",
+        "sprite_destruido": "001a64f6.bmp"
+    },
+    {
+        "id": "fabrica_ligera",
+        "nombre": "Fábrica Ligera",
+        "energia": 500,
+        "costo": 800,
+        "dimensiones": [3, 3],
+        "puntos_estructura": 500,
+        "sprite_construido": "001d46ab.bmp",
+        "sprite_destruido": ""
+    },
+    {
+        "id": "fabrica_pesada",
+        "nombre": "Fábrica Pesada",
+        "energia": 800,
+        "costo": 1500,
+        "dimensiones": [4, 4],
+        "puntos_estructura": 1500
+    },
+    {
+        "id": "trampas_aire",
+        "nombre": "Trampas de Aire",
+        "energia": -500,
+        "costo": 800,
+        "dimensiones": [3, 3],
+        "puntos_estructura": 500,
+        "sprite_construido": "001e41eb.bmp",
+        "sprite_destruido": "001e52f4.bmp"
+    },
+    {
+        "id": "refineria",
+        "nombre": "Refinería",
+        "energia": 400,
+        "costo": 500,
+        "dimensiones": [3, 3],
+        "puntos_estructura": 500,
+        "capacidad_especia": 5000
+    },
+    {
+        "id": "silo",
+        "nombre": "Silo",
+        "energia": 100,
+        "costo": 200,
+        "dimensiones": [1, 1],
+        "puntos_estructura": 200,
+        "capacidad_especia": 1000
+    },
+    {
+        "id": "cuartel",
+        "nombre": "Cuartel",
+        "energia": 100,
+        "costo": 300,
+        "dimensiones": [3, 2],
+        "puntos_estructura": 300
+    },
+    {
+        "id": "palacio",
+        "nombre": "Palacio",
+        "energia": 800,
+        "costo": 2000,
+        "dimensiones": [3, 3],
+        "puntos_estructura": 1000
+    }
+]

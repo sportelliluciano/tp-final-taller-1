@@ -5,7 +5,7 @@
 namespace cliente {
 
 Juego::Juego(Ventana& ventana_juego) : ventana(ventana_juego) {
-    terreno = new Terreno("../terreno.csv");
+    terreno = new Terreno("../data/terreno.csv");
     jugador = new Jugador(*terreno);
 }
 
