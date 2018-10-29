@@ -99,6 +99,15 @@ void Ventana::actualizar() {
         ticks_ultimo_cuadro = SDL_GetTicks();
     }
 
+    /******** GRILLA DEPURACION *********/
+    for (int i=0;i<ancho() / 32; i++) {
+        SDL_RenderDrawLine(renderer, i*32, 0, i*32, alto());
+        for (int j=0;j<=alto() / 32; j++) {
+            SDL_RenderDrawLine(renderer, 0, j * 32, ancho(), j * 32);
+        }
+    }
+    /************************************/
+
     SDL_RenderPresent(renderer);
     
     // https://wiki.libsdl.org/SDL_RenderPresent recomienda 
