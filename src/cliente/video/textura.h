@@ -21,6 +21,16 @@ public:
     Textura& operator=(Textura&& otro);
     
     /**
+     * \brief Devuelve el alto de la textura.
+     */
+    int obtener_alto() const;
+
+    /**
+     * \brief Devuelve el ancho de la textura.
+     */
+    int obtener_ancho() const;
+
+    /**
      * \brief Renderiza la textura en la posición (x, y).
      */
     void renderizar(int x, int y) const;

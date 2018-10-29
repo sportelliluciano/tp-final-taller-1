@@ -43,6 +43,14 @@ Textura& Textura::operator=(Textura&& otro) {
     return *this;
 }
 
+int Textura::obtener_alto() const {
+    return src.h;
+}
+
+int Textura::obtener_ancho() const {
+    return src.w;
+}
+
 void Textura::renderizar(int x, int y) const {
     SDL_Rect dst;
     dst.x = x; dst.y = y;
