@@ -64,6 +64,14 @@ public:
     std::vector<Celda> obtener_celdas_visibles(Ventana& ventana);
 
     /**
+     * \brief Convierte las coordenadas de celdas en píxeles.
+     * 
+     * Convierte un punto (x, y) dado en celdas en su posición en la ventana
+     * en píxeles. Tiene en consideración la posición de la cámara.
+     */
+    void convertir_a_px(int x, int y, int& x_px, int& y_px) const;
+
+    /**
      * \brief Destructor.
      */
     ~Terreno();

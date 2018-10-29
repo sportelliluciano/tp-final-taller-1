@@ -7,6 +7,9 @@
 
 #include "cliente/video/ventana.h"
 
+#define ANCHO_CELDA 32
+#define ALTO_CELDA 32
+
 #define ANCHO_MOSAICO 8
 #define ALTO_MOSAICO 8
 
@@ -43,14 +46,14 @@ Terreno::Terreno(const char *ruta_csv) {
             if (x > ancho_)
                 ancho_ = x;
             
-            x += 10;
+            x++;
         }
         
         if (y > alto_)
             alto_ = y;
 
         x = 0;
-        y += 10;
+        y++;
         terreno.push_back(fila_actual);
     }
 
@@ -121,7 +124,9 @@ void Terreno::renderizar_mosaico(Ventana& ventana, int x, int y,
             int x_mosaico = col_mosaico * ANCHO_MOSAICO;
             Rectangulo seccion(x_mosaico, y_mosaico, ANCHO_MOSAICO,
                 ALTO_MOSAICO);
-            mosaico.renderizar((x * 4 + i) * ANCHO_MOSAICO, (y * 4 + j) * ALTO_MOSAICO, 
+            mosaico.renderizar(
+                ((x - camara_x) * 4 + i) * ANCHO_MOSAICO, 
+                ((y - camara_y) * 4 + j) * ALTO_MOSAICO, 
                 seccion, destino);
         }
     }
@@ -160,6 +165,11 @@ void Terreno::renderizar(Ventana& ventana) {
     textura_cacheada.renderizar(0, 0);
 }
 
+void Terreno::convertir_a_px(int x, int y, int& x_px, int& y_px) const {
+    x_px = (x - camara_x) * ANCHO_CELDA;
+    y_px = (y - camara_y) * ALTO_CELDA;
+}
+
 bool Terreno::esta_en_camara(std::vector<Celda> celdas, Ventana& ventana) {
     int ancho_ventana = ventana.ancho() / ANCHO_MOSAICO;
     int alto_ventana = ventana.alto() / ALTO_MOSAICO;
@@ -167,8 +177,8 @@ bool Terreno::esta_en_camara(std::vector<Celda> celdas, Ventana& ventana) {
     int limite_y = camara_y + alto_ventana;
 
     for (auto it = celdas.begin(); it != celdas.end(); ++it) {
-        if ((camara_x < it->x()) && (it->x() < limite_x)) {
-            if ((camara_y < it->y()) && (it->y() < limite_y))
+        if ((camara_x <= it->x()) && (it->x() < limite_x)) {
+            if ((camara_y <= it->y()) && (it->y() < limite_y))
                 return true;
         }
     }

@@ -3,7 +3,7 @@
 namespace cliente {
 
 ClienteJuego::ClienteJuego(int argc, char *argv[]) : ventana(800, 600),
-    juego(ventana) { }
+    juego(ventana, argv[1]) { }
 
 int ClienteJuego::ejecutar() {
     ventana.registrar_evento(EVENTO_VENTANA_CERRAR, [this]() {

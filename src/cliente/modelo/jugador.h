@@ -12,7 +12,7 @@ class Jugador {
 public:
     Jugador(Terreno& terreno_juego);
     void renderizar(Ventana& ventana);
-
+    void construir_edificio(const char *edificio);
 private:
     Terreno& terreno;
     int energia;

@@ -9,7 +9,7 @@ namespace cliente {
 
 class Juego {
 public:
-    Juego(Ventana& ventana_juego);
+    Juego(Ventana& ventana_juego, const char *edificio);
 
     /**
      * \brief Devuelve true si el juego terminó.
