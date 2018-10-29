@@ -7,6 +7,7 @@
 
 #include "cliente/modelo/celda.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/modelo/sprite.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -41,8 +42,8 @@ public:
 private:
     std::string id;
     std::string nombre;
-    int sprite_base, sprite_construido, sprite_destruido;
-    int desp_base_x, desp_base_y;
+    Sprite sprite_base, sprite_construido, sprite_destruido;
+    
     int ancho, alto;
     std::vector<Celda> celdas_ocupadas;
     int vida;

@@ -13,13 +13,11 @@ Edificio::Edificio(const nlohmann::json& data_edificio)
 {
     id = data_edificio["id"];
     nombre = data_edificio["nombre"];
-    sprite_base = data_edificio["sprite_base"];
-    sprite_construido = data_edificio["sprite_construido"];
-    sprite_destruido = data_edificio["sprite_destruido"];
+    sprite_base = Sprite(data_edificio["sprite_base"]);
+    sprite_construido = Sprite(data_edificio["sprite_construido"]);
+    sprite_destruido = Sprite(data_edificio["sprite_destruido"]);
     ancho = data_edificio["dimensiones"][0];
     alto = data_edificio["dimensiones"][1];
-    desp_base_x = data_edificio["desplazamiento_x"];
-    desp_base_y = data_edificio["desplazamiento_y"];
     vida = 100;
 }
 
@@ -32,26 +30,11 @@ void Edificio::renderizar(const Terreno& terreno, Ventana& ventana) {
 
     terreno.convertir_a_px(pos_x, pos_y, x_px, y_px);
 
-    char nombre_sprite_base[300];
-    int y_base = 0;
-
-    if (sprite_base != -1) {
-        sprintf(nombre_sprite_base, "./assets/imgs/imgs-numeradas/%05d.bmp", 
-            sprite_base);
-        const Textura& textura = ventana
-            .obtener_administrador_texturas()
-            .cargar_imagen(nombre_sprite_base);
-        
-        textura.renderizar(x_px, y_px);
-    }
-
-    sprintf(nombre_sprite_base, "./assets/imgs/imgs-numeradas/%05d.bmp", 
-        sprite_construido);
-    const Textura& textura_construido = ventana
-        .obtener_administrador_texturas()
-        .cargar_imagen(nombre_sprite_base);
-    
-    textura_construido.renderizar(x_px + desp_base_x, y_px + desp_base_y);
+    sprite_base.renderizar(ventana, x_px, y_px);
+    if (vida > 30)
+        sprite_construido.renderizar(ventana, x_px, y_px);
+    else
+        sprite_destruido.renderizar(ventana, x_px, y_px);
 }
 
 void Edificio::construir(const Terreno& terreno, int x, int y) {
