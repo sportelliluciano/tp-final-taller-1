@@ -7,7 +7,12 @@
         "dimensiones": [1, 1],
         "puntos_estructura": 1000,
         "requiere": [ "centro_construccion" ],
-        "capacidad_especia": 0
+        "capacidad_especia": 0,
+        "sprite_base": -1,
+        "sprite_construido": -1,
+        "sprite_destruido": -1,
+        "desplazamiento_x": 0,
+        "desplazamiento_y": 0
     },
     {
         "id": "centro_construccion",
@@ -17,8 +22,8 @@
         "dimensiones": [3, 3],
         "puntos_estructura": 3000,
         "requiere": [ ],
-        "sprite_construido": "001a44ee.bmp",
-        "sprite_destruido": "001a64f6.bmp"
+        "sprite_construido": 2967,
+        "sprite_destruido": 2968
     },
     {
         "id": "fabrica_ligera",
@@ -27,8 +32,10 @@
         "costo": 800,
         "dimensiones": [3, 3],
         "puntos_estructura": 500,
-        "sprite_construido": "001d46ab.bmp",
-        "sprite_destruido": ""
+        "sprite_base": 2921,
+        "sprite_construido": 2922,
+        "sprite_destruido": 2923,
+        "desplazamiento_x": 1
     },
     {
         "id": "fabrica_pesada",
@@ -36,7 +43,12 @@
         "energia": 800,
         "costo": 1500,
         "dimensiones": [4, 4],
-        "puntos_estructura": 1500
+        "puntos_estructura": 1500,
+        "sprite_base": 2926,
+        "sprite_construido": 2927,
+        "sprite_destruido": 2928,
+        "desplazamiento_x": 2,
+        "desplazamiento_y": -42
     },
     {
         "id": "trampas_aire",
@@ -45,8 +57,8 @@
         "costo": 800,
         "dimensiones": [3, 3],
         "puntos_estructura": 500,
-        "sprite_construido": "001e41eb.bmp",
-        "sprite_destruido": "001e52f4.bmp"
+        "sprite_construido": 2931,
+        "sprite_destruido": 2932
     },
     {
         "id": "refineria",
@@ -55,7 +67,12 @@
         "costo": 500,
         "dimensiones": [3, 3],
         "puntos_estructura": 500,
-        "capacidad_especia": 5000
+        "capacidad_especia": 5000,
+        "sprite_base": 2969,
+        "sprite_construido": 2970,
+        "sprite_destruido": 2971,
+        "desplazamiento_x": 5,
+        "desplazamiento_y": -27
     },
     {
         "id": "silo",
@@ -64,7 +81,9 @@
         "costo": 200,
         "dimensiones": [1, 1],
         "puntos_estructura": 200,
-        "capacidad_especia": 1000
+        "capacidad_especia": 1000,
+        "sprite_construido": 2977,
+        "sprite_destruido": 2978
     },
     {
         "id": "cuartel",
@@ -72,7 +91,9 @@
         "energia": 100,
         "costo": 300,
         "dimensiones": [3, 2],
-        "puntos_estructura": 300
+        "puntos_estructura": 300,
+        "sprite_construido": 2933,
+        "sprite_destruido": 2934
     },
     {
         "id": "palacio",
@@ -80,6 +101,8 @@
         "energia": 800,
         "costo": 2000,
         "dimensiones": [3, 3],
-        "puntos_estructura": 1000
+        "puntos_estructura": 1000,
+        "sprite_construido": 2924,
+        "sprite_destruido": 2925
     }
 ]
