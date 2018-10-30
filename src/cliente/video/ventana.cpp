@@ -55,14 +55,16 @@ Ventana::Ventana(int w, int h) {
     admin_texturas = new AdministradorTexturas(renderer);
     ticks_ultimo_cuadro = 0;
     log_depuracion("VSync: %s", vsync ? "SI":"NO");
+    ancho_px = w;
+    alto_px = h;
 }
 
 int Ventana::ancho() const {
-    return 800;
+    return ancho_px;
 }
 
 int Ventana::alto() const {
-    return 600;
+    return alto_px;
 }
 
 void Ventana::registrar_evento(evento_ventana_t evento, 

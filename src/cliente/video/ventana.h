@@ -111,6 +111,11 @@ private:
     bool vsync;
 
     /**
+     * \brief Dimensiones de la ventana.
+     */
+    int ancho_px, alto_px;
+
+    /**
      * \brief Ejecuta todos los callbacks correspondientes al evento indicado.
      */
     void ejecutar_callbacks(evento_ventana_t evento);
