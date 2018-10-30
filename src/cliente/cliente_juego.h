@@ -1,6 +1,7 @@
 #ifndef _CLIENTE_JUEGO_H_
 #define _CLIENTE_JUEGO_H_
 
+#include "cliente/modelo/controlador.h"
 #include "cliente/modelo/juego.h"
 #include "cliente/video/ventana.h"
 
@@ -57,6 +58,7 @@ public:
 private:
     Ventana ventana;
     Juego juego;
+    Controlador controlador;
 };
 
 } // namespace cliente

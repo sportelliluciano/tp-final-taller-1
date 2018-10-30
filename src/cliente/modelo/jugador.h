@@ -4,6 +4,7 @@
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/modelo/hud.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -15,8 +16,8 @@ public:
     void construir_edificio(const char *edificio);
 private:
     Terreno& terreno;
-    int energia;
-    int dinero;
+    int energia = 0;
+    int dinero = 0;
     Infraestructura infraestructura;
     Ejercito tropas;
 };

@@ -9,7 +9,7 @@ namespace cliente {
 
 class Juego {
 public:
-    Juego(Ventana& ventana_juego, const char *edificio);
+    Juego(const char *edificio);
 
     /**
      * \brief Devuelve true si el juego terminó.
@@ -21,7 +21,7 @@ public:
      * 
      * Procesa las actualizaciones obtenidas desde el servidor.
      */
-    void actualizar();
+    void renderizar(Ventana& ventana);
 
     /**
      * \brief Fuerza la finalización del juego.
@@ -34,7 +34,6 @@ public:
     ~Juego();
 
 private:
-    Ventana& ventana;
     Terreno *terreno;
     Jugador *jugador;
     bool esta_jugando = true;

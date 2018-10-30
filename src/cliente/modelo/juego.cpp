@@ -4,8 +4,7 @@
 
 namespace cliente {
 
-Juego::Juego(Ventana& ventana_juego, const char* edificio) 
-    : ventana(ventana_juego) {
+Juego::Juego(const char* edificio) {
     terreno = new Terreno("../data/terreno.csv");
     jugador = new Jugador(*terreno);
     jugador->construir_edificio(edificio);
@@ -15,7 +14,7 @@ bool Juego::esta_terminado() const {
     return !esta_jugando;
 }
 
-void Juego::actualizar() {
+void Juego::renderizar(Ventana&  ventana) {
     terreno->renderizar(ventana);
     jugador->renderizar(ventana);
 }

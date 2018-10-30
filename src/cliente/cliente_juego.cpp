@@ -2,17 +2,15 @@
 
 namespace cliente {
 
-ClienteJuego::ClienteJuego(int argc, char *argv[]) : ventana(800, 600),
-    juego(ventana, argv[1]) { }
+ClienteJuego::ClienteJuego(int argc, char *argv[]) 
+: ventana(800, 600), juego(argv[1]), controlador(ventana, juego)
+{ }
 
 int ClienteJuego::ejecutar() {
-    ventana.registrar_evento(EVENTO_VENTANA_CERRAR, [this]() {
-        juego.detener();
-    });
-    
     while (!juego.esta_terminado()) {
         ventana.procesar_eventos();
-        juego.actualizar();
+        controlador.actualizar_modelo();
+        juego.renderizar(ventana);
         ventana.actualizar();
     }
 

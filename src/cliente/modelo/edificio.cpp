@@ -1,8 +1,6 @@
 #include "cliente/modelo/edificio.h"
 
-#include <cstdio>
-
-#include "cliente/json.hpp"
+#include "libs/json.hpp"
 
 #include "cliente/modelo/celda.h"
 #include "cliente/video/ventana.h"

@@ -2,11 +2,8 @@
 
 namespace cliente {
 
-Jugador::Jugador(Terreno& terreno_juego) 
-    : terreno(terreno_juego), infraestructura(terreno), tropas(terreno)
-{ 
-    
-}
+Jugador::Jugador(Terreno& terreno_juego) : terreno(terreno_juego),
+    infraestructura(terreno), tropas(terreno) { }
 
 void Jugador::construir_edificio(const char *edificio) {
     if (edificio)

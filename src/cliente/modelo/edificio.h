@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "cliente/json.hpp"
+#include "libs/json.hpp"
 
 #include "cliente/modelo/celda.h"
 #include "cliente/modelo/terreno.h"

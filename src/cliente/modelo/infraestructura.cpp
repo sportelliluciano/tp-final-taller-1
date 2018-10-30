@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "cliente/json.hpp"
+#include "libs/json.hpp"
 
 #include "cliente/modelo/terreno.h"
 
