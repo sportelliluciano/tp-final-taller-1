@@ -1,5 +1,5 @@
-#ifndef _EVENTO_CREAR_EDIFICIO_H_
-#define _EVENTO_CREAR_EDIFICIO_H_
+#ifndef _EVENTO_JUEGO_TERMINADO_H_
+#define _EVENTO_JUEGO_TERMINADO_H_
 
 #include "libs/json.hpp"
 
@@ -7,17 +7,17 @@
 
 namespace conexion {
 
-class EventoCrearEdificio : public Evento {
+class EventoJuegoTerminado : public Evento {
 public:
     /**
      * \brief Constructor por serialización.
      */
-    EventoCrearEdificio(const nlohmann::json& serializado);
+    EventoJuegoTerminado(const nlohmann::json& serializado);
 
     /**
      * \brief Constructor.
      */
-    EventoCrearEdificio(int id_, const std::string& clase_, int x_, int y_);
+    EventoJuegoTerminado() = default;
 
     /**
      * \brief Actualiza el modelo del juego de un cliente.
@@ -37,4 +37,4 @@ private:
 
 } // namespace conexion
 
-#endif // _EVENTO_CREAR_EDIFICIO_H_
+#endif // _EVENTO_JUEGO_TERMINADO_H_

@@ -2,6 +2,8 @@
 
 #include "conexion/error_conexion.h"
 #include "conexion/eventos/evento_crear_edificio.h"
+#include "conexion/eventos/evento_destruir_edificio.h"
+#include "conexion/eventos/evento_mostrar_gusano.h"
 
 namespace conexion {
 
@@ -14,6 +16,10 @@ Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
     switch(id_evento) {
         case EV_CREAR_EDIFICIO:
             return new EventoCrearEdificio(serializado);
+        case EV_DESTRUIR_EDIFICIO:
+            return new EventoDestruirEdificio(serializado);
+        case EV_MOSTRAR_GUSANO:
+            return new EventoMostrarGusano(serializado);
         default:
             throw ErrorConexion("Evento desconocido");
     }

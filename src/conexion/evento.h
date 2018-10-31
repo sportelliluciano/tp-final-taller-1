@@ -9,6 +9,8 @@ namespace conexion {
 
 typedef enum {
     EV_CREAR_EDIFICIO,
+    EV_DESTRUIR_EDIFICIO,
+    EV_MOSTRAR_GUSANO
 } evento_t;
 
 /**
