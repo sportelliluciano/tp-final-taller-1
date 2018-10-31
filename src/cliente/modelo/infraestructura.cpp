@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <unordered_map>
 
 #include "libs/json.hpp"
 
@@ -32,20 +34,39 @@ Infraestructura::Infraestructura(Terreno& terreno_juego)
     }
 }
 
-void Infraestructura::construir(const std::string& clase, int x, int y) {
+void Infraestructura::construir(int id, const std::string& clase, int x, int y) 
+{
     Edificio edificio_nuevo = edificios.at(clase);
     edificio_nuevo.construir(terreno, x, y);
-    edificios_construidos.emplace_back(edificio_nuevo);
+    edificios_construidos.emplace(id, edificio_nuevo);
+}
+
+void Infraestructura::destruir(int id) {
+    edificios_construidos.at(id).destruir();
 }
 
 void Infraestructura::renderizar(Ventana& ventana) {
+    std::vector<int> edificios_a_eliminar;
+
     for (auto it = edificios_construidos.begin(); 
               it != edificios_construidos.end(); ++it) {
-        Edificio& edificio = *it;
+        Edificio& edificio = it->second;
+        
+        if (!edificio.esta_vivo()) {
+            edificios_a_eliminar.push_back(it->first);
+            continue;
+        }
+
         if (terreno.esta_en_camara(edificio.obtener_celdas_ocupadas(), 
             ventana)) {
             edificio.renderizar(terreno, ventana);
         }
+    }
+
+    for (auto it=edificios_a_eliminar.begin(); it != edificios_a_eliminar.end();
+              ++it) 
+    {
+        edificios_construidos.erase(*it);
     }
 }
 
