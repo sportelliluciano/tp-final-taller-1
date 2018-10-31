@@ -19,6 +19,11 @@ Sprite::Sprite(const nlohmann::json& sprite) {
         dy = sprite["y"];
 }
 
+void Sprite::desplazar(int desplazamiento_x, int desplazamiento_y) {
+    dx = desplazamiento_x;
+    dy = desplazamiento_y;
+}
+
 void Sprite::renderizar(Ventana& ventana, int x, int y) {
     if (id == -1)
         return;

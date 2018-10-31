@@ -18,6 +18,8 @@ public:
 
     Sprite(int id, int desplazamiento_x, int desplazamiento_y);
 
+    void desplazar(int desplazamiento_x, int desplazamiento_y);
+
     void renderizar(Ventana& ventana, int x, int y);
 
 private:
