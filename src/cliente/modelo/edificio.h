@@ -7,7 +7,8 @@
 
 #include "cliente/modelo/celda.h"
 #include "cliente/modelo/terreno.h"
-#include "cliente/modelo/sprite.h"
+#include "cliente/modelo/sprite_animado.h"
+#include "cliente/modelo/sprite_compuesto.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -39,16 +40,34 @@ public:
      */
     void construir(const Terreno& terreno, int x, int y);
 
+    /**
+     * \brief Destruye el edificio.
+     * 
+     * Muestra la animación de destrucción del edificio.
+     */
+    void destruir();
+
+    /**
+     * \brief Devuelve false si el edificio fue destruido y su animación 
+     *        terminó.
+     */
+    bool esta_vivo() const;
+
 private:
     std::string id;
     std::string nombre;
-    Sprite sprite_base, sprite_construido, sprite_destruido;
     
     int ancho, alto;
     std::vector<Celda> celdas_ocupadas;
     int vida;
 
     int pos_x, pos_y;
+
+    bool esta_destruido = false;
+    bool esta_construido = false;
+
+    SpriteAnimado sprite_construccion, sprite_destruccion;
+    SpriteCompuesto sprite, sprite_roto;
     
 };
 
