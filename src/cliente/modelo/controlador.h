@@ -3,6 +3,7 @@
 
 #include "cliente/modelo/hud.h"
 #include "cliente/modelo/juego.h"
+#include "cliente/servidor.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -15,11 +16,17 @@ namespace cliente {
  */ 
 class Controlador {
 public:
-    Controlador(Ventana& ventana_, Juego& juego_);
+    Controlador(Ventana& ventana_, Servidor& servidor_, Juego& juego_);
+
     void actualizar_modelo();
+
+    void renderizar();
+
 private:
-    Juego& juego;
     Ventana& ventana;
+    Servidor& servidor;
+    Juego& juego;
+    
     HUD hud;
 };
 

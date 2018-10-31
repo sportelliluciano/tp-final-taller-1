@@ -18,7 +18,7 @@ public:
     /**
      * \brief Constructor. 
      */
-    ClienteJuego(int argc, char *argv[]);
+    ClienteJuego(Servidor& servidor_juego, int argc, char *argv[]);
 
     /**
      * \brief Ejecuta el cliente del juego.
@@ -29,34 +29,11 @@ public:
      */
     int ejecutar();
 
-    /**
-     * \brief Procesa los argumentos de línea de comandos y carga el juego en
-     *        base a los mismos.
-     * 
-     * Devuelve true si la carga fue exitosa o false si se produjo algún
-     * inconveniente.
-     */
-    bool cargar(int argc, char *argv[]);
-
-    /**
-     * \brief Ciclo principal del juego.
-     * 
-     * Ejecuta el ciclo principal del juego.
-     * En caso de producirse un error irrecuperable lanzará una excepción.
-     */
-    void jugar();
-
-    /**
-     * \brief Muestra el ganador de la partida y las estadísticas de la misma.
-     * 
-     * Puede lanzar una excepción en caso de que se produzca un error
-     */
-    void mostrar_stats();
-
     ~ClienteJuego();
 
 private:
     Ventana ventana;
+    Servidor& servidor;
     Juego juego;
     Controlador controlador;
 };

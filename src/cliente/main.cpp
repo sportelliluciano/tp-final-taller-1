@@ -2,18 +2,24 @@
 #include <exception>
 
 #include "cliente/cliente_juego.h"
+#include "cliente/servidor.h"
 
 int main(int argc, char *argv[]) {
+    cliente::Servidor servidor(argc, argv);
+    cliente::ClienteJuego cliente_juego(servidor, argc, argv);
+    int retcode = EXIT_SUCCESS;
+    
     try {
-        cliente::ClienteJuego cliente_juego(argc, argv);
-        return cliente_juego.ejecutar();
+        servidor.iniciar();
+        retcode = cliente_juego.ejecutar();
     } catch (const std::exception& e) {
         std::cerr << "Se produjo un error: " << e.what() << std::endl;
-        return EXIT_FAILURE;
+        retcode = EXIT_FAILURE;
     } catch (...) {
         std::cerr << "Se produjo un error desconocido" << std::endl;
-        return EXIT_FAILURE;
+        retcode = EXIT_FAILURE;
     }
     
-    return EXIT_SUCCESS;
+    servidor.detener();
+    return retcode;
 }
