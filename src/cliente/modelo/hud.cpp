@@ -7,7 +7,7 @@
 
 namespace cliente {
 
-HUD::HUD() {
+HUD::HUD() : btn(4321, 800, 400) {
 
 }
 
@@ -21,6 +21,8 @@ void HUD::renderizar(Ventana& ventana) {
     
     textura_fps.renderizar(ventana.ancho() - textura_fps.obtener_ancho() - 10,
         10);
+    
+    btn.renderizar(ventana);
 }
 
 } // namespace cliente

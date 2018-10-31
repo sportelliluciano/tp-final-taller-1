@@ -83,6 +83,10 @@ int Ventana::fps() const {
     return fps_;
 }
 
+int Ventana::obtener_ms() const {
+    return ticks_ultimo_cuadro;
+}
+
 void Ventana::registrar_evento(evento_ventana_t evento, 
     std::function<void(void)> callback) {
     callbacks[evento] = callback;
@@ -119,8 +123,6 @@ void Ventana::actualizar() {
              */
             SDL_Delay(1);
         }
-        
-        ticks_ultimo_cuadro = SDL_GetTicks();
     }
 
     /******** GRILLA DEPURACION *********/
@@ -133,6 +135,7 @@ void Ventana::actualizar() {
     /************************************/
 
     SDL_RenderPresent(renderer);
+    ticks_ultimo_cuadro = SDL_GetTicks();
     veces_renderizado++;
     
     // https://wiki.libsdl.org/SDL_RenderPresent recomienda 

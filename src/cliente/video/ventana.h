@@ -60,6 +60,15 @@ public:
     int fps() const;
 
     /**
+     * \brief Devuelve el timestamp en milisegundos del último cuadro 
+     *        presentado.
+     * 
+     * Devuelve la cantidad de milisegundos que pasaron hasta el último cuadro
+     * presentado via Ventana::actualizar.
+     */
+    int obtener_ms() const;
+
+    /**
      * \brief Registra un callback para un evento.
      * 
      * Sólo se permite un callback por evento.

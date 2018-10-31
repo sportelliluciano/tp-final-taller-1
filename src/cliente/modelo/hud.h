@@ -1,6 +1,7 @@
 #ifndef _HUD_H_
 #define _HUD_H_
 
+#include "cliente/modelo/hud/boton.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -13,6 +14,9 @@ public:
     HUD();
     
     void renderizar(Ventana& ventana);
+
+private:
+    Boton btn;
 };
 
 } // namespace cliente
