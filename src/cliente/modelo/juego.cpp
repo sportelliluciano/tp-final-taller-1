@@ -1,5 +1,7 @@
 #include "cliente/modelo/juego.h"
 
+#include <string>
+
 #include "cliente/modelo/terreno.h"
 
 namespace cliente {
@@ -7,7 +9,6 @@ namespace cliente {
 Juego::Juego(const char* edificio) {
     terreno = new Terreno("../data/terreno.csv");
     jugador = new Jugador(*terreno);
-    jugador->construir_edificio(edificio);
 }
 
 bool Juego::esta_terminado() const {
@@ -17,6 +18,10 @@ bool Juego::esta_terminado() const {
 void Juego::renderizar(Ventana&  ventana) {
     terreno->renderizar(ventana);
     jugador->renderizar(ventana);
+}
+
+void Juego::construir_edificio(const std::string& clase, int x, int y) {
+    jugador->construir_edificio(clase, x, y);
 }
 
 void Juego::detener() {

@@ -1,6 +1,8 @@
 #ifndef _JUGADOR_H_
 #define _JUGADOR_H_
 
+#include <string>
+
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
@@ -13,7 +15,7 @@ class Jugador {
 public:
     Jugador(Terreno& terreno_juego);
     void renderizar(Ventana& ventana);
-    void construir_edificio(const char *edificio);
+    void construir_edificio(const std::string& clase, int x, int y);
 private:
     Terreno& terreno;
     int energia = 0;
