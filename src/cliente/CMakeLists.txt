@@ -9,7 +9,7 @@ list(REMOVE_ITEM libcliente_srcs "main.cpp")
 
 # Generar una libería estática con todo el cliente EXCEPTO el main
 add_library(libcliente ${libcliente_srcs})
-target_link_libraries(libcliente clientevideo clientemodelo)
+target_link_libraries(libcliente conexion clientevideo clientemodelo)
 
 # La idea de generar la librería es poder linkear más adelante con el
 #  ejecutable de pruebas unitarias.
