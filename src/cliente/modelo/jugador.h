@@ -15,7 +15,8 @@ class Jugador {
 public:
     Jugador(Terreno& terreno_juego);
     void renderizar(Ventana& ventana);
-    void construir_edificio(const std::string& clase, int x, int y);
+    void construir_edificio(int id, const std::string& clase, int x, int y);
+    void destruir_edificio(int id);
 private:
     Terreno& terreno;
     int energia = 0;
