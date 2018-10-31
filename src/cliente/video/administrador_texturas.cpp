@@ -10,6 +10,9 @@ namespace cliente {
 
 AdministradorTexturas::AdministradorTexturas(SDL_Renderer *renderer_) {
     renderer = renderer_;
+    fuente = TTF_OpenFont("../data/PatrickHand-Regular.ttf", 16);
+    if (!fuente)
+        throw ErrorSDL("TTF_OpenFont", TTF_GetError());
 }
 
 const Textura& AdministradorTexturas::cargar_imagen(const char *img) {
@@ -40,6 +43,20 @@ Textura AdministradorTexturas::crear_textura(int w, int h) {
     
     if (!textura)
         throw ErrorSDL("SDL_CreateTexture");
+    
+    return Textura(renderer, textura);
+}
+
+Textura AdministradorTexturas::crear_texto(const std::string& texto) {
+    SDL_Surface *sf = TTF_RenderUTF8_Blended(fuente, texto.c_str(), {0, 0, 0, 0});
+    if (!sf)
+        throw ErrorSDL("TTF_RenderUTF8_Blended", TTF_GetError());
+    
+    SDL_Texture *textura = SDL_CreateTextureFromSurface(renderer, sf);
+    SDL_FreeSurface(sf);
+
+    if (!textura)
+        throw ErrorSDL("SDL_CreateTextureFromSurface");
     
     return Textura(renderer, textura);
 }

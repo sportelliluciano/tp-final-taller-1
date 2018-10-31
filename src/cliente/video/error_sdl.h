@@ -20,6 +20,15 @@ public:
     explicit ErrorSDL(const std::string& funcion_sdl);
 
     /**
+     * \brief Falló una función relacionada a SDL que no utiliza SDL_GetError
+     *        para obtener un mensaje de error.
+     * 
+     * Indicar en el constructor qué función falló y el mensaje de error 
+     * obtenido desde otro método (ej TTF_GetError)
+     */
+    ErrorSDL(const std::string& funcion_sdl, const std::string& msj_error);
+
+    /**
      * \brief Obtiene el mensaje de error de la excepción.
      * 
      * Sobrecarga del método what.

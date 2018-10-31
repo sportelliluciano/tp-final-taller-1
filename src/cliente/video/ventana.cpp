@@ -1,6 +1,7 @@
 #include "cliente/video/ventana.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "cliente/video/administrador_texturas.h"
 #include "cliente/video/error_sdl.h"
@@ -15,6 +16,7 @@
 
 // 30ms ~ 30 FPS
 #define TICKS_POR_CUADRO (30 / MS_POR_TICK)
+#define TICKS_POR_SEGUNDO (1000 / MS_POR_TICK)
 
 namespace cliente {
 
@@ -23,6 +25,9 @@ Ventana::Ventana() : Ventana(ANCHO_VENTANA_DEFECTO, ALTO_VENTANA_DEFECTO) { }
 Ventana::Ventana(int w, int h) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw ErrorSDL("SDL_Init");
+    
+    if (TTF_Init() != 0)
+        throw ErrorSDL("TTF_Init", TTF_GetError());
     
     ventana = SDL_CreateWindow("Dune remake", SDL_WINDOWPOS_UNDEFINED, 
         SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN);
@@ -35,12 +40,16 @@ Ventana::Ventana(int w, int h) {
 
     if (!renderer) {
         SDL_DestroyWindow(ventana);
+        TTF_Quit();
+        SDL_Quit();
         throw ErrorSDL("SDL_CreateRenderer");
     }
 
     if (SDL_RenderClear(renderer) != 0) {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(ventana);
+        TTF_Quit();
+        SDL_Quit();
         throw ErrorSDL("SDL_RenderClear");
     }
     
@@ -48,6 +57,8 @@ Ventana::Ventana(int w, int h) {
     if (SDL_GetRendererInfo(renderer, &info) != 0) {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(ventana);
+        TTF_Quit();
+        SDL_Quit();
         throw ErrorSDL("SDL_GetRenderInfo");
     }
 
@@ -57,6 +68,7 @@ Ventana::Ventana(int w, int h) {
     log_depuracion("VSync: %s", vsync ? "SI":"NO");
     ancho_px = w;
     alto_px = h;
+    ticks_ultimo_segundo = veces_renderizado = fps_ = 0;
 }
 
 int Ventana::ancho() const {
@@ -65,6 +77,10 @@ int Ventana::ancho() const {
 
 int Ventana::alto() const {
     return alto_px;
+}
+
+int Ventana::fps() const {
+    return fps_;
 }
 
 void Ventana::registrar_evento(evento_ventana_t evento, 
@@ -86,6 +102,12 @@ void Ventana::procesar_eventos() {
 }
 
 void Ventana::actualizar() {
+    if (SDL_GetTicks() > ticks_ultimo_segundo + TICKS_POR_SEGUNDO) {
+        ticks_ultimo_segundo = SDL_GetTicks();
+        fps_ = veces_renderizado;
+        veces_renderizado = 0;
+    }
+
     if (!vsync) {
         /**
          * Si no hay sincronizmo vertical, limitar los FPS via software.
@@ -111,6 +133,7 @@ void Ventana::actualizar() {
     /************************************/
 
     SDL_RenderPresent(renderer);
+    veces_renderizado++;
     
     // https://wiki.libsdl.org/SDL_RenderPresent recomienda 
     //  limpiar el backbuffer utilizando SDL_RenderClear.
@@ -126,6 +149,8 @@ Ventana::~Ventana() {
     delete admin_texturas;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(ventana);
+    TTF_Quit();
+    SDL_Quit();
 }
 
 } // namespace cliente

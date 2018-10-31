@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "cliente/video/textura.h"
 
@@ -32,6 +33,11 @@ public:
     Textura crear_textura(int w, int h);
 
     /**
+     * \brief Crea una nueva textura con el texto indicado-
+     */
+    Textura crear_texto(const std::string& texto);
+
+    /**
      * \brief Destructor.
      * 
      * Libera todas las texturas almacenadas en caché.
@@ -40,6 +46,7 @@ public:
 
 private:
     SDL_Renderer *renderer;
+    TTF_Font* fuente;
     std::unordered_map<std::string, Textura> texturas;
 };
 

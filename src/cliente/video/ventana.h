@@ -54,6 +54,12 @@ public:
     int alto() const;
 
     /**
+     * \brief Devuelve la cantidad de veces que se renderizó la ventana durante
+     *        el último segundo.
+     */
+    int fps() const;
+
+    /**
      * \brief Registra un callback para un evento.
      * 
      * Sólo se permite un callback por evento.
@@ -114,6 +120,12 @@ private:
      * \brief Dimensiones de la ventana.
      */
     int ancho_px, alto_px;
+
+    /**
+     * \brief Cantidad de veces que se renderizó la ventana en el último 
+     *        segundo.
+     */
+    unsigned int veces_renderizado, fps_, ticks_ultimo_segundo;
 
     /**
      * \brief Ejecuta todos los callbacks correspondientes al evento indicado.
