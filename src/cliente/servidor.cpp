@@ -4,9 +4,14 @@
 #include <iostream>
 #include <thread>
 #include <stdexcept>
+#include <iostream>
+
+#include "libs/json.hpp"
 
 #include "cliente/video/lock.h"
-#include "conexion/eventos/evento_crear_edificio.h"
+#include "conexion/evento.h"
+#include "conexion/eventos/evento_juego_terminado.h"
+#include "conexion/factory_evento.h"
 
 namespace cliente {
 
@@ -29,6 +34,24 @@ void Servidor::recibir() {
             conexion::Evento *ev = conn->recibir_evento();
             push_evento(ev);
         }*/
+        while (std::cin.good()) {
+            std::string data;
+            std::getline(std::cin, data);
+            if (data == "")
+                continue;
+            try {
+                conexion::Evento* ev = 
+                    conexion::FactoryEvento::crear_desde_json(
+                        nlohmann::json::parse(data)
+                    );
+                push_evento(ev);
+            } catch (const std::exception& e) {
+                std::cout << e.what() << std::endl;
+            } catch(...) {
+                std::cout << "Error al parsear JSON" << std::endl;
+            }
+        }
+        push_evento(new conexion::EventoJuegoTerminado());
     } catch (const std::exception& e) {
         std::cout << "Error en hilo servidor: " << e.what() << std::endl;
     } catch (...) {
