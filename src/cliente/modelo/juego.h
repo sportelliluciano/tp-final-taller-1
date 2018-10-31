@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "cliente/modelo/gusano_arena.h"
 #include "cliente/modelo/jugador.h"
 #include "cliente/modelo/terreno.h"
 #include "cliente/video/ventana.h"
@@ -26,7 +27,11 @@ public:
     void renderizar(Ventana& ventana);
 
 
-    void construir_edificio(const std::string& clase, int x, int y);
+    void construir_edificio(int id, const std::string& clase, int x, int y);
+    
+    void destruir_edificio(int id);
+
+    void mostrar_gusano(int x, int y);
 
     /**
      * \brief Fuerza la finalización del juego.
@@ -42,6 +47,7 @@ private:
     Terreno *terreno;
     Jugador *jugador;
     bool esta_jugando = true;
+    GusanoArena* gusano;
 };
 
 } // namespace cliente
