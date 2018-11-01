@@ -2,6 +2,8 @@
 #define _HUD_H_
 
 #include "cliente/modelo/hud/boton.h"
+#include "cliente/modelo/hud/dinero.h"
+#include "cliente/modelo/juego.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -13,10 +15,11 @@ class HUD {
 public:
     HUD();
     
-    void renderizar(Ventana& ventana);
+    void renderizar(Ventana& ventana, const Juego& juego);
 
 private:
     Boton btn;
+    Dinero dinero;
 };
 
 } // namespace cliente

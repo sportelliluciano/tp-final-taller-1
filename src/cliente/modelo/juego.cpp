@@ -25,6 +25,14 @@ void Juego::renderizar(Ventana& ventana) {
     jugador->renderizar(ventana);
 }
 
+int Juego::obtener_dinero() const {
+    return jugador->obtener_dinero();
+}
+
+void Juego::setear_dinero(int dinero) {
+    jugador->setear_dinero(dinero);
+}
+
 void Juego::construir_edificio(int id, const std::string& clase, int x, int y) {
     jugador->construir_edificio(id, clase, x, y);
 }

@@ -4,6 +4,8 @@
 #include "conexion/eventos/evento_crear_edificio.h"
 #include "conexion/eventos/evento_destruir_edificio.h"
 #include "conexion/eventos/evento_mostrar_gusano.h"
+#include "conexion/eventos/evento_actualizar_dinero.h"
+#include "conexion/eventos/evento_juego_terminado.h"
 
 namespace conexion {
 
@@ -20,6 +22,10 @@ Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
             return new EventoDestruirEdificio(serializado);
         case EV_MOSTRAR_GUSANO:
             return new EventoMostrarGusano(serializado);
+        case EV_ACTUALIZAR_DINERO:
+            return new EventoActualizarDinero(serializado);
+        case EV_JUEGO_TERMINADO:
+            return new EventoJuegoTerminado(serializado);
         default:
             throw ErrorConexion("Evento desconocido");
     }

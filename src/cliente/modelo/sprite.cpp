@@ -38,4 +38,17 @@ void Sprite::renderizar(Ventana& ventana, int x, int y) {
     textura.renderizar(x + dx, y + dy);
 }
 
+const Textura& Sprite::obtener_textura(Ventana& ventana) const {
+    if (id == -1)
+        throw std::runtime_error("El sprite no fue cargado (-1)");
+    char nombre[300];
+    sprintf(nombre, "./assets/imgs/imgs-numeradas/%05d.bmp", id);
+
+    const Textura& textura = ventana
+        .obtener_administrador_texturas()
+        .cargar_imagen(nombre);
+    
+    return textura;
+}
+
 } // namespace cliente
