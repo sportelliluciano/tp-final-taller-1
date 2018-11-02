@@ -16,8 +16,8 @@ class Jugador{
     public:
     Jugador(Terreno terreno);
     ~Jugador();
-    void crear_edificio(char id,int x,int y);
-    void crear_unidad(char id,int x,int y);
+    void crear_edificio(char id_tipo,int x,int y);
+    void crear_unidad(char id_tipo,int x,int y);
     void mover_unidad(char id,int x,int y);
     void atacar_unidad(char id_victima,char id_atacante);
     void atacar_edificio(char id_edificio,char id_atacante);

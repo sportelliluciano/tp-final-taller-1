@@ -14,6 +14,7 @@ class EdificioCaracteristicas{
     public:
     EdificioCaracteristicas();
     ~EdificioCaracteristicas()
+    get_id();
 };
 }
 #endif

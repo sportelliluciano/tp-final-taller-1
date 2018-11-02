@@ -9,13 +9,14 @@ namespace modelo {
 class Edificio{
     private:
     EdificioCaracteristicas caracteristicas;
-    EdificioBase info_base;
+    EdificioBase& info_base;
 
     public:
     Edificio();
     ~Edificio()
     Edificio clonar(char id,int x,int y);
     void recibir_dano(unsigned int dano);
+    char get_id();
 
 };
 }

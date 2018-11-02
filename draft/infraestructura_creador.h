@@ -10,7 +10,7 @@ namespace modelo {
 class InfraestructuraCreador{
     private:
     std::unordered_map<char,Edificio> prototipos;
-
+    std::unordered_map<char,Edificio> info_base;    
     public:
     Edificio clonar(char id_tipo,int x,int y);
 };
