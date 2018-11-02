@@ -14,13 +14,15 @@ class Sprite {
 public:
     Sprite() = default;
 
-    Sprite(const nlohmann::json& sprite);
+    explicit Sprite(const nlohmann::json& sprite);
 
-    Sprite(int id, int desplazamiento_x, int desplazamiento_y);
+    Sprite(int id, int desplazamiento_x = 0, int desplazamiento_y = 0);
 
-    void desplazar(int desplazamiento_x, int desplazamiento_y);
+    virtual void desplazar(int desplazamiento_x, int desplazamiento_y);
 
-    void renderizar(Ventana& ventana, int x, int y);
+    virtual void renderizar(Ventana& ventana, int x, int y);
+
+    virtual const Textura& obtener_textura(Ventana& ventana) const;
 
 private:
     int id = -1;

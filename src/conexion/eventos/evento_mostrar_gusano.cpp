@@ -1,5 +1,7 @@
 #include "conexion/eventos/evento_mostrar_gusano.h"
 
+#include "libs/json.hpp"
+
 #include "cliente/modelo/juego.h"
 
 namespace conexion {

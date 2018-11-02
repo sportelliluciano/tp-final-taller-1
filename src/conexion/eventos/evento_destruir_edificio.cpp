@@ -1,5 +1,7 @@
 #include "conexion/eventos/evento_destruir_edificio.h"
 
+#include "libs/json.hpp"
+
 #include "cliente/modelo/juego.h"
 
 namespace conexion {

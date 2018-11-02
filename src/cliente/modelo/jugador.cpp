@@ -10,6 +10,14 @@ void Jugador::construir_edificio(int id, const std::string& edificio,
     infraestructura.construir(id, edificio, x, y);
 }
 
+int Jugador::obtener_dinero() const {
+    return dinero;
+}
+
+void Jugador::setear_dinero(int dinero_) {
+    dinero = dinero_;
+}
+
 void Jugador::destruir_edificio(int id) {
     infraestructura.destruir(id);
 }

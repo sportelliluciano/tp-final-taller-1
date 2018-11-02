@@ -26,7 +26,7 @@ void Controlador::actualizar_modelo() {
 }
 
 void Controlador::renderizar() {
-    hud.renderizar(ventana);
+    hud.renderizar(ventana, juego);
 }
 
 } // namespace cliente

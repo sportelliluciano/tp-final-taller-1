@@ -26,11 +26,34 @@ public:
      */
     void renderizar(Ventana& ventana);
 
+    /**
+     * \brief Devuelve la cantidad de dinero que posee el jugador.
+     */
+    int obtener_dinero() const;
 
+    /**
+     * \brief Setea el dinero del jugador.
+     */
+    void setear_dinero(int dinero);
+
+    /**
+     * \brief Construye un nuevo edificio en (x, y).
+     * 
+     * Construye un nuevo edificio con el identificador indicado, de la
+     * clase especificada en la posición (x, y), medida en celdas.
+     * 
+     * Si ya hay un edificio con dicho identificador [TODO] no hace nada.
+     */
     void construir_edificio(int id, const std::string& clase, int x, int y);
     
+    /**
+     * \brief Destruye el edificio con ID indicado.
+     */
     void destruir_edificio(int id);
 
+    /**
+     * \brief Hace aparecer al gusano de arena en la posición (x, y).
+     */
     void mostrar_gusano(int x, int y);
 
     /**

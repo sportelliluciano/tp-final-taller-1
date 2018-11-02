@@ -6,7 +6,6 @@
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
-#include "cliente/modelo/hud.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -17,6 +16,8 @@ public:
     void renderizar(Ventana& ventana);
     void construir_edificio(int id, const std::string& clase, int x, int y);
     void destruir_edificio(int id);
+    int obtener_dinero() const;
+    void setear_dinero(int dinero_);
 private:
     Terreno& terreno;
     int energia = 0;
