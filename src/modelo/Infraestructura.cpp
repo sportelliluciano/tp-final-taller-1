@@ -1,7 +1,5 @@
 #include "modelo/Infraestructura.h"
 
-void Infraestructura::Crear(int x, int y, char id){ 
-}
 void Infraestructura::crear_centro_de_construccion(int x, int y);
 void Infraestructura::crear_fabrica_ligera(int x, int y);
 void Infraestructura::crear_fabrica_pesada(int x, int y);
