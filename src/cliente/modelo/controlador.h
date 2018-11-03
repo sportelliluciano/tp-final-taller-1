@@ -22,12 +22,24 @@ public:
 
     void renderizar();
 
+    void procesar_entrada();
+
 private:
     Ventana& ventana;
     Servidor& servidor;
     Juego& juego;
     
     HUD hud;
+
+    void mouse_click_derecho(int x, int y, bool up);
+    void mouse_click_izquierdo(int x, int y, bool up);
+    void mouse_rueda(int y);
+    void recibir_teclado(tecla_t tecla, bool up);
+
+    /**
+     * \brief Donde se encuentra el mouse en este cuadro.
+     */
+    int mouse_x, mouse_y;
 };
 
 } // namespace cliente

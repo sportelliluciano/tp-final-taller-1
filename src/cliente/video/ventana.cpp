@@ -3,6 +3,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <iostream>
+
 #include "cliente/video/administrador_texturas.h"
 #include "cliente/video/error_sdl.h"
 #include "cliente/video/log.h"
@@ -87,21 +89,105 @@ int Ventana::obtener_ms() const {
     return ticks_ultimo_cuadro;
 }
 
-void Ventana::registrar_evento(evento_ventana_t evento, 
-    std::function<void(void)> callback) {
-    callbacks[evento] = callback;
+void Ventana::registrar_ventana_cerrar(std::function<void(void)> callback) {
+    cb_ventana_cerrar = callback;
 }
 
-void Ventana::ejecutar_callbacks(evento_ventana_t evento) {
-    if (callbacks.count(evento) != 0)
-        callbacks.find(evento)->second();
+void Ventana::registrar_mouse_click(
+    std::function<void(boton_mouse_t, int, int)> mouse_down,
+    std::function<void(boton_mouse_t, int, int)> mouse_up)
+{
+    cb_mouse_click_down = mouse_down;
+    cb_mouse_click_up = mouse_up;
+}
+
+void Ventana::registrar_rueda_mouse(
+    std::function<void(int)> rueda_callback)
+{
+    cb_rueda_mouse = rueda_callback;
+}
+
+void Ventana::registrar_mouse_motion(std::function<void(int, int)> callback) {
+    cb_mouse_motion = callback;
+}
+
+void Ventana::registrar_teclado(
+    std::function<void(tecla_t)> teclado_down,
+    std::function<void(tecla_t)> teclado_up) 
+{
+    cb_teclado_down = teclado_down;
+    cb_teclado_up = teclado_up;
+}
+
+static tecla_t map_sdl_key(SDL_Keycode k) {
+    switch(k) {
+        case SDLK_LSHIFT:
+        case SDLK_RSHIFT:
+            return TECLA_SHIFT;
+        
+        case SDLK_ESCAPE:
+            return TECLA_ESCAPE;
+        
+        default:
+            return TECLA_NO_MAPEADA;
+    }
+
+    return TECLA_NO_MAPEADA;
 }
 
 void Ventana::procesar_eventos() {
     SDL_Event evento;
     while (SDL_PollEvent(&evento)) {
-        if (evento.type == SDL_QUIT)
-            ejecutar_callbacks(EVENTO_VENTANA_CERRAR);
+        switch(evento.type) {
+            case SDL_QUIT:
+                if (cb_ventana_cerrar)
+                    cb_ventana_cerrar();
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                if (cb_mouse_click_down) {
+                    boton_mouse_t boton = BOTON_IZQUIERDO;
+                    if (evento.button.button == SDL_BUTTON_RIGHT)
+                        boton = BOTON_DERECHO;
+                    else if (evento.button.button == SDL_BUTTON_MIDDLE)
+                        boton = BOTON_CENTRAL;
+                    
+                    cb_mouse_click_down(boton, evento.button.x, evento.button.y);
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if (cb_mouse_click_up) {
+                    boton_mouse_t boton = BOTON_IZQUIERDO;
+                    if (evento.button.button == SDL_BUTTON_RIGHT)
+                        boton = BOTON_DERECHO;
+                    else if (evento.button.button == SDL_BUTTON_MIDDLE)
+                        boton = BOTON_CENTRAL;
+                    
+                    cb_mouse_click_up(boton, evento.button.x, evento.button.y);
+                }
+                break;
+            case SDL_MOUSEWHEEL:
+                if (cb_rueda_mouse) {
+                    cb_rueda_mouse(evento.wheel.y);
+                }
+                break;
+            case SDL_MOUSEMOTION:
+                if (cb_mouse_motion) {
+                    cb_mouse_motion(evento.motion.x, evento.motion.y);
+                }
+                break;
+            case SDL_KEYDOWN: {
+                tecla_t tecla = map_sdl_key(evento.key.keysym.sym);
+                if (tecla != TECLA_NO_MAPEADA)
+                    cb_teclado_down(tecla);
+                }
+                break;
+            case SDL_KEYUP: {
+                tecla_t tecla = map_sdl_key(evento.key.keysym.sym);
+                if (tecla != TECLA_NO_MAPEADA)
+                    cb_teclado_up(tecla);
+                }
+                break;
+        }
     }
 }
 

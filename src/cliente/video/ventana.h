@@ -11,8 +11,16 @@
 namespace cliente {
 
 typedef enum {
-    EVENTO_VENTANA_CERRAR
-} evento_ventana_t;
+    BOTON_DERECHO,
+    BOTON_CENTRAL,
+    BOTON_IZQUIERDO
+} boton_mouse_t;
+
+typedef enum {
+    TECLA_NO_MAPEADA,
+    TECLA_ESCAPE,
+    TECLA_SHIFT
+} tecla_t;
 
 /**
  * \brief Ventana. Administra escenas.
@@ -69,12 +77,62 @@ public:
     int obtener_ms() const;
 
     /**
-     * \brief Registra un callback para un evento.
+     * \brief Registra un callback para el cierre de la ventana
      * 
      * Sólo se permite un callback por evento.
      */
-    void registrar_evento(evento_ventana_t evento, 
-        std::function<void(void)> callback);
+    void registrar_ventana_cerrar(std::function<void(void)> callback);
+
+    /**
+     * \brief Registra un callback para los eventos de click del mouse.
+     * 
+     * El evento mouse_down se ejecuta cuando se presiona algún botón del mouse;
+     * el evento mouse_up se ejecuta cuando se suelta el botón.
+     * 
+     * Se puede pasar nullptr si no se desea controlar algún evento o para
+     * des-registrar los callbacks.
+     * 
+     * Sólo se permite un callback por evento.
+     */
+    void registrar_mouse_click(
+        std::function<void(boton_mouse_t, int, int)> mouse_down,
+        std::function<void(boton_mouse_t, int, int)> mouse_up);
+    
+    void registrar_mouse_motion(std::function<void(int, int)> mouse_motion);
+    
+    /**
+     * \brief Registra un callback para los eventos de rueda del mouse.
+     * 
+     * Este evento ocurre cuando el usuario hace scroll con la rueda del mouse.
+     * 
+     * El callback recibe un parámetro: 
+     *  void rueda_callback(int y)
+     * - y: Cuántos píxeles se scrollearon verticalmente. El signo indica la
+     *      dirección.
+     * 
+     * Se puede pasar nullptr si no se desea controlar algún evento o para
+     * des-registrar los callbacks.
+     * 
+     * Sólo se permite un callback por evento.
+     */
+    void registrar_rueda_mouse(std::function<void(int)> rueda_callback);
+
+    /**
+     * \brief Registra un callback para los eventos del teclado.
+     * 
+     * El evento teclado_down se ejecuta cuando se empieza a presionar una tecla;
+     * el evento teclado_up se ejecuta cuando se suelta la tecla.
+     * 
+     * Se puede pasar nullptr si no se desea controlar algún evento o para
+     * des-registrar los callbacks.
+     * 
+     * Sólo se notificarán las teclas que están registradas en el tipo tecla_t.
+     * 
+     * Sólo se permite un callback por evento.
+     */
+    void registrar_teclado(
+        std::function<void(tecla_t)> teclado_down,
+        std::function<void(tecla_t)> teclado_up);
 
     /**
      * \brief Procesa los eventos que recibe la ventana.
@@ -105,11 +163,6 @@ private:
     AdministradorTexturas *admin_texturas;
 
     /**
-     * \brief Callbacks
-     */
-    std::unordered_map<evento_ventana_t, std::function<void(void)>> callbacks;
-
-    /**
      * \brief Ticks en el último cuadro
      * 
      * Esta variable se utiliza para evitar renderizar más cuadros por segundo
@@ -136,12 +189,16 @@ private:
      */
     unsigned int veces_renderizado, fps_, ticks_ultimo_segundo;
 
-    /**
-     * \brief Ejecuta todos los callbacks correspondientes al evento indicado.
-     */
-    void ejecutar_callbacks(evento_ventana_t evento);
+    std::function<void(void)> cb_ventana_cerrar = nullptr;
+    std::function<void(boton_mouse_t, int, int)> cb_mouse_click_up = nullptr,
+        cb_mouse_click_down = nullptr;
+    std::function<void(tecla_t)> cb_teclado_up = nullptr,
+        cb_teclado_down = nullptr;
+    std::function<void(int)> cb_rueda_mouse = nullptr;
+    std::function<void(int, int)> cb_mouse_motion = nullptr;
 };
 
 } // namespace cliente
 
 #endif // _VENTANA_H_
+

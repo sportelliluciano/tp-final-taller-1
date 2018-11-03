@@ -13,10 +13,18 @@ ClienteJuego::ClienteJuego(Servidor& servidor_, int argc, char *argv[])
 
 int ClienteJuego::ejecutar() {
     while (!juego.esta_terminado()) {
-        ventana.procesar_eventos();
-        juego.renderizar(ventana);
+        // Procesar eventos
+        ventana.procesar_eventos(); // Cerrar ventana
+        controlador.procesar_entrada(); // Mouse / teclado
+        
+        // Actualizar el modelo del juego
         controlador.actualizar_modelo();
-        controlador.renderizar();
+        
+        // Renderizar el juego
+        juego.renderizar(ventana);
+        controlador.renderizar(); // Renderizar el HUD
+
+        // Mostrar los cambios
         ventana.actualizar();
     }
     
