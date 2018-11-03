@@ -30,3 +30,6 @@ InfraestructuraCreador::~InfraestructuraCreador();
 Edificio InfraestructuraCreador::clonar(char id_tipo,int x,int y){
     return prototipos[id_tipo].clonar(x,y);
 }
+unsigned int InfraestructuraCreador::get_costo(id_tipo){
+    return info_base[id_tipo].get_costo();
+}

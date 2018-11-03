@@ -8,7 +8,7 @@ EdificioCaracteristicas::EdificioCaracteristicas(int x,int y,
 ~EdificioCaracteristicas();
 bool reducir_ptos_est(dano){
     puntos_de_estructura -= dano;
-    if (puntos_de_estructura >0) return true;
+    if (puntos_de_estructura > 0) return true;
     return false; 
 }
 char get_id(){

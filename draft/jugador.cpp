@@ -6,7 +6,13 @@
     Jugador::Jugador(Terreno terreno):terreno(terreno){}
     Jugador::~Jugador(){}
     void Jugador::crear_edificio(char id_tipo,int x,int y){
-        inf.crear_edificio(id_tipo,x,y);
+        inf.crear(id_tipo,x,y,energia);
+    }
+    void Jugador::reciclar_edificio(char id){
+        inf.reciclar(char id);
+    }
+    void Jugador::destruir_edificio(char id){
+        inf.destruir(char id);
     }
     void Jugador::crear_unidad(char id_tipo,int x,int y){
         ejercito.crear_unidad(id_tipo,x,y);
@@ -18,5 +24,5 @@
         ejercito.atacar(id_victima,id_atacante);
     }
     void Jugador::atacar_edificio(char id_edificio,char id_atacante){
-        ejercito.atacar(inf.get_edificio(id_edificio),id_atacante);
+        ejercito.atacar(inf.get(id_edificio),id_atacante);
     }

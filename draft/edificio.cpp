@@ -12,7 +12,7 @@ Edificio::Edificio(EdificioBase& info_base,int x,int y):
                                 info_base(info_base){}
 Edificio::~Edificio()
 Edificio Edificio::clonar(int x,int y){
-    return Edificio(EdificioBase& info_base,int x,int y)    
+    return Edificio(info_base,x,y)    
 }
 void Edificio::recibir_dano(unsigned int dano){
     if(!caracteristicas.reducir_ptos_est(dano)){

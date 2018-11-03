@@ -18,6 +18,7 @@ class InfraestructuraCreador{
     InfraestructuraCreador(std::string path);
     ~InfraestructuraCreador();
     Edificio clonar(char id_tipo,int x,int y);
+    unsigned int get_costo(id_tipo);
 };
 }
 #endif

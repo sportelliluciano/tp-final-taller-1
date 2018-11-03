@@ -12,11 +12,14 @@ class Jugador{
     Infraestructura inf;
     Ejercito ejercito;
     Terreno& terreno;
+    unsigned int energia;
 
     public:
     Jugador(Terreno terreno);
     ~Jugador();
     void crear_edificio(char id_tipo,int x,int y);
+    void reciclar_edificio(char id);
+    void destruir_edificio(char id);
     void crear_unidad(char id_tipo,int x,int y);
     void mover_unidad(char id,int x,int y);
     void atacar_unidad(char id_victima,char id_atacante);

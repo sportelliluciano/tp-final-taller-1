@@ -17,8 +17,10 @@ class Infraestructura{
 
     public:
     Infraestructura(Terreno& terreno);
-    void crear_edificio(char id_tipo,int x,int y);
-    Edificio& get_edificio(char id);
+    void crear(char id_tipo,int x,int y,unsigned int energia);
+    void reciclar(char id);
+    void destruir(char id);
+    Edificio& get(char id);
 };
 }
 #endif
