@@ -7,7 +7,7 @@ int main(){
 
     using nlohmann::json;
 
-    std::ifstream entrada("../data/edificios.json");
+    std::ifstream entrada("../data/armas.json");
 
     json edificios_json;
 
@@ -21,11 +21,8 @@ int main(){
         json elem = valores_por_defecto;
         elem.update(*it);
 
-        std::cout << elem["id"] << '\n';
         std::cout << elem["nombre"] << '\n';
-        std::cout << elem["energia"] << '\n';
-        std::cout << elem["costo"] << '\n';
-        std::cout << elem["puntos_estructura"] << '\n';
+        std::cout << elem["dano"] << '\n';
     }
     return 0;    
 }
