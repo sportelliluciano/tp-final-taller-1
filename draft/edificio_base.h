@@ -1,6 +1,8 @@
 #ifndef _EDIFICIOBASE_H_
 #define _EDIFICIOBASE_H_
 
+#include "libs/json.hpp"
+
 namespace modelo {
 
 class EdificioBase{
@@ -8,12 +10,14 @@ class EdificioBase{
     char tipo;
     unsigned int energia;
     unsigned int costo;
-    unsigned int dimensiones;
+    unsigned int dimension_x;
+    unsigned int dimension_y;
     unsigned int puntos_de_estructura;
     
     public:
-    EdificioBase();
+    EdificioBase(const nlohmann::json& data_edificio);
     ~EdificioBase()
+    unsigned int get_ptos_est();
 };
 }
 #endif

@@ -12,9 +12,10 @@ class EdificioCaracteristicas{
     unsigned int puntos_de_estructura;
 
     public:
-    EdificioCaracteristicas();
-    ~EdificioCaracteristicas()
-    get_id();
+    EdificioCaracteristicas(int x,int y,unsigned int puntos_de_estructura);
+    ~EdificioCaracteristicas();
+    bool reducir_ptos_est(dano);
+    char get_id();
 };
 }
 #endif

@@ -12,9 +12,10 @@ class Edificio{
     EdificioBase& info_base;
 
     public:
-    Edificio();
+    Edificio(EdificioBase& info_base);
+    Edificio(EdificioBase& info_base,int x,int y);
     ~Edificio()
-    Edificio clonar(char id,int x,int y);
+    Edificio clonar(int x,int y);
     void recibir_dano(unsigned int dano);
     char get_id();
 

@@ -1,0 +1,22 @@
+[
+    {
+        "id": "cuartel",
+        "nombre": "Cuartel",
+        "energia": 100,
+        "costo": 300,
+        "dimensiones": [3, 2],
+        "puntos_estructura": 300,
+        "sprite_construido": { "id": 2933 },
+        "sprite_destruido": { "id": 2934 }
+    },
+    {
+        "id": "palacio",
+        "nombre": "Palacio",
+        "energia": 800,
+        "costo": 2000,
+        "dimensiones": [3, 3],
+        "puntos_estructura": 1000,
+        "sprite_construido": { "id": 2924 },
+        "sprite_destruido": { "id": 2925 }
+    }
+]
