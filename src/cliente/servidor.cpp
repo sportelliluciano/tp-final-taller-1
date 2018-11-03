@@ -82,7 +82,6 @@ void Servidor::push_evento(conexion::Evento* evento) {
 }
 
 void Servidor::detener() {
-    terminar = true;
     hilo_receptor.join();
 }
 

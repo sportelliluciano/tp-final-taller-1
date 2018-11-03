@@ -20,6 +20,11 @@ int main(int argc, char *argv[]) {
         retcode = EXIT_FAILURE;
     }
     
-    servidor.detener();
+    try {
+        servidor.detener();
+    } catch(...) {
+        // Preveer excepciones en caso de que no se pueda 
+        //  hacerle join al hilo.
+    }
     return retcode;
 }
