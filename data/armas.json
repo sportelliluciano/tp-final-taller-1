@@ -2,8 +2,9 @@
     {
         "id": "defecto",
         "nombre": "-",
-        "dano": 0,
-        "frecuencia": 0,
+        "id_base": "-",
+        "id_bono": "-",
+        "bonificacion":{},
         "sprite_base": {
             "id": -1,
             "x": 0,
@@ -11,10 +12,10 @@
         }
     },
     {
-        "id": "-",
+        "id": "arma rifle de asalto",
         "nombre": "rifle de asalto",
-        "dano": 2,
-        "frecuencia": 6,
+        "id_base": "rifle de asalto",
+        "id_bono": "-",
         "sprite_base": {
             "id": -1,
             "x": 0,
@@ -22,10 +23,10 @@
         }
     },
     {
-        "id": "-",
+        "id": "lanza misiles",
         "nombre": "lanza misiles",
-        "dano": 8,
-        "frecuencia": 1,
+        "id_base": "lanza misiles",
+        "id_bono": "-",
         "sprite_base": {
             "id": -1,
             "x": 0,
@@ -33,10 +34,10 @@
         }
     },
     {
-        "id": "-",
+        "id": "arma cañon 22mm",
         "nombre": "cañon 22mm",
-        "dano": 6,
-        "frecuencia": 6,
+        "id_base": "cañon 22mm",
+        "id_bono": "-",
         "sprite_base": {
             "id": -1,
             "x": 0,
@@ -44,10 +45,10 @@
         }
     },
     {
-        "id": "defecto",
+        "id": "arma cañon",
         "nombre": "cañon",
-        "dano": 7,
-        "frecuencia": 1,
+        "id_base": "cañon",
+        "id_bono": "-",
         "sprite_base": {
             "id": -1,
             "x": 0,
@@ -55,10 +56,10 @@
         }
     },
     {
-        "id": "defecto",
+        "id": "arma ondas de sonido",
         "nombre": "ondas de sonido",
-        "dano": 4,
-        "frecuencia": 1,
+        "id_base": "ondas de sonido",
+        "id_bono": "-",
         "sprite_base": {
             "id": -1,
             "x": 0,
@@ -66,10 +67,10 @@
         }
     },
     {
-        "id": "defecto",
+        "id": "arma cañon de plasma",
         "nombre": "cañon de plasma",
-        "dano": 8,
-        "frecuencia": 1,
+        "id_base": "cañon de plasma",
+        "id_bono": "-",
         "sprite_base": {
             "id": -1,
             "x": 0,

@@ -5,19 +5,25 @@
 
 #include "terreno.h"
 #include "unidad.h"
+#include "ejercito_creador.h"
+#include "arma_creador.h"
+#include "edificio.h"
 
 namespace modelo {
 
 class Ejercito{
     private:
     std::unordered_map<char,Unidad> tropas;
+    EjercitoCreador prototipos;
+    ArmaCreador
     Terreno& terreno;
 
     public:
-    Ejercito(Terreno terreno);
+    Ejercito(Terreno& terreno);
     ~Ejercito();
-    void crear_unidad(char id_tipo,int x,int y);
-    void mover_unidad(char id,int x,int y);
+    void crear(char id_tipo,int x,int y);
+    void destruir(char id);
+    void mover(char id,int x,int y);
     void atacar(char id_victima,char id_atacante);
     void atacar(Edificio& edificio,char id_atacante);
 };
