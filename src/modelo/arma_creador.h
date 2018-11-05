@@ -1,10 +1,10 @@
-#ifndef _ARMACREADOR_H_
-#define _ARMACREADOR_H_
+#ifndef _ARMA_CREADOR_H_
+#define _ARMA_CREADOR_H_
 
 #include <unordered_map>
 
-#include "arma_base.h"
-#include "arma_caracteristicas.h"
+#include "modelo/arma_base.h"
+#include "modelo/arma_caracteristicas.h"
 
 namespace modelo {
 

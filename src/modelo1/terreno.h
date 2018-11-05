@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "celda.h"
-#include "grafo.h"
-#include "posicion.h"
+#include "modelo/celda.h"
+#include "modelo/grafo.h"
+#include "modelo/posicion.h"
 
 namespace modelo {
 

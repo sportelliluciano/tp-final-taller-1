@@ -3,11 +3,11 @@
 
 #include <unordered_map>
 
-#include "terreno.h"
-#include "unidad.h"
-#include "ejercito_creador.h"
-#include "arma_creador.h"
-#include "edificio.h"
+#include "modelo/terreno.h"
+#include "modelo/unidad.h"
+#include "modelo/ejercito_creador.h"
+#include "modelo/arma_creador.h"
+#include "modelo/edificio.h"
 
 namespace modelo {
 

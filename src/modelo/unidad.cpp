@@ -1,8 +1,10 @@
-#include "unidad.h"
+#include "modelo/unidad.h"
 
 #include "libs/json.hpp"
-#include "edificio.h"
-#include "unidad_base.h"
+#include "modelo/edificio.h"
+#include "modelo/unidad_base.h"
+
+namespace modelo {
 
 Unidad(int pos_x,int pos_y,
                         UnidadBase& unidad_base):
@@ -28,4 +30,5 @@ void Unidad::atacar(Edificio& edificio){
 }
 char Unidad::get_id(){
     return id;
+}
 }

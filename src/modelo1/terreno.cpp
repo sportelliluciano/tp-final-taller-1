@@ -1,10 +1,10 @@
-#include "terreno.h"
+#include "modelo/terreno.h"
 
 #include <cmath>
 #include <iostream>
 
-#include "a_estrella.h"
-#include "celda.h"
+#include "modelo/a_estrella.h"
+#include "modelo/celda.h"
 
 namespace modelo {
 

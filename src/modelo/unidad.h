@@ -2,8 +2,8 @@
 #define _UNIDAD_H_
 
 #include "libs/json.hpp"
-#include "edificio.h"
-#include "unidadb_base.h"
+#include "modelo/edificio.h"
+#include "modelo/unidad_base.h"
 
 namespace modelo {
 

@@ -1,4 +1,4 @@
-#include "posicion.h"
+#include "modelo/posicion.h"
 
 #include <cmath>
 

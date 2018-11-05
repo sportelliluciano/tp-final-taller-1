@@ -1,7 +1,9 @@
-#include "jugador.h"
-#include "infraestructura.h"
-#include "ejercito.h"
-#include "terreno.h"
+#include "modelo/jugador.h"
+#include "modelo/infraestructura.h"
+#include "modelo/ejercito.h"
+#include "modelo/terreno.h"
+
+namespace modelo {
 
 Jugador::Jugador(Terreno terreno):terreno(terreno){}
 Jugador::~Jugador(){}
@@ -28,4 +30,5 @@ void Jugador::atacar_unidad(char id_victima,char id_atacante){
 }
 void Jugador::atacar_edificio(char id_edificio,char id_atacante){
     ejercito.atacar(inf.get(id_edificio),id_atacante);
+}
 }

@@ -4,7 +4,7 @@
 #include <functional>
 #include <unordered_map>
 
-#include "grafo.h"
+#include "modelo/grafo.h"
 
 namespace modelo {
 

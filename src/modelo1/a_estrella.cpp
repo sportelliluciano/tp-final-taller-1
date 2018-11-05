@@ -1,4 +1,4 @@
-#include "a_estrella.h"
+#include "modelo/a_estrella.h"
 
 #include <limits>
 #include <set>
