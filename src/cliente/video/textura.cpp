@@ -102,4 +102,10 @@ void Textura::renderizar(int x, int y, const Rectangulo& seccion,
         throw ErrorSDL("SDL_SetRenderTarget");
 }
 
+Textura::~Textura() {
+    if (textura)
+        SDL_DestroyTexture(textura);
+    textura = nullptr;
+}
+
 } // namespace cliente

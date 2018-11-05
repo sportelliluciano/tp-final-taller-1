@@ -19,6 +19,11 @@ public:
      */
     Textura(Textura&& otro);
     Textura& operator=(Textura&& otro);
+
+    /**
+     * \brief Destructor.
+     */
+    ~Textura();
     
     /**
      * \brief Devuelve el alto de la textura.
