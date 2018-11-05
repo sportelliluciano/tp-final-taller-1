@@ -20,13 +20,17 @@ EdificioBase::EdificioBase(const nlohmann::json& data_edificio){
     dimension_y = data_edificio[DIM][Y];
     puntos_de_estructura = data_edificio[PTOS_ESTRUCUTURA];
 }
-const unsigned int EdificioBase::get_energia(){
+
+unsigned int EdificioBase::get_energia() const {
     return energia;
 }
-const unsigned int EdificioBase::get_costo(){
+
+unsigned int EdificioBase::get_costo() const {
     return costo;
 }
-const unsigned int EdificioBase::get_ptos_est(){
+
+unsigned int EdificioBase::get_ptos_est() const {
     return puntos_de_estructura;
 }
-}
+
+} // namespace modelo

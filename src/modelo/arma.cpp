@@ -7,14 +7,18 @@
 
 namespace modelo {
 
-Arma(ArmaBase& info_base,ArmaCaracteristicas& caracteristicas):
+Arma::Arma(ArmaBase& info_base,ArmaCaracteristicas& caracteristicas):
                             info_base(info_base),
                             caracteristicas(caracteristicas){}
-~Arma(){}
-void atacar_a(Unidad& victima){
+
+Arma::~Arma(){}
+
+void Arma::atacar_a(Unidad* victima){
 
 }
-void atacar_a(Edificio& victima){
+
+void Arma::atacar_a(Edificio& victima){
 
 }
-}
+
+} // namespace modelo

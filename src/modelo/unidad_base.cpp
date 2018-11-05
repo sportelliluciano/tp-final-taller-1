@@ -3,9 +3,6 @@
 #include <string>
 
 #include "libs/json.hpp"
-#include "modelo/arma.h"
-#include "modelo/unidad.h"
-#include "modelo/edificio.h"
 
 #define CASA "casa"
 #define RANGO "rango"
@@ -16,7 +13,7 @@
 
 namespace modelo {
 
-UnidadBase::UnidadBase(const nlohmann::json& data_unidad,Arma& arma):arma(arma){
+UnidadBase::UnidadBase(const nlohmann::json& data_unidad) {
     casa = data_unidad[CASA];
     rango = data_unidad[RANGO];
     velocidad = data_unidad[VEL];
@@ -24,26 +21,29 @@ UnidadBase::UnidadBase(const nlohmann::json& data_unidad,Arma& arma):arma(arma){
     costo = data_unidad[COSTO];
     vida = data_unidad[VIDA];
 }
-UnidadBase::~UnidadBase();
-void UnidadBase::atacar(Unidad& victima){
-    arma.atacar_a(victima);
+
+UnidadBase::~UnidadBase() { 
+
 }
-void UnidadBase::atacar(Edificio& edificio){
-    arma.atacar_a(victima);
-}
-unsigned int UnidadBase::get_rango(){
+
+unsigned int UnidadBase::get_rango() const {
     return rango;
 }
-unsigned int UnidadBase::get_velocidad(){
+
+unsigned int UnidadBase::get_velocidad() const {
     return velocidad;
 }
-unsigned int UnidadBase::get_tiempo(){
+
+unsigned int UnidadBase::get_tiempo() const {
     return tiempo_de_entrenamiento;
 }
-unsigned int UnidadBase::get_costo(){
+
+unsigned int UnidadBase::get_costo() const {
     return costo;
 }
-unsigned int UnidadBase::get_vida(){
+
+unsigned int UnidadBase::get_vida() const {
     return vida;
 }
-}
+
+} // namespace modelo

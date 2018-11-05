@@ -6,20 +6,22 @@
 namespace modelo {
 
 class EdificioBase{
-    private:
-    char tipo;
+private:
+    int tipo;
     unsigned int energia;
     unsigned int costo;
     unsigned int dimension_x;
     unsigned int dimension_y;
     unsigned int puntos_de_estructura;
     
-    public:
+public:
     EdificioBase(const nlohmann::json& data_edificio);
     ~EdificioBase();
-    const unsigned int get_energia();
-    const unsigned int get_costo();
-    const unsigned int get_ptos_est();
+    unsigned int get_energia() const;
+    unsigned int get_costo() const;
+    unsigned int get_ptos_est() const;
 };
-}
-#endif
+
+} // namespace modelo
+
+#endif // _EDIFICIO_BASE_H_
