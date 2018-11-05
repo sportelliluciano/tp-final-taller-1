@@ -1,0 +1,206 @@
+[
+    {
+        "id":"-",
+        "nombre":"-",
+        "casa":"-",
+        "requerimiento":[],
+        "id_arma":"-",
+        "rango":0,
+        "velocidad":0,
+        "tiempo de entrenamiento":0,
+        "costo":0,
+        "vida":0,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"infanteria ligera",
+        "nombre":"infanteria ligera",
+        "casa":["atreides","Hatkonnen","ordos"],
+        "requerimiento":["cuartel"],
+        "id_arma":"rifle de asalto",
+        "rango":3,
+        "velocidad":16,
+        "tiempo de entrenamiento":1,
+        "costo":50,
+        "vida":50,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"infanteria pesada",
+        "nombre":"infanteria pesada",
+        "casa":["atreides","Hatkonnen","ordos"],
+        "requerimiento":[],
+        "id_arma":"lanza misiles",
+        "rango":3,
+        "velocidad":12,
+        "tiempo de entrenamiento":1.3,
+        "costo":70,
+        "vida":80,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"fremen",
+        "nombre":"fremen",
+        "casa":["atreides"],
+        "requerimiento":["cuartel","palacio"],
+        "id_arma":"rifle de asalto + lanza misiles",
+        "rango":3,
+        "velocidad":20,
+        "tiempo de entrenamiento":2,
+        "costo":100,
+        "vida":50,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"sardaukar",
+        "nombre":"sardaukar",
+        "casa":["harkonnen"],
+        "requerimiento":["cuartel","palacio"],
+        "id_arma":"rifle de asalto + lanza misiles",
+        "rango":3,
+        "velocidad":12,
+        "tiempo de entrenamiento":2,
+        "costo":100,
+        "vida":80,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"trike",
+        "nombre":"trike",
+        "casa":["harkonnen","atreides"],
+        "requerimiento":["fabrica ligera"],
+        "id_arma":"rifle de asalto",
+        "rango":4,
+        "velocidad":64,
+        "tiempo de entrenamiento":2,
+        "costo":100,
+        "vida":80,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"raider",
+        "nombre":"raider",
+        "casa":["ordos"],
+        "requerimiento":["fabrica ligera"],
+        "id_arma":"cañon 22mm",
+        "rango":4,
+        "velocidad":84,
+        "tiempo de entrenamiento":2,
+        "costo":100,
+        "vida":80,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"tanque",
+        "nombre":"raider",
+        "casa":["atreides","Hatkonnen","ordos"],
+        "requerimiento":["fabrica pesada"],
+        "id_arma":"cañon",
+        "rango":4,
+        "velocidad":40,
+        "tiempo de entrenamiento":4,
+        "costo":300,
+        "vida":30,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"tanque sonico",
+        "nombre":"tanque sonico",
+        "casa":["atreides"],
+        "requerimiento":["fabrica pesada","palacio"],
+        "id_arma":"ondas de sonido",
+        "rango":4,
+        "velocidad":12,
+        "tiempo de entrenamiento":4,
+        "costo":300,
+        "vida":300,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"desviador",
+        "nombre":"desviador",
+        "casa":["ordos"],
+        "requerimiento":["fabrica pesada","palacio"],
+        "id_arma":"lanza misiles",
+        "rango":5,
+        "velocidad":12,
+        "tiempo de entrenamiento":4,
+        "costo":400,
+        "vida":300,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"devastador",
+        "nombre":"devastador",
+        "casa":["harkonnen"],
+        "requerimiento":["fabrica pesada","palacio"],
+        "id_arma":"cañon de plasma",
+        "rango":4,
+        "velocidad":12,
+        "tiempo de entrenamiento":5,
+        "costo":400,
+        "vida":400,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "id":"cosechadora",
+        "nombre":"cosechadora",
+        "casa":["atreides","Hatkonnen","ordos"],
+        "requerimiento":["fabrica pesada"],
+        "id_arma":"-",
+        "rango":0,
+        "velocidad":12,
+        "tiempo de entrenamiento":3,
+        "costo":300,
+        "vida":600,
+        "sprite_base": {
+            "id": -1,
+            "x": 0,
+            "y": 0
+        }
+    }
+]

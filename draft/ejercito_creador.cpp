@@ -21,7 +21,7 @@ EjercitoCreador(Terreno& terreno):terreno(terreno){
         // Mergear valores por defecto con el elemento actual
         json elem = valores_por_defecto;
         elem.update(*it);
-        prototipos_base.emplace(elem["id"], UnidadBase(elem,armamento.get(elem["id"])));
+        prototipos_base.emplace(elem["id"], UnidadBase(elem,armamento.get(elem["id_arma"])));
         //prototipos.emplace(elem["id"], Unidad(elem,armamento.get(elem["id"])));
     }
 }
