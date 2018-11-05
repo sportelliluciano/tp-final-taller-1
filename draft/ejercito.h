@@ -15,7 +15,7 @@ class Ejercito{
     private:
     std::unordered_map<char,Unidad> tropas;
     EjercitoCreador prototipos;
-    ArmaCreador
+    ArmaCreador arma_creador;
     Terreno& terreno;
 
     public:

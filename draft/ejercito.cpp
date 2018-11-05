@@ -11,7 +11,7 @@
 Ejercito::Ejercito(Terreno& terreno):terreno(terreno){}
 Ejercito::~Ejercito(){}
 void Ejercito::crear(char id_tipo,int x,int y){
-    Unidad nueva_unidad = prototipos.clonar(id_tipo);
+    Unidad nueva_unidad = prototipos.clonar(id_tipo,x,y);
     tropas[nueva_unidad.get_id()] = nueva_unidad; // usar move semantics
 }
 void Ejercito::destruir(char id){

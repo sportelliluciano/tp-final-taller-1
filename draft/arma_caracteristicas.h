@@ -3,13 +3,13 @@
 
 namespace modelo {
 
-//bonificaciones y comportamiento extra
+//comportamiento extra
 class ArmaCaracteristicas{
     private:
 
     public:
-    ArmaCaracteristicas();
-    ~ArmaCaracteristicas()
+    virtual ~ArmaCaracteristicas(){}
+    virtual void aplicar() = 0;
 };
 }
 #endif
