@@ -25,7 +25,7 @@ namespace cliente {
 Ventana::Ventana() : Ventana(ANCHO_VENTANA_DEFECTO, ALTO_VENTANA_DEFECTO) { }
 
 Ventana::Ventana(int w, int h) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) != 0)
         throw ErrorSDL("SDL_Init");
     
     if (TTF_Init() != 0)
@@ -43,7 +43,7 @@ Ventana::Ventana(int w, int h) {
     if (!renderer) {
         SDL_DestroyWindow(ventana);
         TTF_Quit();
-        SDL_Quit();
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
         throw ErrorSDL("SDL_CreateRenderer");
     }
 
@@ -51,7 +51,7 @@ Ventana::Ventana(int w, int h) {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(ventana);
         TTF_Quit();
-        SDL_Quit();
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
         throw ErrorSDL("SDL_RenderClear");
     }
     
@@ -60,7 +60,7 @@ Ventana::Ventana(int w, int h) {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(ventana);
         TTF_Quit();
-        SDL_Quit();
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
         throw ErrorSDL("SDL_GetRenderInfo");
     }
 
@@ -211,15 +211,6 @@ void Ventana::actualizar() {
         }
     }
 
-    /******** GRILLA DEPURACION *********/
-    for (int i=0;i<ancho() / 32; i++) {
-        SDL_RenderDrawLine(renderer, i*32, 0, i*32, alto());
-        for (int j=0;j<=alto() / 32; j++) {
-            SDL_RenderDrawLine(renderer, 0, j * 32, ancho(), j * 32);
-        }
-    }
-    /************************************/
-
     SDL_RenderPresent(renderer);
     ticks_ultimo_cuadro = SDL_GetTicks();
     veces_renderizado++;
@@ -234,12 +225,40 @@ AdministradorTexturas& Ventana::obtener_administrador_texturas() {
     return *admin_texturas;
 }
 
+// TODO: Sacar esto
+void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1) {
+    if ((abs(x1 - x0) * abs(y1 - y0)) < 32)
+        return;
+    
+    Uint8 r, g, b, a;
+    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
+    SDL_Rect rc;
+    rc.x = x0; rc.y = y0;
+    rc.w = x1 - x0; rc.h = y1 - y0;
+    SDL_RenderDrawRect(renderer, &rc);
+    rc.x += 1; rc.y += 1; rc.w -= 2; rc.h -= 2;
+    SDL_RenderDrawRect(renderer, &rc);
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+}
+
+void Ventana::dibujar_grilla() {
+    /******** GRILLA DEPURACION *********/
+    for (int i=0;i<ancho() / 32; i++) {
+        SDL_RenderDrawLine(renderer, i*32, 0, i*32, alto());
+        for (int j=0;j<=alto() / 32; j++) {
+            SDL_RenderDrawLine(renderer, 0, j * 32, ancho(), j * 32);
+        }
+    }
+    /************************************/
+}
+
 Ventana::~Ventana() {
     delete admin_texturas;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(ventana);
     TTF_Quit();
-    SDL_Quit();
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 } // namespace cliente

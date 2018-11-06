@@ -142,6 +142,18 @@ public:
     void procesar_eventos();
 
     /**
+     * \brief Dibuja un rectángulo de depuración sobre la ventana
+     * TODO: Arreglar esto
+     */
+    void dibujar_rectangulo(int x0, int y0, int x1, int y1);
+
+    /**
+     * \brief Dibuja una grilla de 32x32 sobre la ventana.
+     * TODO: Eliminar esto
+     */
+    void dibujar_grilla();
+
+    /**
      * \brief Destructor.
      */
     ~Ventana();
