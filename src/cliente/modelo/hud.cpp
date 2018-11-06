@@ -1,31 +1,41 @@
 #include "cliente/modelo/hud.h"
 
-#include <string>
-#include <sstream>
+#include <iostream>
 
 #include "cliente/modelo/juego.h"
+#include "cliente/modelo/hud/barra_superior.h"
+#include "cliente/modelo/hud/panel_lateral.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
 
-HUD::HUD() : btn(4321, 800, 400) {
+HUD::HUD(Ventana& ventana, Juego& juego) 
+: barra_superior(ventana.ancho()), panel_lateral(juego)
+{}
 
+void HUD::click_derecho(int x, int y) {
+    if (barra_superior.contiene_punto(x, y))
+        barra_superior.click_derecho(x, y);
+    else if (panel_lateral.contiene_punto(x, y))
+        panel_lateral.click_derecho(x, y);
+}
+
+void HUD::click_izquierdo(int x, int y) {
+    std::cout << "Click en HUD" << std::endl;
+    if (barra_superior.contiene_punto(x, y))
+        barra_superior.click_izquierdo(x, y);
+    else if (panel_lateral.contiene_punto(x, y))
+        panel_lateral.click_izquierdo(x, y);
+}
+
+bool HUD::contiene_punto(int x, int y) {
+    return panel_lateral.contiene_punto(x, y) ||
+        barra_superior.contiene_punto(x, y);
 }
 
 void HUD::renderizar(Ventana& ventana, const Juego& juego) {
-    std::stringstream s_fps;
-    s_fps << "FPS: " << ventana.fps();
-
-    Textura textura_fps = ventana
-        .obtener_administrador_texturas()
-        .crear_texto(s_fps.str());
-    
-    textura_fps.renderizar(ventana.ancho() - textura_fps.obtener_ancho() - 10,
-        10);
-    
-    btn.renderizar(ventana);
-    dinero.setear_dinero(juego.obtener_dinero());
-    dinero.renderizar(ventana, 800, 30);
+    panel_lateral.renderizar(ventana, juego);
+    barra_superior.renderizar(ventana, juego);
 }
 
 } // namespace cliente

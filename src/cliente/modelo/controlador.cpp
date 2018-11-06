@@ -11,7 +11,7 @@
 namespace cliente {
 
 Controlador::Controlador(Ventana& ventana_, Servidor& servidor_, Juego& juego_) 
-    : ventana(ventana_), servidor(servidor_), juego(juego_)
+    : ventana(ventana_), servidor(servidor_), juego(juego_), hud(ventana_, juego_)
 { 
     ventana.registrar_ventana_cerrar([this]() {
         juego.detener();
@@ -73,6 +73,23 @@ void Controlador::mouse_click_derecho(int x, int y, bool up) {
 
 void Controlador::mouse_click_izquierdo(int x, int y, bool up) {
     std::cout << (up ? "UP": "DOWN") << " click izquierdo en (" << x << ", " << y << ")" << std::endl;
+    if (!up) { // down
+        if (!hud.contiene_punto(x, y)) {
+            drag_start_x = x;
+            drag_start_y = y;
+            std::cout << "Drag started" << std::endl;
+            draggeando = true;
+        }
+    } else { // up
+        if (draggeando) {
+            std::cout << "Drag finished" << std::endl;
+            draggeando = false;
+            drag_end_x = x;
+            drag_end_y = y;
+        } else if (hud.contiene_punto(x, y)) {
+            hud.click_izquierdo(x, y);
+        }
+    }
 }
 
 void Controlador::recibir_teclado(tecla_t tecla, bool up) {
@@ -84,6 +101,10 @@ void Controlador::mouse_rueda(int y) {
 }
 
 void Controlador::renderizar() {
+    if (draggeando) {
+        ventana.dibujar_rectangulo(drag_start_x, drag_start_y, mouse_x, mouse_y);
+    }
+
     hud.renderizar(ventana, juego);
 }
 

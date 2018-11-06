@@ -40,6 +40,10 @@ private:
      * \brief Donde se encuentra el mouse en este cuadro.
      */
     int mouse_x, mouse_y;
+
+    bool draggeando = false;
+
+    int drag_start_x, drag_start_y, drag_end_x, drag_end_y;
 };
 
 } // namespace cliente
