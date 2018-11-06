@@ -22,6 +22,14 @@ void Jugador::destruir_edificio(int id) {
     infraestructura.destruir(id);
 }
 
+void Jugador::iniciar_construccion(const std::string& clase) {
+    infraestructura.iniciar_construccion(clase);
+}
+
+std::vector<const Edificio*> Jugador::obtener_edificios() const {
+    return infraestructura.obtener_edificios();
+}
+
 void Jugador::renderizar(Ventana& ventana) {
     infraestructura.renderizar(ventana);
     tropas.renderizar(ventana);

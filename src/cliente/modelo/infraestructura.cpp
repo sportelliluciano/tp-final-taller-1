@@ -70,4 +70,23 @@ void Infraestructura::renderizar(Ventana& ventana) {
     }
 }
 
+std::vector<const Edificio*> Infraestructura::obtener_edificios() const {
+    std::vector<const Edificio*> edificios_disponibles;
+
+    for (auto it=edificios.begin(); it != edificios.end(); ++it) {
+        if (it->first == "centro_construccion")
+            continue;
+        edificios_disponibles.push_back(&it->second);
+    }
+
+    return edificios_disponibles;
+}
+
+void Infraestructura::iniciar_construccion(const std::string& clase) {
+    if (clase == "centro_construccion")
+        throw std::runtime_error("Este edificio no debería construirse");
+    
+    
+}
+
 } // namespace cliente

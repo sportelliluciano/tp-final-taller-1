@@ -1,6 +1,7 @@
 #ifndef _INFRAESTRUCTURA_H_
 #define _INFRAESTRUCTURA_H_
 
+#include <list>
 #include <unordered_map>
 
 #include "cliente/modelo/celda.h"
@@ -15,12 +16,16 @@ public:
     void renderizar(Ventana& ventana);
     void construir(int id, const std::string& clase, int x, int y);
     void destruir(int id);
+    std::vector<const Edificio*> obtener_edificios() const;
+    void iniciar_construccion(const std::string& clase);
 
 private:
     Terreno& terreno;
     std::unordered_map<int, Edificio> edificios_construidos;
 
     std::unordered_map<std::string, Edificio> edificios;
+
+    std::unordered_map<std::string, std::list<int>> cola_construccion;
 };
 
 } // namespace cliente

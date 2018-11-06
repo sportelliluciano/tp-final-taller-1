@@ -49,6 +49,14 @@ void Juego::detener() {
     esta_jugando = false;
 }
 
+void Juego::iniciar_construccion(const std::string& clase) {
+    jugador->iniciar_construccion(clase);
+}
+
+std::vector<const Edificio*> Juego::obtener_edificios() const {
+    return jugador->obtener_edificios();
+}
+
 Juego::~Juego() {
     delete terreno;
 }

@@ -14,10 +14,12 @@ class Jugador {
 public:
     Jugador(Terreno& terreno_juego);
     void renderizar(Ventana& ventana);
+    void iniciar_construccion(const std::string& clase);
     void construir_edificio(int id, const std::string& clase, int x, int y);
     void destruir_edificio(int id);
     int obtener_dinero() const;
     void setear_dinero(int dinero_);
+    std::vector<const Edificio*> obtener_edificios() const;
 private:
     Terreno& terreno;
     int energia = 0;

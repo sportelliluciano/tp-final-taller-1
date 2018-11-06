@@ -2,6 +2,7 @@
 #define _JUEGO_H_
 
 #include <string>
+#include <vector>
 
 #include "cliente/modelo/gusano_arena.h"
 #include "cliente/modelo/jugador.h"
@@ -36,6 +37,8 @@ public:
      */
     void setear_dinero(int dinero);
 
+    void iniciar_construccion(const std::string& clase);
+
     /**
      * \brief Construye un nuevo edificio en (x, y).
      * 
@@ -60,6 +63,11 @@ public:
      * \brief Fuerza la finalización del juego.
      */
     void detener();
+
+    /**
+     * \brief Devuelve los edificios que existen en el juego.
+     */
+    std::vector<const Edificio*> obtener_edificios() const;
 
     /**
      * \brief Destructor.

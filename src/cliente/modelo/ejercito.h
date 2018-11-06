@@ -2,6 +2,7 @@
 #define _EJERCITO_H_
 
 #include "cliente/modelo/terreno.h"
+#include "cliente/modelo/tropa.h"
 
 namespace cliente {
 
@@ -12,6 +13,7 @@ public:
     
 private:
     Terreno& terreno;
+    Tropa tropa;
 };
 
 } // namespace cliente

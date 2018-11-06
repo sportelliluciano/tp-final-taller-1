@@ -53,6 +53,16 @@ public:
      */
     bool esta_vivo() const;
 
+    /**
+     * \brief Devuelve el número de sprite que corresponde al botón del HUD.
+     */
+    int obtener_sprite_boton() const;
+
+    /**
+     * \brief Devuelve el ID de edificio
+     */
+    const std::string& obtener_id() const;
+
 private:
     std::string id;
     std::string nombre;
@@ -62,13 +72,14 @@ private:
     int vida;
 
     int pos_x, pos_y;
+    
+    int sprite_boton;
 
     bool esta_destruido = false;
     bool esta_construido = false;
 
     SpriteAnimado sprite_construccion, sprite_destruccion;
     SpriteCompuesto sprite, sprite_roto;
-    
 };
 
 } // namespace cliente

@@ -21,6 +21,8 @@ Edificio::Edificio(const nlohmann::json& data_edificio)
 
     sprite_construccion = SpriteAnimado(4130, 4136);
     sprite_destruccion  = SpriteAnimado(4137, 4151);
+    
+    sprite_boton = data_edificio["sprite_boton"];
 
     ancho = data_edificio["dimensiones"][0];
     alto = data_edificio["dimensiones"][1];
@@ -70,6 +72,14 @@ void Edificio::construir(const Terreno& terreno, int x, int y) {
             celdas_ocupadas.push_back(terreno.at(x + i, y + j));
         }
     }
+}
+
+const std::string& Edificio::obtener_id() const {
+    return id;
+}
+
+int Edificio::obtener_sprite_boton() const {
+    return sprite_boton;
 }
 
 void Edificio::destruir() {
