@@ -134,14 +134,18 @@ void Terreno::renderizar_mosaico(Ventana& ventana, int x, int y,
 
 void Terreno::renderizar(Ventana& ventana) {
     if (!is_dirty) {
-        textura_cacheada.renderizar(0, 0);
+        ventana
+            .obtener_administrador_texturas()
+            .obtener_textura("terreno")
+            .renderizar(0, 0);
+        ventana.dibujar_grilla();
         return;
     }
     
-    textura_cacheada = ventana
+    Textura& textura = ventana
         .obtener_administrador_texturas()
-        .crear_textura(ventana.ancho(), ventana.alto());
-
+        .crear_textura("terreno", ventana.ancho(), ventana.alto());
+    
     /**
      * Se renderizan siempre tantas celdas como entren en la ventana.
      * Las celdas que no estén en el tablero serán simplemente mosaicos en
@@ -157,12 +161,13 @@ void Terreno::renderizar(Ventana& ventana) {
             if ((y < 0) || (y > alto()))
                 continue;
 
-            renderizar_mosaico(ventana, x, y, textura_cacheada);
+            renderizar_mosaico(ventana, x, y, textura);
         }
     }
 
     is_dirty = false;
-    textura_cacheada.renderizar(0, 0);
+    textura.renderizar(0, 0);
+    ventana.dibujar_grilla();
 }
 
 void Terreno::convertir_a_px(int x, int y, int& x_px, int& y_px) const {

@@ -40,6 +40,10 @@ void Sprite::renderizar(Ventana& ventana, int x, int y) {
     textura.renderizar(x + dx, y + dy);
 }
 
+int Sprite::obtener_alto(Ventana& ventana) const {
+    return obtener_textura(ventana).obtener_alto();
+}
+
 const Textura& Sprite::obtener_textura(Ventana& ventana) const {
     if (id == -1)
         throw std::runtime_error("El sprite no fue cargado (-1)");

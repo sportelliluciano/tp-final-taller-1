@@ -81,7 +81,7 @@ private:
     int ancho_, alto_;
     int camara_x = 0, camara_y = 0;
     bool is_dirty = true;
-    Textura textura_cacheada;
+    int textura_cacheada;
 
     void renderizar_mosaico(Ventana& ventana, int x, int y, Textura& destino);
 };
