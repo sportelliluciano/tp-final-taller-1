@@ -58,6 +58,14 @@ public:
     void renderizar(int x, int y, const Rectangulo& seccion, 
         Textura& destino) const;
     
+    /**
+     * \brief Recorta un fragmento de la superficie y lo renderiza.
+     */
+    void renderizar(int x, int y, const Rectangulo& seccion, 
+        const Rectangulo& destino) const;
+    
+    Rectangulo obtener_rect() const;
+    
 
 private:
     Textura(SDL_Renderer *renderer, SDL_Texture* textura);

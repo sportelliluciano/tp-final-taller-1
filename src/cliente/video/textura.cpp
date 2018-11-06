@@ -86,6 +86,17 @@ void Textura::renderizar(int x, int y, const Rectangulo& seccion) const {
 }
 
 void Textura::renderizar(int x, int y, const Rectangulo& seccion, 
+    const Rectangulo& destino) const 
+{
+    SDL_Rect dst = destino.sdl_rect;
+    dst.x = x; dst.y = y;
+    if (SDL_RenderCopy(renderer, textura, &seccion.sdl_rect, 
+        &dst) != 0) {
+        throw ErrorSDL("SDL_RenderCopy");
+    }
+}
+
+void Textura::renderizar(int x, int y, const Rectangulo& seccion, 
     Textura& otro) const {
     SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
     if (SDL_SetRenderTarget(renderer, otro.textura) != 0)
@@ -100,6 +111,10 @@ void Textura::renderizar(int x, int y, const Rectangulo& seccion,
     
     if (SDL_SetRenderTarget(renderer, old_target) != 0)
         throw ErrorSDL("SDL_SetRenderTarget");
+}
+
+Rectangulo Textura::obtener_rect() const {
+    return Rectangulo(0, 0, src.w, src.h);
 }
 
 Textura::~Textura() {
