@@ -5,16 +5,18 @@
 
 namespace modelo {
 
-Jugador::Jugador(Terreno terreno):terreno(terreno){}
+Jugador::Jugador(Terreno terreno_):inf(Infraestructura(terreno_)),
+                                   ejercito(Ejercito(terreno_)),
+                                   terreno(terreno_){}
 Jugador::~Jugador(){}
 void Jugador::crear_edificio(char id_tipo,int x,int y){
     inf.crear(id_tipo,x,y,energia);
 }
 void Jugador::reciclar_edificio(char id){
-    inf.reciclar(char id);
+    inf.reciclar(id);
 }
 void Jugador::destruir_edificio(char id){
-    inf.destruir(char id);
+    inf.destruir(id);
 }
 void Jugador::crear_unidad(char id_tipo,int x,int y){
     ejercito.crear(id_tipo,x,y);

@@ -9,7 +9,7 @@ class ArmaCaracteristicas{
 
     public:
     virtual ~ArmaCaracteristicas(){}
-    virtual void aplicar() = 0;
+    virtual void aplicar();
 };
 }
 #endif

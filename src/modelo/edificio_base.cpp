@@ -12,6 +12,8 @@
 
 namespace modelo {
 
+EdificioBase::EdificioBase(){}
+EdificioBase::~EdificioBase(){}
 EdificioBase::EdificioBase(const nlohmann::json& data_edificio){
     tipo = data_edificio[ID];
     energia = data_edificio[ENERGIA];

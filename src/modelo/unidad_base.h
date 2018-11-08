@@ -4,6 +4,8 @@
 #include <string>
 
 #include "libs/json.hpp"
+namespace modelo { class UnidadBase; }
+#include "modelo/arma.h"
 
 namespace modelo {
 
@@ -15,10 +17,14 @@ private:
     unsigned int tiempo_de_entrenamiento;
     unsigned int costo;
     unsigned int vida;
+    Arma* arma;
 
 public:
-    UnidadBase(const nlohmann::json& data_unidad);
+    UnidadBase();
+    UnidadBase(const nlohmann::json& data_unidad,Arma* arma_);
     ~UnidadBase();
+    void atacar_a(Unidad* victima);
+    void atacar_a(Edificio* edificio);
     unsigned int get_rango() const;
     unsigned int get_velocidad() const;
     unsigned int get_tiempo() const;

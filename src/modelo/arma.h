@@ -13,14 +13,15 @@ namespace modelo {
 
 class Arma {
 private:
-    ArmaBase& info_base;
-    ArmaCaracteristicas& caracteristicas;
+    ArmaBase* arma_base;
+    ArmaCaracteristicas* caracteristicas;
 
 public:
-    Arma(ArmaBase& info_base, ArmaCaracteristicas& caracteristicas);
+    Arma();
+    Arma(ArmaBase* info_base, ArmaCaracteristicas* caracteristicas);
     ~Arma();
     void atacar_a(Unidad* victima);
-    void atacar_a(Edificio& victima);
+    void atacar_a(Edificio* victima);
 };
 
 } // namespace modelo

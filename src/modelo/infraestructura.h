@@ -11,12 +11,12 @@ namespace modelo {
 
 class Infraestructura{
     private:
+    Terreno& terreno;
     std::unordered_map<char,Edificio> edificios;
     InfraestructuraCreador prototipos;
-    Terreno& terreno;
 
     public:
-    Infraestructura(Terreno& terreno);
+    Infraestructura(Terreno& mapa);
     void crear(char id_tipo,int x,int y,unsigned int energia);
     void reciclar(char id);
     void destruir(char id);

@@ -3,6 +3,7 @@
 #include <string>
 
 #include "libs/json.hpp"
+#include "modelo/arma.h"
 
 #define CASA "casa"
 #define RANGO "rango"
@@ -13,7 +14,7 @@
 
 namespace modelo {
 
-UnidadBase::UnidadBase(const nlohmann::json& data_unidad) {
+UnidadBase::UnidadBase(const nlohmann::json& data_unidad,Arma* arma_):arma(arma_) {
     casa = data_unidad[CASA];
     rango = data_unidad[RANGO];
     velocidad = data_unidad[VEL];
@@ -21,11 +22,18 @@ UnidadBase::UnidadBase(const nlohmann::json& data_unidad) {
     costo = data_unidad[COSTO];
     vida = data_unidad[VIDA];
 }
-
+UnidadBase::UnidadBase(){
+    
+}
 UnidadBase::~UnidadBase() { 
 
 }
-
+void UnidadBase::atacar_a(Unidad* victima){
+    arma->atacar_a(victima);
+}
+void UnidadBase::atacar_a(Edificio* victima){
+    arma->atacar_a(victima);
+}
 unsigned int UnidadBase::get_rango() const {
     return rango;
 }

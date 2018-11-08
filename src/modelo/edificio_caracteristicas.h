@@ -5,17 +5,18 @@ namespace modelo {
 
 class EdificioCaracteristicas{
     private:
-    char id;
+    int id;
     //Celda& posicion;
     int x;
     int y;
     unsigned int puntos_de_estructura;
 
     public:
+    EdificioCaracteristicas();
     EdificioCaracteristicas(int x,int y,unsigned int puntos_de_estructura);
     ~EdificioCaracteristicas();
     bool reducir_ptos_est(int dano);
-    char get_id();
+    int get_id();
 };
 }
 #endif

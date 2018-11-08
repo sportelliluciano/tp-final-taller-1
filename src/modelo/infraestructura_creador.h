@@ -11,14 +11,14 @@ namespace modelo {
 
 class InfraestructuraCreador{
     private:
-    std::unordered_map<char,Edificio> prototipos;
-    std::unordered_map<char,EdificioBase> info_base;    
+    std::unordered_map<int,Edificio> prototipos;
+    std::unordered_map<int,EdificioBase> info_base;    
     public:
 
-    InfraestructuraCreador(std::string path);
+    InfraestructuraCreador();
     ~InfraestructuraCreador();
-    Edificio clonar(char id_tipo,int x,int y);
-    unsigned int get_costo(char id_tipo);
+    Edificio clonar(int id_tipo,int x,int y);
+    unsigned int get_costo(int id_tipo);
 };
 }
 #endif

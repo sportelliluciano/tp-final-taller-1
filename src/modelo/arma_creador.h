@@ -10,14 +10,15 @@ namespace modelo {
 
 class ArmaCreador{
     private:
-    std::unordered_map<char,Arma> prototipos;
-    std::unordered_map<char,ArmaBase> armas_base;
-    std::unordered_map<char,ArmaCaracteristicas>armas_caracteristicas;
+    std::unordered_map<int,Arma> prototipos;
+    std::unordered_map<int,ArmaBase> armas_base;
+    std::unordered_map<int,ArmaCaracteristicas>armas_caracteristicas;
+    void armas_base_iniziaizador();
 
     public:
     ArmaCreador();
     ~ArmaCreador();
-    Arma& get_arma(char id);
+    Arma* get(int id);
 };
 }
 #endif

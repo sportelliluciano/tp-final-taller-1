@@ -2,7 +2,7 @@
 #define _EDIFICIO_BASE_H_
 
 #include "libs/json.hpp"
-
+namespace modelo { class EdificioBase; }
 namespace modelo {
 
 class EdificioBase{
@@ -15,6 +15,7 @@ private:
     unsigned int puntos_de_estructura;
     
 public:
+    EdificioBase();
     EdificioBase(const nlohmann::json& data_edificio);
     ~EdificioBase();
     unsigned int get_energia() const;

@@ -18,15 +18,15 @@ private:
     int pos_x;
     int pos_y;
     int vida;
-    UnidadBase& unidad_base;
-    Arma& arma;
+    UnidadBase* unidad_base;
 
 public:
-    Unidad(int pos_x,int pos_y, UnidadBase& unidad_base, Arma& arma);
+    Unidad();
+    Unidad(int pos_x,int pos_y, UnidadBase* unidad_base);
     //Unidad(UnidadBase& unidad_base);
     ~Unidad();
     //void clonar(int x,int y);
-    void moverse(int x, int y);
+    void mover(int x, int y);
     void recibir_dano(unsigned int dano);
     void atacar(Unidad& victima);
     void atacar(Edificio& edificio);

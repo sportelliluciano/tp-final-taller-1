@@ -1,13 +1,15 @@
 #include "modelo/ejercito_creador.h"
 
+#include <fstream> 
 #include <unordered_map>
 
 #include "libs/json.hpp"
 #include "modelo/unidad.h"
+#include "terreno.h"
 
 namespace modelo {
 
-EjercitoCreador(Terreno& terreno):terreno(terreno){
+EjercitoCreador::EjercitoCreador(Terreno& terreno_):terreno(terreno_){
     using nlohmann::json;
 
     std::ifstream entrada("../data/ejercito.json");
@@ -27,8 +29,8 @@ EjercitoCreador(Terreno& terreno):terreno(terreno){
         //prototipos.emplace(elem["id"], Unidad(elem,armamento.get(elem["id"])));
     }
 }
-~EjercitoCreador(){}
-Unidad clonar(char id_tipo,int x,int y){
-    return Unidad(x,y,prototipos_base[id_tipo]);
+EjercitoCreador::~EjercitoCreador(){}
+Unidad EjercitoCreador::clonar(int id_tipo,int x,int y){
+    return Unidad(x,y,&prototipos_base[id_tipo]);
 }
 }

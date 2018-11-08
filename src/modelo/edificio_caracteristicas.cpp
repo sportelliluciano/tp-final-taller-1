@@ -1,19 +1,23 @@
-#include "modelo/EdificioCaracteristicas"
+#include "modelo/edificio_caracteristicas.h"
 
 namespace modelo {
+EdificioCaracteristicas::EdificioCaracteristicas(){
+    
+}
+EdificioCaracteristicas::EdificioCaracteristicas(int x_,int y_,
+                            unsigned int puntos_de_estructura_):
+                            x(x_),
+                            y(y_),
+                            puntos_de_estructura(puntos_de_estructura_){}
+EdificioCaracteristicas::~EdificioCaracteristicas(){
 
-EdificioCaracteristicas::EdificioCaracteristicas(int x,int y,
-                            unsigned int puntos_de_estructura):
-                            x(x),
-                            y(y),
-                            puntos_de_estructura(puntos_de_estructura){}
-~EdificioCaracteristicas();
-bool reducir_ptos_est(dano){
+}
+bool EdificioCaracteristicas::reducir_ptos_est(int dano){
     puntos_de_estructura -= dano;
     if (puntos_de_estructura > 0) return true;
     return false; 
 }
-char get_id(){
+int EdificioCaracteristicas::get_id(){
     return id;
 }
 }

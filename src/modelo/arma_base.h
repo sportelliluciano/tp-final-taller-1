@@ -18,8 +18,11 @@ private:
     //bonificaciones
     
 public:
+    ArmaBase();
     ArmaBase(const nlohmann::json& data_arma);
     ~ArmaBase();
+    void atacar_a(Unidad* victima);
+    void atacar_a(Edificio* victima);
 };
 
 } // namespace modelo
