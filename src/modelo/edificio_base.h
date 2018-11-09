@@ -1,13 +1,15 @@
 #ifndef _EDIFICIO_BASE_H_
 #define _EDIFICIO_BASE_H_
 
+#include <string>
+
 #include "libs/json.hpp"
 namespace modelo { class EdificioBase; }
 namespace modelo {
 
 class EdificioBase{
 private:
-    int tipo;
+    std::string tipo;
     unsigned int energia;
     unsigned int costo;
     unsigned int dimension_x;

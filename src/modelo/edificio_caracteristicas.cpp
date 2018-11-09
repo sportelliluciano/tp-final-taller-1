@@ -4,11 +4,14 @@ namespace modelo {
 EdificioCaracteristicas::EdificioCaracteristicas(){
     
 }
-EdificioCaracteristicas::EdificioCaracteristicas(int x_,int y_,
+EdificioCaracteristicas::EdificioCaracteristicas(int id_,int x_,int y_,
                             unsigned int puntos_de_estructura_):
+                            id(id_),
                             x(x_),
                             y(y_),
-                            puntos_de_estructura(puntos_de_estructura_){}
+                            puntos_de_estructura(puntos_de_estructura_){
+    //asignar id unico
+}
 EdificioCaracteristicas::~EdificioCaracteristicas(){
 
 }

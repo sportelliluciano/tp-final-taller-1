@@ -10,17 +10,17 @@ namespace modelo {
 class Edificio{
     private:
     EdificioCaracteristicas caracteristicas;
-    EdificioBase* info_base;
+    EdificioBase& info_base;
 
     public:
-    Edificio();
-    explicit Edificio(EdificioBase* info_base);
-    Edificio(EdificioBase* info_base,int x,int y);
+    //Edificio();
+    explicit Edificio(EdificioBase& info_base);
+    Edificio(EdificioBase& info_base,int id,int x,int y);
     ~Edificio();
     Edificio& operator=(const Edificio& other);
-    Edificio clonar(int x,int y);
+    Edificio clonar(int id,int x,int y);
     void recibir_dano(unsigned int dano);
-    char get_id();
+    int get_id();
 
 };
 }

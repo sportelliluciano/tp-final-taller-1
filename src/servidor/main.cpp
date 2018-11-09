@@ -1,6 +1,8 @@
-#include <iostream>
+#include "modelo/terreno.h"
+#include "modelo/jugador.h"
 
 int main(int argc, char *argv[]) {
-    std::cout << "Hola servidor" << std::endl;
+    modelo::Terreno terreno(3,6);
+    modelo::Jugador player(terreno); 
     return 0;
 }

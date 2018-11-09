@@ -13,7 +13,7 @@ class EdificioCaracteristicas{
 
     public:
     EdificioCaracteristicas();
-    EdificioCaracteristicas(int x,int y,unsigned int puntos_de_estructura);
+    EdificioCaracteristicas(int id,int x,int y,unsigned int puntos_de_estructura);
     ~EdificioCaracteristicas();
     bool reducir_ptos_est(int dano);
     int get_id();

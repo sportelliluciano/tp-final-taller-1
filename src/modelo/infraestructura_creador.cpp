@@ -26,14 +26,14 @@ InfraestructuraCreador::InfraestructuraCreador(){
         json elem = valores_por_defecto;
         elem.update(*it);
         info_base.emplace(elem["id"], EdificioBase(elem));
-        prototipos.emplace(elem["id"], Edificio(&info_base.at(elem["id"])));
+        prototipos.emplace(elem["id"], Edificio(info_base.at(elem["id"])));
     }
 }
 InfraestructuraCreador::~InfraestructuraCreador(){}
-Edificio InfraestructuraCreador::clonar(int id_tipo,int x,int y){
-    return prototipos[id_tipo].clonar(x,y);
+Edificio InfraestructuraCreador::clonar(std::string id_tipo,int id,int x,int y){
+    return prototipos.at(id_tipo).clonar(id,x,y);
 }
-unsigned int InfraestructuraCreador::get_costo(int id_tipo){
-    return info_base[id_tipo].get_costo();
+unsigned int InfraestructuraCreador::get_costo(std::string id_tipo){
+    return info_base.at(id_tipo).get_costo();
 }
 }

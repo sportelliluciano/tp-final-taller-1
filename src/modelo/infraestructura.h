@@ -1,6 +1,7 @@
 #ifndef _INFRAESTRUCTURA_H_
 #define _INFRAESTRUCTURA_H_
 
+#include <string>
 #include <unordered_map>
 
 #include "modelo/edificio.h"
@@ -12,15 +13,15 @@ namespace modelo {
 class Infraestructura{
     private:
     Terreno& terreno;
-    std::unordered_map<char,Edificio> edificios;
+    std::unordered_map<int,Edificio> edificios;
     InfraestructuraCreador prototipos;
 
     public:
     Infraestructura(Terreno& mapa);
-    void crear(char id_tipo,int x,int y,unsigned int energia);
-    void reciclar(char id);
-    void destruir(char id);
-    Edificio& get(char id);
+    void crear(std::string id_tipo,int x,int y,unsigned int energia);
+    void reciclar(int id);
+    void destruir(int id);
+    Edificio& get(int id);
 };
 }
 #endif
