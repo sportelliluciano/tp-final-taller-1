@@ -15,12 +15,7 @@
 
 namespace cliente {
 
-Servidor::Servidor(int argc, char *argv[]) { 
-    /*if (argc == 3) {
-        conn = new conexion::Conexion(argv[1], argv[2]);
-    } else {
-        throw std::runtime_error("Indique a donde conectarse");
-    }*/
+Servidor::Servidor() { 
 }
 
 void Servidor::iniciar() {

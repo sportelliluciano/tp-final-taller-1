@@ -18,7 +18,7 @@ public:
     /**
      * \brief Constructor. 
      */
-    ClienteJuego(Servidor& servidor_juego, int argc, char *argv[]);
+    ClienteJuego(Servidor& servidor_juego);
 
     /**
      * \brief Ejecuta el cliente del juego.

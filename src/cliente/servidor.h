@@ -18,7 +18,7 @@ namespace cliente {
  */
 class Servidor {
 public:
-    Servidor(int argc, char *argv[]);
+    Servidor();
     
     /**
      * \brief Inicia el hilo servidor.

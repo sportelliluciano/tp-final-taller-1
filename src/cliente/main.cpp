@@ -5,11 +5,12 @@
 
 #include "cliente/cliente_juego.h"
 #include "cliente/servidor.h"
+#include "cliente/sonido/sonido.h"
 
 int main(int argc, char *argv[]) {
     SDL_Init(0);
-    cliente::Servidor servidor(argc, argv);
-    cliente::ClienteJuego cliente_juego(servidor, argc, argv);
+    cliente::Servidor servidor;
+    cliente::ClienteJuego cliente_juego(servidor);
     int retcode = EXIT_SUCCESS;
     
     try {
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]) {
         // Preveer excepciones en caso de que no se pueda 
         //  hacerle join al hilo.
     }
+    cliente::Sonido::obtener_instancia().apagar();
     SDL_Quit();
     return retcode;
 }
