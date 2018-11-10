@@ -1,6 +1,7 @@
 #include "cliente/video/textura.h"
 
 #include "cliente/video/error_sdl.h"
+#include "cliente/video/log.h"
 
 namespace cliente {
 
@@ -90,8 +91,7 @@ void Textura::renderizar(int x, int y, const Rectangulo& seccion,
 {
     SDL_Rect dst = destino.sdl_rect;
     dst.x = x; dst.y = y;
-    if (SDL_RenderCopy(renderer, textura, &seccion.sdl_rect, 
-        &dst) != 0) {
+    if (SDL_RenderCopy(renderer, textura, &seccion.sdl_rect, &dst) != 0) {
         throw ErrorSDL("SDL_RenderCopy");
     }
 }
@@ -117,9 +117,25 @@ Rectangulo Textura::obtener_rect() const {
     return Rectangulo(0, 0, src.w, src.h);
 }
 
+void Textura::limpiar(int r, int g, int b, int a) {
+    SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
+    if (SDL_SetRenderTarget(renderer, textura) != 0)
+        throw ErrorSDL("SDL_SetRenderTarget");
+    
+    Uint8 rr, gg, bb, aa;
+    SDL_GetRenderDrawColor(renderer, &rr, &gg, &bb, &aa);
+    SDL_SetRenderDrawColor(renderer, (Uint8)r, (Uint8)g, (Uint8)b, (Uint8) a);
+    SDL_RenderFillRect(renderer, NULL);
+    SDL_SetRenderDrawColor(renderer, rr, gg, bb, aa);
+    
+    if (SDL_SetRenderTarget(renderer, old_target) != 0)
+        throw ErrorSDL("SDL_SetRenderTarget");
+}
+
 Textura::~Textura() {
     if (textura)
         SDL_DestroyTexture(textura);
+
     textura = nullptr;
 }
 

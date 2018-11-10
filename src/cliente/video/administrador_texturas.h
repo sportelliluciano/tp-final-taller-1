@@ -42,6 +42,11 @@ public:
     Textura& obtener_textura(const std::string& id);
 
     /**
+     * \brief Elimina una textura del almacén. Devuelve la textura eliminada.
+     */
+    Textura eliminar_textura(const std::string& id);
+
+    /**
      * \brief Crea una nueva textura vacía.
      * 
      * Crea una nueva textura vacía y la guarda en el almacén de texturas con el
@@ -52,9 +57,15 @@ public:
     Textura& crear_textura(const std::string& nombre, int w, int h);
 
     /**
-     * \brief Crea una nueva textura con el texto indicado-
+     * \brief Crea una nueva textura con el texto indicado y la almacena
+     *        junto con las texturas creadas con el nombre "texto-" + texto.
      */
-    Textura crear_texto(const std::string& texto);
+    Textura& crear_texto(const std::string& texto);
+
+    /**
+     * \brief Crea una nueva textura con el texto indicado sin almacenarla.
+     */
+    Textura crear_texto_nc(const std::string& texto);
 
     /**
      * \brief Destructor.

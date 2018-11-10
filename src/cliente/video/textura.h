@@ -64,6 +64,11 @@ public:
     void renderizar(int x, int y, const Rectangulo& seccion, 
         const Rectangulo& destino) const;
     
+    /**
+     * \brief Limpia la textura a un fondo de color, por defecto negro.
+     */
+    void limpiar(int r = 0, int g = 0, int b = 0, int a = 0);
+    
     Rectangulo obtener_rect() const;
     
 

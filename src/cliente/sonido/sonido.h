@@ -14,10 +14,6 @@ typedef enum {
     SONIDO_BLEEP
 } sonido_t;
 
-typedef enum {
-    MUSICA_0
-} musica_t;
-
 /**
  * \brief Encapsulamiento del módulo de sonido de SDL.
  * 
@@ -25,10 +21,7 @@ typedef enum {
  */
 class Sonido {
 public:
-    /**
-     * \brief Inicializa el subsistema de sonido.
-     */
-    Sonido();
+    static Sonido& obtener_instancia();
 
     /**
      * \brief Encola un sonido a ser reproducido.
@@ -36,12 +29,12 @@ public:
      * Encola un sonido a ser reproducido. El mismo podría no reproducirse
      * si se detecta que hay demasiados sonidos similares sonando.
      */
-    void reproducir_sonido(sonido_t sonido, int volumen);
+    void reproducir_sonido(sonido_t sonido, int volumen = 100);
 
     /**
      * \brief Inicia la reproducción de la música de fondo.
      */
-    void iniciar_musica_fondo(musica_t musica);
+    void iniciar_musica_fondo();
 
     /**
      * \brief Detiene la reproducción de la música de fondo.
@@ -64,6 +57,8 @@ public:
      */
     void set_volumen_sonidos(int volumen);
 
+    void apagar();
+    
     /**
      * \brief Libera los recursos asociados.
      */
@@ -71,9 +66,16 @@ public:
 
 private:
     std::unordered_map<sonido_t, Mix_Chunk*> sonidos;
-    std::unordered_map<musica_t, Mix_Music*> musicas;
+    Mix_Music* musica_fondo = NULL;
 
-    float volumen_sonidos;
+    float volumen_sonidos = 1.0f;
+
+    bool sonido_habilitado = true;
+
+    /**
+     * \brief Inicializa el subsistema de sonido.
+     */
+    Sonido();
 };
 
 } // namespace cliente

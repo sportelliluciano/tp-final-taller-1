@@ -1,5 +1,7 @@
 #include "cliente/modelo/hud/boton.h"
 
+#include <iostream>
+
 #include "cliente/modelo/sprite.h"
 #include "cliente/video/ventana.h"
 
@@ -9,7 +11,7 @@
 namespace cliente {
 
 Boton::Boton()
-    : sprite(0), boton(0, 0, ANCHO_DEF, ALTO_DEF), imagen(nullptr)
+    : imagen(nullptr), sprite(0), boton(0, 0, ANCHO_DEF, ALTO_DEF)
 { }
 
 Boton::Boton(int sprite_id)
@@ -28,11 +30,6 @@ void Boton::set_imagen(const char *img) {
 
 void Boton::registrar_click(std::function<void(void)> callback) {
     cb_click = callback;
-}
-
-void Boton::click() {
-    if (cb_click)
-        cb_click();
 }
 
 void Boton::set_tamanio(int ancho, int alto) {
@@ -54,8 +51,13 @@ void Boton::renderizar(Ventana& ventana, int x, int y) {
             ventana.obtener_administrador_texturas().cargar_imagen(imagen);
         if (autoresize_activo)
             boton = t.obtener_rect();
-        t.renderizar(x, y, boton, t.obtener_rect());
+        t.renderizar(x + padding_x, y + padding_y, boton, t.obtener_rect());
     }
+}
+
+void Boton::set_padding(int x, int y) {
+    padding_x = x;
+    padding_y = y;
 }
 
 int Boton::obtener_alto() const {
@@ -64,6 +66,13 @@ int Boton::obtener_alto() const {
 
 int Boton::obtener_ancho() const {
     return boton.sdl_rect.w;
+}
+
+bool Boton::mouse_click_izquierdo(int x, int y) {
+    std::cout << "Boton: click izq en (" << x << "," << y << ")" << std::endl;
+    if (cb_click)
+        cb_click();
+    return false;
 }
 
 } // namespace cliente

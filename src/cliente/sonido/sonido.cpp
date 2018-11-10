@@ -4,8 +4,14 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "cliente/video/error_sdl.h"
+#include "cliente/video/log.h"
 
 namespace cliente {
+
+Sonido& Sonido::obtener_instancia() {
+    static Sonido sonido;
+    return sonido;
+}
 
 Sonido::Sonido() {
     if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0) {
@@ -21,6 +27,9 @@ Sonido::Sonido() {
 }
 
 void Sonido::reproducir_sonido(sonido_t sonido, int volumen) {
+    if ((!sonido_habilitado) || (volumen == 0))
+        return;
+    
     if (sonidos.find(sonido) == sonidos.end()) {
         Mix_Chunk* nuevo_sonido = Mix_LoadWAV("./assets/sonidos/bleep.wav");
         if (!nuevo_sonido)
@@ -38,22 +47,24 @@ void Sonido::reproducir_sonido(sonido_t sonido, int volumen) {
         throw ErrorSDL("Mix_PlayChannel", Mix_GetError());
 }
 
-void Sonido::iniciar_musica_fondo(musica_t musica) {
-    if (musicas.find(musica) == musicas.end()) {
-        Mix_Music* nueva_musica = Mix_LoadMUS("./assets/sonidos/this_sick_beat.mp3");
-        if (!nueva_musica)
+void Sonido::iniciar_musica_fondo() {
+    if (musica_fondo == NULL) {
+        musica_fondo = Mix_LoadMUS("./assets/sonidos/this_sick_beat.mp3");
+        if (!musica_fondo)
             throw ErrorSDL("Mix_LoadMUS", Mix_GetError());
-        musicas.emplace(musica, nueva_musica);
     }
 
     if (Mix_PlayingMusic() != 0)
         detener_musica_fondo();
     
-    Mix_PlayMusic(musicas.at(musica), -1);
+    if (Mix_PausedMusic() != 0)
+        Mix_ResumeMusic();
+    else
+        Mix_PlayMusic(musica_fondo, -1);
 }
 
 void Sonido::detener_musica_fondo() {
-    Mix_HaltMusic();
+    Mix_PauseMusic();
 }
 
 void Sonido::set_volumen_musica_fondo(int volumen) {
@@ -65,22 +76,24 @@ void Sonido::set_volumen_musica_fondo(int volumen) {
 void Sonido::set_volumen_sonidos(int volumen) {
     if ((volumen < 0) || (volumen > MAX_VOLUMEN))
         throw std::runtime_error("set_volumen_sonidos: volumen inválido");
-    volumen_sonidos = volumen / 100.0f;   
+    volumen_sonidos = volumen / 100.0f;
+    sonido_habilitado = (volumen != 0);
 }
 
-Sonido::~Sonido() {
+void Sonido::apagar() {
+    log_depuracion("Limpiando Sonido", 0);
     Mix_HaltMusic();
-    
+    Mix_FreeMusic(musica_fondo);
+
     for (auto it=sonidos.begin(); it != sonidos.end(); ++it) {
         Mix_FreeChunk(it->second);
     }
 
-    for (auto it=musicas.begin(); it != musicas.end(); ++it) {
-        Mix_FreeMusic(it->second);
-    }
-
     Mix_Quit();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
+}
+
+Sonido::~Sonido() {   
 }
 
 } // namespace cliente

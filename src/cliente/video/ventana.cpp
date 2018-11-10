@@ -7,6 +7,7 @@
 
 #include "cliente/video/administrador_texturas.h"
 #include "cliente/video/error_sdl.h"
+#include "cliente/video/i_notificable.h"
 #include "cliente/video/log.h"
 
 #define ANCHO_VENTANA_DEFECTO 800
@@ -68,17 +69,17 @@ Ventana::Ventana(int w, int h) {
     admin_texturas = new AdministradorTexturas(renderer);
     ticks_ultimo_cuadro = 0;
     log_depuracion("VSync: %s", vsync ? "SI":"NO");
-    ancho_px = w;
-    alto_px = h;
+    ancho_vp = ancho_px = w;
+    alto_vp = alto_px = h;
     ticks_ultimo_segundo = veces_renderizado = fps_ = 0;
 }
 
 int Ventana::ancho() const {
-    return ancho_px;
+    return ancho_vp;
 }
 
 int Ventana::alto() const {
-    return alto_px;
+    return alto_vp;
 }
 
 int Ventana::fps() const {
@@ -87,36 +88,6 @@ int Ventana::fps() const {
 
 int Ventana::obtener_ms() const {
     return ticks_ultimo_cuadro;
-}
-
-void Ventana::registrar_ventana_cerrar(std::function<void(void)> callback) {
-    cb_ventana_cerrar = callback;
-}
-
-void Ventana::registrar_mouse_click(
-    std::function<void(boton_mouse_t, int, int)> mouse_down,
-    std::function<void(boton_mouse_t, int, int)> mouse_up)
-{
-    cb_mouse_click_down = mouse_down;
-    cb_mouse_click_up = mouse_up;
-}
-
-void Ventana::registrar_rueda_mouse(
-    std::function<void(int)> rueda_callback)
-{
-    cb_rueda_mouse = rueda_callback;
-}
-
-void Ventana::registrar_mouse_motion(std::function<void(int, int)> callback) {
-    cb_mouse_motion = callback;
-}
-
-void Ventana::registrar_teclado(
-    std::function<void(tecla_t)> teclado_down,
-    std::function<void(tecla_t)> teclado_up) 
-{
-    cb_teclado_down = teclado_down;
-    cb_teclado_up = teclado_up;
 }
 
 static tecla_t map_sdl_key(SDL_Keycode k) {
@@ -128,6 +99,15 @@ static tecla_t map_sdl_key(SDL_Keycode k) {
         case SDLK_ESCAPE:
             return TECLA_ESCAPE;
         
+        case SDLK_LEFT:
+            return TECLA_IZQUIERDA;
+        case SDLK_RIGHT:
+            return TECLA_DERECHA;
+        case SDLK_UP:
+            return TECLA_ARRIBA;
+        case SDLK_DOWN:
+            return TECLA_ABAJO;
+        
         default:
             return TECLA_NO_MAPEADA;
     }
@@ -135,56 +115,82 @@ static tecla_t map_sdl_key(SDL_Keycode k) {
     return TECLA_NO_MAPEADA;
 }
 
+void Ventana::registrar_notificable(INotificable& notificable) {
+    receptor_eventos = &notificable;
+}
+
+// TODO: Refactorizar esto
 void Ventana::procesar_eventos() {
+    if (!receptor_eventos)
+        return;
     SDL_Event evento;
     while (SDL_PollEvent(&evento)) {
         switch(evento.type) {
             case SDL_QUIT:
-                if (cb_ventana_cerrar)
-                    cb_ventana_cerrar();
+                receptor_eventos->cerrar_ventana();
+                break;
+            case SDL_WINDOWEVENT: 
+                if (evento.window.event == SDL_WINDOWEVENT_ENTER) {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    receptor_eventos->mouse_entra(x, y);
+                } else if (evento.window.event == SDL_WINDOWEVENT_LEAVE) {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    receptor_eventos->mouse_sale(x, y);
+                }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                if (cb_mouse_click_down) {
-                    boton_mouse_t boton = BOTON_IZQUIERDO;
-                    if (evento.button.button == SDL_BUTTON_RIGHT)
-                        boton = BOTON_DERECHO;
-                    else if (evento.button.button == SDL_BUTTON_MIDDLE)
-                        boton = BOTON_CENTRAL;
+                if (evento.button.button == SDL_BUTTON_LEFT) {
+                    SDL_GetMouseState(&mouse_inicio_arrastre_x, 
+                        &mouse_inicio_arrastre_y);
+                    mouse_down = true;
+                }
+                break;
+            case SDL_MOUSEMOTION: {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                if (!mouse_arrastre_iniciado && mouse_down && (abs(x - mouse_inicio_arrastre_x) > 4) && (abs(x - mouse_inicio_arrastre_y) > 4)) {
+                    mouse_arrastre_iniciado = true;
+                    receptor_eventos->mouse_inicio_arrastre(mouse_inicio_arrastre_x, 
+                        mouse_inicio_arrastre_y);
+                }
+                receptor_eventos->mouse_movimiento(evento.motion.x, 
+                        evento.motion.y);
+                } break;
+            case SDL_MOUSEBUTTONUP: {
+                    int x = evento.button.x,
+                        y = evento.button.y;
                     
-                    cb_mouse_click_down(boton, evento.button.x, evento.button.y);
+                    if (evento.button.button == SDL_BUTTON_LEFT) {
+                        if (mouse_arrastre_iniciado) {
+                            receptor_eventos->mouse_fin_arrastre(x, y);
+                            mouse_arrastre_iniciado = false;
+                        } else {
+                            receptor_eventos->mouse_click_izquierdo(x, y);
+                        }
+                        mouse_down = false;
+                    } else if (evento.button.button == SDL_BUTTON_RIGHT) {
+                        receptor_eventos->mouse_click_derecho(x, y);
+                    }
                 }
                 break;
-            case SDL_MOUSEBUTTONUP:
-                if (cb_mouse_click_up) {
-                    boton_mouse_t boton = BOTON_IZQUIERDO;
-                    if (evento.button.button == SDL_BUTTON_RIGHT)
-                        boton = BOTON_DERECHO;
-                    else if (evento.button.button == SDL_BUTTON_MIDDLE)
-                        boton = BOTON_CENTRAL;
-                    
-                    cb_mouse_click_up(boton, evento.button.x, evento.button.y);
-                }
-                break;
-            case SDL_MOUSEWHEEL:
-                if (cb_rueda_mouse) {
-                    cb_rueda_mouse(evento.wheel.y);
-                }
-                break;
-            case SDL_MOUSEMOTION:
-                if (cb_mouse_motion) {
-                    cb_mouse_motion(evento.motion.x, evento.motion.y);
+            case SDL_MOUSEWHEEL: {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    receptor_eventos->mouse_scroll(x, y, evento.wheel.y);
                 }
                 break;
             case SDL_KEYDOWN: {
                 tecla_t tecla = map_sdl_key(evento.key.keysym.sym);
                 if (tecla != TECLA_NO_MAPEADA)
-                    cb_teclado_down(tecla);
+                    receptor_eventos->teclado_presionado(tecla);
                 }
                 break;
             case SDL_KEYUP: {
                 tecla_t tecla = map_sdl_key(evento.key.keysym.sym);
                 if (tecla != TECLA_NO_MAPEADA)
-                    cb_teclado_up(tecla);
+                    receptor_eventos->teclado_suelto(tecla);
                 }
                 break;
         }
@@ -226,13 +232,21 @@ AdministradorTexturas& Ventana::obtener_administrador_texturas() {
 }
 
 // TODO: Sacar esto
-void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1) {
+void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
     if ((abs(x1 - x0) * abs(y1 - y0)) < 32)
         return;
     
     Uint8 r, g, b, a;
     SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
+    if (color == 0)
+        SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
+    else if (color == 1)
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+    else if (color == 2)
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 0);
+    else if (color == 3)
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
+
     SDL_Rect rc;
     rc.x = x0; rc.y = y0;
     rc.w = x1 - x0; rc.h = y1 - y0;
@@ -251,6 +265,22 @@ void Ventana::dibujar_grilla() {
         }
     }
     /************************************/
+}
+
+void Ventana::setear_viewport(const Rectangulo& seccion) {
+    if (SDL_RenderSetViewport(renderer, &seccion.sdl_rect) != 0)
+        throw ErrorSDL("SDL_RenderSetViewport");
+    
+    ancho_vp = seccion.sdl_rect.w;
+    alto_vp = seccion.sdl_rect.h;
+}
+
+void Ventana::reestablecer_viewport() {
+    if (SDL_RenderSetViewport(renderer, NULL) != 0)
+        throw ErrorSDL("SDL_RenderSetViewport");
+    
+    ancho_vp = ancho_px;
+    alto_vp = alto_px;
 }
 
 Ventana::~Ventana() {

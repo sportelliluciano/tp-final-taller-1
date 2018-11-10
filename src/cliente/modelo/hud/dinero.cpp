@@ -6,6 +6,12 @@
 
 #define DIGITO_0 27
 
+#define ANCHO_DINERO 100
+#define ALTO_DINERO 30
+
+#define PADDING_DINERO_X 10
+#define PADDING_DINERO_Y 7
+
 namespace cliente {
 
 Dinero::Dinero() {
@@ -26,6 +32,14 @@ void Dinero::setear_dinero(int nuevo_dinero) {
     }
 }
 
+int Dinero::obtener_alto() const {
+    return ALTO_DINERO;
+}
+
+int Dinero::obtener_ancho() const {
+    return ANCHO_DINERO;
+}
+
 void Dinero::renderizar(Ventana& ventana, int x, int y) {
     int digito;
     int dx = 0;
@@ -33,12 +47,14 @@ void Dinero::renderizar(Ventana& ventana, int x, int y) {
         if (digitos_dinero[digito] != 0)
             break;
         
-        digitos[10].renderizar(ventana, x + dx, y);
+        digitos[10].renderizar(ventana, 
+            x + PADDING_DINERO_X + dx, y + PADDING_DINERO_Y);
         dx += digitos[10].obtener_textura(ventana).obtener_ancho();
     }
 
     for (; digito >= 0; digito--) {
-        digitos[digitos_dinero[digito]].renderizar(ventana, x + dx, y);
+        digitos[digitos_dinero[digito]].renderizar(ventana, 
+            x + PADDING_DINERO_X + dx, y + PADDING_DINERO_Y);
         dx += digitos[digitos_dinero[digito]]
             .obtener_textura(ventana).obtener_ancho();
     }

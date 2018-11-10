@@ -1,5 +1,7 @@
 #include "cliente/modelo/hud/botonera.h"
 
+#include <iostream>
+
 #include "cliente/modelo/hud/boton.h"
 
 namespace cliente {
@@ -10,6 +12,14 @@ Botonera::Botonera(int ancho_, int alto_) {
     padding_x = 10;
     padding_y = 0;
     spacing = 4;
+}
+
+int Botonera::obtener_alto() const {
+    return alto;
+}
+
+int Botonera::obtener_ancho() const {
+    return ancho;
 }
 
 Boton* Botonera::crear_boton() {
@@ -31,7 +41,8 @@ void Botonera::calcular_padding() {
     }
 }
 
-void Botonera::click_izquierdo(int x, int y) {
+bool Botonera::mouse_click_izquierdo(int x, int y) {
+    std::cout << "botonera click" << std::endl;
     calcular_padding();
     int dx = padding_x, dy = padding_y, max_alto = 0;
     for (auto it = botones.begin(); it != botones.end(); ++it) {
@@ -44,8 +55,8 @@ void Botonera::click_izquierdo(int x, int y) {
 
         if ((dy <= y) && (y <= dy + btn.obtener_alto())) {
             if ((dx <= x) && (x <= dx + btn.obtener_ancho())) {
-                btn.click();
-                return;
+                btn.mouse_click_izquierdo(x, y);
+                return false;
             }
         }
 
@@ -54,6 +65,8 @@ void Botonera::click_izquierdo(int x, int y) {
 
         dx += btn.obtener_ancho() + spacing;
     }
+
+    return true;
 }
 
 void Botonera::renderizar(Ventana& ventana, int x, int y) {

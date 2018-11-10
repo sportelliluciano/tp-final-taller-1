@@ -5,13 +5,14 @@
 
 #include "cliente/modelo/sprite.h"
 #include "cliente/video/rectangulo.h"
+#include "cliente/video/widgets/widget.h"
 
 namespace cliente {
 
 /**
  * \brief Boton del HUD.
  */
-class Boton {
+class Boton : public Widget {
 public:
     Boton();
     Boton(int sprite_id);
@@ -22,8 +23,11 @@ public:
 
     void set_tamanio(int ancho, int alto);
 
-    int obtener_alto() const;
-    int obtener_ancho() const;
+    void set_padding(int x, int y);
+
+    int obtener_alto() const override;
+    
+    int obtener_ancho() const override;
 
     void autoresize(bool activar);
 
@@ -34,16 +38,15 @@ public:
      */
     void renderizar(Ventana& ventana, int x, int y);
 
-    /**
-     * \brief Ejecuta el callback de click en el botón.
-     */
-    void click();
+    bool mouse_click_izquierdo(int x, int y) override;
 
 private:
     const char *imagen;
     int sprite;
     bool autoresize_activo = false;
     
+    int padding_x = 0, padding_y = 0;
+
     std::function<void(void)> cb_click = nullptr;
 
     Rectangulo boton;

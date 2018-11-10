@@ -1,18 +1,13 @@
-#ifndef _DINERO_H_
-#define _DINERO_H_
+#ifndef _FPS_H_
+#define _FPS_H_
 
-#include "cliente/modelo/sprite.h"
-#include "cliente/video/ventana.h"
 #include "cliente/video/widgets/widget.h"
+#include "cliente/video/ventana.h"
 
 namespace cliente {
 
-class Dinero : public Widget {
+class FPS : public Widget {
 public:
-    Dinero();
-    
-    void setear_dinero(int nuevo_dinero);
-    
     int obtener_alto() const override;
 
     /**
@@ -29,22 +24,9 @@ public:
     void renderizar(Ventana& ventana, int x, int y) override;
 
 private:
-    // Tomado del enunciado
-    static const int N_DIGITOS_DINERO = 8;
-
-    /**
-     * \brief Valor de cada dígito del dinero actual.
-     */
-    int digitos_dinero[N_DIGITOS_DINERO];
-
-    /**
-     * \brief Dígitos a mostrar.
-     */
-    Sprite digitos[11];
-
     int ancho = 0, alto = 0;
 };
 
 } // namespace cliente
 
-#endif // _DINERO_H_
+#endif // _FPS_H_
