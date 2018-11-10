@@ -1,5 +1,7 @@
 #include "modelo/ejercito_creador.h"
 
+#include <iostream>
+#include <string>
 #include <fstream> 
 #include <unordered_map>
 
@@ -25,12 +27,16 @@ EjercitoCreador::EjercitoCreador(Terreno& terreno_):terreno(terreno_){
         // Mergear valores por defecto con el elemento actual
         json elem = valores_por_defecto;
         elem.update(*it);
+        if(!armamento.tiene(elem["id_arma"]))continue;
+        std::cout << "se crea unidad base: " << elem["id"] << '\n';
+        std::cout << "con arma: " << elem["id_arma"] << '\n';
         prototipos_base.emplace(elem["id"], UnidadBase(elem,armamento.get(elem["id_arma"])));
         //prototipos.emplace(elem["id"], Unidad(elem,armamento.get(elem["id"])));
     }
 }
 EjercitoCreador::~EjercitoCreador(){}
-Unidad EjercitoCreador::clonar(int id_tipo,int x,int y){
-    return Unidad(x,y,&prototipos_base[id_tipo]);
+Unidad EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y){
+    
+    return Unidad(id,x,y,prototipos_base.at(id_tipo));
 }
 }

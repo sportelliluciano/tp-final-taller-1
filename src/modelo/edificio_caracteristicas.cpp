@@ -23,4 +23,7 @@ bool EdificioCaracteristicas::reducir_ptos_est(int dano){
 int EdificioCaracteristicas::get_id(){
     return id;
 }
+int EdificioCaracteristicas::get_vida(){
+    return puntos_de_estructura;
+}
 }

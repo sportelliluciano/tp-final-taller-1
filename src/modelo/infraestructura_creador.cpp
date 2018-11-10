@@ -1,9 +1,11 @@
 #include "modelo/infraestructura_creador.h"
 
+#include <iostream>
 #include <fstream>
 #include <unordered_map>
 #include <string>
 
+#include "libs/json.hpp"
 #include "modelo/edificio.h"
 #include "modelo/edificio_base.h"
 
@@ -26,7 +28,10 @@ InfraestructuraCreador::InfraestructuraCreador(){
         json elem = valores_por_defecto;
         elem.update(*it);
         info_base.emplace(elem["id"], EdificioBase(elem));
+        //std::cout << "estoy en infraestrucutrua creador"<<'\n';
+        //std::cout << (info_base.at(elem["id"])).get_ptos_est()<<'\n';
         prototipos.emplace(elem["id"], Edificio(info_base.at(elem["id"])));
+        //std::cout << (prototipos.at(elem["id"])).get_vida()<<'\n';
     }
 }
 InfraestructuraCreador::~InfraestructuraCreador(){}

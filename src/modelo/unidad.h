@@ -14,15 +14,15 @@ namespace modelo {
 
 class Unidad {
 private:
-    char id;
+    int id;
     int pos_x;
     int pos_y;
     int vida;
-    UnidadBase* unidad_base;
+    UnidadBase& unidad_base;
 
 public:
-    Unidad();
-    Unidad(int pos_x,int pos_y, UnidadBase* unidad_base);
+    //Unidad();
+    Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
     //Unidad(UnidadBase& unidad_base);
     ~Unidad();
     //void clonar(int x,int y);
@@ -30,7 +30,8 @@ public:
     void recibir_dano(unsigned int dano);
     void atacar(Unidad& victima);
     void atacar(Edificio& edificio);
-    char get_id();
+    int get_id();
+    unsigned int get_vida();
 };
 
 } // namespace modelo

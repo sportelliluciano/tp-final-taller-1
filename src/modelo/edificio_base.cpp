@@ -6,8 +6,8 @@
 #define ENERGIA "energia"
 #define COSTO "costo"
 #define DIM "dimensiones"
-#define X "x"
-#define Y "y"
+#define X 0
+#define Y 1
 #define PTOS_ESTRUCUTURA "puntos_estructura"
 
 namespace modelo {
@@ -31,7 +31,7 @@ unsigned int EdificioBase::get_costo() const {
     return costo;
 }
 
-unsigned int EdificioBase::get_ptos_est() const {
+unsigned int EdificioBase::get_ptos_est() {
     return puntos_de_estructura;
 }
 

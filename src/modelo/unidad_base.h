@@ -11,17 +11,17 @@ namespace modelo {
 
 class UnidadBase {
 private: 
-    std::string casa;
+    //std::string casa;
     unsigned int rango;
     unsigned int velocidad;
     unsigned int tiempo_de_entrenamiento;
     unsigned int costo;
     unsigned int vida;
-    Arma* arma;
+    Arma& arma;
 
 public:
-    UnidadBase();
-    UnidadBase(const nlohmann::json& data_unidad,Arma* arma_);
+    //UnidadBase();
+    UnidadBase(const nlohmann::json& data_unidad,Arma& arma_);
     ~UnidadBase();
     void atacar_a(Unidad* victima);
     void atacar_a(Edificio* edificio);
