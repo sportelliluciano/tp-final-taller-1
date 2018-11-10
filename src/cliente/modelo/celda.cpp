@@ -1,31 +1,142 @@
 #include "cliente/modelo/celda.h"
 
+#include <sstream>
+#include <string>
+
+#include "cliente/modelo/edificio.h"
+#include "cliente/modelo/tropa.h"
+
+#define ANCHO_MOSAICO 8
+#define ALTO_MOSAICO 8
+
+#define COLS_MOSAICO 20
+#define FILAS_MOSAICO 40
+
+#define RUTA_MOSAICO "./assets/terrain/d2k_BLOXBASE.bmp"
+
 namespace cliente {
 
-Celda::Celda(int tile_no, int x_, int y_) {
-    posicion_x = x_;
-    posicion_y = y_;
-    numero_tile = tile_no;
+Celda::Celda(tipo_celda_t tipo) {
+    static int uid_celda = 0;
+
+    tipo_celda = tipo;
+    id_celda = uid_celda++;
 }
 
-int Celda::numero_mosaico() const {
-    return numero_tile;
-}
-
-int Celda::x() const {
-    return posicion_x;
-}
-
-int Celda::y() const {
-    return posicion_y;
+void Celda::agregar_tropa(const Tropa& tropa) {
+    tropas.push_back(&tropa);
 }
 
 bool Celda::contiene_tropas() const {
-    return false;
+    return tropas.size() != 0;
 }
 
-std::vector<Tropa*> Celda::obtener_tropas() const {
-    return std::vector<Tropa*>();
+const std::list<const Tropa*>& Celda::obtener_tropas() const {
+    return tropas;
+}
+
+void Celda::eliminar_tropa(const Tropa& tropa_eliminada) {
+    for (auto it=tropas.begin(); it != tropas.end();) {
+        const Tropa* tropa = *it;
+
+        if (tropa == &tropa_eliminada)
+            it = tropas.erase(it);
+        else
+            ++it;
+    }
+}
+
+void Celda::set_edificio(const Edificio& nuevo_edificio) {
+    if (contiene_edificio())
+        throw std::runtime_error("La celda ya tenía un edificio");
+    
+    edificio = &nuevo_edificio;
+}
+
+bool Celda::contiene_edificio() const {
+    return edificio != nullptr;
+}
+
+const Edificio& Celda::obtener_edificio() const {
+    if (!contiene_edificio())
+        throw std::runtime_error("La celda no contiene nigún edificio");
+    
+    return *edificio;
+}
+
+void Celda::eliminar_edificio(const Edificio& edificio_eliminado) {
+    if (edificio != &edificio_eliminado)
+        throw std::runtime_error("El edificio a eliminar no coincide");
+    
+    edificio = nullptr;
+}
+
+void Celda::renderizar(Ventana& ventana, int x, int y, Textura& destino) {
+    std::stringstream s;
+    s << "celda-" << id_celda;
+    std::string s_id_celda = s.str();
+
+    if (ventana.obtener_administrador_texturas().contiene_textura(s_id_celda)) {
+        ventana
+            .obtener_administrador_texturas()
+            .obtener_textura(s_id_celda)
+            .renderizar(x, y, destino);
+        return;
+    }
+
+    const Textura& mosaico = ventana
+        .obtener_administrador_texturas()
+        .cargar_imagen(RUTA_MOSAICO);
+    
+    Textura& textura_celda = ventana
+        .obtener_administrador_texturas()
+        .crear_textura(s_id_celda, 32, 32);
+    /**
+     * Esto es horrible, pero es la única forma que encontré de que la arena
+     * se vea bien.
+     * A ser implementado por parte del editor de mapas.
+     */
+    static std::vector<int> ids_arena = {0, 8, 9, 10, 11, 16, 17, 18, 19, 20, 
+        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39, 40, 41, 42, 
+        43, 44, 45, 46, 47, 48, 49, 50, 51, 56, 57, 58, 59, 60, 61, 62, 63, 64, 
+        65, 66, 68, 69, 70, 71, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 100, 
+        101, 102, 103, 104};
+    
+    static std::vector<int> ids_roca = {552, 553, 554, 555, 572, 573, 574, 575};
+
+    int arena = (id_celda * 10001 + x * 1001 + y) % ids_arena.size();
+    int roca = (id_celda * 10001 + x * 1001 + y) % ids_roca.size();
+
+    for (int i=0; i<4; i++) {
+        for (int j=0; j<4; j++) {
+            int tile_id = 0;
+            if (tipo_celda == CELDA_ARENA) {
+                tile_id = ids_arena[arena];
+                arena = (arena + 1) % ids_arena.size();
+            } else if (tipo_celda == CELDA_ROCA) {
+                tile_id = ids_roca[roca];
+                roca = (roca + 1) % ids_roca.size();
+            } else {
+                tile_id = ids_arena[arena];
+            }
+
+            int fila_mosaico = tile_id / COLS_MOSAICO;
+            int col_mosaico = tile_id % COLS_MOSAICO;
+
+            if (fila_mosaico >= FILAS_MOSAICO)
+                throw std::runtime_error("Número de mosaico inválido");
+            
+            int y_mosaico = fila_mosaico * ALTO_MOSAICO;
+            int x_mosaico = col_mosaico * ANCHO_MOSAICO;
+            Rectangulo seccion(x_mosaico, y_mosaico, ANCHO_MOSAICO,
+                ALTO_MOSAICO);
+            mosaico.renderizar(
+                i * ANCHO_MOSAICO, j * ALTO_MOSAICO, 
+                seccion, textura_celda);
+        }
+    }
+
+    textura_celda.renderizar(x, y, destino);
 }
 
 } // namespace cliente
