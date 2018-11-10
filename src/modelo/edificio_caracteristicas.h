@@ -17,6 +17,7 @@ class EdificioCaracteristicas{
     ~EdificioCaracteristicas();
     bool reducir_ptos_est(int dano);
     int get_id();
+    int get_vida();
 };
 }
 #endif

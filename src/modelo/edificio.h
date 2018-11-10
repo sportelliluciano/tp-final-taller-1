@@ -1,7 +1,7 @@
 #ifndef _EDIFICIO_H_
 #define _EDIFICIO_H_
 
-namespace modelo { class Edificio; }
+//namespace modelo { class Edificio; }
 #include "modelo/edificio_base.h"
 #include "modelo/edificio_caracteristicas.h"
 
@@ -21,6 +21,7 @@ class Edificio{
     Edificio clonar(int id,int x,int y);
     void recibir_dano(unsigned int dano);
     int get_id();
+    int get_vida();//temporal
 
 };
 }

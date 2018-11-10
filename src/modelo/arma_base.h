@@ -1,6 +1,8 @@
 #ifndef _ARMA_BASE_H_
 #define _ARMA_BASE_H_
 
+#include <string>
+
 #include "libs/json.hpp"
 
 namespace modelo { class ArmaBase; }
@@ -12,7 +14,7 @@ namespace modelo {
 
 class ArmaBase {
 private:
-    int tipo;
+    std::string tipo;
     unsigned int dano;
     unsigned int frecuencia;
     //bonificaciones

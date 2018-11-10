@@ -1,19 +1,23 @@
 #include "modelo/arma_base.h"
 
+#include <string>
+
 #include "libs/json.hpp"
 #include "modelo/unidad.h"
 #include "modelo/edificio.h"
 
 #define ID "id"
-#define DANO "daño"
+#define DANO "dano"
 #define FREQ "frecuencia"
 
 namespace modelo {
 
 ArmaBase::ArmaBase(const nlohmann::json& data_arma){
-    tipo = data_arma.at(ID);
-    dano = data_arma.at(DANO);
-    frecuencia = data_arma.at(FREQ);
+    tipo = data_arma[ID];
+    dano = data_arma[DANO];
+    frecuencia = data_arma[FREQ];
+}
+ArmaBase::~ArmaBase(){
 }
 void ArmaBase::atacar_a(Unidad* victima){
     victima->recibir_dano(dano);

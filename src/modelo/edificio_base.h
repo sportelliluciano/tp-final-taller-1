@@ -22,7 +22,7 @@ public:
     ~EdificioBase();
     unsigned int get_energia() const;
     unsigned int get_costo() const;
-    unsigned int get_ptos_est() const;
+    unsigned int get_ptos_est() ;
 };
 
 } // namespace modelo

@@ -8,7 +8,7 @@
 namespace modelo {
 
 Jugador::Jugador(Terreno terreno_):inf(Infraestructura(terreno_)),
-                                   //ejercito(Ejercito(terreno_)),
+                                   ejercito(Ejercito(terreno_)),
                                    terreno(terreno_){}
 Jugador::~Jugador(){}
 void Jugador::crear_edificio(std::string id_tipo,int x,int y){
@@ -20,7 +20,9 @@ void Jugador::reciclar_edificio(int id){
 void Jugador::destruir_edificio(int id){
     inf.destruir(id);
 }
-/*
+Edificio& Jugador::get(int id){//temporal
+    return inf.get(id);
+}
 void Jugador::crear_unidad(std::string id_tipo,int x,int y){
     ejercito.crear(id_tipo,x,y);
 }
@@ -36,5 +38,7 @@ void Jugador::atacar_unidad(int id_victima,int id_atacante){
 void Jugador::atacar_edificio(int id_edificio,int id_atacante){
     ejercito.atacar(inf.get(id_edificio),id_atacante);
 }
-*/
+Unidad& Jugador::get_unidad(int id){//temporal
+    return ejercito.get(id);
+}
 }
