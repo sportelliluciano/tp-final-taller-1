@@ -5,6 +5,7 @@
 #include "cliente/modelo/juego.h"
 #include "cliente/servidor.h"
 #include "cliente/video/ventana.h"
+#include "cliente/video/widgets/widget_raiz.h"
 
 namespace cliente {
 
@@ -18,32 +19,22 @@ class Controlador {
 public:
     Controlador(Ventana& ventana_, Servidor& servidor_, Juego& juego_);
 
-    void actualizar_modelo();
-
+    /**
+     * \brief Renderiza el HUD.
+     */
     void renderizar();
 
+    /**
+     * \brief Procesa las distintas entradas y actualiza el modelo de juego.
+     */
     void procesar_entrada();
 
 private:
     Ventana& ventana;
     Servidor& servidor;
     Juego& juego;
-    
+
     HUD hud;
-
-    void mouse_click_derecho(int x, int y, bool up);
-    void mouse_click_izquierdo(int x, int y, bool up);
-    void mouse_rueda(int y);
-    void recibir_teclado(tecla_t tecla, bool up);
-
-    /**
-     * \brief Donde se encuentra el mouse en este cuadro.
-     */
-    int mouse_x, mouse_y;
-
-    bool draggeando = false;
-
-    int drag_start_x, drag_start_y, drag_end_x, drag_end_y;
 };
 
 } // namespace cliente
