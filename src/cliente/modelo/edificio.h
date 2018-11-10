@@ -5,8 +5,6 @@
 
 #include "libs/json.hpp"
 
-#include "cliente/modelo/celda.h"
-#include "cliente/modelo/terreno.h"
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/modelo/sprite_compuesto.h"
 #include "cliente/video/ventana.h"
@@ -25,20 +23,18 @@ public:
      * interfaz, prefiero mantenerlo de esta forma.
      */
     Edificio(const nlohmann::json& data_edificio);
-    /**
-     * \brief Devuelve las celdas que ocupa el edificio
-     */
-    const std::vector<Celda>& obtener_celdas_ocupadas() const;
 
     /**
-     * \brief Renderiza el edificio.
+     * \brief Renderiza el edificio en la posición (x, y).
+     * 
+     * (x, y) está dado en píxeles relativos a la ventana.
      */
-    void renderizar(const Terreno& terreno, Ventana& ventana);
+    void renderizar(Ventana& ventana, int x, int y, bool seleccionado = false);
 
     /**
-     * \brief Construye el edificio sobre el terreno en la posición (x, y).
+     * \brief Construye el edificio en la celda (celda_x, celda_y).
      */
-    void construir(const Terreno& terreno, int x, int y);
+    void construir(int id_edificio_, int celda_x, int celda_y);
 
     /**
      * \brief Destruye el edificio.
@@ -61,15 +57,44 @@ public:
     /**
      * \brief Devuelve el ID de edificio
      */
-    const std::string& obtener_id() const;
+    int obtener_id() const;
+
+    /**
+     * \brief Devuelve la clase de edificio
+     */
+    const std::string& obtener_clase() const;
+
+    /**
+     * \brief Devuelve la coordenada x de la celda superior izquierda del
+     *        edificio.
+     */
+    int obtener_celda_x() const;
+
+    /**
+     * \brief Devuelve la coordenada y de la celda superior izquierda del
+     *        edificio.
+     */
+    int obtener_celda_y() const;
+
+    /**
+     * \brief Devuelve el ancho del edificio, en celdas.
+     */
+    int obtener_ancho_celdas() const;
+
+    /**
+     * \brief Devuelve el alto del edificio, en celdas.
+     */
+    int obtener_alto_celdas() const;
 
 private:
     std::string id;
     std::string nombre;
     
     int ancho, alto;
-    std::vector<Celda> celdas_ocupadas;
+    
     int vida;
+
+    int id_edificio = -1;
 
     int pos_x, pos_y;
     

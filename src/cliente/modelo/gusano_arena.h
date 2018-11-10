@@ -22,7 +22,7 @@ public:
      * Muestra el gusano de arena en la posición indicada. (x, y) es la 
      * posición del gusano en celdas.
      */
-    void aparecer(int x, int y);
+    void aparecer(int x_, int y_);
 
     /**
      * \brief Renderiza el gusano sobre la ventana.
@@ -34,7 +34,7 @@ public:
 private:
     Terreno& terreno;
     SpriteAnimado sprite;
-    int x_px, y_px;
+    int x, y;
     bool mostrar = false;
 };
 

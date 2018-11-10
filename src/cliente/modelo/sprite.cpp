@@ -41,7 +41,15 @@ void Sprite::renderizar(Ventana& ventana, int x, int y) {
 }
 
 int Sprite::obtener_alto(Ventana& ventana) const {
+    if (id == -1)
+        return 0;
     return obtener_textura(ventana).obtener_alto();
+}
+
+int Sprite::obtener_ancho(Ventana& ventana) const {
+    if (id == -1)
+        return 0;
+    return obtener_textura(ventana).obtener_ancho();
 }
 
 const Textura& Sprite::obtener_textura(Ventana& ventana) const {

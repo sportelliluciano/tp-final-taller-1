@@ -29,24 +29,9 @@ Edificio::Edificio(const nlohmann::json& data_edificio)
     vida = 100;
 }
 
-const std::vector<Celda>& Edificio::obtener_celdas_ocupadas() const {
-    return celdas_ocupadas;
-}
-
-void Edificio::renderizar(const Terreno& terreno, Ventana& ventana) {
+void Edificio::renderizar(Ventana& ventana, int x_px, int y_px, bool selecc) {
     if (!esta_vivo())
         return;
-
-    int x_px, y_px;
-
-    for (auto it=celdas_ocupadas.begin(); it != celdas_ocupadas.end(); ++it) {
-        const Celda& celda = *it;
-        terreno.convertir_a_px(celda.x(), celda.y(), x_px, y_px);
-        Sprite(0, 0, 0)
-            .renderizar(ventana, x_px, y_px);
-    }
-
-    terreno.convertir_a_px(pos_x, pos_y, x_px, y_px);
 
     if (!esta_destruido) {
         if (!esta_construido) {
@@ -54,27 +39,29 @@ void Edificio::renderizar(const Terreno& terreno, Ventana& ventana) {
             esta_construido = sprite_construccion.finalizado();
         } else {
             sprite.renderizar(ventana, x_px, y_px);
+            if (selecc) {
+                ventana
+                    .obtener_administrador_texturas()
+                    .cargar_imagen("./assets/nuevos/seleccion-edificio.png")
+                    .renderizar(x_px + sprite.obtener_ancho(ventana) / 2, y_px);
+            }
         }
     } else {
         sprite_destruccion.renderizar(ventana, x_px, y_px);
     }
 }
 
-void Edificio::construir(const Terreno& terreno, int x, int y) {
-    if (celdas_ocupadas.size() != 0)
-        throw std::runtime_error("Se quizo construir un edificio ya construido");
-    
+void Edificio::construir(int id_edificio_, int x, int y) {
     pos_x = x;
     pos_y = y;
-
-    for (int i=0; i < ancho; i++) {
-        for (int j=0; j < alto; j++) {
-            celdas_ocupadas.push_back(terreno.at(x + i, y + j));
-        }
-    }
+    id_edificio = id_edificio_;
 }
 
-const std::string& Edificio::obtener_id() const {
+int Edificio::obtener_id() const {
+    return id_edificio;
+}
+
+const std::string& Edificio::obtener_clase() const {
     return id;
 }
 
@@ -84,6 +71,22 @@ int Edificio::obtener_sprite_boton() const {
 
 void Edificio::destruir() {
     esta_destruido = true;
+}
+
+int Edificio::obtener_celda_x() const {
+    return pos_x;
+}
+
+int Edificio::obtener_celda_y() const {
+    return pos_y;
+}
+
+int Edificio::obtener_ancho_celdas() const {
+    return ancho;
+}
+
+int Edificio::obtener_alto_celdas() const {
+    return alto;
 }
 
 bool Edificio::esta_vivo() const {

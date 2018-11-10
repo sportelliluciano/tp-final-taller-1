@@ -25,6 +25,7 @@ public:
     virtual const Textura& obtener_textura(Ventana& ventana) const;
 
     virtual int obtener_alto(Ventana& ventana) const;
+    virtual int obtener_ancho(Ventana& ventana) const;
 
 private:
     int id = -1;

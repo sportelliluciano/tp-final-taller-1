@@ -34,40 +34,70 @@ Infraestructura::Infraestructura(Terreno& terreno_juego)
     }
 }
 
+void Infraestructura::actualizar(int) {
+    std::vector<int> edificios_a_eliminar;
+
+    for (auto& par : edificios_construidos) {
+        Edificio& edificio = par.second;
+        if (!edificio.esta_vivo()) {
+            edificios_a_eliminar.push_back(edificio.obtener_id());
+        }
+    }
+
+    for (int id_a_eliminar: edificios_a_eliminar) {
+        edificios_construidos.erase(id_a_eliminar);
+    }
+    
+}
+
 void Infraestructura::construir(int id, const std::string& clase, int x, int y) 
 {
     Edificio edificio_nuevo = edificios.at(clase);
-    edificio_nuevo.construir(terreno, x, y);
+    edificio_nuevo.construir(id, x, y);
     edificios_construidos.emplace(id, edificio_nuevo);
+    terreno.agregar_edificio(edificios_construidos.at(id));
 }
 
 void Infraestructura::destruir(int id) {
+    terreno.eliminar_edificio(edificios_construidos.at(id));
     edificios_construidos.at(id).destruir();
 }
 
 void Infraestructura::renderizar(Ventana& ventana) {
-    std::vector<int> edificios_a_eliminar;
+    for (const Edificio* eid : terreno.obtener_edificios_visibles(ventana)) {
+        Edificio& edificio = edificios_construidos.at(eid->obtener_id());
 
-    for (auto it = edificios_construidos.begin(); 
-              it != edificios_construidos.end(); ++it) {
-        Edificio& edificio = it->second;
-        
-        if (!edificio.esta_vivo()) {
-            edificios_a_eliminar.push_back(it->first);
-            continue;
-        }
+        int x_px, y_px;
 
-        if (terreno.esta_en_camara(edificio.obtener_celdas_ocupadas(), 
-            ventana)) {
-            edificio.renderizar(terreno, ventana);
+        /*** Pintar celda ***/
+        int x_celda = edificio.obtener_celda_x(),
+            y_celda = edificio.obtener_celda_y();
+
+        for (int x=0; x<edificio.obtener_ancho_celdas();x++) {
+            for (int y=0; y<edificio.obtener_alto_celdas();y++) {
+                terreno.convertir_a_px(x_celda + x, y_celda + y, x_px, y_px);
+                Sprite(0).renderizar(ventana, x_px, y_px);
+            }
         }
+        /*** Fin pintar celda ***/
+
+        terreno.obtener_posicion_visual(edificio, x_px, y_px);
+        edificio.renderizar(ventana, x_px, y_px, 
+            &edificio == edificio_seleccionado);
     }
+}
 
-    for (auto it=edificios_a_eliminar.begin(); it != edificios_a_eliminar.end();
-              ++it) 
+void Infraestructura::seleccionar(const Edificio& edificio) {
+    if (edificios_construidos.find(edificio.obtener_id()) 
+        != edificios_construidos.end())
     {
-        edificios_construidos.erase(*it);
+        edificio_seleccionado = 
+            &edificios_construidos.at(edificio.obtener_id());
     }
+}
+
+void Infraestructura::limpiar_seleccion() {
+    edificio_seleccionado = nullptr;
 }
 
 std::vector<const Edificio*> Infraestructura::obtener_edificios() const {

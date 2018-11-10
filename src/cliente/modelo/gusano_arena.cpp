@@ -13,14 +13,16 @@ GusanoArena::GusanoArena(Terreno& terreno_)
     : terreno(terreno_), sprite(SPRITE_INICIAL, SPRITE_FINAL, 10) 
 { }
 
-void GusanoArena::aparecer(int x, int y) {
-    terreno.convertir_a_px(x, y, x_px, y_px);
+void GusanoArena::aparecer(int x_, int y_) {
+    x = x_; y = y_;
     sprite.reiniciar();
     mostrar = true;
 }
 
 void GusanoArena::renderizar(Ventana& ventana) {
     if (mostrar) {
+        int x_px, y_px;
+        terreno.convertir_a_px(x, y, x_px, y_px);
         sprite.renderizar(ventana, x_px, y_px);
         if (sprite.finalizado())
             mostrar = false;

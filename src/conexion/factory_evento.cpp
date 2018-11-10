@@ -5,6 +5,8 @@
 #include "conexion/eventos/evento_destruir_edificio.h"
 #include "conexion/eventos/evento_mostrar_gusano.h"
 #include "conexion/eventos/evento_actualizar_dinero.h"
+#include "conexion/eventos/evento_mover_tropa.h"
+#include "conexion/eventos/evento_sincronizar_tropa.h"
 #include "conexion/eventos/evento_juego_terminado.h"
 
 namespace conexion {
@@ -24,6 +26,10 @@ Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
             return new EventoMostrarGusano(serializado);
         case EV_ACTUALIZAR_DINERO:
             return new EventoActualizarDinero(serializado);
+        case EV_MOVER_TROPA:
+            return new EventoMoverTropa(serializado);
+        case EV_SINCRONIZAR_TROPA:
+            return new EventoSincronizarTropa(serializado);
         case EV_JUEGO_TERMINADO:
             return new EventoJuegoTerminado(serializado);
         default:
