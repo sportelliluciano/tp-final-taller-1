@@ -79,6 +79,11 @@ public:
     void reiniciar();
 
     /**
+     * \brief Centra la animación alrededor del punto de renderizado.
+     */
+    void set_centrado(bool habilitar);
+
+    /**
      * \brief Devuelve true si la animación finalizó
      */
     bool finalizado() const;
@@ -86,7 +91,7 @@ public:
 private:
     std::vector<Sprite> cuadros;
     unsigned int cuadro_actual = 0, ms_por_cuadro, ts_ultimo_cuadro = 0;
-    bool loop = false, terminado = true;
+    bool loop = false, terminado = true, centrar = false;
 };
 
 } // namespace cliente

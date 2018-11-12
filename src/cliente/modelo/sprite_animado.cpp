@@ -40,7 +40,15 @@ void SpriteAnimado::renderizar(Ventana& ventana, int x, int y) {
     if (cuadro_actual == cuadros.size())
         throw std::runtime_error("SpriteAnimado: Assertion failed en renderizar");
     
-    cuadros[cuadro_actual].renderizar(ventana, x, y);
+    int pos_x = x;
+    int pos_y = y;
+
+    if (centrar) {
+        pos_x -= cuadros[cuadro_actual].obtener_ancho(ventana) / 2;
+        pos_y -= cuadros[cuadro_actual].obtener_alto(ventana) / 2;
+    }
+
+    cuadros[cuadro_actual].renderizar(ventana, pos_x, pos_y);
 
     if (ventana.obtener_ms() > ts_ultimo_cuadro + ms_por_cuadro) {
         ts_ultimo_cuadro = ventana.obtener_ms();
@@ -64,6 +72,10 @@ void SpriteAnimado::configurar_repeticion(bool repetir_indefinidamente) {
 void SpriteAnimado::reiniciar() {
     cuadro_actual = 0;
     terminado = false;
+}
+
+void SpriteAnimado::set_centrado(bool habilitar) {
+    centrar = habilitar;
 }
 
 bool SpriteAnimado::finalizado() const {
