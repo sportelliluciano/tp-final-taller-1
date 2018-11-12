@@ -6,7 +6,7 @@
 #include <mutex>
 
 #include "conexion/conexion.h"
-#include "conexion/evento.h"
+#include "cliente/eventos/evento.h"
 
 namespace cliente {
 
@@ -46,7 +46,60 @@ public:
      * 
      * Lanza runtime_error si la cola está vacía.
      */
-    conexion::Evento* pop_evento();
+    Evento* pop_evento();
+
+    /**
+     * \brief Solicita al servidor iniciar la construccion un edificio
+     *        de la clase indicada.
+     */
+    void iniciar_construccion(const std::string& clase);
+    
+    /**
+     * \brief Solicita al servidor cancelar la construccion de un edificio
+     *        de la clase indicada.
+     */
+    void cancelar_construccion(const std::string& clase);
+    
+    /**
+     * \brief Indica al servidor donde ubicar el nuevo edificio.
+     */
+    void ubicar_edificio(const std::string& clase, int celda_x, int celda_y);
+
+    /**
+     * \brief Indica al servidor que se quiere vender el edificio indicado.
+     */
+    void vender_edificio(int id_edificio);
+
+    /**
+     * \brief Solicita al servidor iniciar el entrenamiento de una tropa
+     *        de la clase indicada.
+     */
+    void iniciar_entrenamiento(const std::string& clase);
+
+    /**
+     * \brief Solicita al servidor cancelar el entrenamiento de una tropa
+     *        de la clase indicada.
+     */
+    void cancelar_entrenamiento(const std::string& clase);
+
+    /**
+     * \brief Solicita al servidor mover las tropas indicas a la posición
+     *        (x_px, y_px), dada en píxeles globales.
+     */
+    void mover_tropas(const std::vector<int>& ids, int x_px, int y_px);
+
+    /**
+     * \brief Solicita al servidor que las tropas indicadas ataquen a la 
+     *        tropa con id = id_atacado.
+     */
+    void atacar_tropa(const std::vector<int>& ids, int id_atacado);
+
+    /**
+     * \brief Solicita al servidor indicarle a la(s) cosechadora(s) que vayan
+     *        a recolectar especia a la celda indicada.
+     */
+    void indicar_especia_cosechadora(const std::vector<int>& ids, int celda_x, 
+        int celda_y);
 
     /**
      * \brief Detiene el hilo y cierra la conexión con el servidor.
@@ -65,7 +118,7 @@ private:
     std::string clase_edificio;
 
     std::mutex cola_eventos_mutex;
-    std::list<conexion::Evento*> cola_eventos;
+    std::list<Evento*> cola_eventos;
     
     conexion::Conexion* conn;
 
@@ -80,7 +133,12 @@ private:
      * Agrega un nuevo evento proveniente del servidor a la cola de eventos.
      * Este método está protegido del acceso concurrente.
      */
-    void push_evento(conexion::Evento* evento);
+    void push_evento(Evento* evento);
+
+    /**
+     * \brief Envía el evento a través de la conexión.
+     */
+    void enviar_evento(const nlohmann::json& evento);
 };
 
 } // namespace cliente
