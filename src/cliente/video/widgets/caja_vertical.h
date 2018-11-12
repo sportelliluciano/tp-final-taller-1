@@ -27,6 +27,12 @@ public:
     void empaquetar_abajo(Widget& hijo);
 
     /**
+     * \brief Reemplaza el widget actual por nuevo. Si actual no está en el
+     *        contenedor no hace nada.
+     */
+    void reemplazar_widget(Widget& actual, Widget& nuevo);
+
+    /**
      * \brief Devuelve el alto del contenedor.
      * 
      * El alto de una caja vertical es el alto del padre de la misma.

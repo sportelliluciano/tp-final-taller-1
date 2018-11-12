@@ -65,6 +65,8 @@ Ventana::Ventana(int w, int h) {
         throw ErrorSDL("SDL_GetRenderInfo");
     }
 
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
     vsync = (info.flags & SDL_RENDERER_PRESENTVSYNC) ? true : false;
     admin_texturas = new AdministradorTexturas(renderer);
     ticks_ultimo_cuadro = 0;
@@ -96,6 +98,10 @@ static tecla_t map_sdl_key(SDL_Keycode k) {
         case SDLK_RSHIFT:
             return TECLA_SHIFT;
         
+        case SDLK_LCTRL:
+        case SDLK_RCTRL:
+            return TECLA_CTRL;
+
         case SDLK_ESCAPE:
             return TECLA_ESCAPE;
         
@@ -239,13 +245,13 @@ void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
     Uint8 r, g, b, a;
     SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
     if (color == 0)
-        SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
+        SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
     else if (color == 1)
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     else if (color == 2)
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 0);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     else if (color == 3)
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
     SDL_Rect rc;
     rc.x = x0; rc.y = y0;
@@ -257,6 +263,9 @@ void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
 }
 
 void Ventana::dibujar_grilla() {
+    Uint8 r, g, b, a;
+    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     /******** GRILLA DEPURACION *********/
     for (int i=0;i<ancho() / 32; i++) {
         SDL_RenderDrawLine(renderer, i*32, 0, i*32, alto());
@@ -265,6 +274,7 @@ void Ventana::dibujar_grilla() {
         }
     }
     /************************************/
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
 
 void Ventana::setear_viewport(const Rectangulo& seccion) {
@@ -281,6 +291,14 @@ void Ventana::reestablecer_viewport() {
     
     ancho_vp = ancho_px;
     alto_vp = alto_px;
+}
+
+void Ventana::ocultar_mouse() {
+    SDL_ShowCursor(SDL_DISABLE);
+}
+
+void Ventana::mostrar_mouse() {
+    SDL_ShowCursor(SDL_ENABLE);
 }
 
 Ventana::~Ventana() {

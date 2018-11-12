@@ -11,6 +11,7 @@ Textura::Textura(SDL_Renderer *renderer_, SDL_Texture* textura_) {
     src.x = src.y = 0;
     if (SDL_QueryTexture(textura, NULL, NULL, &src.w, &src.h) != 0)
         throw ErrorSDL("SDL_QueryTexture");
+    SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND);
 }
 
 Textura::Textura() {

@@ -18,25 +18,31 @@ AdministradorTexturas::AdministradorTexturas(SDL_Renderer *renderer_) {
         throw ErrorSDL("TTF_OpenFont", TTF_GetError());
 }
 
-const Textura& AdministradorTexturas::cargar_imagen(const char *img) {
+const Textura& AdministradorTexturas::cargar_imagen(const std::string& img) {
     if (texturas.count(img) != 0)
         return texturas.find(img)->second;
-    
-    SDL_Surface *superficie = IMG_Load(img);
-    if (!superficie)
-        throw ErrorSDL("SDL_LoadBMP");
-    
-    SDL_SetColorKey(superficie, SDL_TRUE, 0);
-    
-    SDL_Texture *textura = SDL_CreateTextureFromSurface(renderer, superficie);
-    SDL_FreeSurface(superficie);
+
+    SDL_Texture *textura;
+
+    if ((img.length() > 3) && (img.substr(img.length() - 3) == "bmp")) {
+        SDL_Surface *superficie = IMG_Load(img.c_str());
+        if (!superficie)
+            throw ErrorSDL("IMG_Load", IMG_GetError());
+        
+        SDL_SetColorKey(superficie, SDL_TRUE, 0);
+        textura = SDL_CreateTextureFromSurface(renderer, superficie);
+        SDL_FreeSurface(superficie);
+    } else {
+        // Los PNG ya tienen su alpha
+        textura = IMG_LoadTexture(renderer, img.c_str());
+    }
 
     if (!textura)
         throw ErrorSDL("SDL_CreateTextureFromSurface");
 
     texturas.emplace(img, Textura(renderer, textura));
     
-    log_depuracion("Cargado %s", img);
+    log_depuracion("Cargado %s", img.c_str());
     return texturas.find(img)->second;
 }
 

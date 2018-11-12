@@ -26,7 +26,7 @@ public:
      * Almacena las texturas en una caché de modo que al volver a usarlas 
      * no haya que levantarlas desde el disco.
      */
-    const Textura& cargar_imagen(const char *img);
+    const Textura& cargar_imagen(const std::string& img);
 
     /**
      * \brief Devuelve true si el almacén contiene la textura indicada.

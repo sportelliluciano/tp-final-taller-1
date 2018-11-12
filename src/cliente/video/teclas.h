@@ -11,6 +11,7 @@ typedef enum {
     TECLA_NO_MAPEADA,
     TECLA_ESCAPE,
     TECLA_SHIFT,
+    TECLA_CTRL,
     TECLA_ARRIBA,
     TECLA_ABAJO,
     TECLA_DERECHA,

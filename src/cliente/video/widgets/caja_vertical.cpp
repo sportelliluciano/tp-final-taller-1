@@ -25,6 +25,28 @@ void CajaVertical::empaquetar_abajo(Widget& hijo) {
     abajo.push_back(&hijo);
 }
 
+void CajaVertical::reemplazar_widget(Widget& actual, Widget& nuevo) {
+    for (auto it = arriba.begin(); it != arriba.end(); ++it) {
+        Widget*& wx = *it;
+        if (&actual == wx) {
+            wx->set_padre(nullptr);
+            wx = &nuevo;
+            wx->set_padre(this);
+            return;
+        }
+    }
+
+    for (auto it = abajo.begin(); it != abajo.end(); ++it) {
+        Widget*& wx = *it;
+        if (&actual == wx) {
+            wx->set_padre(nullptr);
+            wx = &nuevo;
+            wx->set_padre(this);
+            return;
+        }
+    }
+}
+
 int CajaVertical::obtener_alto() const {
     return alto;
 }

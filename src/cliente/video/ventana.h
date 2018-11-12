@@ -108,6 +108,16 @@ public:
     void reestablecer_viewport();
 
     /**
+     * \brief Oculta el cursor del mouse sobre la ventana.
+     */
+    void ocultar_mouse();
+
+    /**
+     * \brief Muestra el cursor del mouse sobre la ventana.
+     */
+    void mostrar_mouse();
+
+    /**
      * \brief Destructor.
      */
     ~Ventana();

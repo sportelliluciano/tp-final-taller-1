@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 # Tomar los archivos fuente del cliente (todos los *.cpp)
-file(GLOB libclientevideo_srcs *.cpp)
+file(GLOB_RECURSE libclientevideo_srcs *.cpp)
 
 INCLUDE(FindPkgConfig)
 
