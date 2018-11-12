@@ -6,6 +6,8 @@ add_subdirectory(modelo)
 
 # Tomar los archivos fuente del cliente (todos los *.cpp)
 file(GLOB libcliente_srcs *.cpp)
+file(GLOB eventos_cliente_src eventos/*.cpp)
+list(APPEND libcliente_srcs ${eventos_cliente_src})
 list(REMOVE_ITEM libcliente_srcs "main.cpp")
 
 # Generar una libería estática con todo el cliente EXCEPTO el main
