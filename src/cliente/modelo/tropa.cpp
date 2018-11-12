@@ -22,6 +22,13 @@ Tropa::Tropa(int id_tropa_, int x_, int y_) {
 }
 
 void Tropa::renderizar(Ventana& ventana, int x_px, int y_px) {
+    if (esta_marcada) {
+        ventana
+            .obtener_administrador_texturas()
+            .cargar_imagen("./assets/nuevos/unidad-seleccionada.png")
+            .renderizar(x_px, y_px);
+    }
+
     if ((x_destino == x) && (y_destino == y)) {
         sprites[0].renderizar(ventana, x_px, y_px);
         return;
@@ -33,25 +40,28 @@ void Tropa::renderizar(Ventana& ventana, int x_px, int y_px) {
 void Tropa::actualizar(int dt_ms) {
     float vx = 0, vy = 0;
 
-    if (x_destino != x) {
+    if (abs(x_destino - x) > 1) {
         vx = (x_destino - x) / abs(x_destino - x);
         vx *= 0.4 / 15;
     }
 
-    if (y_destino != y) {
+    if (abs(y_destino - y) > 1) {
         vy = (y_destino - y) / abs(y_destino - y);
         vy *= 0.4 / 15;
     }
 
+    if ((vx == 0) && (vy == 0))
+        return;
+
     float dx = vx * dt_ms,
           dy = vy * dt_ms;
 
-    if (abs(x + dx) > abs(x_destino))
+    if (abs(dx) > abs(x - x_destino))
         x = x_destino;
     else
         x += dx;
     
-    if (abs(y + dy) > abs(y_destino))
+    if (abs(dy) > abs(y - y_destino))
         y = y_destino;
     else
         y += dy;
@@ -83,11 +93,11 @@ void Tropa::caminar_hacia(int x_dest, int y_dest) {
 
 void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
     camino_actual = camino;
-    paso_actual = 0;
+    paso_actual = 1;
     
     // Iniciar la caminata.
-    sync_camino(camino_actual[paso_actual].first, 
-        camino_actual[paso_actual].second);
+    sync_camino(camino_actual[0].first, 
+        camino_actual[0].second);
 }
 
 void Tropa::sync_camino(int x_, int y_) {
@@ -103,11 +113,23 @@ void Tropa::sync_camino(int x_, int y_) {
     x = x_;
     y = y_;
 
-    paso_actual++;
     if (paso_actual < camino_actual.size()) {
         caminar_hacia(camino_actual[paso_actual].first, 
             camino_actual[paso_actual].second);
+        paso_actual++;
     }
+}
+
+void Tropa::set_vida(int nueva_vida) {
+    vida = nueva_vida;
+}
+
+void Tropa::marcar() {
+    esta_marcada = true;
+}
+
+void Tropa::desmarcar() {
+    esta_marcada = false;
 }
 
 } // namespace cliente

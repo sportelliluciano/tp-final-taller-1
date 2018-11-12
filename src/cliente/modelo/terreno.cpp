@@ -81,7 +81,7 @@ void Terreno::renderizar(Ventana& ventana) {
     Textura& textura = admin_texturas.crear_textura("terreno", 
         ventana.ancho(), ventana.alto());
 
-    textura.limpiar();
+    textura.limpiar(0, 0, 0, 255);
 
     int ancho_ventana = ventana.ancho() / ANCHO_CELDA;
     int alto_ventana = ventana.alto() / ALTO_CELDA;
@@ -98,12 +98,6 @@ void Terreno::renderizar(Ventana& ventana) {
             y_px = (y - camara_y) * ALTO_CELDA;
 
             terreno[y][x].renderizar(ventana, x_px, y_px, textura);
-            std::stringstream s;
-            s << "(" << x << "," << y << ")";
-            ventana
-                .obtener_administrador_texturas()
-                .crear_texto_nc(s.str())
-                .renderizar(x_px, y_px, textura);
         }
     }
 
@@ -204,6 +198,15 @@ void Terreno::convertir_a_px(int x_celda, int y_celda, int& x_px, int& y_px) {
     y_px = (y_celda - camara_y) * ALTO_CELDA;
 }
 
+void Terreno::calcular_celda(int x_px, int y_px, int& x_celda, int& y_celda) {
+    x_celda = (x_px / ANCHO_CELDA) + camara_x;
+    y_celda = (y_px / ALTO_CELDA) + camara_y;
+}
+
+bool Terreno::es_construible(int x_celda, int y_celda) const {
+    return terreno[y_celda][x_celda].es_construible();
+}
+
 /**
  * Intercambia el contenido de a con el contenido de b.
  */
@@ -213,7 +216,7 @@ static inline void swap(int& a, int& b) {
     a = tmp;
 }
 
-std::unordered_set<const Tropa*>
+std::unordered_set<Tropa*>
     Terreno::seleccionar_unidades(int x0, int y0, int x1, int y1) {
     if (x0 > x1)
         swap(x0, x1);
@@ -229,11 +232,11 @@ std::unordered_set<const Tropa*>
     std::cout << "Seleccionando desde (" << celda_x0 << "," << celda_y0 << ") "
               << "hasta (" << celda_x1 << "," << celda_y1  << ")" << std::endl;
 
-    std::unordered_set<const Tropa*> tropas_seleccionadas;
+    std::unordered_set<Tropa*> tropas_seleccionadas;
 
     for (int x = celda_x0; x < celda_x1; x++) {
         for (int y = celda_y0; y < celda_y1; y++) {
-            for (const Tropa* t : terreno[y][x].obtener_tropas()) {
+            for (Tropa* t : terreno[y][x].obtener_tropas()) {
                 tropas_seleccionadas.insert(t);
             }
         }
@@ -242,7 +245,7 @@ std::unordered_set<const Tropa*>
     return tropas_seleccionadas;
 }
 
-const Edificio* Terreno::obtener_edificio_en(int x, int y) {
+Edificio* Terreno::obtener_edificio_en(int x, int y) {
     int celda_x = (x / ANCHO_CELDA) + camara_x;
     int celda_y = (y / ALTO_CELDA) + camara_y;
     if ((celda_x < 0) || (celda_x > ancho))
@@ -256,7 +259,7 @@ const Edificio* Terreno::obtener_edificio_en(int x, int y) {
     return nullptr;
 }
 
-void Terreno::agregar_tropa(const Tropa& tropa) {
+void Terreno::agregar_tropa(Tropa& tropa) {
     int celda_x = tropa.obtener_x() / ANCHO_CELDA;
     int celda_y = tropa.obtener_y() / ALTO_CELDA;
 
@@ -269,7 +272,7 @@ void Terreno::agregar_tropa(const Tropa& tropa) {
     terreno[celda_y][celda_x].agregar_tropa(tropa);
 }
 
-void Terreno::mover_tropa(const Tropa& tropa, int x_ant, int y_ant) {
+void Terreno::mover_tropa(Tropa& tropa, int x_ant, int y_ant) {
     int nuevo_celda_x = tropa.obtener_x() / ANCHO_CELDA;
     int nuevo_celda_y = tropa.obtener_y() / ALTO_CELDA;
 
@@ -304,7 +307,7 @@ void Terreno::eliminar_tropa(const Tropa& tropa) {
     terreno[celda_y][celda_x].eliminar_tropa(tropa);
 }
 
-void Terreno::agregar_edificio(const Edificio& edificio) {
+void Terreno::agregar_edificio(Edificio& edificio) {
     int celda_x = edificio.obtener_celda_x();
     int celda_y = edificio.obtener_celda_y();
 

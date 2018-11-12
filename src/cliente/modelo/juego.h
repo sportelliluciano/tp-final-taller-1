@@ -48,33 +48,6 @@ public:
      */
     void setear_dinero(int dinero);
 
-    void iniciar_construccion(const std::string& clase);
-
-    /**
-     * \brief Construye un nuevo edificio en (x, y).
-     * 
-     * Construye un nuevo edificio con el identificador indicado, de la
-     * clase especificada en la posición (x, y), medida en celdas.
-     * 
-     * Si ya hay un edificio con dicho identificador [TODO] no hace nada.
-     */
-    void construir_edificio(int id, const std::string& clase, int x, int y);
-    
-    /**
-     * \brief Destruye el edificio con ID indicado.
-     */
-    void destruir_edificio(int id);
-
-    /**
-     * \brief Crea una nueva tropa.
-     */
-    void crear_tropa(int id, const std::string& clase, int x, int y);
-
-    /**
-     * \brief Elimina una tropa.
-     */
-    void destruir_tropa(int id);
-
     /**
      * \brief Hace aparecer al gusano de arena en la posición (x, y).
      */
@@ -89,15 +62,6 @@ public:
      * \brief Devuelve los edificios que existen en el juego.
      */
     std::vector<const Edificio*> obtener_edificios() const;
-
-    void seleccionar_tropas(int x0, int y0, int x1, int y1);
-    
-    void seleccionar_edificio(int x, int y);
-
-    void sincronizar_tropa(int id_tropa, int x, int y);
-
-    void indicar_camino_tropa(int id_tropa, 
-        const std::vector<std::pair<int, int>>& camino);
     
     /**
      * \brief Mueve la cámara incrementando la posición en (dx, dy).
@@ -107,6 +71,10 @@ public:
      * (dx, dy) es el desplazamiento en celdas.
      */
     void mover_camara(int dx, int dy);
+
+    Infraestructura& obtener_infraestructura();
+    Ejercito& obtener_ejercito();
+    Terreno& obtener_terreno();
 
     /**
      * \brief Destructor.

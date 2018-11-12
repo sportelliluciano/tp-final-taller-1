@@ -4,13 +4,7 @@
 
 namespace cliente {
 
-Ejercito::Ejercito(Terreno& terreno_juego) : terreno(terreno_juego) { 
-    crear(0, "", 300, 300);
-    tropas.at(0).seguir_camino(
-        {{300, 300}, {300, 400}, {300, 500}}
-    );
-    // {"id":4, "id_tropa":0,"camino":[300, 300, 300, 340, 300, 360, 300, 380, 300, 400]}
-}
+Ejercito::Ejercito(Terreno& terreno_juego) : terreno(terreno_juego) { }
 
 void Ejercito::renderizar(Ventana& ventana) {
     for (const Tropa* tid : terreno.obtener_tropas_visibles(ventana)) {
@@ -26,17 +20,6 @@ void Ejercito::renderizar(Ventana& ventana) {
         /*** Fin pintar celda ***/
 
         terreno.obtener_posicion_visual(tropa, x, y);
-
-        if (unidades_seleccionadas.find(tid->obtener_id()) 
-            != unidades_seleccionadas.end()) 
-        {
-            ventana
-                .obtener_administrador_texturas()
-                .cargar_imagen("./assets/nuevos/unidad-seleccionada.png")
-                .renderizar(x, y);
-        }
-        
-        
         tropa.renderizar(ventana, x, y);
     }
 }
@@ -53,34 +36,48 @@ void Ejercito::actualizar(int t_ms) {
     last_ms = t_ms;
 }
 
-void Ejercito::crear(int id, const std::string& , int x, int y) {
-    tropas.emplace(id, Tropa(id, x, y));
+void Ejercito::entrenar(const std::string& clase, int tiempo_ms) {
+    entrenamiento_actual[clase] = tiempo_ms;
+}
+
+void Ejercito::sincronizar_entrenamiento(const std::string& clase, 
+    int tiempo_ms) 
+{
+    entrenamiento_actual[clase] = tiempo_ms;
+}
+
+void Ejercito::actualizar_cola_entrenamiento(const std::string& clase, 
+    int cantidad) 
+{
+    colas_entrenamiento[clase] = cantidad;
+}
+
+void Ejercito::crear_tropa(int id, const std::string& clase, 
+    const std::vector<int>& posicion, int id_jugador) 
+{
+    tropas.emplace(id, Tropa(id, posicion.at(0), posicion.at(1)));
     terreno.agregar_tropa(tropas.at(id));
 }
 
-void Ejercito::mover(int id, int x_destino, int y_destino) {
-    tropas.at(id).caminar_hacia(x_destino, y_destino);
-}
-
-void Ejercito::seleccionar(const std::unordered_set<const Tropa*>& unidades) {
-    unidades_seleccionadas = std::unordered_set<int>();
-
-    for (const Tropa* tropa : unidades) {
-        unidades_seleccionadas.insert(tropa->obtener_id());
+void Ejercito::mover_tropa(int id, const std::vector<int>& camino) {
+    std::vector<std::pair<int, int>> pasos;
+    
+    for (size_t i=0; i<camino.size(); i+=2) {
+        pasos.push_back({camino[i], camino[i+1]});
     }
+    
+    tropas.at(id).seguir_camino(pasos);
 }
 
-void Ejercito::sincronizar_tropa(int id_tropa, int x, int y) {
-    tropas.at(id_tropa).sync_camino(x, y);
+void Ejercito::sincronizar_tropa(int id, const std::vector<int>& posicion) {
+    tropas.at(id).sync_camino(posicion.at(0), posicion.at(1));
 }
 
-void Ejercito::indicar_camino_tropa(int id_tropa, 
-    const std::vector<std::pair<int, int>>& camino)
-{
-    tropas.at(id_tropa).seguir_camino(camino);
+void Ejercito::atacar_tropa(int id, int nueva_vida) {
+    tropas.at(id).set_vida(nueva_vida);
 }
 
-void Ejercito::destruir(int id) {
+void Ejercito::destruir_tropa(int id) {
     terreno.eliminar_tropa(tropas.at(id));
     tropas.erase(id);
 }

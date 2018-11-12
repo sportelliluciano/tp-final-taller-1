@@ -75,6 +75,21 @@ public:
      */
     void sync_camino(int x_, int y_);
 
+    /**
+     * \brief Setea la vida de la tropa.
+     */
+    void set_vida(int nueva_vida);
+
+    /**
+     * \brief Agrega una marca de selección a la tropa.
+     */
+    void marcar();
+
+    /**
+     * \brief Elimina la marca de selección de la tropa.
+     */
+    void desmarcar();
+
 private:
     static const int N_SPRITES = 32;
     SpriteAnimado sprites[N_SPRITES];
@@ -85,7 +100,10 @@ private:
     int id_tropa = -1;
 
     std::vector<std::pair<int, int>> camino_actual;
-    int paso_actual = 0;
+    size_t paso_actual = 0;
+    int vida = 100;
+
+    bool esta_marcada = false;
 };
 
 } // namespace cliente

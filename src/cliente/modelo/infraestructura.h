@@ -13,14 +13,101 @@ namespace cliente {
 class Infraestructura {
 public:
     Infraestructura(Terreno& terreno);
+
+    /**
+     * \brief Renderiza los edificios en la ventana.
+     */
     void renderizar(Ventana& ventana);
+
+    /**
+     * \brief Actualiza el estado de las construcciones.
+     */
     void actualizar(int t_ms);
-    void construir(int id, const std::string& clase, int x, int y);
-    void destruir(int id);
+
+    
+    /******* Métodos para actualizar el HUD *******/
+
+    /**
+     * \brief Devuelve los edificios disponibles para construir.
+     */
     std::vector<const Edificio*> obtener_edificios() const;
-    void iniciar_construccion(const std::string& clase);
-    void seleccionar(const Edificio& edificio);
-    void limpiar_seleccion();
+
+    /**
+     * \brief Devuelve true si se está construyendo un edificio de la clase
+     *        indicada.
+     */
+    bool esta_construyendo(const std::string& clase) const;
+
+    /**
+     * \brief Devuelve la cantidad de edificios que hay en la cola de 
+     *        construcción de la clase especificada.
+     */
+    int obtener_cola_construccion(const std::string& clase) const;
+
+    /**
+     * \brief Devuelve la cantidad de segundos restantes para que se construya
+     *        el próximo edificio de la clase indicada.
+     */
+    int obtener_segundos_restantes(const std::string& clase) const;
+
+    /**
+     * \brief Devuelve el sprite para el botón asociado a la clase indicada.
+     */
+    int obtener_sprite_clase(const std::string& clase) const;
+
+    
+    /******* Métodos para actualizar desde el servidor *******/
+
+    
+    /**
+     * Inicia la construcción de un edificio.
+     */
+    void iniciar_construccion(const std::string& clase, int tiempo_ms);
+
+    /**
+     * Sincroniza la construcción de un edificio.
+     */
+    void sincronizar_construccion(const std::string& clase, int tiempo_ms);
+
+    /**
+     * Actualiza la cola de construcciones según la cantidad
+     */
+    void actualizar_cola(const std::string& clase, int cantidad);
+
+    /**
+     * Setea la velocidad de construcción.
+     * 1.0 es normal, 2.0 es el doble de rápido, 0.5 la mitad de velocidad.
+     */
+    void set_velocidad_construccion(float velocidad);
+
+    /**
+     * Actualiza la vida de un edificio.
+     */
+    void atacar(int id, int nueva_vida);
+
+    /**
+     * Crea un nuevo edificio sobre el terreno.
+     */
+    void crear_edificio(int id, const std::string& clase, 
+        const std::vector<int>& posicion, int id_jugador);
+    
+    /**
+     * Agrega un edificio que ya existía pero entró en el campo de visión del
+     * jugador.
+     */
+    void agregar_edificio(int id, const std::vector<int>& posicion, 
+        int id_jugador, const std::string& clase, int vida);
+    
+    /**
+     * Elimina un edificio que fue eliminado previamente pero recién ahora
+     * el jugador observó la zona.
+     */
+    void eliminar_edificio(int id);
+
+    /**
+     * Destruye un edificio sobre el terreno.
+     */
+    void destruir_edificio(int id);
 
 private:
     Terreno& terreno;
@@ -28,9 +115,13 @@ private:
 
     std::unordered_map<std::string, Edificio> edificios;
 
-    std::unordered_map<std::string, std::list<int>> cola_construccion;
+    std::unordered_map<std::string, int> construcciones_iniciadas;
+    std::unordered_map<std::string, int> colas_construccion;
 
-    Edificio* edificio_seleccionado = nullptr;
+
+    float velocidad_cc = 1.0f;
+
+    int last_ms = -1;
 };
 
 } // namespace cliente

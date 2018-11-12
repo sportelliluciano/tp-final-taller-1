@@ -15,22 +15,38 @@ namespace cliente {
 class Jugador {
 public:
     Jugador(Terreno& terreno_juego);
+    
+    /**
+     * \brief Renderiza las unidades y edificios del jugador en la ventana.
+     */
     void renderizar(Ventana& ventana);
+
+    /**
+     * \brief Actualiza el estado del jugador.
+     */
     void actualizar(int t_ms);
-    void iniciar_construccion(const std::string& clase);
-    void construir_edificio(int id, const std::string& clase, int x, int y);
-    void destruir_edificio(int id);
-    void crear_tropa(int id, const std::string& clase, int x, int y);
-    void destruir_tropa(int id);
+    
+    /**
+     * \brief Obtiene el dinero del jugador.
+     */
     int obtener_dinero() const;
+
+    /**
+     * \brief Setea el dinero del jugador.
+     */
     void setear_dinero(int dinero_);
+    
     std::vector<const Edificio*> obtener_edificios() const;
-    void seleccionar_unidades(const std::unordered_set<const Tropa*>& unidades);
-    void seleccionar_edificio(const Edificio& edificio);
-    void deseleccionar_edificio();
-    void sincronizar_tropa(int id_tropa, int x, int y);
-    void indicar_camino_tropa(int id_tropa, 
-        const std::vector<std::pair<int, int>>& camino);
+    
+    /**
+     * \brief Obtiene la infraestructura del jugador.
+     */
+    Infraestructura& obtener_infraestructura();
+
+    /**
+     * \brief Obtiene el ejército del jugador.
+     */
+    Ejercito& obtener_ejercito();
 private:
     Terreno& terreno;
     int energia = 0;

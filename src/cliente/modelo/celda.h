@@ -43,6 +43,11 @@ public:
     void renderizar(Ventana& ventana, int x, int y, Textura& destino);
 
     /**
+     * \brief Devuelve true si se puede construir sobre la celda.
+     */
+    bool es_construible() const;
+
+    /**
      * \brief Devuelve true si hay al menos una tropa en la celda actual.
      */
     bool contiene_tropas() const;
@@ -55,7 +60,7 @@ public:
     /**
      * \brief Devuelve las tropas que estén paradas sobre la celda actual.
      */
-    const std::list<const Tropa*>& obtener_tropas() const;
+    const std::list<Tropa*>& obtener_tropas() const;
 
     /**
      * \brief Setea el edificio construido sobre la celda.
@@ -63,14 +68,14 @@ public:
      * Si la celda ya contenía un edificio o contenía tropas lanzará una 
      * excepción de tipo runtime_error.
      */
-    void set_edificio(const Edificio& nuevo_edificio);
+    void set_edificio(Edificio& nuevo_edificio);
 
     /**
      * \brief Obtiene el edificio que contiene la celda.
      * 
      * Si la celda no contiene ningún edificio lanza runtime_error.
      */
-    const Edificio& obtener_edificio() const;
+    Edificio& obtener_edificio();
 
     /**
      * \brief Elimina el edificio de la celda.
@@ -86,7 +91,7 @@ public:
      * Si la celda ya contenía un edificio lanzará una excepción de tipo 
      * runtime_error.
      */
-    void agregar_tropa(const Tropa& tropa);
+    void agregar_tropa(Tropa& tropa);
 
     /**
      * \brief Elimina una tropa de la celda actual.
@@ -106,7 +111,7 @@ private:
     /**
      * \brief Tropas paradas en la celda actual.
      */
-    std::list<const Tropa*> tropas;
+    std::list<Tropa*> tropas;
 
     /**
      * \brief Si hay un edificio en esta celda entonces este puntero 
@@ -114,7 +119,7 @@ private:
      * 
      * Sólo puede haber un edificio por celda.
      */
-    const Edificio *edificio = nullptr;
+    Edificio *edificio = nullptr;
 
     /**
      * \brief Identificador único de celda.

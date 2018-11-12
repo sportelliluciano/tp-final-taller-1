@@ -9,6 +9,12 @@
 
 #include "cliente/modelo/terreno.h"
 
+/**
+ * Los contadores de tiempo de construcción se reducen hasta un mínimo.
+ * El 0 en los contadores lo setea el servidor.
+ */
+#define MIN_TIEMPO_CONSTRUCCION 1
+
 namespace cliente {
 
 Infraestructura::Infraestructura(Terreno& terreno_juego) 
@@ -34,35 +40,6 @@ Infraestructura::Infraestructura(Terreno& terreno_juego)
     }
 }
 
-void Infraestructura::actualizar(int) {
-    std::vector<int> edificios_a_eliminar;
-
-    for (auto& par : edificios_construidos) {
-        Edificio& edificio = par.second;
-        if (!edificio.esta_vivo()) {
-            edificios_a_eliminar.push_back(edificio.obtener_id());
-        }
-    }
-
-    for (int id_a_eliminar: edificios_a_eliminar) {
-        edificios_construidos.erase(id_a_eliminar);
-    }
-    
-}
-
-void Infraestructura::construir(int id, const std::string& clase, int x, int y) 
-{
-    Edificio edificio_nuevo = edificios.at(clase);
-    edificio_nuevo.construir(id, x, y);
-    edificios_construidos.emplace(id, edificio_nuevo);
-    terreno.agregar_edificio(edificios_construidos.at(id));
-}
-
-void Infraestructura::destruir(int id) {
-    terreno.eliminar_edificio(edificios_construidos.at(id));
-    edificios_construidos.at(id).destruir();
-}
-
 void Infraestructura::renderizar(Ventana& ventana) {
     for (const Edificio* eid : terreno.obtener_edificios_visibles(ventana)) {
         Edificio& edificio = edificios_construidos.at(eid->obtener_id());
@@ -82,22 +59,41 @@ void Infraestructura::renderizar(Ventana& ventana) {
         /*** Fin pintar celda ***/
 
         terreno.obtener_posicion_visual(edificio, x_px, y_px);
-        edificio.renderizar(ventana, x_px, y_px, 
-            &edificio == edificio_seleccionado);
+        edificio.renderizar(ventana, x_px, y_px);
     }
 }
 
-void Infraestructura::seleccionar(const Edificio& edificio) {
-    if (edificios_construidos.find(edificio.obtener_id()) 
-        != edificios_construidos.end())
+void Infraestructura::actualizar(int t_ms) {
+    if (last_ms == -1)
+        last_ms = t_ms;
+    
+    int dt_cc = (int)((t_ms - last_ms) * velocidad_cc);
+    
+    for (auto it = construcciones_iniciadas.begin(); 
+        it != construcciones_iniciadas.end(); ++it) 
     {
-        edificio_seleccionado = 
-            &edificios_construidos.at(edificio.obtener_id());
+        if (it->second <= MIN_TIEMPO_CONSTRUCCION)
+            continue;
+        if (it->second - dt_cc < MIN_TIEMPO_CONSTRUCCION)
+            it->second = MIN_TIEMPO_CONSTRUCCION;
+        else
+            it->second -= dt_cc;
     }
-}
 
-void Infraestructura::limpiar_seleccion() {
-    edificio_seleccionado = nullptr;
+    std::vector<int> edificios_a_eliminar;
+
+    for (auto& par : edificios_construidos) {
+        Edificio& edificio = par.second;
+        if (!edificio.esta_vivo()) {
+            edificios_a_eliminar.push_back(edificio.obtener_id());
+        }
+    }
+
+    for (int id_a_eliminar: edificios_a_eliminar) {
+        edificios_construidos.erase(id_a_eliminar);
+    }
+    
+    last_ms = t_ms;
 }
 
 std::vector<const Edificio*> Infraestructura::obtener_edificios() const {
@@ -112,11 +108,87 @@ std::vector<const Edificio*> Infraestructura::obtener_edificios() const {
     return edificios_disponibles;
 }
 
-void Infraestructura::iniciar_construccion(const std::string& clase) {
-    if (clase == "centro_construccion")
-        throw std::runtime_error("Este edificio no debería construirse");
-    
-    
+bool Infraestructura::esta_construyendo(const std::string& clase) const {
+    return construcciones_iniciadas.find(clase) != 
+        construcciones_iniciadas.end();
+}
+
+int Infraestructura::obtener_cola_construccion(const std::string& clase) const {
+    auto val = colas_construccion.find(clase);
+    if (val == colas_construccion.end())
+        return 0;
+    return val->second;
+}
+
+int Infraestructura::obtener_segundos_restantes(const std::string& clase) const 
+{
+    return construcciones_iniciadas.at(clase);
+}
+
+
+void Infraestructura::iniciar_construccion(const std::string& clase, 
+    int tiempo_ms)
+{
+    construcciones_iniciadas[clase] = tiempo_ms;
+}
+
+void Infraestructura::sincronizar_construccion(const std::string& clase, 
+    int tiempo_ms) 
+{
+    construcciones_iniciadas[clase] = tiempo_ms;
+}
+
+void Infraestructura::set_velocidad_construccion(float velocidad) {
+    velocidad_cc = velocidad;
+}
+
+void Infraestructura::actualizar_cola(const std::string& clase, int cantidad) {
+    colas_construccion[clase] = cantidad;
+}
+
+void Infraestructura::atacar(int id, int nueva_vida) {
+    edificios_construidos.at(id).set_vida(nueva_vida);
+}
+
+void Infraestructura::crear_edificio(int id, const std::string& clase, 
+    const std::vector<int>& posicion, int)
+{
+    construcciones_iniciadas.erase(clase);
+    Edificio nuevo = edificios.at(clase);
+
+    int x = posicion.at(0), y = posicion.at(1);
+
+    // TODO: por que el edificio conoce su posicion?
+    nuevo.inicializar(id, x, y, false);
+    edificios_construidos.emplace(id, nuevo);
+    terreno.agregar_edificio(edificios_construidos.at(id));
+}
+
+void Infraestructura::agregar_edificio(int id, const std::vector<int>& posicion, 
+    int, const std::string& clase, int vida)
+{
+    Edificio nuevo = edificios.at(clase);
+
+    int x = posicion.at(0), y = posicion.at(1);
+
+    nuevo.inicializar(id, x, y, true);
+    nuevo.set_vida(vida);
+    edificios_construidos.emplace(id, nuevo);
+    terreno.agregar_edificio(edificios_construidos.at(id));
+}
+
+void Infraestructura::eliminar_edificio(int id) {
+    terreno.eliminar_edificio(edificios_construidos.at(id));
+    edificios_construidos.erase(id);
+}
+
+void Infraestructura::destruir_edificio(int id) {
+    terreno.eliminar_edificio(edificios_construidos.at(id));
+    edificios_construidos.at(id).destruir();
+}
+
+int Infraestructura::obtener_sprite_clase(const std::string& clase) const {
+    return edificios.at(clase).obtener_sprite_boton();
 }
 
 } // namespace cliente

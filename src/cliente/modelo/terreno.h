@@ -71,12 +71,23 @@ public:
     void convertir_a_px(int x_celda, int y_celda, int& x_px, int& y_px);
 
     /**
+     * \brief Convierte una coordenada en píxeles relativos a la ventana a
+     *        la celda correspondiente según la cámara.
+     */
+    void calcular_celda(int x_px, int y_px, int& x_celda, int& y_celda);
+
+    /**
+     * \brief Devuelve true si se puede construir sobre la celda.
+     */
+    bool es_construible(int x_celda, int y_celda) const;
+
+    /**
      * \brief Selecciona las unidades que estén contenidas en el rectángulo con 
      *        esquinas opuestas en (x0, y0) y (x1, y1).
      * 
      * Las coordenadas están dadas en píxeles relativos a la ventana.
      */
-    std::unordered_set<const Tropa*>
+    std::unordered_set<Tropa*>
         seleccionar_unidades(int x0, int y0, int x1, int y1);
 
     /**
@@ -85,14 +96,14 @@ public:
      * Si no hubiera un edificio en dicha posición devolverá un puntero nulo.
      * Las coordenadas están dadas en píxeles relativos a la ventana.
      */
-    const Edificio* obtener_edificio_en(int x, int y);
+    Edificio* obtener_edificio_en(int x, int y);
 
     /**
      * \brief Agrega una tropa al terreno.
      * 
      * Esta operación es O(1)
      */
-    void agregar_tropa(const Tropa& tropa);
+    void agregar_tropa(Tropa& tropa);
 
     /**
      * \brief Actualiza la posición de una tropa que estaba en (x_ant, y_ant)
@@ -101,7 +112,7 @@ public:
      * La posición (x_ant, y_ant) está dada en píxeles globales.
      * Esta operación es O(1)
      */
-    void mover_tropa(const Tropa& tropa, int x_ant, int y_ant);
+    void mover_tropa(Tropa& tropa, int x_ant, int y_ant);
 
     /**
      * \brief Elimina una tropa del terreno.
@@ -117,7 +128,7 @@ public:
      * en celdas. Siendo que h y b suelen ser constantes chicas esta operación
      * es normalmente de tiempo constante.
      */
-    void agregar_edificio(const Edificio& edificio);
+    void agregar_edificio(Edificio& edificio);
 
     /**
      * \brief Elimina un edificio del terreno.

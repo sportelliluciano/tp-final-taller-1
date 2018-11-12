@@ -19,8 +19,8 @@ Edificio::Edificio(const nlohmann::json& data_edificio)
     sprite = SpriteCompuesto({sprite_construido, sprite_base});
     sprite_roto = SpriteCompuesto({sprite_destruido, sprite_base});
 
-    sprite_construccion = SpriteAnimado(4130, 4136);
-    sprite_destruccion  = SpriteAnimado(4137, 4151);
+    sprite_construccion = SpriteAnimado(3765, 3783);
+    sprite_destruccion  = SpriteAnimado(3686, 3700);
     
     sprite_boton = data_edificio["sprite_boton"];
 
@@ -29,7 +29,7 @@ Edificio::Edificio(const nlohmann::json& data_edificio)
     vida = 100;
 }
 
-void Edificio::renderizar(Ventana& ventana, int x_px, int y_px, bool selecc) {
+void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
     if (!esta_vivo())
         return;
 
@@ -39,7 +39,7 @@ void Edificio::renderizar(Ventana& ventana, int x_px, int y_px, bool selecc) {
             esta_construido = sprite_construccion.finalizado();
         } else {
             sprite.renderizar(ventana, x_px, y_px);
-            if (selecc) {
+            if (marcado) {
                 ventana
                     .obtener_administrador_texturas()
                     .cargar_imagen("./assets/nuevos/seleccion-edificio.png")
@@ -51,10 +51,12 @@ void Edificio::renderizar(Ventana& ventana, int x_px, int y_px, bool selecc) {
     }
 }
 
-void Edificio::construir(int id_edificio_, int x, int y) {
+void Edificio::inicializar(int id_, int x, int y, bool construido) {
+    id_edificio = id_;
     pos_x = x;
     pos_y = y;
-    id_edificio = id_edificio_;
+    esta_construido = construido;
+    esta_destruido = false;
 }
 
 int Edificio::obtener_id() const {
@@ -91,6 +93,18 @@ int Edificio::obtener_alto_celdas() const {
 
 bool Edificio::esta_vivo() const {
     return !sprite_destruccion.finalizado();
+}
+
+void Edificio::set_vida(int nueva_vida) {
+    vida = nueva_vida;
+}
+
+void Edificio::marcar() {
+    marcado = true;
+}
+
+void Edificio::desmarcar() {
+    marcado = false;
 }
 
 } // namespace cliente

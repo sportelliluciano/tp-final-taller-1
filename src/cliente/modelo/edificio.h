@@ -29,12 +29,12 @@ public:
      * 
      * (x, y) está dado en píxeles relativos a la ventana.
      */
-    void renderizar(Ventana& ventana, int x, int y, bool seleccionado = false);
+    void renderizar(Ventana& ventana, int x, int y);
 
     /**
-     * \brief Construye el edificio en la celda (celda_x, celda_y).
+     * \brief Inicializa el edificio.
      */
-    void construir(int id_edificio_, int celda_x, int celda_y);
+    void inicializar(int id_, int x, int y, bool construido);
 
     /**
      * \brief Destruye el edificio.
@@ -86,6 +86,21 @@ public:
      */
     int obtener_alto_celdas() const;
 
+    /**
+     * \brief Actualiza la vida del edificio.
+     */
+    void set_vida(int nueva_vida);
+
+    /**
+     * \brief Agrega una marca de selección al edificio.
+     */
+    void marcar();
+
+    /**
+     * \brief Elimina la marca de selección del edificio.
+     */
+    void desmarcar();
+
 private:
     std::string id;
     std::string nombre;
@@ -102,6 +117,8 @@ private:
 
     bool esta_destruido = false;
     bool esta_construido = false;
+
+    bool marcado = false;
 
     SpriteAnimado sprite_construccion, sprite_destruccion;
     SpriteCompuesto sprite, sprite_roto;

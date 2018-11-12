@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "cliente/modelo/hud/area_juego.h"
+#include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
 #include "cliente/servidor.h"
 #include "cliente/sonido/sonido.h"
@@ -14,6 +15,10 @@
 
 #define ANCHO_BOTONERA 250
 #define ALTO_BARRA_SUPERIOR 42
+#define ALTO_BARRA_BOTONERA 40
+
+#define MARGEN_TOSTADOR_X 30
+#define MARGEN_TOSTADOR_Y (ALTO_BARRA_SUPERIOR + 20)
 
 namespace cliente {
 
@@ -21,21 +26,50 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
 : WidgetRaiz(ventana.ancho(), ventana.alto()),
   juego(juego_),
   servidor(servidor_),
-  area_juego(juego_), 
-  botonera_lateral(ANCHO_BOTONERA, ventana.alto() / 2),
+  area_juego(juego_, servidor, tostador), 
+  botonera_construccion(ANCHO_BOTONERA, ventana.alto() / 2),
+  botonera_entrenamiento(ANCHO_BOTONERA, ventana.alto() / 2),
   base(0, 0, ventana.ancho(), ventana.alto()), 
-  panel_lateral(ventana.ancho() - ANCHO_BOTONERA, ALTO_BARRA_SUPERIOR, 
-    ANCHO_BOTONERA, ventana.alto() - ALTO_BARRA_SUPERIOR),
-  barra_superior(0, 0, ventana.ancho(), ALTO_BARRA_SUPERIOR),
+  barra_superior(0, 0, ventana.ancho() - ANCHO_BOTONERA, ALTO_BARRA_SUPERIOR),
+  barra_botoneras(ventana.ancho() - ANCHO_BOTONERA, 
+    ventana.alto() / 2 - ALTO_BARRA_BOTONERA, ANCHO_BOTONERA, 
+    ALTO_BARRA_BOTONERA),
   area_general(0, ALTO_BARRA_SUPERIOR, ventana.ancho() - ANCHO_BOTONERA, 
-    ventana.alto() - ALTO_BARRA_SUPERIOR)
+    ventana.alto() - ALTO_BARRA_SUPERIOR),
+  panel_lateral(ventana.ancho() - ANCHO_BOTONERA, 0, 
+    ANCHO_BOTONERA, ventana.alto()),
+  tostador(MARGEN_TOSTADOR_X, MARGEN_TOSTADOR_Y)
 {
     setear_hijo(&base);
-    base.empaquetar_arriba(barra_superior);
-    base.empaquetar_arriba(area_general);
-    area_general.empaquetar_al_frente(area_juego);
-    area_general.empaquetar_al_frente(panel_lateral);
-    panel_lateral.empaquetar_abajo(botonera_lateral);
+    base.empaquetar_al_frente(area_general);
+    base.empaquetar_al_frente(panel_lateral);
+    base.empaquetar_al_frente(tostador);
+    area_general.empaquetar_arriba(barra_superior);
+    area_general.empaquetar_arriba(area_juego);
+
+    panel_lateral.empaquetar_abajo(barra_botoneras);
+    panel_lateral.empaquetar_abajo(botonera_construccion);
+    
+    
+    barra_botoneras.empaquetar_al_frente(modo_construccion);
+    barra_botoneras.empaquetar_al_frente(modo_entrenamiento);
+    barra_botoneras.empaquetar_al_frente(modo_vender);
+
+    modo_construccion.set_imagen("./assets/nuevos/icono-construir.png");
+    modo_construccion.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
+    modo_construccion.set_autopadding(true);
+    modo_construccion.registrar_click([this](){ click_modo_construir(); });
+    
+    modo_entrenamiento.set_imagen("./assets/nuevos/icono-entrenar.png");
+    modo_entrenamiento.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
+    modo_entrenamiento.set_autopadding(true);
+    modo_entrenamiento.registrar_click([this](){ click_modo_entrenar(); });
+    
+    modo_vender.set_imagen("./assets/nuevos/icono-vender.png");
+    modo_vender.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
+    modo_vender.set_autopadding(true);
+    modo_vender.registrar_click([this](){ click_modo_vender(); });    
+    
 
     mutear_sonido.set_tamanio(42, 32);
     mutear_sonido.set_imagen("./assets/nuevos/sin-sonido.png");
@@ -48,11 +82,17 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
     mutear_musica.registrar_click([this](){ toggle_musica(); });
 
     for (const Edificio* edificio : juego.obtener_edificios()) {
-        Boton& btn = *botonera_lateral.crear_boton();
-        btn.set_sprite(edificio->obtener_sprite_boton());
-        btn.registrar_click([this, edificio] () { 
-            construir_edificio(edificio->obtener_clase());
-        });
+        botones_construccion.emplace_back(
+            BotonConstruccion(
+                juego.obtener_infraestructura(), 
+                edificio->obtener_clase(), 
+                servidor,
+                tostador
+            )
+        );
+        botonera_construccion.agregar_widget(botones_construccion.back());
+        botones_construccion.back().en_ubicar_nuevo_edificio(
+            [this, edificio] () { area_juego.ubicar_edificio(edificio); });
     }
 
     barra_superior.empaquetar_al_frente(mutear_sonido);
@@ -62,18 +102,44 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
 
     area_juego.set_tamanio(
         ventana.ancho() - ANCHO_BOTONERA,
-        ventana.alto() - barra_superior.obtener_alto());    
+        ventana.alto() - barra_superior.obtener_alto());
 }
 
 bool HUD::teclado_presionado(tecla_t tecla) {
-    if (tecla == TECLA_SHIFT)
-        shift_presionado = true;
+    switch(tecla) {
+        case TECLA_SHIFT:
+            shift_presionado = true;
+            area_juego.set_modo_vender(true);
+            break;
+        case TECLA_IZQUIERDA:
+        case TECLA_DERECHA:
+        case TECLA_ABAJO:
+        case TECLA_ARRIBA:
+        case TECLA_CTRL:
+            return area_juego.teclado_presionado(tecla);
+        default:
+            break;
+    }
+    
     return false;
 }
 
 bool HUD::teclado_suelto(tecla_t tecla) {
-    if (tecla == TECLA_SHIFT)
-        shift_presionado = false;
+    switch(tecla) {
+        case TECLA_SHIFT:
+            shift_presionado = true;
+            area_juego.set_modo_vender(false);
+            break;
+        case TECLA_IZQUIERDA:
+        case TECLA_DERECHA:
+        case TECLA_ABAJO:
+        case TECLA_ARRIBA:
+        case TECLA_CTRL:
+            return area_juego.teclado_suelto(tecla);
+        default:
+            break;
+    }
+    
     return false;
 }
 
@@ -101,15 +167,27 @@ void HUD::toggle_musica() {
     musica_activa = !musica_activa;
 }
 
-void HUD::construir_edificio(const std::string& clase) {
-    std::cout << "Construyendo: " << clase << std::endl;
-    Sonido::obtener_instancia().reproducir_sonido(SONIDO_BLEEP);
-}
-
 bool HUD::cerrar_ventana() {
     juego.detener();
     servidor.detener();
     return false;
 }
+
+void HUD::click_modo_construir() {
+    area_juego.set_modo_vender(false);
+    panel_lateral.reemplazar_widget(botonera_entrenamiento, 
+        botonera_construccion);
+}
+
+void HUD::click_modo_entrenar() {
+    area_juego.set_modo_vender(false);
+    panel_lateral.reemplazar_widget(botonera_construccion, 
+        botonera_entrenamiento);
+}
+
+void HUD::click_modo_vender() {
+    area_juego.set_modo_vender(true);
+}
+
 
 } // namespace cliente

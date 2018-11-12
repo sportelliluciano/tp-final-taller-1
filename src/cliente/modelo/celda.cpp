@@ -23,7 +23,11 @@ Celda::Celda(tipo_celda_t tipo) {
     id_celda = uid_celda++;
 }
 
-void Celda::agregar_tropa(const Tropa& tropa) {
+bool Celda::es_construible() const {
+    return (tipo_celda == CELDA_ROCA) && (edificio == nullptr);
+}
+
+void Celda::agregar_tropa(Tropa& tropa) {
     tropas.push_back(&tropa);
 }
 
@@ -31,7 +35,7 @@ bool Celda::contiene_tropas() const {
     return tropas.size() != 0;
 }
 
-const std::list<const Tropa*>& Celda::obtener_tropas() const {
+const std::list<Tropa*>& Celda::obtener_tropas() const {
     return tropas;
 }
 
@@ -46,7 +50,7 @@ void Celda::eliminar_tropa(const Tropa& tropa_eliminada) {
     }
 }
 
-void Celda::set_edificio(const Edificio& nuevo_edificio) {
+void Celda::set_edificio(Edificio& nuevo_edificio) {
     if (contiene_edificio())
         throw std::runtime_error("La celda ya tenía un edificio");
     
@@ -57,7 +61,7 @@ bool Celda::contiene_edificio() const {
     return edificio != nullptr;
 }
 
-const Edificio& Celda::obtener_edificio() const {
+Edificio& Celda::obtener_edificio() {
     if (!contiene_edificio())
         throw std::runtime_error("La celda no contiene nigún edificio");
     
