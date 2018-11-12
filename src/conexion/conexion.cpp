@@ -10,8 +10,6 @@
 
 #include "conexion/error_socket.h"
 #include "conexion/error_conexion.h"
-#include "conexion/evento.h"
-#include "conexion/factory_evento.h"
 #include "conexion/socket_conexion.h"
 
 namespace conexion {
@@ -47,20 +45,18 @@ Conexion& Conexion::operator=(Conexion&& otro) {
     return *this;
 }
 
-Evento* Conexion::recibir_evento() {
+nlohmann::json Conexion::recibir_json() {
     std::stringstream resultado;
     uint8_t byte_leido;
     while ((byte_leido = leer_uint8()) != '\n')
         resultado << (char) byte_leido;
 
-    return FactoryEvento::crear_desde_json(
-            nlohmann::json::parse(resultado.str())
-        );
+    return nlohmann::json::parse(resultado.str());
 }
 
-void Conexion::enviar_evento(const Evento& evento) {
-    std::string json_str = evento.serializar().dump();
-    enviar_bytes((uint8_t*)json_str.c_str(), json_str.length() + 1); // + \0
+void Conexion::enviar_json(const nlohmann::json& json_data) {
+    std::string json_str = json_data.dump() + "\n";
+    enviar_bytes((uint8_t*)json_str.c_str(), json_str.length()); // + \0
 }
 
 bool Conexion::esta_conectada() const {

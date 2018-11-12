@@ -6,9 +6,10 @@
 #include <string>
 #include <vector>
 
+#include "libs/json.hpp"
+
 #include "conexion/error_socket.h"
 #include "conexion/error_conexion.h"
-#include "conexion/evento.h"
 #include "conexion/socket_conexion.h"
 
 namespace conexion {
@@ -82,7 +83,7 @@ public:
      * o se produce algún otro error en la misma.
      */
 
-    Evento* recibir_evento();
+    nlohmann::json recibir_json();
     
     /**
      * enviar_x: Envía un dato a través de la conexión.
@@ -91,7 +92,7 @@ public:
      * otro error en la misma durante el envío.
      */
 
-    void enviar_evento(const Evento& evento);
+    void enviar_json(const nlohmann::json& data);
     
     /**
      * Devuelve true si ambos canales de la conexión están abiertos.
