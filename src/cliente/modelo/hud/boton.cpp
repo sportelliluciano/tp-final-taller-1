@@ -51,8 +51,43 @@ void Boton::renderizar(Ventana& ventana, int x, int y) {
             ventana.obtener_administrador_texturas().cargar_imagen(imagen);
         if (autoresize_activo)
             boton = t.obtener_rect();
-        t.renderizar(x + padding_x, y + padding_y, boton, t.obtener_rect());
+        
+        Rectangulo seccion(0, 0, t.obtener_ancho(), t.obtener_alto());
+        Rectangulo destino = boton;
+
+        int h_boton = boton.sdl_rect.h;
+        int w_boton = boton.sdl_rect.w;
+        float relacion_boton = h_boton / (1.0f * w_boton);
+        int h_img = t.obtener_ancho();
+        int w_img = t.obtener_alto();
+        float relacion_img = h_img / (1.0f * w_img);
+
+        if (relacion_boton < relacion_img) {
+            // 2x1 < 1x2
+            //  __   _
+            // |__| | |
+            //      |_|
+            w_img = w_img * (h_boton / (1.0f * h_img));
+            h_img = h_boton;
+        } else {
+            h_img = h_img * (w_boton / (1.0f * w_img));
+            w_img = w_boton;
+        }
+
+        destino.sdl_rect.w = w_img;
+        destino.sdl_rect.h = h_img;
+
+        if (autopadding) {
+            padding_x = (boton.sdl_rect.w - w_img) / 2;
+            padding_y = (boton.sdl_rect.h - h_img) / 2;
+        }
+
+        t.renderizar(x + padding_x, y + padding_y, seccion, destino);
     }
+}
+
+void Boton::set_autopadding(bool activar) {
+    autopadding = activar;
 }
 
 void Boton::set_padding(int x, int y) {

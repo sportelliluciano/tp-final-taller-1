@@ -1,14 +1,18 @@
 #ifndef _AREA_JUEGO_H_
 #define _AREA_JUEGO_H_
 
+#include <unordered_set>
+
 #include "cliente/modelo/juego.h"
+#include "cliente/modelo/hud/tostador.h"
 #include "cliente/video/widgets/widget.h"
+#include "cliente/servidor.h"
 
 namespace cliente {
 
 class AreaJuego : public Widget {
 public:
-    AreaJuego(Juego& juego_);
+    AreaJuego(Juego& juego_, Servidor& servidor_, Tostador& tostador_);
 
     void set_tamanio(int ancho_, int alto_);
 
@@ -75,11 +79,21 @@ public:
     virtual bool mouse_entra(int x, int y);
     virtual bool mouse_sale(int x, int y);
 
+    virtual bool teclado_presionado(tecla_t tecla);
+    virtual bool teclado_suelto(tecla_t tecla);
+
+    void set_modo_vender(bool habilitado);
+
+    void ubicar_edificio(const Edificio* edificio);
+
 private:
     int ancho = 0, alto = 0;
     Juego& juego;
+    Servidor& servidor;
+    Tostador& tostador;
 
     bool esta_draggeando = false;
+    bool ctrl_presionado = false;
 
     int drag_start_x, drag_start_y;
     int drag_end_x, drag_end_y;
@@ -87,9 +101,29 @@ private:
     int mover_camara_x = 0;
     int mover_camara_y = 0;
     int delay_camara = 0;
+
+    bool mouse_en_ventana = false;
+
+    /**
+     * \brief Setear a true para habilitar el modo venta de edificios.
+     */
+    bool en_modo_vender = false;
+
+    int mouse_x = 0, mouse_y = 0;
+
+    SpriteAnimado mouse_vender;
+    SpriteAnimado mouse_mover_tropa;
+    bool animar_mover_tropas = false;
+
+    Edificio* edificio_seleccionado = nullptr;
+    std::unordered_set<Tropa*> unidades_seleccionadas;
+
+    bool seleccionar_edificio(int x, int y);
+    bool seleccionar_tropas(int x0, int y0, int x1, int y1);
+
+    const Edificio* edificio_a_ubicar = nullptr;
 };
 
 } // namespace cliente
 
 #endif // _AREA_JUEGO_H_
-

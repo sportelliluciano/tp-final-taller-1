@@ -30,6 +30,7 @@ public:
     int obtener_ancho() const override;
 
     void autoresize(bool activar);
+    void set_autopadding(bool activar);
 
     void registrar_click(std::function<void(void)> callback);
 
@@ -44,6 +45,7 @@ private:
     const char *imagen;
     int sprite;
     bool autoresize_activo = false;
+    bool autopadding = false;
     
     int padding_x = 0, padding_y = 0;
 
