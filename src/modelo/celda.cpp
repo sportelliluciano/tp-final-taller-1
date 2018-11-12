@@ -2,18 +2,14 @@
 
 namespace modelo {
 
-Celda::Celda(int x_, int y_) {
+Celda::Celda(tipo_celda_t tipo,int x_, int y_) {
     posicion_x = x_;
     posicion_y = y_;
-    tipo_celda = 2;
+    tipo_celda = tipo;
 }
 
 int Celda::tipo() const {
     return tipo_celda;
-}
-
-void Celda::set_tipo(int tipo) {
-    tipo_celda = tipo;
 }
 
 int Celda::x() const {
@@ -24,8 +20,31 @@ int Celda::y() const {
     return posicion_y;
 }
 
-bool Celda::es_caminable() const {
-    return tipo_celda != 0;
+bool Celda::tiene_edificio(){
+    return edificio;
+}
+void Celda::agregar_edificio(){
+    edificio = true;
+}
+void Celda::eliminar_edificio(){
+    edificio = false;
+}
+bool Celda::es_caminable() const{
+    return (tipo_celda == CELDA_ROCA ||
+            tipo_celda == CELDA_ARENA ||
+            tipo_celda == CELDA_DUNA );
+}
+bool Celda::es_construible(){
+    return tipo_celda == CELDA_ROCA;
+}
+bool Celda::hay_tropa(){
+    return tropa;
+}
+void Celda::agregar_tropa(){
+    tropa = true;
+}
+void Celda::eliminar_tropa(){
+    tropa = false;
 }
 
 } // namespace modelo

@@ -7,6 +7,7 @@
 #include "modelo/edificio.h"
 #include "modelo/infraestructura_creador.h"
 #include "modelo/terreno.h"
+#include "modelo/id.h"
 
 namespace modelo {
 
@@ -15,13 +16,18 @@ class Infraestructura{
     Terreno& terreno;
     std::unordered_map<int,Edificio> edificios;
     InfraestructuraCreador prototipos;
+    Id id_;
 
     public:
     Infraestructura(Terreno& mapa);
-    void crear(std::string id_tipo,int x,int y,unsigned int energia);
-    void reciclar(int id);
+    int crear(std::string id_tipo,int x,int y);
+    unsigned int reciclar(int id);
     void destruir(int id);
     Edificio& get(int id);
+    unsigned int get_costo(std::string id_tipo);
+    unsigned int get_energia(std::string id_tipo);
+    unsigned int get_costo(int id);
+    unsigned int get_energia(int id);
 };
 }
 #endif

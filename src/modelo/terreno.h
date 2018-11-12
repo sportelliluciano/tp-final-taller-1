@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "celda.h"
-#include "grafo.h"
-#include "posicion.h"
+#include "modelo/celda.h"
+#include "modelo/grafo.h"
+#include "modelo/posicion.h"
 
 namespace modelo {
 
@@ -28,10 +28,8 @@ public:
     /**
      * \brief Constructor.
      * 
-     * Crea un terreno de tamaño ancho x alto.
-     * Tanto el alto como el ancho se miden en cantidad de celdas.
      */
-    Terreno(int ancho, int alto);
+    Terreno(const char *ruta_csv);
 
     /**
      * \brief Devuelve una referencia a la celda en la posición (x, y).
@@ -54,19 +52,38 @@ public:
     /**
      * \brief Interfaz Grafo: Devuelve los vecinos a un nodo.
      */
-    std::vector<int> obtener_vecinos(int nodo) const;
+    std::vector<int> obtener_vecinos(int nodo) const override;
 
     /**
      * \brief Busca un camino mínimo entre inicio y fin.
      * 
      * Devuelve un vector con cada posición a recorrer.
      */
-    std::vector<Posicion> buscar_camino_minimo(const Celda& inicio, 
-        const Celda& fin) const;
+    std::vector<Posicion> buscar_camino_minimo(const Posicion& inicio, 
+        const Posicion& fin) const;
+    
+    bool rango_valido_edificio(int x_, int y_,std::pair<int,int>& dim);
+    bool rango_valido_tropa(int x_, int y_,std::pair<int,int>& dim);
+    bool tiene_edificio(int x_, int y_);
+    void agregar_edificio(int x_, int y_,std::pair<int,int>& dim);
+    void eliminar_edificio(Posicion& pos,std::pair<int,int>& dim);
+    bool es_caminable(int x_, int y_);
+    bool hay_tropa(int x_, int y_);
+    void agregar_tropa(int x_, int y_,std::pair<int,int>& dim);
+    void eliminar_tropa(Posicion& pos,std::pair<int,int>& dim);
 
 private:
+    /**
+     * \brief Representación del terreno como un arreglo de celdas.
+     * 
+     * El terreno se representa como un arreglo de celdas de 32x32 píxeles.
+     */
     std::vector<std::vector<Celda>> terreno;
-    int ancho_, alto_;
+
+    /**
+     * \brief Dimensiones del terreno, en celdas.
+     */
+    int ancho = 0, alto = 0;
 
     /**
      * \brief Obtiene un hash reversible a partir de una posición discreta.

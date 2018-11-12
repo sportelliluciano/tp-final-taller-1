@@ -87,7 +87,6 @@ std::vector<int>
      * Admite una relación de orden donde un Nodo A es menor que un Nodo B si
      * A.f_score < B.f_score.
      */
-
     std::vector<Nodo> nodos_sin_visitar;
     std::unordered_set<int> nodos_visitados;
     std::unordered_map<int, int> de_donde_vine;
@@ -99,18 +98,17 @@ std::vector<int>
 
     while (!nodos_sin_visitar.empty()) {
         const Nodo& actual = mas_chico(&nodos_sin_visitar);
-        if (actual.id == id_destino)
+        if (actual.id == id_destino){
             return reconstruir_camino(de_donde_vine, actual.id);
-        
+        }
         nodos_visitados.insert(actual.id);
-
         std::vector<int> vecinos = grafo->obtener_vecinos(actual.id);
         for (auto id_vecino=vecinos.begin(); id_vecino != vecinos.end(); ++id_vecino) {
             if (nodos_visitados.count(*id_vecino) != 0){
                 continue;
             }
             double g_score_tentativo = actual.g_score + 
-                distancia_entre(*id_vecino, actual.id);
+                distancia_entre(*id_vecino, actual.id);    
             Nodo* vecino = esta(&nodos_sin_visitar, *id_vecino);
             if (vecino) {
                 if (g_score_tentativo >= (*vecino).g_score){

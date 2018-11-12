@@ -38,4 +38,10 @@ int Edificio::get_id(){
 int Edificio::get_vida(){//temporal
     return caracteristicas.get_vida();
 }
+unsigned int Edificio::get_costo(){
+    return info_base.get_costo();
+}
+unsigned int Edificio::get_energia(){
+    return info_base.get_energia();
+}
 }

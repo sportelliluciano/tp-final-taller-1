@@ -17,19 +17,20 @@ class Ejercito{
     private:
     std::unordered_map<int,Unidad> tropas;
     EjercitoCreador prototipos;
-    //ArmaCreador arma_creador;
     Terreno& terreno;
     Id id_;
 
     public:
     Ejercito(Terreno& terreno);
     ~Ejercito();
-    void crear(std::string id_tipo,int x,int y);
+    int crear(std::string id_tipo,int x,int y);
     void destruir(int id);
     void mover(int id,int x,int y);
+    void actualizar_pos(int id,int x,int y);
     void atacar(int id_victima,int id_atacante);
     void atacar(Edificio& edificio,int id_atacante);
     Unidad& get(int id);
+    unsigned int get_costo(std::string id_tipo);
 };
 }
 #endif

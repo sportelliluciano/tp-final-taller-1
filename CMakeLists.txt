@@ -11,11 +11,11 @@ include_directories(.)
 include_directories(src)
 
 add_subdirectory(src)
-add_subdirectory(test)
+#add_subdirectory(test)
 
 # Generar el cliente
-add_executable(cliente src/cliente/main.cpp)
-target_link_libraries(cliente libcliente)
+#add_executable(cliente src/cliente/main.cpp)
+#target_link_libraries(cliente libcliente)
 
 # Generar el servidor
 add_executable(servidor src/servidor/main.cpp)

@@ -2,8 +2,10 @@
 #define _UNIDAD_BASE_H_
 
 #include <string>
+#include <utility>
 
 #include "libs/json.hpp"
+
 namespace modelo { class UnidadBase; }
 #include "modelo/arma.h"
 
@@ -18,6 +20,7 @@ private:
     unsigned int costo;
     unsigned int vida;
     Arma& arma;
+    std::pair <int,int> dimensiones = std::pair <int,int> (1,1);
 
 public:
     //UnidadBase();
@@ -30,6 +33,7 @@ public:
     unsigned int get_tiempo() const;
     unsigned int get_costo() const;
     unsigned int get_vida() const;
+    std::pair<int,int>& get_dimensiones();
 };
 
 } // namespace modelo

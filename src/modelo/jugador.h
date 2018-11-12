@@ -2,34 +2,28 @@
 #define _JUGADOR_H_
 
 #include <string>
-
-#include "modelo/unidad.h"
-#include "modelo/infraestructura.h"
-#include "modelo/ejercito.h"
-#include "modelo/terreno.h"
+#include <unordered_map>
+#include <set>
 
 namespace modelo {
 
 class Jugador{
     private:
-    Infraestructura inf;
-    Ejercito ejercito;
-    Terreno& terreno;
+    std::string casa;
+    std::set<int> inventario;
     unsigned int energia = 100000;
-
+    unsigned int consumo = 0;
+    
     public:
-    Jugador(Terreno terreno);
+    Jugador(std::string casa);
     ~Jugador();
-    void crear_edificio(std::string id_tipo,int x,int y);
-    void reciclar_edificio(int id);
-    void destruir_edificio(int id);
-    Edificio& get(int id);//temporal
-    void crear_unidad(std::string id_tipo,int x,int y);
-    void destruir_unidad(int id);
-    void mover_unidad(int id,int x,int y);
-    void atacar_unidad(int id_victima,int id_atacante);
-    void atacar_edificio(int id_edificio,int id_atacante);
-    Unidad& get_unidad(int id);
+    void aumentar_consumo(unsigned int consumo_);
+    void reducir_consumo(unsigned int consumo_);
+    std::string get_casa();
+    bool hay_suficiente_energia(unsigned int costo);
+    void agregar_elemento(int id,unsigned int costo,unsigned int energia_);
+    void eliminar_elemento(int id,unsigned int energia_consumida);
+    bool pertenece(int id);
 };
 }
 #endif

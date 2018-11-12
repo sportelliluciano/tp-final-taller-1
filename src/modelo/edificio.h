@@ -22,6 +22,8 @@ class Edificio{
     void recibir_dano(unsigned int dano);
     int get_id();
     int get_vida();//temporal
+    unsigned int get_costo();
+    unsigned int get_energia();
 
 };
 }

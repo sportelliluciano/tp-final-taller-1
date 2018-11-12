@@ -69,6 +69,7 @@ public:
      */
     float x() const;
     float y() const;
+    void actualizar(float x,float y);
 
 private:
     float x_ = 0, y_ = 0;

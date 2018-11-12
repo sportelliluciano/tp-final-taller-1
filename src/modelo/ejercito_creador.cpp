@@ -39,4 +39,10 @@ Unidad EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y){
     
     return Unidad(id,x,y,prototipos_base.at(id_tipo));
 }
+unsigned int EjercitoCreador::get_costo(std::string id_tipo){
+    return prototipos_base.at(id_tipo).get_costo();
+}
+std::pair<int,int>& EjercitoCreador::get_dimensiones(std::string id_tipo){
+    return prototipos_base.at(id_tipo).get_dimensiones();
+}
 }

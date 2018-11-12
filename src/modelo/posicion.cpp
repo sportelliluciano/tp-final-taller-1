@@ -38,5 +38,9 @@ float Posicion::x() const {
 float Posicion::y() const {
     return y_;
 }
+void Posicion::actualizar(float x,float y){
+    x_ = x;
+    y_ = y;
+}
 
 } // namespace modelo

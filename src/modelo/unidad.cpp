@@ -5,13 +5,13 @@
 #include "modelo/arma.h"
 #include "modelo/edificio.h"
 #include "modelo/unidad_base.h"
+#include "modelo/posicion.h"
 
 namespace modelo {
 
 Unidad::Unidad(int id_, int x, int y, UnidadBase& unidad_base_):
     id(id_),
-    pos_x(x),
-    pos_y(y),
+    posicion(Posicion(x,y)),
     vida(unidad_base_.get_vida()),
     unidad_base(unidad_base_)
 {
@@ -21,7 +21,7 @@ Unidad::~Unidad() {
 
 }
 void Unidad::mover(int x, int y){
-
+    posicion.actualizar(x,y);
 }
 void Unidad::recibir_dano(unsigned int dano){
     vida -= dano;
@@ -41,5 +41,17 @@ int Unidad::get_id(){
 }
 unsigned int Unidad::get_vida(){
     return vida;
+}
+std::pair<int,int>& Unidad::get_dimensiones() {
+    return unidad_base.get_dimensiones();
+}
+Posicion& Unidad::get_posicion(){
+    return posicion;
+}
+unsigned int Unidad::x(){
+    return posicion.x();
+}
+unsigned int Unidad::y(){
+    return posicion.y();
 }
 }  // namespace modelo

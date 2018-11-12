@@ -7,10 +7,10 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wshadow -Wpointer-arith")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunreachable-code -Wformat=2")
 
 add_subdirectory(comun)
-add_subdirectory(conexion)
+#add_subdirectory(conexion)
 add_subdirectory(modelo)
 add_subdirectory(servidor)
-add_subdirectory(cliente)
+#add_subdirectory(cliente)
 add_subdirectory(editor)
 
 

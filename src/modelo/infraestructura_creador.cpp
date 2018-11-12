@@ -41,4 +41,7 @@ Edificio InfraestructuraCreador::clonar(std::string id_tipo,int id,int x,int y){
 unsigned int InfraestructuraCreador::get_costo(std::string id_tipo){
     return info_base.at(id_tipo).get_costo();
 }
+unsigned int InfraestructuraCreador::get_energia(std::string id_tipo){
+    return info_base.at(id_tipo).get_energia();
+}
 }
