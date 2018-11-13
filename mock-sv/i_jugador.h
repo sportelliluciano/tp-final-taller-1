@@ -18,15 +18,16 @@ public:
      * 
      * Este ID es único.
      */
-    int obtener_id() const;
+    virtual int obtener_id() const = 0;
 
     /**
      * \brief Indica al jugador que inicie la construcción de un edificio
      *        de la clase indicada.
      * 
      * clase: Clase del edificio a construir
+     * ms: Tiempo de la construcción en milisegundos
      */
-    virtual void iniciar_construccion(const std::string& clase) = 0;
+    virtual void iniciar_construccion(const std::string& clase, int ms) = 0;
 
     /**
      * \brief Sincroniza el temporizador de construcción de la clase con el

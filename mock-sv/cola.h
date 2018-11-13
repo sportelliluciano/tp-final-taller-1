@@ -1,5 +1,12 @@
 #pragma once
 
+#define COLOR_ROJO      "\x1b[31m"
+#define COLOR_VERDE     "\x1b[32m"
+#define COLOR_AMARILLO  "\x1b[33m"
+#define COLOR_RESET     "\x1b[0m"
+
+#include "../src/libs/json.hpp"
+
 class Cola {
 public:
     Cola() { }
