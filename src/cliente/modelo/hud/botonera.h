@@ -46,6 +46,7 @@ public:
      * botonera.
      */
     bool mouse_click_izquierdo(int x, int y) override;
+    bool mouse_click_derecho(int x, int y) override;
 
 private:
     std::list<Widget*> widgets;

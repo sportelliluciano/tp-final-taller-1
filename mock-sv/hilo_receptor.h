@@ -2,6 +2,7 @@
 #define _HILO_RECEPTOR_H_
 
 #include <iostream>
+#include <mutex>
 
 #include "../src/libs/json.hpp"
 
@@ -12,8 +13,10 @@
 
 class HiloReceptor {
 public:
-    HiloReceptor(conexion::Conexion& conexion_, IModelo* modelo_, IJugador* jugador_) 
-    : conexion(conexion_), modelo(modelo_), jugador(jugador_)
+    HiloReceptor(conexion::Conexion& conexion_, IModelo* modelo_, 
+        std::mutex& lock_modelo_, IJugador* jugador_) 
+    : conexion(conexion_), modelo(modelo_), lock_modelo(lock_modelo_), 
+      jugador(jugador_)
     { }
 
     void operator()() {
@@ -23,6 +26,7 @@ public:
                 nlohmann::json evento = conexion.recibir_json();
                 std::cout << COLOR_VERDE ">> " COLOR_RESET << evento.dump() << std::endl;
                 evento_servidor_t id = evento.at("id").get<evento_servidor_t>();
+                lock_modelo.lock();
                 switch(id) {
                     case EVS_INICIAR_CONSTRUCCION:
                         modelo->iniciar_construccion_edificio(
@@ -98,7 +102,7 @@ public:
                         std::cout << "Evento desconocido" << std::endl;
                         break;
                 }
-                
+                lock_modelo.unlock();                
             }
         } catch(const std::exception& e) {
             std::cout << "HR: conexion perdida (" << e.what() << ")" << std::endl;
@@ -114,6 +118,7 @@ private:
     conexion::Conexion& conexion;
     IModelo* modelo;
     IJugador* jugador;
+    std::mutex& lock_modelo;
 
     bool terminar = false;
     int id_jugador;

@@ -62,6 +62,31 @@ bool Botonera::mouse_click_izquierdo(int x, int y) {
     return true;
 }
 
+bool Botonera::mouse_click_derecho(int x, int y) {
+    calcular_padding();
+    int dx = padding_x, dy = padding_y, max_alto = 0;
+    for (Widget* wx : widgets) {
+        if (dx + wx->obtener_ancho() > ancho) {
+            dx = padding_x;
+            dy += max_alto + spacing;
+        }
+
+        if ((dy <= y) && (y <= dy + wx->obtener_alto())) {
+            if ((dx <= x) && (x <= dx + wx->obtener_ancho())) {
+                wx->mouse_click_derecho(x, y);
+                return false;
+            }
+        }
+
+        if (wx->obtener_alto() > max_alto)
+            max_alto = wx->obtener_alto();
+
+        dx += wx->obtener_ancho() + spacing;
+    }
+
+    return true;
+}
+
 void Botonera::renderizar(Ventana& ventana, int x, int y) {
     calcular_padding();
     ventana.dibujar_rectangulo(x, y, x + ancho, y + alto);

@@ -27,24 +27,6 @@ public:
         return terminado;
     }
 
-    void actualizar(int dt) {
-        if (!tropa_creada) {
-            jugador->crear_tropa(0, "a", x_tropa, y_tropa, 100, 
-                jugador->obtener_id());
-            tropa_creada = true;
-        }
-        actualizar_construcciones(dt);
-        if (wait <= 0 && paso_actual == 0) {
-            jugador->mover_tropa(0, camino_tropa);
-            paso_actual = 1;
-            x_destino = camino_tropa[paso_actual].first;
-            y_destino = camino_tropa[paso_actual].second;
-        } else {
-            wait -= dt;
-        }
-        actualizar_tropas(dt);
-    }
-
     void crear_jugador(IJugador* jugador_nuevo) {
         jugador = jugador_nuevo;
     }
@@ -145,6 +127,25 @@ public:
         return false;
     }
 
+    void actualizar(int dt) {
+        if (!tropa_creada) {
+            jugador->crear_tropa(0, "a", x_tropa, y_tropa, 100, 
+                jugador->obtener_id());
+            tropa_creada = true;
+        }
+        actualizar_construcciones(dt);
+        if (wait <= 0 && !esta_en_camino && paso_actual == 0) {
+            jugador->mover_tropa(0, camino_tropa);
+            paso_actual = 0;
+            x_destino = camino_tropa[paso_actual].first;
+            y_destino = camino_tropa[paso_actual].second;
+            esta_en_camino = true;
+        } else {
+            wait -= dt;
+        }
+        actualizar_tropas(dt);
+    }
+
 private:
 
     void actualizar_construcciones(int dt) {
@@ -180,18 +181,25 @@ private:
         }
     }
 
-    bool esta_en_destino() {
-        return (abs(x_destino - x_tropa) < 1) && 
-               (abs(y_destino - y_tropa) < 1);
+    bool llego_a(const std::pair<int, int>& posicion) {
+        return (abs(posicion.first - x_tropa) < 1) && 
+               (abs(posicion.second - y_tropa) < 1);
     }
 
     void actualizar_tropas(int dt) {
-        if (esta_en_destino()) {
-            if (paso_actual < camino_tropa.size()) {
-                jugador->sincronizar_tropa(0, x_tropa, y_tropa);
+        if (esta_en_camino) {
+            if (llego_a(camino_tropa[paso_actual])) {
+                if (paso_actual > 0)
+                    jugador->sincronizar_tropa(0, x_tropa, y_tropa);
+                
                 paso_actual++;
-                x_destino = camino_tropa[paso_actual].first;
-                y_destino = camino_tropa[paso_actual].second;
+
+                if (paso_actual >= camino_tropa.size()) {
+                    esta_en_camino = false;
+                } else {
+                    x_destino = camino_tropa[paso_actual].first;
+                    y_destino = camino_tropa[paso_actual].second;
+                }
             }
         }
 
@@ -250,7 +258,8 @@ private:
     const std::vector<std::pair<int, int>> camino_tropa = 
         { {1*32,5*32}, {2*32,5*32}, {3*32,6*32}, {4*32,6*32},
           {5*32,7*32}, {6*32,7*32}, {7*32,7*32}, {8*32,8*32} };
-    int paso_actual = -2;
+    int paso_actual = 0;
+    bool esta_en_camino = false;
 
     int wait = 5000;
     bool terminado = false;

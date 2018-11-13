@@ -4,6 +4,7 @@
 #include <chrono>
 #include <unordered_map>
 #include <stdexcept>
+#include <mutex>
 #include <thread>
 
 #include "i_modelo.h"
@@ -21,7 +22,8 @@ public:
             throw std::runtime_error("La partida ya fue iniciada");
 
         ultimo_id++;
-        jugadores[ultimo_id] = new ConexionJugador(modelo, jugador, ultimo_id);
+        jugadores[ultimo_id] = new ConexionJugador(modelo, lock_modelo, 
+            jugador, ultimo_id);
         modelo->crear_jugador(jugadores[ultimo_id]);
     }
 
@@ -43,7 +45,9 @@ public:
         const int tick = 20;
         while (!terminar && !modelo->juego_terminado()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(tick));
+            lock_modelo.lock();
             modelo->actualizar(tick);
+            lock_modelo.unlock();
         }
     }
 
@@ -58,6 +62,7 @@ private:
     IModelo *modelo = nullptr;
     std::unordered_map<int, ConexionJugador*> jugadores;
     int ultimo_id = 0;
+    std::mutex lock_modelo;
 };
 
 #endif // _PARTIDA_H_

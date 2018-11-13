@@ -1,6 +1,7 @@
 #ifndef _CONEXION_JUGADOR_H_
 #define _CONEXION_JUGADOR_H_
 
+#include <mutex>
 #include <thread>
 
 #include "../src/conexion/conexion.h"
@@ -15,9 +16,10 @@ using namespace conexion;
 
 class ConexionJugador : public IJugador {
 public:
-    ConexionJugador(IModelo* modelo_, conexion::Conexion* conexion_, int id_)
+    ConexionJugador(IModelo* modelo_, std::mutex& lock_modelo_, 
+        conexion::Conexion* conexion_, int id_)
     : hilo_emisor(*conexion_, cola_salida),
-      hilo_receptor(*conexion_, modelo_, this)
+      hilo_receptor(*conexion_, modelo_, lock_modelo_, this)
     {
         id = id_;
         conexion = conexion_;
