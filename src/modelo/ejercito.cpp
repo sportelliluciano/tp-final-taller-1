@@ -18,7 +18,6 @@ Ejercito::Ejercito(Terreno& terreno_):prototipos(EjercitoCreador(terreno_)),
 Ejercito::~Ejercito(){}
 int Ejercito::crear(std::string id_tipo,int x,int y){
     if (!(terreno.rango_valido_tropa(x,y,prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
-    std::cout << "Pase los condicionales." << '\n';
     int nuevo_id = id_.nuevo_id(); 
     tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,x,y));
     terreno.agregar_tropa(x,y,prototipos.get_dimensiones(id_tipo));
@@ -31,12 +30,11 @@ void Ejercito::destruir(int id){
 }
 void Ejercito::mover(int id,int x,int y){
     //mandar el evento con el camino
-    std::cout << "Llegue a mover." << '\n';
-
-    std::vector<Posicion> v = terreno.buscar_camino_minimo(tropas.at(id).get_posicion(), 
+    std::vector<Posicion> a_estrella = terreno.buscar_camino_minimo(tropas.at(id).get_posicion(), 
                                                            Posicion(x,y));
+    std::vector<Posicion> v;                                                       
     for (auto it = v.begin(); it!=v.end(); ++it){
-        std::cout << "(" << (*it).x() << " ; " << (*it).y() << "(" << '\n'; 
+        std::cout << "(" << (*it).x() << " ; " << (*it).y() << ")" << '\n'; 
     }                                                       
 }
 void Ejercito::actualizar_pos(int id,int x,int y){
