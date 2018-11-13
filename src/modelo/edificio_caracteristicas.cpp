@@ -7,8 +7,7 @@ EdificioCaracteristicas::EdificioCaracteristicas(){
 EdificioCaracteristicas::EdificioCaracteristicas(int id_,int x_,int y_,
                             unsigned int puntos_de_estructura_):
                             id(id_),
-                            x(x_),
-                            y(y_),
+                            posicion(Posicion(x_,y_)),
                             puntos_de_estructura(puntos_de_estructura_){
     //asignar id unico
 }
@@ -25,5 +24,8 @@ int EdificioCaracteristicas::get_id(){
 }
 int EdificioCaracteristicas::get_vida(){
     return puntos_de_estructura;
+}
+Posicion& EdificioCaracteristicas::get_posicion()const{
+    return posicion;
 }
 }

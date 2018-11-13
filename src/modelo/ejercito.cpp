@@ -32,9 +32,11 @@ void Ejercito::mover(int id,int x,int y){
     //mandar el evento con el camino
     std::vector<Posicion> a_estrella = terreno.buscar_camino_minimo(tropas.at(id).get_posicion(), 
                                                            Posicion(x,y));
-    std::vector<Posicion> v;                                                       
-    for (auto it = v.begin(); it!=v.end(); ++it){
-        std::cout << "(" << (*it).x() << " ; " << (*it).y() << ")" << '\n'; 
+    std::vector<int> v;                                                       
+    for (auto it = a_estrella.begin(); it!=a_estrella.end(); ++it){
+        std::cout << "(" << (*it).x() << " ; " << (*it).y() << ")" << '\n';
+        v.push_back((int)(*it).x());
+        v.push_back((int)(*it).y()); 
     }                                                       
 }
 void Ejercito::actualizar_pos(int id,int x,int y){

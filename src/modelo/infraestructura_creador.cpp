@@ -28,10 +28,7 @@ InfraestructuraCreador::InfraestructuraCreador(){
         json elem = valores_por_defecto;
         elem.update(*it);
         info_base.emplace(elem["id"], EdificioBase(elem));
-        //std::cout << "estoy en infraestrucutrua creador"<<'\n';
-        //std::cout << (info_base.at(elem["id"])).get_ptos_est()<<'\n';
         prototipos.emplace(elem["id"], Edificio(info_base.at(elem["id"])));
-        //std::cout << (prototipos.at(elem["id"])).get_vida()<<'\n';
     }
 }
 InfraestructuraCreador::~InfraestructuraCreador(){}
@@ -43,5 +40,8 @@ unsigned int InfraestructuraCreador::get_costo(std::string id_tipo){
 }
 unsigned int InfraestructuraCreador::get_energia(std::string id_tipo){
     return info_base.at(id_tipo).get_energia();
+}
+std::pair<int,int>& InfraestructuraCreador::get_dimensiones(std::string id_tipo)const{
+    return info_base.at(id_tipo).get_dimensiones();
 }
 }

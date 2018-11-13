@@ -16,15 +16,9 @@ Edificio::Edificio(EdificioBase& info_base_,int id,int x,int y):
                                     info_base_.get_ptos_est())),
                                 info_base(info_base_){
 }
-//Edificio::Edificio(){}
-Edificio::~Edificio(){}
-/*
-Edificio& operator=(const Edificio& other){
-    this->caracteristicas = other.caracteristicas;
-    this->info_base = other.info_base;
-}*/
+Edificio::~Edificio(){
+}
 Edificio Edificio::clonar(int id,int x,int y){
-    //std::cout<< info_base.get_ptos_est()<<'\n';
     return Edificio(info_base,id,x,y);    
 }
 void Edificio::recibir_dano(unsigned int dano){
@@ -43,5 +37,11 @@ unsigned int Edificio::get_costo(){
 }
 unsigned int Edificio::get_energia(){
     return info_base.get_energia();
+}
+std::pair<int,int>& Edificio::get_dimensiones()const{
+    return info_base.get_dimensiones();
+}
+Posicion& Edificio::get_posicion()const{
+    return info_base.get_posicion();
 }
 }

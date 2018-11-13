@@ -13,7 +13,6 @@ class Edificio{
     EdificioBase& info_base;
 
     public:
-    //Edificio();
     explicit Edificio(EdificioBase& info_base);
     Edificio(EdificioBase& info_base,int id,int x,int y);
     ~Edificio();
@@ -24,6 +23,8 @@ class Edificio{
     int get_vida();//temporal
     unsigned int get_costo();
     unsigned int get_energia();
+    std::pair<int,int>& get_dimensiones()const;
+    Posicion& get_posicion()const;
 
 };
 }

@@ -2,6 +2,7 @@
 #define _EDIFICIO_BASE_H_
 
 #include <string>
+#include <utility>
 
 #include "libs/json.hpp"
 namespace modelo { class EdificioBase; }
@@ -12,8 +13,7 @@ private:
     std::string tipo;
     unsigned int energia;
     unsigned int costo;
-    unsigned int dimension_x;
-    unsigned int dimension_y;
+    std::pair<int,int> dimensiones;
     unsigned int puntos_de_estructura;
     
 public:
@@ -23,6 +23,7 @@ public:
     unsigned int get_energia() const;
     unsigned int get_costo() const;
     unsigned int get_ptos_est() ;
+    std::pair<int,int>& get_dimensiones();
 };
 
 } // namespace modelo

@@ -14,21 +14,20 @@ namespace modelo {
 
 Infraestructura::Infraestructura(Terreno& mapa):terreno(mapa){}
 int Infraestructura::crear(std::string id_tipo,int x,int y){
-    //if (!terreno.rango_valido(x,y,dim_x,dim_y))raise error;
+    if (!terreno.rango_valido_edificio(x,y,prototipos.get_dimensiones(id_tipo)))return 0;//raise error;
     int nuevo_id = id_.nuevo_id();                                           
     edificios.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,x,y));
-    //terreno.agregar_edificio(x,y,nuevo_id);
+    terreno.agregar_edificio(x,y,prototipos.get_dimensiones(id_tipo));
     return nuevo_id;
 }
 unsigned int Infraestructura::reciclar(int id){
+    //revisar
     unsigned int energia_retorno = (edificios.at(id).get_costo())*FACTOR;
     edificios.erase (id);
     return energia_retorno;
 }
 void Infraestructura::destruir(int id){
-    //int x = edificios.at(id).get_x();
-    //int y = edificios.at(id).get_y();
-    //terreno.eliminar_unidad(x,y,id);
+    terreno.eliminar_edificio(edificios.at(id).get_posicion(),edificios.at(id).get_dimensiones());
     edificios.erase (id);
     //crear y comunicar el evento
 }
