@@ -73,7 +73,7 @@ public:
     Conexion& operator=(Conexion&& otro);
 
     /**
-     * recibir_x: Recibe un dato desde la conexión. Devuelve true si la 
+     * recibir_json: Recibe un dato desde la conexión. Devuelve true si la 
      * recepción fue correcta.
      * 
      * Si el método devuelve false, entonces el servidor envío un tipo de dato
@@ -81,15 +81,21 @@ public:
      * 
      * Puede lanzar ErrorSocket si la conexion se cierra antes de recibir
      * o se produce algún otro error en la misma.
+     * 
+     * Este método se puede ejecutar de manera asincrónica junto con 
+     * enviar_json.
      */
 
     nlohmann::json recibir_json();
     
     /**
-     * enviar_x: Envía un dato a través de la conexión.
+     * enviar_json: Envía un dato a través de la conexión.
      * 
      * Puede lanzar ErrorSocket si la conexión se cierra o se produce algún
      * otro error en la misma durante el envío.
+     *
+     * Este método se puede ejecutar de manera asincrónica junto con 
+     * recibir_json.
      */
 
     void enviar_json(const nlohmann::json& data);
