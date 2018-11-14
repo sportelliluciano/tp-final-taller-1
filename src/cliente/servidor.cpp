@@ -8,7 +8,7 @@
 
 #include "libs/json.hpp"
 
-#include "cliente/video/lock.h"
+#include "conexion/lock.h"
 #include "cliente/eventos/evento.h"
 #include "cliente/eventos/factory_evento.h"
 #include "cliente/eventos/evento_terminar.h"
@@ -22,9 +22,9 @@ using namespace conexion;
 Servidor::Servidor() { 
 }
 
-void Servidor::iniciar() {
+void Servidor::iniciar(const std::string& ip_servidor) {
     terminar = false;
-    conn = new Conexion("localhost", "9432");
+    conn = new Conexion(ip_servidor, "9432");
     hilo_receptor = std::thread(&Servidor::recibir, this);
 }
 
@@ -34,6 +34,9 @@ void Servidor::recibir() {
             try {
                 Evento *ev = FactoryEvento::crear_desde_json(conn->recibir_json());
                 push_evento(ev);
+            } catch (const ErrorSocket& e) {
+                log_error("Error socket: %s", e.what());
+                break;
             } catch (const std::exception& e) {
                 log_error("Datos inválidos: %s", e.what());
             }
@@ -162,7 +165,7 @@ void Servidor::indicar_especia_cosechadora(const std::vector<int>& ids,
 }
 
 void Servidor::detener() {
-    conn->cerrar();
+    conn->cerrar(true);
     delete conn;
     hilo_receptor.join();
 }

@@ -23,7 +23,7 @@ public:
     /**
      * \brief Inicia el hilo servidor.
      */
-    void iniciar();
+    void iniciar(const std::string& ip_servidor);
 
     /**
      * \brief Verifica si hay nuevos eventos provenientes del servidor.

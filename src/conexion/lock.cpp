@@ -1,4 +1,4 @@
-#include "cliente/video/lock.h"
+#include "conexion/lock.h"
 
 #include <mutex>
 
