@@ -18,12 +18,49 @@ namespace cliente {
  */
 class Servidor {
 public:
-    Servidor();
+    /**
+     * \brief Abre la conexión al servidor.
+     */
+    Servidor(const std::string& ip_servidor, const std::string& puerto);
     
     /**
-     * \brief Inicia el hilo servidor.
+     * \brief Obtiene las salas disponibles en el servidor.
+     * 
+     * Esta función bloquea hasta que se hayan recibido los datos.
      */
-    void iniciar(const std::string& ip_servidor);
+    std::vector<std::string> obtener_salas();
+
+    /**
+     * \brief Obtiene los mapas disponibles para una nueva sala.
+     * 
+     * Esta función bloquea hasta que se hayan recibido los datos.
+     */
+    std::vector<std::string> obtener_mapas();
+
+    /**
+     * \brief Une al cliente a la sala indicada.
+     * 
+     * Devuelve true si se pudo unir, false en caso contrario.
+     */
+    bool unirse_a_sala(const std::string& sala);
+
+    /**
+     * \brief Deja la sala a la que el cliente está conectado actualmente.
+     * 
+     * Devuelve true si se pudo dejar, false en caso contrario.
+     */
+    bool dejar_sala();
+
+    /**
+     * \brief Crea una nueva sala y une al jugador actual a la misma.
+     *        Devuelve true si se creó la sala; false en caso contrario.
+     */
+    bool crear_sala(const std::string& nombre, const std::string& mapa);
+    
+    /**
+     * \brief Inicia la recepción asincrónica de mensajes del juego.
+     */
+    void iniciar_juego();
 
     /**
      * \brief Verifica si hay nuevos eventos provenientes del servidor.

@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="imgs/nuevos">
+    <file>check-square-solid.svg</file>
+    <file>square-solid.svg</file>
+  </qresource>
+</RCC>

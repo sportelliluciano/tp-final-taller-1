@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
+add_subdirectory(lanzador)
 add_subdirectory(video)
 add_subdirectory(sonido)
 add_subdirectory(modelo)
@@ -12,7 +13,7 @@ list(REMOVE_ITEM libcliente_srcs "main.cpp")
 
 # Generar una libería estática con todo el cliente EXCEPTO el main
 add_library(libcliente ${libcliente_srcs})
-target_link_libraries(libcliente conexion clientevideo clientemodelo clientesonido)
+target_link_libraries(libcliente lanzadorcliente conexion clientevideo clientemodelo clientesonido)
 
 # La idea de generar la librería es poder linkear más adelante con el
 #  ejecutable de pruebas unitarias.

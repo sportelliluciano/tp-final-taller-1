@@ -19,12 +19,91 @@ namespace cliente {
 
 using namespace conexion;
 
-Servidor::Servidor() { 
+Servidor::Servidor(const std::string& ip_servidor, 
+    const std::string& puerto) 
+{
+    terminar = false;
+    conn = new Conexion(ip_servidor, puerto);
 }
 
-void Servidor::iniciar(const std::string& ip_servidor) {
-    terminar = false;
-    conn = new Conexion(ip_servidor, "9432");
+std::vector<std::string> Servidor::obtener_salas() {
+    conn->enviar_json({
+        {"tipo", "listar_salas"}
+    });
+
+    nlohmann::json data = conn->recibir_json();
+    if (data.at("estado") != "OK")
+        throw std::runtime_error(data.at("mensaje"));
+    
+    std::vector<std::string> nombre_salas;
+    const std::vector<nlohmann::json>& salas = data.at("salas");
+
+    for (const nlohmann::json& sala : salas) {
+        nombre_salas.push_back(sala.at("nombre"));
+    }
+
+    return nombre_salas;
+}
+
+std::vector<std::string> Servidor::obtener_mapas() {
+    conn->enviar_json({
+        {"tipo", "listar_mapas"}
+    });
+
+    nlohmann::json data = conn->recibir_json();
+    if (data.at("estado") != "OK")
+        throw std::runtime_error(data.at("mensaje"));
+    
+    std::vector<std::string> nombre_mapas;
+    const std::vector<nlohmann::json>& mapas = data.at("mapas");
+
+    for (const std::string& mapa : mapas) {
+        nombre_mapas.push_back(mapa);
+    }
+
+    return nombre_mapas;
+}
+
+bool Servidor::unirse_a_sala(const std::string& sala) {
+    conn->enviar_json({
+        {"tipo", "unirse"},
+        {"sala", sala}
+    });
+
+    nlohmann::json respuesta = conn->recibir_json();
+    if (respuesta.at("estado") != "OK")
+        return false;
+    
+    return true;
+}
+
+bool Servidor::dejar_sala() {
+    conn->enviar_json({
+        {"tipo", "dejar_sala"},
+    });
+
+    nlohmann::json respuesta = conn->recibir_json();
+    if (respuesta.at("estado") != "OK")
+        return false;
+    
+    return true;
+}
+
+bool Servidor::crear_sala(const std::string& nombre, const std::string& mapa) {
+    conn->enviar_json({
+        {"tipo", "crear_sala"},
+        {"nombre", nombre},
+        {"mapa", mapa}
+    });
+
+    nlohmann::json respuesta = conn->recibir_json();
+    if (respuesta.at("estado") != "OK")
+        return false;
+    
+    return true;
+}
+
+void Servidor::iniciar_juego() {   
     hilo_receptor = std::thread(&Servidor::recibir, this);
 }
 
@@ -167,7 +246,8 @@ void Servidor::indicar_especia_cosechadora(const std::vector<int>& ids,
 void Servidor::detener() {
     conn->cerrar(true);
     delete conn;
-    hilo_receptor.join();
+    if (hilo_receptor.joinable())
+        hilo_receptor.join();
 }
 
 Servidor::~Servidor() {
