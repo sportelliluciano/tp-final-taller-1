@@ -386,7 +386,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLineEdit" name="btnNombreJugador">
+      <widget class="QLineEdit" name="txtNombreJugador">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -440,6 +440,9 @@
           <property name="text">
            <string>HARKONNEN</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -453,6 +456,22 @@
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QPushButton" name="btnActualizarJugadores">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>290</y>
+         <width>111</width>
+         <height>29</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>ACTUALIZAR</string>
+       </property>
       </widget>
      </widget>
     </item>
