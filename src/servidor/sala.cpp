@@ -27,7 +27,6 @@ Sala::Sala(Sala&& otro) {
             "No se puede mover la sala con la partida iniciada");
     }
 
-
     modelo = otro.modelo;
     otro.modelo = nullptr;
     jugadores = std::move(otro.jugadores);
@@ -38,7 +37,7 @@ Sala::Sala(Sala&& otro) {
 }
 
 bool Sala::puede_unirse() const {
-    return (jugadores.size() >= capacidad) || modelo->partida_iniciada();
+    return (jugadores.size() >= capacidad) || !modelo->partida_iniciada();
 }
 
 void Sala::agregar_cliente(Cliente& cliente) {
@@ -73,13 +72,13 @@ void Sala::configurar_recepcion_eventos() {
     for (auto it=clientes.begin();it!=clientes.end();++it) {
         Cliente& cliente = *it->first;
         
+        modelo->crear_jugador(&it->second);
+        
         cliente.al_recibir_datos(
             [this, &it] (const nlohmann::json& data) {
                 actualizar_modelo(&it->second, data);
             }
         );
-
-        modelo->crear_jugador(&it->second);
     }
 }
 
