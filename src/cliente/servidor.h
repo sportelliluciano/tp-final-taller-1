@@ -56,9 +56,18 @@ public:
      *        Devuelve true si se creó la sala; false en caso contrario.
      */
     bool crear_sala(const std::string& nombre, const std::string& mapa);
+
+    /**
+     * \brief Avisa el servidor que el jugador ya inició el cliente del juego.
+     */
+    void avisar_jugador_listo();
     
     /**
-     * \brief Inicia la recepción asincrónica de mensajes del juego.
+     * \brief Espera a que el servidor sincronice el inicio del juego 
+     *        e inicia la recepción asincrónica de mensajes.
+     * 
+     * Este método bloquea hasta que el servidor sincronice el inicio del 
+     * juego.
      */
     void iniciar_juego();
 

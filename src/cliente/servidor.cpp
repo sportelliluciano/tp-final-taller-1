@@ -103,7 +103,20 @@ bool Servidor::crear_sala(const std::string& nombre, const std::string& mapa) {
     return true;
 }
 
-void Servidor::iniciar_juego() {   
+void Servidor::avisar_jugador_listo() {
+    conn->enviar_json({
+        {"tipo", "iniciar_juego"}
+    });
+}
+
+void Servidor::iniciar_juego() {
+    nlohmann::json data;
+    data = conn->recibir_json();
+    
+    if (data.at("tipo") != "juego_iniciando") {
+        throw std::runtime_error("Se esperaba un comando juego_iniciando");
+    }
+
     hilo_receptor = std::thread(&Servidor::recibir, this);
 }
 

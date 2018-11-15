@@ -6,6 +6,7 @@
 
 #include "cliente/modelo/controlador.h"
 #include "cliente/modelo/juego.h"
+#include "cliente/modelo/pantalla_carga.h"
 #include "cliente/partida.h"
 #include "cliente/servidor.h"
 #include "cliente/sonido/sonido.h"
@@ -47,6 +48,11 @@ bool ClienteJuego::ejecutar_juego() {
     
     Ventana ventana(partida.ancho_ventana(), partida.alto_ventana(),
         partida.pantalla_completa(), partida.vsync());
+    
+    PantallaCarga pantalla_carga;
+
+    pantalla_carga.renderizar(ventana);
+    ventana.actualizar();
 
     // TODO: configurar sonido
 
@@ -54,6 +60,7 @@ bool ClienteJuego::ejecutar_juego() {
     
     Servidor *servidor = partida.servidor();
     partida.servidor(nullptr);
+    servidor->iniciar_juego();
     
     Controlador controlador(ventana, *servidor, juego);
 
