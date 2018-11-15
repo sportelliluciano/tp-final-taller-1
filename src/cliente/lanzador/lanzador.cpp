@@ -47,6 +47,19 @@ void Lanzador::list_salas_item_clicked() {
 }
 
 void Lanzador::btn_iniciar_juego_click() {
+    if (!servidor) {
+        QMessageBox msgBox;
+        msgBox.setText("No estás conectado");
+        msgBox.exec();
+        return;
+    }
+    servidor->avisar_jugador_listo();
+    partida.servidor(servidor);
+    partida.musica(ui->cbMusica->isChecked());
+    partida.sonido(ui->cbSFX->isChecked());
+    partida.pantalla_completa(ui->cbPantallaCompleta->isChecked());
+    partida.vsync(ui->cbVsync->isChecked());
+    partida.partida_lista(true);
     close();
 }
 

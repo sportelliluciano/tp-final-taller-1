@@ -6,483 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
+    <width>1028</width>
     <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dune Remake</string>
   </property>
-  <widget class="QWidget" name="horizontalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1031</width>
-     <height>511</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QFrame" name="frame_3">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>-1</y>
-         <width>341</width>
-         <height>81</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>26</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>CONECTAR AL SERVIDOR</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_4">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>110</y>
-         <width>181</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>DIRECCIÓN DEL SERVIDOR</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtDireccionServidor">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>130</y>
-         <width>210</width>
-         <height>29</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_5">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>110</y>
-         <width>67</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>PUERTO</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtPuertoServidor">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>130</y>
-         <width>99</width>
-         <height>29</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnConectar">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>170</y>
-         <width>181</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CONECTAR</string>
-       </property>
-      </widget>
-      <widget class="QListWidget" name="listServidoresRecientes">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>310</y>
-         <width>321</width>
-         <height>192</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_6">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>290</y>
-         <width>310</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>SERVIDORES RECIENTES</string>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame_2">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>341</width>
-         <height>81</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>26</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>ELEGIR SALA</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QListWidget" name="listSalasDisponibles">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>130</y>
-         <width>331</width>
-         <height>151</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_7">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>110</y>
-         <width>331</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>SALAS DISPONIBLES</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_9">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>370</y>
-         <width>331</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CREAR UNA NUEVA SALA</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtNombreSala">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>390</y>
-         <width>331</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="placeholderText">
-        <string>Nombre de la sala</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnCrearSala">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>470</y>
-         <width>201</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CREAR SALA</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnElegirSala">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>290</y>
-         <width>111</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>UNIRSE</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnActualizar">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>290</y>
-         <width>111</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>ACTUALIZAR</string>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="cbMapas">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>430</y>
-         <width>271</width>
-         <height>25</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_15">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>435</y>
-         <width>67</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>MAPA:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_16">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>330</y>
-         <width>121</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CONECTADO A:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="lblNombreSala">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>330</y>
-         <width>211</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>-</string>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QLabel" name="label_3">
-       <property name="geometry">
-        <rect>
-         <x>-10</x>
-         <y>0</y>
-         <width>341</width>
-         <height>81</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>26</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>INICIAR JUEGO</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_8">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>310</y>
-         <width>331</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>JUGADORES EN LA SALA</string>
-       </property>
-      </widget>
-      <widget class="QListWidget" name="listJugadoresEnSala">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>330</y>
-         <width>321</width>
-         <height>171</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtNombreJugador">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>130</y>
-         <width>331</width>
-         <height>29</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_10">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>110</y>
-         <width>321</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>MI NOMBRE</string>
-       </property>
-      </widget>
-      <widget class="QWidget" name="horizontalLayoutWidget_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>160</y>
-         <width>331</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QRadioButton" name="rbAtreides">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>ATREIDES</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="rbHarkonnen">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>HARKONNEN</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="rbOrdos">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>ORDOS</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QPushButton" name="btnActualizarJugadores">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>210</x>
-         <y>290</y>
-         <width>111</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>ACTUALIZAR</string>
-       </property>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QFrame" name="frame_4">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>353</x>
      <y>520</y>
-     <width>1024</width>
+     <width>671</width>
      <height>80</height>
     </rect>
    </property>
@@ -495,10 +31,10 @@
    <widget class="QPushButton" name="btnIniciarJuego">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>0</y>
+      <x>470</x>
+      <y>10</y>
       <width>191</width>
-      <height>71</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="font">
@@ -694,6 +230,387 @@ QCheckBox::indicator:unchecked {
     </property>
     <property name="wordWrap">
      <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QFrame" name="frame_3">
+   <property name="geometry">
+    <rect>
+     <x>1</x>
+     <y>1</y>
+     <width>341</width>
+     <height>601</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>-1</y>
+      <width>341</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>26</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>CONECTAR AL SERVIDOR</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>181</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DIRECCIÓN DEL SERVIDOR</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtDireccionServidor">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>120</y>
+      <width>210</width>
+      <height>29</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>100</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PUERTO</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtPuertoServidor">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>120</y>
+      <width>99</width>
+      <height>29</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnConectar">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>160</y>
+      <width>181</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CONECTAR</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnCrearSala">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>540</y>
+      <width>201</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CREAR SALA</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>230</y>
+      <width>141</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SALAS DISPONIBLES</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnElegirSala">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>390</y>
+      <width>111</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UNIRSE</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtNombreSala">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>460</y>
+      <width>321</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Nombre de la sala</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cbMapas">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>500</y>
+      <width>261</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>505</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>MAPA:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnActualizar">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>220</y>
+      <width>111</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ACTUALIZAR</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>440</y>
+      <width>321</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CREAR UNA NUEVA SALA</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listSalasDisponibles">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>250</y>
+      <width>321</width>
+      <height>131</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>349</x>
+     <y>1</y>
+     <width>681</width>
+     <height>509</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="lblNombreSala">
+    <property name="geometry">
+     <rect>
+      <x>-10</x>
+      <y>0</y>
+      <width>681</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>26</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>DESCONECTADO</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>310</y>
+      <width>331</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>JUGADORES EN LA SALA</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listJugadoresEnSala">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>330</y>
+      <width>321</width>
+      <height>171</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtNombreJugador">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>130</y>
+      <width>331</width>
+      <height>29</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>110</y>
+      <width>321</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>MI NOMBRE</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>160</y>
+      <width>331</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QRadioButton" name="rbAtreides">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>ATREIDES</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rbHarkonnen">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>HARKONNEN</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rbOrdos">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>ORDOS</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="btnActualizarJugadores">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>300</y>
+      <width>111</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ACTUALIZAR</string>
     </property>
    </widget>
   </widget>
