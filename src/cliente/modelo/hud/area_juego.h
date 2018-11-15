@@ -5,6 +5,8 @@
 
 #include "cliente/modelo/juego.h"
 #include "cliente/modelo/hud/tostador.h"
+#include "cliente/video/camara.h"
+#include "cliente/video/posicion.h"
 #include "cliente/video/widgets/widget.h"
 #include "cliente/servidor.h"
 
@@ -88,6 +90,7 @@ public:
 
 private:
     int ancho = 0, alto = 0;
+    Camara camara;
     Juego& juego;
     Servidor& servidor;
     Tostador& tostador;
@@ -109,7 +112,7 @@ private:
      */
     bool en_modo_vender = false;
 
-    int mouse_x = 0, mouse_y = 0;
+    Posicion mouse;
 
     SpriteAnimado mouse_vender;
     SpriteAnimado mouse_mover_tropa;

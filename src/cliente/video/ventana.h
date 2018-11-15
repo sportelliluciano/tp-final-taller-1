@@ -3,10 +3,8 @@
 
 #include <SDL2/SDL.h>
 
-#include <functional>
-#include <unordered_map>
-
 #include "cliente/video/administrador_texturas.h"
+#include "cliente/video/camara.h"
 #include "cliente/video/i_notificable.h"
 #include "cliente/video/teclas.h"
 
@@ -23,9 +21,17 @@ public:
     Ventana();
 
     /**
-     * \brief Crea una ventana de tamaño w x h.
+     * \brief Crea una nueva ventana.
+     * 
+     * La nueva ventana creada será de w x h.
+     * 
+     * Si pantalla_completa es true, se ignorará el tamaño pasado y se mostrará
+     * la ventana a pantalla completa, en la resolución nativa.
+     * 
+     * Si vsync es true, se intentará utilizar sincronizmo vertical. Si es 
+     * false se desactivará el sincronizmo vertical (aunque esté disponible).
      */
-    Ventana(int w, int h);
+    Ventana(int w, int h, bool pantalla_completa = false, bool vsync_ = true);
 
     /**
      * \brief Actualiza la imagen mostrada en la ventana.
@@ -90,7 +96,7 @@ public:
      * \brief Dibuja una grilla de 32x32 sobre la ventana.
      * TODO: Eliminar esto
      */
-    void dibujar_grilla();
+    void dibujar_grilla(int x_offset, int y_offset);
 
     /**
      * \brief Setea el viewport de la ventana al rectángulo indicado.

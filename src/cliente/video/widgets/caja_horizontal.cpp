@@ -1,6 +1,7 @@
 #include "cliente/video/widgets/caja_horizontal.h"
 
 #include <iostream>
+#include <functional>
 #include <list>
 
 #include "cliente/video/widgets/widget.h"

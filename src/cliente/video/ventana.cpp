@@ -3,9 +3,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include <iostream>
-
 #include "cliente/video/administrador_texturas.h"
+#include "cliente/video/camara.h"
 #include "cliente/video/error_sdl.h"
 #include "cliente/video/i_notificable.h"
 #include "cliente/video/log.h"
@@ -25,21 +24,34 @@ namespace cliente {
 
 Ventana::Ventana() : Ventana(ANCHO_VENTANA_DEFECTO, ALTO_VENTANA_DEFECTO) { }
 
-Ventana::Ventana(int w, int h) {
+Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) != 0)
         throw ErrorSDL("SDL_Init");
     
     if (TTF_Init() != 0)
         throw ErrorSDL("TTF_Init", TTF_GetError());
     
-    ventana = SDL_CreateWindow("Dune remake", SDL_WINDOWPOS_UNDEFINED, 
-        SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN);
+    if (pantalla_completa) {
+        ventana = SDL_CreateWindow("Dune Remake", 
+            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+            0, 0, 
+            SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
+    } else {
+        ventana = SDL_CreateWindow("Dune remake", 
+            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+            w, h, 
+            SDL_WINDOW_SHOWN);
+    }
     
     if (!ventana)
         throw ErrorSDL("SDL_CreateWindow");
+
+    Uint32 renderer_flags = SDL_RENDERER_ACCELERATED;
     
-    renderer = SDL_CreateRenderer(ventana, 0, 
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (vsync_)
+        renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
+
+    renderer = SDL_CreateRenderer(ventana, 0, renderer_flags);
 
     if (!renderer) {
         SDL_DestroyWindow(ventana);
@@ -69,11 +81,16 @@ Ventana::Ventana(int w, int h) {
 
     vsync = (info.flags & SDL_RENDERER_PRESENTVSYNC) ? true : false;
     admin_texturas = new AdministradorTexturas(renderer);
+    
+    SDL_GetWindowSize(ventana, &ancho_px, &alto_px);
+    ancho_vp = ancho_px;
+    alto_vp = alto_px;
+    
     ticks_ultimo_cuadro = 0;
-    log_depuracion("VSync: %s", vsync ? "SI":"NO");
-    ancho_vp = ancho_px = w;
-    alto_vp = alto_px = h;
     ticks_ultimo_segundo = veces_renderizado = fps_ = 0;
+    
+    log_depuracion("VSync: %s", vsync ? "SI":"NO");
+    log_depuracion("Tamaño de ventana: %dx%d", ancho_px, alto_px);
 }
 
 int Ventana::ancho() const {
@@ -262,15 +279,17 @@ void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
     SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
 
-void Ventana::dibujar_grilla() {
+void Ventana::dibujar_grilla(int x_offset, int y_offset) {
     Uint8 r, g, b, a;
     SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     /******** GRILLA DEPURACION *********/
     for (int i=0;i<ancho() / 32; i++) {
-        SDL_RenderDrawLine(renderer, i*32, 0, i*32, alto());
+        SDL_RenderDrawLine(renderer, x_offset + i*32, y_offset, 
+            x_offset + i*32, alto() + y_offset);
         for (int j=0;j<=alto() / 32; j++) {
-            SDL_RenderDrawLine(renderer, 0, j * 32, ancho(), j * 32);
+            SDL_RenderDrawLine(renderer, x_offset, j * 32 + y_offset, 
+                ancho() + x_offset, j * 32 + y_offset);
         }
     }
     /************************************/

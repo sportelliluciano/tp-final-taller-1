@@ -2,6 +2,7 @@
 
 #include "cliente/modelo/sprite.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/video/camara.h"
 #include "cliente/video/ventana.h"
 
 #define SPRITE_INICIAL 3802
@@ -19,11 +20,11 @@ void GusanoArena::aparecer(int x_, int y_) {
     mostrar = true;
 }
 
-void GusanoArena::renderizar(Ventana& ventana) {
+void GusanoArena::renderizar(Ventana& ventana, Camara& camara) {
     if (mostrar) {
-        int x_px, y_px;
-        terreno.convertir_a_px(x, y, x_px, y_px);
-        sprite.renderizar(ventana, x_px, y_px);
+        // TODO: no renderizar si no es visible
+        Posicion visual = camara.traducir_a_visual(Posicion(x, y));
+        sprite.renderizar(ventana, visual.x, visual.y);
         if (sprite.finalizado())
             mostrar = false;
     }

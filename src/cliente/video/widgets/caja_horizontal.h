@@ -2,6 +2,7 @@
 #define _CAJA_HORIZONTAL_H_
 
 #include <list>
+#include <functional>
 
 #include "cliente/video/widgets/widget.h"
 

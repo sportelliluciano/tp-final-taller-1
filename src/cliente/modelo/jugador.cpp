@@ -1,13 +1,20 @@
 #include "cliente/modelo/jugador.h"
 
+#include "cliente/modelo/ejercito.h"
+#include "cliente/modelo/infraestructura.h"
+#include "cliente/modelo/terreno.h"
+#include "cliente/video/camara.h"
+#include "cliente/video/ventana.h"
+
 namespace cliente {
 
-Jugador::Jugador(Terreno& terreno_juego) : terreno(terreno_juego),
-    infraestructura(terreno), tropas(terreno) { }
+Jugador::Jugador(Terreno& terreno) 
+: infraestructura(terreno), tropas(terreno) 
+{ }
 
-void Jugador::renderizar(Ventana& ventana) {
-    infraestructura.renderizar(ventana);
-    tropas.renderizar(ventana);
+void Jugador::renderizar(Ventana& ventana, Camara& camara) {
+    infraestructura.renderizar(ventana, camara);
+    tropas.renderizar(ventana, camara);
 }
 
 void Jugador::actualizar(int t_ms) {

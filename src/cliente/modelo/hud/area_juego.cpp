@@ -2,6 +2,7 @@
 
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
+#include "cliente/video/camara.h"
 #include "cliente/servidor.h"
 
 #define ANCHO_MOV_CAMARA 15
@@ -33,6 +34,7 @@ int AreaJuego::obtener_ancho() const {
 void AreaJuego::set_tamanio(int ancho_, int alto_) {
     ancho = ancho_;
     alto = alto_;
+    camara = Camara(ancho, alto);
 }
 
 void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
@@ -40,12 +42,13 @@ void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
     
     if ((mover_camara_x != 0) || (mover_camara_y != 0)) {
         if (ventana.obtener_ms() - delay_camara > DELAY_CAMARA_MS) {
-            juego.mover_camara(mover_camara_x, mover_camara_y);
+            camara.desplazar_camara(Posicion(32 * mover_camara_x, 
+                32 * mover_camara_y));
             delay_camara = ventana.obtener_ms();
         }
     }
 
-    juego.renderizar(ventana);
+    juego.renderizar(ventana, camara);
 
     if (esta_draggeando) {
         ventana.dibujar_rectangulo(drag_start_x, drag_start_y,
@@ -53,17 +56,18 @@ void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
     }
 
     if (edificio_a_ubicar) {
-        int pos_x, pos_y, celda_px, celda_py;
+        int celda_x, celda_y;
         Terreno& terreno = juego.obtener_terreno();
-        terreno.calcular_celda(
-            mouse_x, mouse_y, pos_x, pos_y);
-        for (int celda_x=0;celda_x<edificio_a_ubicar->obtener_ancho_celdas();celda_x++) {
-            for (int celda_y=0;celda_y<edificio_a_ubicar->obtener_alto_celdas();celda_y++) {
-                terreno.convertir_a_px(pos_x + celda_x, pos_y + celda_y, celda_px, celda_py);
-                if (terreno.es_construible(pos_x + celda_x, pos_y + celda_y)) {
-                    Sprite(0).renderizar(ventana, celda_px, celda_py);
+        terreno.obtener_celda(camara.traducir_a_logica(mouse), celda_x, celda_y);
+
+        for (;celda_x<edificio_a_ubicar->obtener_ancho_celdas();celda_x++) {
+            for (;celda_y<edificio_a_ubicar->obtener_alto_celdas();celda_y++) {
+                Posicion visual = camara.traducir_a_visual(
+                    terreno.obtener_posicion(celda_x, celda_y));
+                if (terreno.es_construible(celda_x, celda_y)) {
+                    Sprite(0).renderizar(ventana, visual.x, visual.y);
                 } else {
-                    Sprite(1).renderizar(ventana, celda_px, celda_py);
+                    Sprite(1).renderizar(ventana, visual.x, visual.y);
                 }
             }
         }
@@ -72,10 +76,10 @@ void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
     if (mouse_en_ventana) {
         if (en_modo_vender) {
             ventana.ocultar_mouse();
-            mouse_vender.renderizar(ventana, mouse_x, mouse_y);
+            mouse_vender.renderizar(ventana, mouse.x, mouse.y);
         } else if (animar_mover_tropas) {
             ventana.ocultar_mouse();
-            mouse_mover_tropa.renderizar(ventana, mouse_x, mouse_y);
+            mouse_mover_tropa.renderizar(ventana, mouse.x, mouse.y);
             if (mouse_mover_tropa.finalizado())
                 animar_mover_tropas = false;
         } else {
@@ -94,7 +98,8 @@ void AreaJuego::set_modo_vender(bool habilitado) {
 
 bool AreaJuego::seleccionar_edificio(int x, int y) {
     Edificio* nuevo_seleccionado = 
-        juego.obtener_terreno().obtener_edificio_en(x, y);
+        juego.obtener_terreno()
+            .obtener_edificio_en(camara.traducir_a_logica(Posicion(x, y)));
     
     if (edificio_seleccionado)
         edificio_seleccionado->desmarcar();
@@ -109,7 +114,13 @@ bool AreaJuego::seleccionar_edificio(int x, int y) {
 
 bool AreaJuego::seleccionar_tropas(int x0, int y0, int x1, int y1) {
     std::unordered_set<Tropa*> nueva_seleccion =
-        juego.obtener_terreno().seleccionar_unidades(x0, y0, x1, y1);
+        juego.obtener_terreno()
+            .obtener_tropas_en(
+                Rectangulo(
+                    camara.traducir_a_logica(Posicion(x0, y0)), 
+                    camara.traducir_a_logica(Posicion(x1, y1))
+                )
+            );
     
     if (!ctrl_presionado) {
         for (Tropa* tropa : unidades_seleccionadas) {
@@ -132,7 +143,8 @@ bool AreaJuego::seleccionar_tropas(int x0, int y0, int x1, int y1) {
 bool AreaJuego::mouse_click_izquierdo(int x, int y) {
     if (edificio_a_ubicar) {
         int celda_x, celda_y;
-        juego.obtener_terreno().calcular_celda(x, y, celda_x, celda_y);
+        juego.obtener_terreno().obtener_celda(
+                camara.traducir_a_logica(Posicion(x, y)), celda_x, celda_y);
         servidor.ubicar_edificio(edificio_a_ubicar->obtener_clase(),
             celda_x, celda_y);
         tostador.hacer_tostada("Ubicando edificio: " + 
@@ -163,7 +175,8 @@ bool AreaJuego::mouse_click_izquierdo(int x, int y) {
 
 bool AreaJuego::mouse_click_derecho(int x, int y) {
     int celda_x, celda_y;
-    juego.obtener_terreno().calcular_celda(x, y, celda_x, celda_y);
+    juego.obtener_terreno().obtener_celda(
+        camara.traducir_a_logica(Posicion(x, y)), celda_x, celda_y);
     
     std::vector<int> ids;
     for (Tropa* tropa : unidades_seleccionadas) {
@@ -186,8 +199,8 @@ bool AreaJuego::mouse_inicio_arrastre(int x, int y) {
 }
 
 bool AreaJuego::mouse_movimiento(int x, int y) {
-    mouse_x = x;
-    mouse_y = y;
+    mouse.x = x;
+    mouse.y = y;
 
     if (esta_draggeando) {
         drag_end_x = x;

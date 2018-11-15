@@ -1,6 +1,7 @@
 #ifndef _CAJA_VERTICAL_H_
 #define _CAJA_VERTICAL_H_
 
+#include <functional>
 #include <list>
 
 #include "cliente/video/widgets/widget.h"

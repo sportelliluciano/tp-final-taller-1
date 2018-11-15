@@ -2,19 +2,18 @@
 
 #include <iostream>
 #include <fstream>
+#include <functional>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
 
+#include "cliente/modelo/celda.h"
+#include "cliente/video/camara.h"
 #include "cliente/video/ventana.h"
+#include "cliente/video/log.h"
 
 #define ANCHO_CELDA 32
 #define ALTO_CELDA 32
-
-#define LIM_INF_CAMARA_X -10
-#define LIM_SUP_CAMARA_X  10
-#define LIM_INF_CAMARA_Y -10
-#define LIM_SUP_CAMARA_Y  10
 
 namespace cliente {
 
@@ -59,16 +58,36 @@ Terreno::Terreno(const char *ruta_csv) {
         terreno.push_back(fila_actual);
     }
 
-    set_camara(0, 0);
+    ultimo_celda_x0 = ancho + 1;
+    ultimo_celda_x1 = ancho + 1;
+    ultimo_celda_y0 = alto + 1;
+    ultimo_celda_y1 = alto + 1;
 }
 
-void Terreno::renderizar(Ventana& ventana) {
-    if (!is_dirty) {
+void Terreno::renderizar(Ventana& ventana, Camara& camara) {
+    Rectangulo vista = camara.obtener_vista();
+    
+    int celda_inicial_x, celda_inicial_y,
+        celda_final_x, celda_final_y;
+    
+    obtener_celda(vista.esq_sup_izq, celda_inicial_x, celda_inicial_y);
+    obtener_celda(vista.esq_inf_der, celda_final_x, celda_final_y);
+
+    // Evitar rectángulo negro al final
+    celda_final_x += 1;
+    celda_final_y += 1;
+
+    if ((celda_inicial_x == ultimo_celda_x0) && 
+       (celda_final_x == ultimo_celda_x1)  && 
+       (celda_inicial_y == ultimo_celda_y0) && 
+       (celda_final_y == ultimo_celda_y1))
+    {
+        Posicion visual = camara.traducir_a_visual(vista.esq_sup_izq);
         ventana
             .obtener_administrador_texturas()
             .obtener_textura("terreno")
-            .renderizar(0, 0);
-        ventana.dibujar_grilla();
+            .renderizar(visual.x, visual.y);
+        ventana.dibujar_grilla(visual.x, visual.y);
         return;
     }
     
@@ -83,124 +102,101 @@ void Terreno::renderizar(Ventana& ventana) {
 
     textura.limpiar(0, 0, 0, 255);
 
-    int ancho_ventana = ventana.ancho() / ANCHO_CELDA;
-    int alto_ventana = ventana.alto() / ALTO_CELDA;
-
-    for (int x = camara_x; x <= camara_x + ancho_ventana; x++) {
+    for (int x = celda_inicial_x; x <= celda_final_x; x++) {
         if ((x < 0) || (x > ancho))
             continue;
-        for (int y = camara_y; y <= camara_y + alto_ventana; y++) {
+        for (int y = celda_inicial_y; y <= celda_final_y; y++) {
             if ((y < 0) || (y > alto))
                 continue;
             
-            int x_px, y_px;
-            x_px = (x - camara_x) * ANCHO_CELDA;
-            y_px = (y - camara_y) * ALTO_CELDA;
-
-            terreno[y][x].renderizar(ventana, x_px, y_px, textura);
+            Posicion visual = camara.traducir_a_visual(obtener_posicion(x, y));
+            terreno[y][x].renderizar(ventana, visual.x, visual.y, textura);
         }
     }
 
-    is_dirty = false;
-    textura.renderizar(0, 0);
-    ventana.dibujar_grilla();
+    ultimo_celda_x0 = celda_inicial_x;
+    ultimo_celda_x1 = celda_final_x;
+    ultimo_celda_y0 = celda_inicial_y;
+    ultimo_celda_y1 = celda_final_y;
+
+    Posicion visual = camara.traducir_a_visual(vista.esq_sup_izq);
+    textura.renderizar(visual.x, visual.y);
+    ventana.dibujar_grilla(visual.x, visual.y);
 }
 
-void Terreno::set_camara(int nuevo_camara_x, int nuevo_camara_y) {
-    if (LIM_INF_CAMARA_X > nuevo_camara_x)
-        nuevo_camara_x = LIM_INF_CAMARA_X;
-    if (LIM_INF_CAMARA_Y > nuevo_camara_y)
-        nuevo_camara_y = LIM_INF_CAMARA_Y;
+void Terreno::obtener_celda(const Posicion& pos, int& celda_x, int& celda_y) {
+    celda_x = pos.x / ANCHO_CELDA;
+    celda_y = pos.y / ALTO_CELDA;
+}
+
+Posicion Terreno::obtener_posicion(int celda_x, int celda_y) {
+    return Posicion(celda_x * ANCHO_CELDA, celda_y * ALTO_CELDA);
+}
+
+Posicion Terreno::obtener_posicion(const Edificio* edificio) {
+    return obtener_posicion(edificio->obtener_celda_x(), 
+        edificio->obtener_celda_y());
+}
+
+Posicion Terreno::obtener_posicion(const Tropa* tropa) {
+    return Posicion(tropa->obtener_x(), tropa->obtener_y());
+}
+
+void Terreno::para_cada_celda_en(const Rectangulo& area, 
+    std::function<bool(int, int)> accion, bool considerar_overflow) 
+{
+    int celda_inicial_x, celda_inicial_y,
+        celda_final_x, celda_final_y;
     
-    if (nuevo_camara_x > ancho + LIM_SUP_CAMARA_X)
-        nuevo_camara_x = ancho + LIM_SUP_CAMARA_X;
-    if (nuevo_camara_y > alto + LIM_SUP_CAMARA_Y)
-        nuevo_camara_y = alto + LIM_SUP_CAMARA_Y;
+    obtener_celda(area.esq_sup_izq, celda_inicial_x, celda_inicial_y);
+    obtener_celda(area.esq_inf_der, celda_final_x, celda_final_y);
 
-    if ((camara_x == nuevo_camara_x) && (camara_y == nuevo_camara_y))
-        return;
+    if (considerar_overflow) {
+        celda_final_x += 1;
+        celda_final_y += 1;
+    }
 
-    camara_x = nuevo_camara_x;
-    camara_y = nuevo_camara_y;
-    is_dirty = true;
-}
-
-void Terreno::mover_camara(int dx, int dy) {
-    if ((dx == 0) && (dy == 0))
-        return;
-    
-    set_camara(camara_x + dx, camara_y + dy);
-}
-
-std::unordered_set<const Edificio*> Terreno::obtener_edificios_visibles(
-    Ventana& ventana) {
-    int ancho_ventana = ventana.ancho() / ANCHO_CELDA;
-    int alto_ventana = ventana.alto() / ALTO_CELDA;
-
-    std::unordered_set<const Edificio*> resultado;
-
-    for (int x = camara_x; x <= camara_x + ancho_ventana; x++) {
+    for (int x = celda_inicial_x; x <= celda_final_x; x++) {
         if ((x < 0) || (x > ancho))
             continue;
-        for (int y = camara_y; y <= camara_y + alto_ventana; y++) {
+        for (int y = celda_inicial_y; y <= celda_final_y; y++) {
             if ((y < 0) || (y > alto))
                 continue;
+            if (!accion(x, y))
+                return;
+        }
+    }
+}
 
+std::unordered_set<Edificio*> Terreno::obtener_edificios_en(
+    const Rectangulo& area) 
+{
+    std::unordered_set<Edificio*> edificios;
+    
+    para_cada_celda_en(area, 
+        [this, &edificios] (int x, int y) {
             if (terreno[y][x].contiene_edificio())
-                resultado.insert(&terreno[y][x].obtener_edificio());
-        }
-    }
-
-    return resultado;
+                edificios.insert(&terreno[y][x].obtener_edificio());
+            return true;
+        }, false);
+    
+    return edificios;
 }
 
-std::unordered_set<const Tropa*> Terreno::obtener_tropas_visibles(
-    Ventana& ventana) {
-    int ancho_ventana = ventana.ancho() / ANCHO_CELDA;
-    int alto_ventana = ventana.alto() / ALTO_CELDA;
-
-    std::unordered_set<const Tropa*> resultado;
-
-    for (int x = camara_x; x <= camara_x + ancho_ventana; x++) {
-        if ((x < 0) || (x > ancho))
-            continue;
-        for (int y = camara_y; y <= camara_y + alto_ventana; y++) {
-            if ((y < 0) || (y > alto))
-                continue;
-
+std::unordered_set<Tropa*> Terreno::obtener_tropas_en(const Rectangulo& area) {
+    std::unordered_set<Tropa*> tropas;
+    
+    para_cada_celda_en(area, 
+        [this, &tropas] (int x, int y) {
             if (terreno[y][x].contiene_tropas()) {
-                for (const Tropa* tropa : terreno[y][x].obtener_tropas()) {
-                    resultado.insert(tropa);
+                for (Tropa* tropa : terreno[y][x].obtener_tropas()) {
+                    tropas.insert(tropa);
                 }
             }
-        }
-    }
-
-    return resultado;
-}
-
-void Terreno::obtener_posicion_visual(const Tropa& tropa, int& x_px, int& y_px) 
-{
-    x_px = tropa.obtener_x() - (camara_x * ANCHO_CELDA);
-    y_px = tropa.obtener_y() - (camara_y * ALTO_CELDA);
-
-}
-
-void Terreno::obtener_posicion_visual(const Edificio& edificio, int& x_px, 
-    int& y_px) 
-{
-    convertir_a_px(edificio.obtener_celda_x(), edificio.obtener_celda_y(),
-        x_px, y_px);
-}
-
-void Terreno::convertir_a_px(int x_celda, int y_celda, int& x_px, int& y_px) {
-    x_px = (x_celda - camara_x) * ANCHO_CELDA;
-    y_px = (y_celda - camara_y) * ALTO_CELDA;
-}
-
-void Terreno::calcular_celda(int x_px, int y_px, int& x_celda, int& y_celda) {
-    x_celda = (x_px / ANCHO_CELDA) + camara_x;
-    y_celda = (y_px / ALTO_CELDA) + camara_y;
+            return true;
+        }, false);
+    
+    return tropas;
 }
 
 bool Terreno::es_construible(int x_celda, int y_celda) const {
@@ -216,38 +212,25 @@ static inline void swap(int& a, int& b) {
     a = tmp;
 }
 
-std::unordered_set<Tropa*>
-    Terreno::seleccionar_unidades(int x0, int y0, int x1, int y1) {
-    if (x0 > x1)
-        swap(x0, x1);
+Tropa* Terreno::obtener_tropa_en(const Posicion& pos) {
+    Tropa* tropa = nullptr;
     
-    if (y0 > y1)
-        swap(y0, y1);
-    
-    int celda_x0 = (x0 / ANCHO_CELDA) + camara_x;
-    int celda_x1 = (x1 / ANCHO_CELDA) + camara_x;
-    int celda_y0 = (y0 / ALTO_CELDA) + camara_y;
-    int celda_y1 = (y1 / ALTO_CELDA) + camara_y;
-
-    std::cout << "Seleccionando desde (" << celda_x0 << "," << celda_y0 << ") "
-              << "hasta (" << celda_x1 << "," << celda_y1  << ")" << std::endl;
-
-    std::unordered_set<Tropa*> tropas_seleccionadas;
-
-    for (int x = celda_x0; x < celda_x1; x++) {
-        for (int y = celda_y0; y < celda_y1; y++) {
-            for (Tropa* t : terreno[y][x].obtener_tropas()) {
-                tropas_seleccionadas.insert(t);
+    para_cada_celda_en(Rectangulo(pos.x, pos.y, ANCHO_CELDA, ALTO_CELDA),
+        [this, &tropa] (int x, int y) {
+            if (terreno[y][x].contiene_tropas()) {
+                tropa = terreno[y][x].obtener_tropas().front();
+                return false;
             }
-        }
-    }
-    
-    return tropas_seleccionadas;
+            return true;
+        }, true);
+
+    return tropa;
 }
 
-Edificio* Terreno::obtener_edificio_en(int x, int y) {
-    int celda_x = (x / ANCHO_CELDA) + camara_x;
-    int celda_y = (y / ALTO_CELDA) + camara_y;
+Edificio* Terreno::obtener_edificio_en(const Posicion& pos) {
+    int celda_x = pos.x / ANCHO_CELDA;
+    int celda_y = pos.y / ALTO_CELDA;
+
     if ((celda_x < 0) || (celda_x > ancho))
         return nullptr;
     if ((celda_y < 0) || (celda_y > alto))
@@ -284,7 +267,7 @@ void Terreno::mover_tropa(Tropa& tropa, int x_ant, int y_ant) {
 
     if ((celda_x > ancho) || (celda_y > alto) || 
         (celda_x < 0) || (celda_y < 0) ||
-        (nuevo_celda_x >ancho) || (nuevo_celda_y > alto) || 
+        (nuevo_celda_x > ancho) || (nuevo_celda_y > alto) || 
         (nuevo_celda_x < 0) || (nuevo_celda_y < 0))
     {
         throw std::runtime_error("Terreno::agregar_tropa: Fuera de rango");
@@ -292,6 +275,8 @@ void Terreno::mover_tropa(Tropa& tropa, int x_ant, int y_ant) {
 
     terreno[celda_y][celda_x].eliminar_tropa(tropa);
     terreno[nuevo_celda_y][nuevo_celda_x].agregar_tropa(tropa);
+    log_advertencia("Cambio de celdas: (%d,%d) => (%d,%d)", celda_x, celda_y,
+        nuevo_celda_x, nuevo_celda_y);
 }
 
 void Terreno::eliminar_tropa(const Tropa& tropa) {

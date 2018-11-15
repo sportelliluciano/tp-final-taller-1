@@ -3,6 +3,7 @@
 
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/video/camara.h"
 
 namespace cliente {
 
@@ -29,7 +30,7 @@ public:
      * 
      * Si el gusano no está en pantalla la función no hace nada.
      */
-    void renderizar(Ventana& ventana);
+    void renderizar(Ventana& ventana, Camara& camara);
 
 private:
     Terreno& terreno;

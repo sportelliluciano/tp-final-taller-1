@@ -1,10 +1,13 @@
 #ifndef _TERRENO_H_
 #define _TERRENO_H_
 
+#include <functional>
 #include <vector>
 #include <unordered_set>
 
 #include "cliente/modelo/celda.h"
+#include "cliente/video/camara.h"
+#include "cliente/video/posicion.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -24,57 +27,37 @@ public:
     /**
      * \brief Renderiza el terreno en la ventana indicada.
      */
-    void renderizar(Ventana& ventana);
+    void renderizar(Ventana& ventana, Camara& camara);
 
     /**
-     * \brief Setea la ubicación de la cámara sobre el terreno.
-     * 
-     * Esta función permite establecer en que celda está la esquina superior
-     * izquierda de la pantalla. Observar que los valores son en unidades
-     * (celdas) del terreno y no en pixeles.
-     * 
-     * La función admite valores negativos y más grandes que el terreno, las 
-     * posiciones que no representen una celda del terreno se renderizaran en
-     * negro.
+     * \brief Obtiene la posición en píxeles globales de la celda indicada.
      */
-    void set_camara(int camara_x_, int camara_y_);
+    Posicion obtener_posicion(int celda_x, int celda_y);
 
     /**
-     * \brief Desplaza la cámara actual en (dx, dy).
-     * 
-     * Si (dx, dy) == (0, 0) esta operación no tiene ningún efecto.
-     * Si la cámara está en algún límite la operación no tiene efecto
-     * sobre dicho límite.
+     * \brief Obtiene la posición en píxeles globales del edificio indicado.
      */
-    void mover_camara(int dx, int dy);
+    Posicion obtener_posicion(const Edificio* edificio);
 
     /**
-     * \brief Devuelve los elementos que son visibles bajo la cámara actual.
+     * \brief Obtiene la posición en píxeles globales de la tropa indicada.
      */
-    std::unordered_set<const Edificio*> 
-        obtener_edificios_visibles(Ventana& ventana);
-    std::unordered_set<const Tropa*> 
-        obtener_tropas_visibles(Ventana& ventana);
+    Posicion obtener_posicion(const Tropa* tropa);
 
     /**
-     * \brief Obtiene la posición en píxeles relativos a la ventana del 
-     *        objeto en cuestión según la posición de la cámara.
+     * \brief Devuelve los edificios que se encuentran en el área indicada.
      */
-    void obtener_posicion_visual(const Tropa& tropa, int& x_px, int& y_px);
-    void obtener_posicion_visual(const Edificio& edificio, int& x_px, 
-        int& y_px);
-    
-    /**
-     * \brief Convierte la celda a su posición en píxeles según la posición de 
-     *        la cámara.
-     */
-    void convertir_a_px(int x_celda, int y_celda, int& x_px, int& y_px);
+    std::unordered_set<Edificio*> obtener_edificios_en(const Rectangulo& area);
 
     /**
-     * \brief Convierte una coordenada en píxeles relativos a la ventana a
-     *        la celda correspondiente según la cámara.
+     * \brief Devuelve las tropas que se encuentran en el área indicada.
      */
-    void calcular_celda(int x_px, int y_px, int& x_celda, int& y_celda);
+    std::unordered_set<Tropa*> obtener_tropas_en(const Rectangulo& area);
+
+    /**
+     * \brief Obtiene la celda en la posición dada.
+     */
+    void obtener_celda(const Posicion& posicion, int& celda_x, int& celda_y);
 
     /**
      * \brief Devuelve true si se puede construir sobre la celda.
@@ -82,21 +65,20 @@ public:
     bool es_construible(int x_celda, int y_celda) const;
 
     /**
-     * \brief Selecciona las unidades que estén contenidas en el rectángulo con 
-     *        esquinas opuestas en (x0, y0) y (x1, y1).
+     * \brief Selecciona la unidad que está en la posición indicada.
      * 
-     * Las coordenadas están dadas en píxeles relativos a la ventana.
+     * Si no hubiera unidad se devolverá un puntero nulo.
+     * Las coordenadas están dadas en píxeles globales
      */
-    std::unordered_set<Tropa*>
-        seleccionar_unidades(int x0, int y0, int x1, int y1);
+    Tropa* obtener_tropa_en(const Posicion& posicion);
 
     /**
-     * \brief Devuelve el edificio que se encuentra en la posición (x, y).
+     * \brief Devuelve el edificio que se encuentra en la posición indicada.
      * 
      * Si no hubiera un edificio en dicha posición devolverá un puntero nulo.
-     * Las coordenadas están dadas en píxeles relativos a la ventana.
+     * Las coordenadas están dadas en píxeles globales
      */
-    Edificio* obtener_edificio_en(int x, int y);
+    Edificio* obtener_edificio_en(const Posicion& posicion);
 
     /**
      * \brief Agrega una tropa al terreno.
@@ -158,18 +140,26 @@ private:
     int ancho = 0, alto = 0;
 
     /**
-     * \brief Posición de la cámara sobre el terreno.
-     */
-    int camara_x = 0, camara_y = 0;
-    int ultimo_camara_x = 0, ultimo_camara_y = 0;
-
-    /**
      * \brief Optimización para evitar redibujar el terreno celda por celda
      *        en cada cuadro.
      */
-    bool is_dirty = true;
-
-    bool ultimo_is_dirty = true;
+    int ultimo_celda_x0;
+    int ultimo_celda_x1;
+    int ultimo_celda_y0;
+    int ultimo_celda_y1;
+    
+    /**
+     * \brief Itera sobre todas las celdas que están contenidas en el área y
+     * para cada una de ellas aplica "accion". Si considerar_overflow es true
+     * entonces se agregará una celda hacia abajo y hacia la izquierda.
+     * 
+     * bool accion(const Posicion& posicion): Callback a ejecutar para cada 
+     * celda. Debe devolver true si se quiere seguir iterando o false en caso 
+     * contrario.
+     */
+    void para_cada_celda_en(const Rectangulo& area, 
+        std::function<bool(int, int)> accion, 
+        bool considerar_overflow = false);
 };
 
 } // namespace cliente

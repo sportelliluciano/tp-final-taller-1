@@ -19,10 +19,10 @@ bool Juego::esta_terminado() const {
     return !esta_jugando;
 }
 
-void Juego::renderizar(Ventana& ventana) {
-    terreno->renderizar(ventana);
-    gusano->renderizar(ventana);
-    jugador->renderizar(ventana);
+void Juego::renderizar(Ventana& ventana, Camara& camara) {
+    terreno->renderizar(ventana, camara);
+    gusano->renderizar(ventana, camara);
+    jugador->renderizar(ventana, camara);
 }
 
 void Juego::actualizar(int t_ms) {
@@ -47,10 +47,6 @@ void Juego::detener() {
 
 std::vector<const Edificio*> Juego::obtener_edificios() const {
     return jugador->obtener_edificios();
-}
-
-void Juego::mover_camara(int dx, int dy) {
-    terreno->mover_camara(dx, dy);
 }
 
 Infraestructura& Juego::obtener_infraestructura() {

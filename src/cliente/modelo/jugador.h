@@ -8,6 +8,7 @@
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/video/camara.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -19,7 +20,7 @@ public:
     /**
      * \brief Renderiza las unidades y edificios del jugador en la ventana.
      */
-    void renderizar(Ventana& ventana);
+    void renderizar(Ventana& ventana, Camara& camara);
 
     /**
      * \brief Actualiza el estado del jugador.
@@ -47,8 +48,8 @@ public:
      * \brief Obtiene el ejército del jugador.
      */
     Ejercito& obtener_ejercito();
+
 private:
-    Terreno& terreno;
     int energia = 0;
     int dinero = 0;
     Infraestructura infraestructura;

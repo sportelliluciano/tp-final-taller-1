@@ -15,7 +15,7 @@ public:
     /**
      * \brief Dibuja las tropas sobre la ventana.
      */
-    void renderizar(Ventana& ventana);
+    void renderizar(Ventana& ventana, Camara& camara);
     
     /**
      * \brief Actualiza la posición de las tropas según corresponda.

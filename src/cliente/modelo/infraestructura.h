@@ -1,12 +1,14 @@
 #ifndef _INFRAESTRUCTURA_H_
 #define _INFRAESTRUCTURA_H_
 
-#include <list>
 #include <unordered_map>
+#include <vector>
 
 #include "cliente/modelo/celda.h"
 #include "cliente/modelo/edificio.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/video/camara.h"
+#include "cliente/video/ventana.h"
 
 namespace cliente {
 
@@ -17,7 +19,7 @@ public:
     /**
      * \brief Renderiza los edificios en la ventana.
      */
-    void renderizar(Ventana& ventana);
+    void renderizar(Ventana& ventana, Camara& camara);
 
     /**
      * \brief Actualiza el estado de las construcciones.

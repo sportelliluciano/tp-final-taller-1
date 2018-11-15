@@ -40,26 +40,27 @@ Infraestructura::Infraestructura(Terreno& terreno_juego)
     }
 }
 
-void Infraestructura::renderizar(Ventana& ventana) {
-    for (const Edificio* eid : terreno.obtener_edificios_visibles(ventana)) {
-        Edificio& edificio = edificios_construidos.at(eid->obtener_id());
-
-        int x_px, y_px;
+void Infraestructura::renderizar(Ventana& ventana, Camara& camara) {
+    for (Edificio* edificio : 
+        terreno.obtener_edificios_en(camara.obtener_vista())) 
+    {
+        Posicion visual;
 
         /*** Pintar celda ***/
-        int x_celda = edificio.obtener_celda_x(),
-            y_celda = edificio.obtener_celda_y();
+        int x_celda = edificio->obtener_celda_x(),
+            y_celda = edificio->obtener_celda_y();
 
-        for (int x=0; x<edificio.obtener_ancho_celdas();x++) {
-            for (int y=0; y<edificio.obtener_alto_celdas();y++) {
-                terreno.convertir_a_px(x_celda + x, y_celda + y, x_px, y_px);
-                Sprite(0).renderizar(ventana, x_px, y_px);
+        for (int x=0; x<edificio->obtener_ancho_celdas();x++) {
+            for (int y=0; y<edificio->obtener_alto_celdas();y++) {
+                visual = camara.traducir_a_visual(
+                    terreno.obtener_posicion(x + x_celda, y + y_celda));
+                Sprite(0).renderizar(ventana, visual.x, visual.y);
             }
         }
         /*** Fin pintar celda ***/
 
-        terreno.obtener_posicion_visual(edificio, x_px, y_px);
-        edificio.renderizar(ventana, x_px, y_px);
+        visual = camara.traducir_a_visual(terreno.obtener_posicion(edificio));
+        edificio->renderizar(ventana, visual.x, visual.y);
     }
 }
 

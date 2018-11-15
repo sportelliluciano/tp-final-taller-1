@@ -7,6 +7,7 @@
 #include "cliente/modelo/gusano_arena.h"
 #include "cliente/modelo/jugador.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/video/camara.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -23,9 +24,8 @@ public:
     /**
      * \brief Renderiza el juego.
      * 
-     * Procesa las actualizaciones obtenidas desde el servidor.
      */
-    void renderizar(Ventana& ventana);
+    void renderizar(Ventana& ventana, Camara& camara);
 
     /**
      * \brief Actualiza el modelo del juego.
@@ -62,15 +62,6 @@ public:
      * \brief Devuelve los edificios que existen en el juego.
      */
     std::vector<const Edificio*> obtener_edificios() const;
-    
-    /**
-     * \brief Mueve la cámara incrementando la posición en (dx, dy).
-     * 
-     * Si la cámara está en uno de sus límites esta operación no tiene efecto.
-     * 
-     * (dx, dy) es el desplazamiento en celdas.
-     */
-    void mover_camara(int dx, int dy);
 
     Infraestructura& obtener_infraestructura();
     Ejercito& obtener_ejercito();
