@@ -28,12 +28,14 @@ Sala::Sala(Sala&& otro) {
     }
 
     modelo = otro.modelo;
-    otro.modelo = nullptr;
     jugadores = std::move(otro.jugadores);
     clientes = std::move(otro.clientes);
     ultimo_id = otro.ultimo_id;
     terminar = otro.terminar;
     capacidad = otro.capacidad;
+    partida_iniciada = otro.partida_iniciada;
+
+    otro.modelo = nullptr;
 }
 
 bool Sala::puede_unirse() const {
@@ -47,9 +49,9 @@ void Sala::agregar_cliente(Cliente& cliente) {
     ultimo_id++;
     
     clientes.emplace(&cliente, ConexionJugador(cliente, ultimo_id));
-    ConexionJugador* nuevo_jugador = &clientes.at(&cliente);
+    ConexionJugador& nuevo_jugador = clientes.at(&cliente);
     
-    jugadores[ultimo_id] = nuevo_jugador;
+    jugadores.insert({ultimo_id, &nuevo_jugador});
 }
 
 void Sala::eliminar_cliente(Cliente& cliente) {
@@ -71,12 +73,12 @@ void Sala::notificar_desconexion(Cliente& cliente) {
 void Sala::configurar_recepcion_eventos() {
     for (auto it=clientes.begin();it!=clientes.end();++it) {
         Cliente& cliente = *it->first;
-        
+        IJugador *jugador = &it->second;
         modelo->crear_jugador(&it->second);
         
         cliente.al_recibir_datos(
-            [this, &it] (const nlohmann::json& data) {
-                actualizar_modelo(&it->second, data);
+            [this, jugador] (const nlohmann::json& data) {
+                actualizar_modelo(jugador, data);
             }
         );
     }
@@ -135,6 +137,11 @@ void Sala::terminar_partida() {
 
 size_t Sala::obtener_capacidad() {
     return capacidad;
+}
+
+Sala::~Sala() {
+    if (modelo)
+        delete modelo;
 }
 
 // TODO: Chequear excepciones
@@ -219,11 +226,6 @@ void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {
         default:
             throw std::runtime_error("actualizar_modelo: Evento desconocido");
     }
-}
-
-Sala::~Sala() {
-    if (modelo)
-        delete modelo;
 }
 
 } // namespace servidor

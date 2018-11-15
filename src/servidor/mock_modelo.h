@@ -42,11 +42,11 @@ public:
         const std::string& clase)
     {
         if (construcciones_en_cola.count(clase) == 0)
-            construcciones_en_cola[clase] = 1;
+            construcciones_en_cola.insert({clase, 1});
         else
-            construcciones_en_cola[clase]++;
+            construcciones_en_cola.at(clase)++;
         
-        jugador_act->actualizar_cola_cc(clase, construcciones_en_cola[clase]);
+        jugador_act->actualizar_cola_cc(clase, construcciones_en_cola.at(clase));
         return true;
     }
     
@@ -54,9 +54,9 @@ public:
         const std::string& clase)
     {
         if (construcciones_en_cola.count(clase) != 0) {
-            construcciones_en_cola[clase]--;
-            jugador_act->actualizar_cola_cc(clase, construcciones_en_cola[clase]);
-            if (construcciones_en_cola[clase] <= 0)
+            construcciones_en_cola.at(clase)--;
+            jugador->actualizar_cola_cc(clase, construcciones_en_cola.at(clase));
+            if (construcciones_en_cola.at(clase) <= 0)
                 construcciones_en_cola.erase(clase);
             
             return true;
@@ -77,11 +77,11 @@ public:
                 clase
             )
         );
-        jugador_act->crear_edificio(
+        jugador->crear_edificio(
             id_edificio,
             clase, 
             celda_x, celda_y, 
-            jugador_act->obtener_id()
+            jugador->obtener_id()
         );
         construcciones_esperando_ubicacion.erase(clase);
         return true;
@@ -89,7 +89,7 @@ public:
 
     bool vender_edificio(IJugador* jugador_act, int id_edificio) {
         edificios.erase(id_edificio);
-        jugador_act->eliminar_edificio(id_edificio);
+        jugador->eliminar_edificio(id_edificio);
         return true;
     }
 
@@ -112,7 +112,7 @@ public:
         y_destino = y_px;
         
         for (int id : ids) {
-            jugador_act->mover_tropa(id, { {x_tropa, y_tropa}, {x_px, y_px}});
+            jugador->mover_tropa(id, { {x_tropa, y_tropa}, {x_px, y_px}});
         }
 
         return true;
