@@ -1,5 +1,6 @@
 #include "servidor/cliente.h"
 
+#include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -17,11 +18,15 @@ Cliente::Cliente(conexion::SocketConexion socket_conexion)
 : conexion(socket_conexion)
 { }
 
-Cliente::Cliente(Cliente&& otro) {
-    if (async_iniciado)
+Cliente::Cliente(Cliente&& otro) 
+: conexion(std::move(otro.conexion))
+{
+    if (async_iniciado) {
+        // rollback
+        otro.conexion = std::move(conexion);
         throw std::runtime_error("No se puede mover habiendo iniciado el async");
+    }
 
-    conexion = std::move(otro.conexion);
     cb_al_recibir_datos = otro.cb_al_recibir_datos;
     
     // TODO: Revisar esto
@@ -52,7 +57,11 @@ void Cliente::iniciar_async() {
             error_emisor = e.what();
             hubo_error_emisor = true;
             conexion.cerrar(true);
+            std::cout << "Hilo cliente (E) explotó" << std::endl;
+            std::cout << " --> " << e.what() << std::endl;
         }
+
+        std::cout << "Hilo cliente (E) died" << std::endl;
     });
 
     hilo_receptor = std::thread([this]() {
@@ -68,7 +77,11 @@ void Cliente::iniciar_async() {
             error_receptor = e.what();
             hubo_error_receptor = true;
             conexion.cerrar(true);
+            std::cout << "Hilo cliente (R) explotó" << std::endl;
+            std::cout << " --> " << e.what() << std::endl;
         }
+
+        std::cout << "Hilo cliente (R) died" << std::endl;
     });
 }
 
