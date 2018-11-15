@@ -37,13 +37,13 @@ Sala::Sala(Sala&& otro) {
     capacidad = otro.capacidad;
 }
 
-// TODO: Esto tiene que estar protegido de la concurrencia
+bool Sala::puede_unirse() const {
+    return (jugadores.size() >= capacidad) || modelo->partida_iniciada();
+}
+
 void Sala::agregar_cliente(Cliente& cliente) {
-    if (modelo->partida_iniciada())
-        throw std::runtime_error("La partida ya fue iniciada");
-    
-    if (jugadores.size() >= capacidad)
-        throw std::runtime_error("La sala está llena");
+    if (!puede_unirse())
+        throw std::runtime_error("No se puede unir a esta sala");
 
     ultimo_id++;
     
@@ -98,6 +98,12 @@ void Sala::iniciar_partida(Cliente& cliente) {
     }
 
     if (todos_listos) {
+        for (auto it=clientes.begin();it!=clientes.end();++it) {
+            Cliente* jugador = it->first;
+            jugador->enviar({
+                {"tipo", "juego_iniciando"}
+            });
+        }
         partida_iniciada = true;
         hilo_partida = std::thread(&Sala::jugar, this);
     }

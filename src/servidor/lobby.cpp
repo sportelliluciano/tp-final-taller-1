@@ -81,7 +81,13 @@ void Lobby::procesar_evento(Cliente& cliente, const nlohmann::json& evento) {
             return;
         }
 
-        it->second.agregar_cliente(cliente);
+        if (it->second.puede_unirse()) {
+            it->second.agregar_cliente(cliente);
+        } else {
+            enviar_error(cliente, "No se puede unir a esta sala");
+            return;
+        }
+        
         salas_clientes[&cliente] = &it->second;
         cliente.enviar({
             {"estado", "OK"}

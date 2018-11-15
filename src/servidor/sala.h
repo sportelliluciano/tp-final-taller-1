@@ -42,6 +42,15 @@ public:
     void jugar();
 
     /**
+     * \brief Devuelve true si se puede unir un cliente a esta sala.
+     * 
+     * Un cliente no puede unirse si sucede alguna de las siguientes:
+     *  - La sala está llena
+     *  - La partida ya empezó
+     */
+    bool puede_unirse() const;
+
+    /**
      * \brief Indica a la sala que el cliente inició la partida.
      * 
      * Cuando todos los clientes en la sala hayan iniciado la partida se 
