@@ -237,6 +237,8 @@ public:
     virtual void crear_jugador() = 0;
     virtual void jugador_listo() = 0;
     virtual void juego_terminado() = 0;
+
+    virtual ~IJugador() { }
 };
 
 #endif 
