@@ -57,6 +57,9 @@ public:
      */
     void set_volumen_sonidos(int volumen);
 
+    /**
+     * \brief Apaga el sistema de sonido del juego liberando los recursos.
+     */
     void apagar();
     
     /**
