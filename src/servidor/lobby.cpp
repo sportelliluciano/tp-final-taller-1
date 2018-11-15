@@ -92,6 +92,7 @@ void Lobby::procesar_evento(Cliente& cliente, const nlohmann::json& evento) {
             return;
         }
         salas_clientes.at(&cliente)->eliminar_cliente(cliente);
+        salas_clientes.erase(&cliente);
         cliente.enviar({
             {"estado", "OK"}
         });
