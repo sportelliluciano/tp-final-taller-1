@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -51,12 +52,14 @@ nlohmann::json Conexion::recibir_json() {
     while ((byte_leido = leer_uint8()) != '\n')
         resultado << (char) byte_leido;
 
+    std::cout << "\x1b[32m>> \x1b[0m" << resultado.str() << std::endl;
     return nlohmann::json::parse(resultado.str());
 }
 
 void Conexion::enviar_json(const nlohmann::json& json_data) {
     std::string json_str = json_data.dump() + "\n";
     enviar_bytes((uint8_t*)json_str.c_str(), json_str.length()); // + \0
+    std::cout << "\x1b[31m<< \x1b[0m" << json_data.dump() << std::endl;
 }
 
 bool Conexion::esta_conectada() const {
