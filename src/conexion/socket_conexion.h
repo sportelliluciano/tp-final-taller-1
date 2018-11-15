@@ -28,9 +28,6 @@ namespace conexion {
  */
 class SocketConexion {
 public:
-    /* Constructor por defecto. */
-    SocketConexion();
-    
     /**
      * Constructor a partir de un file descriptor de un socket abierto 
      * previamente.
@@ -64,6 +61,50 @@ public:
      * ErrorSocket y la otra conexión no será modificada.
      */
     SocketConexion& operator=(SocketConexion&& otro);
+
+    /**
+     * Espera exactamente cantidad bytes desde la conexión.
+     * La función bloquea hasta que se haya recibido la cantidad especificada.
+     * 
+     * Puede devolver menos que cantidad en caso de que la conexión se cierre
+     * antes de que se reciba la cantidad esperada.
+     * 
+     * Si se produce algún error durante la recepción se lanzará ErrorSocket.
+     */
+    size_t recibir_bytes(uint8_t *buffer_, size_t cantidad);
+
+    /**
+     * Envía los bytes a través de la conexión. 
+     * La función bloquea hasta que todos los bytes hayan sido enviados.
+     * 
+     * Devuelve la cantidad de bytes enviados, que puede ser menor a cantidad
+     * en el caso en que la conexión se cierre antes de terminar el envío.
+     * 
+     * Si se produce algún error durante el envío lanzará ErrorSocket.
+     */
+    size_t enviar_bytes(const uint8_t *buffer_, size_t cantidad);
+
+    /**
+     * \brief Devuelve el estado del canal de escritura luego del último llamado
+     *        a escribir_bytes / send.
+     * 
+     * Este método devuelve el estado del canal de escritura *luego* del último
+     * llamado a cualquier función que envíe bytes a través de la conexión. 
+     * Si luego del envío se cerro el canal entonces este método devolverá 
+     * false.
+     */
+    bool puede_enviar() const;
+
+    /**
+     * \brief Devuelve el estado del canal de lectura luego del último llamado
+     *        a recibir_bytes / recv.
+     * 
+     * Este método devuelve el estado del canal de lectura *luego* del último
+     * llamado a cualquier función que reciba bytes a través de la conexión. 
+     * Si luego de la recepción se cerró el canal de lectura entonces el
+     * método devolvera false.
+     */
+    bool puede_recibir() const;
     
     /**
      * Recibe como máximo _largo_ bytes desde la conexión.
@@ -117,6 +158,8 @@ public:
 private:
     /* File descriptor para el socket. */
     int socket_conexion;
+
+    bool esta_conectado_rd, esta_conectado_wr;
 
     /* Deshabilitar copia */
     SocketConexion(const SocketConexion& otro) = delete;

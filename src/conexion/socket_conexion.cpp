@@ -16,15 +16,16 @@
 
 namespace conexion {
 
-SocketConexion::SocketConexion() : socket_conexion(SOCKET_INVALIDO) { }
-
-SocketConexion::SocketConexion(int fd) : socket_conexion(fd) {
+SocketConexion::SocketConexion(int fd) 
+: socket_conexion(fd), esta_conectado_rd(true), esta_conectado_wr(true) 
+{
     if (fd == SOCKET_INVALIDO)
         throw ErrorSocket("SocketConexion(int)", "Socket inválido", EBADF);
 }
 
 SocketConexion::SocketConexion(const std::string& direccion, 
-    const std::string& servicio) {
+    const std::string& servicio) 
+{
     struct addrinfo hints;
     struct addrinfo *result = NULL, *ptr = NULL;
 
@@ -61,11 +62,17 @@ SocketConexion::SocketConexion(const std::string& direccion,
         throw ErrorSocket("connect", 
             "No se pudo conectar al destino", EINVAL);
     }
+
+    esta_conectado_rd = esta_conectado_wr = true;
 }
 
 SocketConexion::SocketConexion(SocketConexion&& otro) {
     socket_conexion = otro.socket_conexion;
     otro.socket_conexion = SOCKET_INVALIDO;
+    
+    esta_conectado_rd = otro.esta_conectado_rd;
+    esta_conectado_wr = otro.esta_conectado_wr;
+    otro.esta_conectado_rd = otro.esta_conectado_wr = false;
 }
 
 SocketConexion& SocketConexion::operator=(SocketConexion&& otro) {
@@ -80,7 +87,51 @@ SocketConexion& SocketConexion::operator=(SocketConexion&& otro) {
 
     socket_conexion = otro.socket_conexion;
     otro.socket_conexion = SOCKET_INVALIDO;
+
+    esta_conectado_rd = otro.esta_conectado_rd;
+    esta_conectado_wr = otro.esta_conectado_wr;
+    otro.esta_conectado_rd = otro.esta_conectado_wr = false;
     return *this;
+}
+
+size_t SocketConexion::recibir_bytes(uint8_t *buffer, size_t cantidad) {
+    size_t bytes_totales = 0;
+    
+    while (bytes_totales < cantidad) {
+        ssize_t bytes_recibidos = recv(buffer + bytes_totales, 
+            cantidad - bytes_totales);
+
+        if (bytes_recibidos == 0)
+            return bytes_totales;
+
+        bytes_totales += bytes_recibidos;
+    }
+
+    return bytes_totales;
+}
+
+size_t SocketConexion::enviar_bytes(const uint8_t *buffer, size_t cantidad) {
+    size_t bytes_totales = 0;
+
+    while (bytes_totales < cantidad) {
+        ssize_t bytes_enviados = send(buffer + bytes_totales, 
+            cantidad - bytes_totales);
+        
+        if (bytes_enviados == 0)
+            return bytes_totales;
+
+        bytes_totales += bytes_enviados;
+    }
+
+    return bytes_totales;
+}
+
+bool SocketConexion::puede_recibir() const {
+    return esta_conectado_rd;
+}
+
+bool SocketConexion::puede_enviar() const {
+    return esta_conectado_wr;
 }
 
 size_t SocketConexion::recv(uint8_t *buffer, size_t largo) {
@@ -89,6 +140,9 @@ size_t SocketConexion::recv(uint8_t *buffer, size_t largo) {
     if (bytes_recibidos == SOCKET_ERROR)
         throw ErrorSocket("recv");
     
+    if (bytes_recibidos == 0)
+        esta_conectado_rd = false;
+
     return bytes_recibidos;
 }
 
@@ -98,6 +152,9 @@ size_t SocketConexion::send(const uint8_t *buffer, size_t largo) {
     
     if (bytes_enviados == SOCKET_ERROR)
         throw ErrorSocket("send");
+
+    if (bytes_enviados == 0)
+        esta_conectado_wr = false;
 
     return bytes_enviados;
 }
@@ -111,6 +168,9 @@ void SocketConexion::shutdown(bool shut_rd, bool shut_wr, bool ignorar_error) {
     else if (!shut_rd && !shut_wr)
         return;
     
+    esta_conectado_rd = esta_conectado_rd & shut_rd;
+    esta_conectado_wr = esta_conectado_wr & shut_wr;
+
     if ((::shutdown(socket_conexion, how) == SOCKET_ERROR) && !ignorar_error)
         throw ErrorSocket("shutdown");
 }
@@ -118,6 +178,7 @@ void SocketConexion::shutdown(bool shut_rd, bool shut_wr, bool ignorar_error) {
 void SocketConexion::close(bool ignorar_error) {
     int retval = ::close(socket_conexion);
     socket_conexion = SOCKET_INVALIDO;
+    esta_conectado_rd = esta_conectado_wr = false;
 
     if ((retval == SOCKET_ERROR) && !ignorar_error)
         throw ErrorSocket("close");

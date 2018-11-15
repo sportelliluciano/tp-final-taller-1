@@ -1,10 +1,7 @@
 #ifndef _CONEXION_H_
 #define _CONEXION_H_
 
-#include <cstdlib>
-
 #include <string>
-#include <vector>
 
 #include "libs/json.hpp"
 
@@ -17,36 +14,11 @@ namespace conexion {
 /**
  * Clase Conexión.
  * 
- * Permite enviar distintos tipos de datos a través de una conexión TCP.
- * 
- * Esta clase provee métodos para enviar y recibir distintos tipos de dato entre
- * el cliente y el servidor. En particular permite enviar datos de tipo
- * booleano, objeto (serializado), entero, string o comando.
- * 
- * El protocolo para transmisión es el siguiente:
- * Se envía un byte para indicar qué tipo de dato se está enviando y luego
- * se envían 0 o más bytes correspondientes al dato a enviar.
- * 
- * Cada tipo de dato indica su longitud según se considere necesario.
- * Detalle de tipos:
- * 
- * Booleano: Existen dos tipos de dato (verdadero o falso), no necesita bytes
- *  extra.
- * Entero: Se envía el tipo entero + 4 bytes almacenados como big-endian.
- * Objeto: Se envía el tipo objeto, seguido de un entero indicando la longitud
- *  de la serializacion y luego los bytes serializados.
- * String: Se envía el tipo string + los bytes del string, para indicar la
- *  finalización del string se envía un byte 0.
- * Comando: Se envía el tipo comando y un byte identificando el comando.
+ * Permite enviar y recibir datos en formato JSON a través de una conexión TCP.
  */
 
 class Conexion {
 public:
-    /**
-     * Constructor por defecto.
-     */
-    Conexion();
-
     /**
      * Constructor a partir de un socket conectado.
      */
@@ -133,38 +105,11 @@ public:
 
 private:
     SocketConexion conexion;
-    bool esta_conectado_rd = true, esta_conectado_wr = true;
+    uint8_t *buffer_recepcion;
 
     /* Deshabilitar copia */
     Conexion(const Conexion& otro) = delete;
     Conexion& operator=(const Conexion& otro) = delete;
-
-    /**
-     * Espera exactamente cantidad bytes desde la conexión.
-     * La función bloquea hasta que se haya recibido la cantidad especificada.
-     * 
-     * Puede devolver menos que cantidad en caso de que la conexión se cierre
-     * antes de que se reciba la cantidad esperada.
-     * 
-     * Si se produce algún error durante la recepción se lanzará ErrorSocket.
-     */
-    size_t recibir_bytes(uint8_t *buffer_, size_t cantidad);
-
-    /**
-     * Envía los bytes a través de la conexión. 
-     * La función bloquea hasta que todos los bytes hayan sido enviados.
-     * 
-     * Devuelve la cantidad de bytes enviados, que puede ser menor a cantidad
-     * en el caso en que la conexión se cierre antes de terminar el envío.
-     * 
-     * Si se produce algún error durante el envío lanzará ErrorSocket.
-     */
-    size_t enviar_bytes(const uint8_t *buffer_, size_t cantidad);
-
-    /**
-     * Lee un byte desde la conexión.
-     */
-    uint8_t leer_uint8();
 };
 
 } // namespace conexion
