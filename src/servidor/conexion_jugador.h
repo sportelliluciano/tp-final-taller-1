@@ -243,6 +243,8 @@ public:
     void set_estado(bool listo_);
     bool esta_listo() const;
 
+    virtual ~ConexionJugador();
+
 private:
     Cliente& conexion_cliente;
     int id;
