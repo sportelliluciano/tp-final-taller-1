@@ -10,14 +10,16 @@
 #include "modelo/infraestructura.h"
 #include "modelo/ejercito.h"
 #include "modelo/terreno.h"
-#include "modelo/i_jugador.h"
+#include "conexion/i_jugador.h"
+#include "conexion/i_modelo.h"
+
 namespace modelo {
 
-class Juego{
+class Juego : public IModelo {
     private:
+    Terreno terreno;
     Infraestructura inf;
     Ejercito ejercito;
-    Terreno& terreno;
     std::unordered_map<int,Jugador> jugadores;
     Id id;
     bool empezo = false;
@@ -26,11 +28,11 @@ class Juego{
     IJugador* comunicacion_jugador;
 
     public:
-    Juego(Terreno& terreno);
+    Juego();
     ~Juego();
     void iniciar_partida();
-    bool partida_iniciada();
-    bool juego_terminado();
+    bool partida_iniciada() const override;
+    bool juego_terminado() const override;
     void crear_jugador(IJugador* jugador);
     void jugador_desconectado(IJugador* jugador);//no implementada
     bool iniciar_construccion_edificio(IJugador* jugador,
@@ -49,7 +51,7 @@ class Juego{
     bool atacar_tropa(IJugador* jugador, 
         const std::vector<int>& ids_atacantes, int id_atacado);//le falta                                    
     bool indicar_especia_cosechadora(IJugador* jugador,
-    const std::vector<int>& ids, int celda_x, int celda_y);//sin implementar
+    const std::vector<int>& ids, int celda_x, int celda_y) override;//sin implementar
 
     void actualizar(int dt_ms);
     void eliminar_jugador(int id);

@@ -15,14 +15,14 @@ void Juego::iniciar_partida(){
     /**
      * \brief Devuelve true si la partida ya fue iniciada
      */
-bool Juego::partida_iniciada() {
+bool Juego::partida_iniciada() const {
     return empezo;
 }
 
     /**
      * \brief Indica si el juego terminó
      */
-bool Juego::juego_terminado(){
+bool Juego::juego_terminado() const {
     return !empezo;
 }
 
@@ -184,13 +184,14 @@ bool Juego::atacar_tropa(IJugador* jugador,
      * \brief El jugador quiere indicarle a la(s) cosechadora(s) que vayan
      *        a recolectar especia a la celda indicada.
      */
-bool indicar_especia_cosechadora(IJugador* jugador,
+bool Juego::indicar_especia_cosechadora(IJugador* jugador,
     const std::vector<int>& ids, int celda_x, int celda_y) {}
 
 
-Juego::Juego(Terreno& terreno_):inf(Infraestructura(terreno_)),
-                                   ejercito(Ejercito(terreno_)),
-                                   terreno(terreno_){}
+Juego::Juego():terreno(Terreno("../data/terreno.csv")),
+                        inf(Infraestructura(terreno)),
+                        ejercito(Ejercito(terreno))
+{}
 Juego::~Juego(){}
 /*
 void Juego::eliminar_jugador(int id_){
