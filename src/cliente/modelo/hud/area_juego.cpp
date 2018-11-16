@@ -60,11 +60,11 @@ void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
         Terreno& terreno = juego.obtener_terreno();
         terreno.obtener_celda(camara.traducir_a_logica(mouse), celda_x, celda_y);
 
-        for (;celda_x<edificio_a_ubicar->obtener_ancho_celdas();celda_x++) {
-            for (;celda_y<edificio_a_ubicar->obtener_alto_celdas();celda_y++) {
+        for (int cx = 0; cx < edificio_a_ubicar->obtener_ancho_celdas(); cx++) {
+            for (int cy = 0; cy < edificio_a_ubicar->obtener_alto_celdas(); cy++) {
                 Posicion visual = camara.traducir_a_visual(
-                    terreno.obtener_posicion(celda_x, celda_y));
-                if (terreno.es_construible(celda_x, celda_y)) {
+                    terreno.obtener_posicion(celda_x + cx, celda_y + cy));
+                if (terreno.es_construible(celda_x + cx, celda_y + cy)) {
                     Sprite(0).renderizar(ventana, visual.x, visual.y);
                 } else {
                     Sprite(1).renderizar(ventana, visual.x, visual.y);
@@ -174,16 +174,17 @@ bool AreaJuego::mouse_click_izquierdo(int x, int y) {
 }
 
 bool AreaJuego::mouse_click_derecho(int x, int y) {
+    Posicion pos_logica = camara.traducir_a_logica(Posicion(x, y));
     int celda_x, celda_y;
     juego.obtener_terreno().obtener_celda(
-        camara.traducir_a_logica(Posicion(x, y)), celda_x, celda_y);
+        pos_logica, celda_x, celda_y);
     
     std::vector<int> ids;
     for (Tropa* tropa : unidades_seleccionadas) {
         ids.push_back(tropa->obtener_id());
     }
 
-    servidor.mover_tropas(ids, celda_x * 32, celda_y * 32);
+    servidor.mover_tropas(ids, pos_logica.x, pos_logica.y);
     tostador.hacer_tostada("Mover tropas");
     
     animar_mover_tropas = true;
@@ -237,6 +238,7 @@ bool AreaJuego::mouse_entra(int, int) {
 bool AreaJuego::mouse_sale(int, int) {
     mover_camara_x = mover_camara_y = 0;
     mouse_en_ventana = false;
+    esta_draggeando = false;
     return false;
 }
 

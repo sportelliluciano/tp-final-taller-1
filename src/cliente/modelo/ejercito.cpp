@@ -1,10 +1,33 @@
 #include "cliente/modelo/ejercito.h"
 
+#include <fstream>
+
+#include "libs/json.hpp"
+
 #include "cliente/modelo/terreno.h"
 
 namespace cliente {
 
-Ejercito::Ejercito(Terreno& terreno_juego) : terreno(terreno_juego) { }
+Ejercito::Ejercito(Terreno& terreno_juego) : terreno(terreno_juego) {
+    /*using nlohmann::json;
+
+    std::ifstream entrada("../data/ejercito.json");
+
+    json tropas_json;
+
+    entrada >> tropas_json;
+
+    auto it = tropas_json.begin();
+    const json& valores_por_defecto = *it;
+    ++it;
+    for(; it != tropas_json.end(); ++it) {
+        // Mergear valores por defecto con el elemento actual
+        json elem = valores_por_defecto;
+        elem.update(*it);
+
+        tropas_base.emplace(elem.at("id"), Tropa(elem));
+    }*/
+}
 
 void Ejercito::renderizar(Ventana& ventana, Camara& camara) {
     for (Tropa* tropa : terreno.obtener_tropas_en(camara.obtener_vista())) {
@@ -34,6 +57,45 @@ void Ejercito::actualizar(int t_ms) {
         terreno.mover_tropa(tropa, x_ant, y_ant);
     }
     last_ms = t_ms;
+}
+
+void Ejercito::set_tropa_disparando(int id_tropa, bool disparando) {
+    tropas.at(id_tropa).set_esta_disparando(disparando);
+}
+
+int Ejercito::obtener_sprite_clase(const std::string& clase) const {
+    return tropas_base.at(clase).obtener_sprite_boton();
+}
+
+bool Ejercito::esta_habilitada(const std::string& clase) const {
+    return false;
+}
+
+bool Ejercito::esta_entrenando(const std::string& clase) const {
+    return obtener_cola_entrenamiento(clase) != 0
+        || obtener_segundos_restantes(clase) != 0;
+}
+
+int Ejercito::obtener_cola_entrenamiento(const std::string& clase) const {
+    auto it = colas_entrenamiento.find(clase);
+    if (it == colas_entrenamiento.end())
+        return 0;
+    return it->second;
+}
+
+int Ejercito::obtener_segundos_restantes(const std::string& clase) const {
+    auto it = entrenamiento_actual.find(clase);
+    if (it == entrenamiento_actual.end())
+        return 0;
+    return it->second;
+}
+
+std::vector<const Tropa*> Ejercito::obtener_tropas_base() const {
+    std::vector<const Tropa*> resultado;
+    for (auto& it : tropas_base) {
+        resultado.push_back(&it.second);
+    }
+    return resultado;
 }
 
 void Ejercito::entrenar(const std::string& clase, int tiempo_ms) {

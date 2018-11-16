@@ -23,6 +23,42 @@ public:
     void actualizar(int t_ms);
 
     /**
+     * \brief Obtiene el número de sprite a mostrar para la clase indicada.
+     */
+    int obtener_sprite_clase(const std::string& clase) const;
+
+    /**
+     * \brief Devuelve true si la clase indicada está entrenando tropas
+     */
+    bool esta_entrenando(const std::string& clase) const;
+
+    /**
+     * \brief Devuelve true si la clase esta habilitada para su entrenamiento.
+     */
+    bool esta_habilitada(const std::string& clase) const;
+
+    /**
+     * \brief Obtiene la cantidad de tropas en la cola de la clase actual.
+     */
+    int obtener_cola_entrenamiento(const std::string& clase) const;
+
+    /**
+     * \brief Obtiene la cantidad de segundos restantes para que finalice el
+     *        entrenamiento actual de la clase indicada.
+     */
+    int obtener_segundos_restantes(const std::string& clase) const;
+
+    /**
+     * \brief Obtiene las tropas base disponibles para entrenar.
+     */
+    std::vector<const Tropa*> obtener_tropas_base() const;
+
+    void set_tropa_disparando(int id_tropa, bool disparando);
+
+    
+    /**** Eventos provenientes del servidor *****/
+
+    /**
      * \brief Inicia el entrenamiento de una clase de tropa.
      */
     void entrenar(const std::string& clase, int tiempo_ms);
@@ -77,6 +113,8 @@ private:
 
     std::unordered_map<std::string, int> entrenamiento_actual;
     std::unordered_map<std::string, int> colas_entrenamiento;
+
+    std::unordered_map<std::string, Tropa> tropas_base;
 };
 
 } // namespace cliente

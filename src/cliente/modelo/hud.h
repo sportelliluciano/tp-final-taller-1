@@ -16,6 +16,9 @@
 #include "cliente/video/widgets/caja_horizontal.h"
 #include "cliente/video/widgets/caja_vertical.h"
 
+#include "cliente/modelo/hud/boton_entrenamiento.h"
+#include "cliente/modelo/hud/boton_construccion.h"
+
 namespace cliente {
 
 /**
@@ -68,6 +71,7 @@ private:
     bool shift_presionado = false;
 
     std::list<BotonConstruccion> botones_construccion;
+    std::list<BotonEntrenamiento> botones_entrenamiento;
 };
 
 } // namespace cliente

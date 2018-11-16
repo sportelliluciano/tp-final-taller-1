@@ -97,7 +97,7 @@ void Infraestructura::actualizar(int t_ms) {
     last_ms = t_ms;
 }
 
-std::vector<const Edificio*> Infraestructura::obtener_edificios() const {
+std::vector<const Edificio*> Infraestructura::obtener_edificios_base() const {
     std::vector<const Edificio*> edificios_disponibles;
 
     for (auto it=edificios.begin(); it != edificios.end(); ++it) {

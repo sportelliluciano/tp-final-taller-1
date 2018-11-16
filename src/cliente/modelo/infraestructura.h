@@ -32,7 +32,7 @@ public:
     /**
      * \brief Devuelve los edificios disponibles para construir.
      */
-    std::vector<const Edificio*> obtener_edificios() const;
+    std::vector<const Edificio*> obtener_edificios_base() const;
 
     /**
      * \brief Devuelve true si se está construyendo un edificio de la clase

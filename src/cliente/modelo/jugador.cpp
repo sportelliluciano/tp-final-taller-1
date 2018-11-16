@@ -30,10 +30,6 @@ void Jugador::setear_dinero(int dinero_) {
     dinero = dinero_;
 }
 
-std::vector<const Edificio*> Jugador::obtener_edificios() const {
-    return infraestructura.obtener_edificios();
-}
-
 Infraestructura& Jugador::obtener_infraestructura() {
     return infraestructura;
 }

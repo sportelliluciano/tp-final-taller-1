@@ -12,6 +12,8 @@
 #include "cliente/video/widgets/widget_raiz.h"
 #include "cliente/video/widgets/caja_vertical.h"
 #include "cliente/video/widgets/caja_horizontal.h"
+#include "cliente/modelo/hud/boton_entrenamiento.h"
+#include "cliente/modelo/hud/boton_construccion.h"
 
 #define ANCHO_BOTONERA 250
 #define ALTO_BARRA_SUPERIOR 42
@@ -81,7 +83,9 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
     mutear_musica.set_padding(5, 4);
     mutear_musica.registrar_click([this](){ toggle_musica(); });
 
-    for (const Edificio* edificio : juego.obtener_edificios()) {
+    for (const Edificio* edificio : 
+        juego.obtener_infraestructura().obtener_edificios_base()) 
+    {
         botones_construccion.emplace_back(
             BotonConstruccion(
                 juego.obtener_infraestructura(), 
@@ -93,6 +97,20 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
         botonera_construccion.agregar_widget(botones_construccion.back());
         botones_construccion.back().en_ubicar_nuevo_edificio(
             [this, edificio] () { area_juego.ubicar_edificio(edificio); });
+    }
+
+    for (const Tropa* tropa : 
+        juego.obtener_ejercito().obtener_tropas_base()) 
+    {
+        botones_entrenamiento.emplace_back(
+            BotonEntrenamiento(
+                juego.obtener_ejercito(), 
+                tropa->obtener_clase(), 
+                servidor,
+                tostador
+            )
+        );
+        botonera_entrenamiento.agregar_widget(botones_entrenamiento.back());
     }
 
     barra_superior.empaquetar_al_frente(mutear_sonido);
@@ -109,7 +127,7 @@ bool HUD::teclado_presionado(tecla_t tecla) {
     switch(tecla) {
         case TECLA_SHIFT:
             shift_presionado = true;
-            area_juego.set_modo_vender(true);
+            juego.obtener_ejercito().set_tropa_disparando(0, true);
             break;
         case TECLA_IZQUIERDA:
         case TECLA_DERECHA:
@@ -128,7 +146,7 @@ bool HUD::teclado_suelto(tecla_t tecla) {
     switch(tecla) {
         case TECLA_SHIFT:
             shift_presionado = true;
-            area_juego.set_modo_vender(false);
+            juego.obtener_ejercito().set_tropa_disparando(0, false);
             break;
         case TECLA_IZQUIERDA:
         case TECLA_DERECHA:
@@ -169,7 +187,6 @@ void HUD::toggle_musica() {
 
 bool HUD::cerrar_ventana() {
     juego.detener();
-    servidor.detener();
     return false;
 }
 

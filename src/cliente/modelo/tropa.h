@@ -4,6 +4,8 @@
 #include <vector>
 #include <utility>
 
+#include "libs/json.hpp"
+
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/video/ventana.h"
 
@@ -12,6 +14,7 @@ namespace cliente {
 class Tropa {
 public:
     Tropa(int id_tropa_, int x_, int y_);
+    Tropa(const nlohmann::json& data);
 
     /**
      * \brief Renderiza la tropa.
@@ -28,6 +31,16 @@ public:
      * \brief Devuelve el ID de tropa.
      */
     int obtener_id() const;
+
+    /**
+     * \brief Devuelve la clase a la que pertenece la tropa
+     */
+    const std::string& obtener_clase() const;
+
+    /**
+     * \brief Devuelve el identificador del botón para entrenar la tropa.
+     */
+    int obtener_sprite_boton() const;
     
     /**
      * \brief Devuelve la coordenada x de la posición de la tropa en 
@@ -45,6 +58,11 @@ public:
      * \brief Devuelve true si la tropa se está moviendo.
      */
     bool esta_moviendo() const;
+
+    /**
+     * \brief Devuelve true si la tropa está disparando.
+     */
+    bool esta_disparando() const;
 
     /**
      * \brief Indica a la tropa que camine hacia la posición
@@ -80,6 +98,8 @@ public:
      */
     void set_vida(int nueva_vida);
 
+    void set_esta_disparando(bool disparando);
+
     /**
      * \brief Agrega una marca de selección a la tropa.
      */
@@ -91,11 +111,9 @@ public:
     void desmarcar();
 
 private:
-    static const int N_SPRITES = 32;
-    SpriteAnimado sprites[N_SPRITES];
-
-    float x, y;
-    float x_destino, y_destino;
+    int x_actual, y_actual;
+    float fx_actual, fy_actual;
+    int x_destino, y_destino;
 
     int id_tropa = -1;
 
@@ -104,6 +122,18 @@ private:
     int vida = 100;
 
     bool esta_marcada = false;
+
+    std::string clase;
+
+    static const int N_SPRITES = 8;
+    SpriteAnimado sprites_caminando[N_SPRITES];
+    SpriteAnimado sprites_parado[N_SPRITES];
+    SpriteAnimado sprites_disparando[N_SPRITES];
+    int posicion_sprite = 0; // Hacia donde está mirando la tropa
+
+    bool b_esta_disparando = false;
+
+    SpriteAnimado& obtener_sprite();
 };
 
 } // namespace cliente

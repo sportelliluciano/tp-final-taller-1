@@ -58,11 +58,6 @@ public:
      */
     void detener();
 
-    /**
-     * \brief Devuelve los edificios que existen en el juego.
-     */
-    std::vector<const Edificio*> obtener_edificios() const;
-
     Infraestructura& obtener_infraestructura();
     Ejercito& obtener_ejercito();
     Terreno& obtener_terreno();

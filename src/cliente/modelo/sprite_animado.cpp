@@ -63,6 +63,14 @@ void SpriteAnimado::renderizar(Ventana& ventana, int x, int y) {
     }
 }
 
+int SpriteAnimado::obtener_alto(Ventana& ventana) {
+    return cuadros[cuadro_actual].obtener_textura(ventana).obtener_alto();
+}
+
+int SpriteAnimado::obtener_ancho(Ventana& ventana) {
+    return cuadros[cuadro_actual].obtener_textura(ventana).obtener_ancho();
+}
+
 void SpriteAnimado::configurar_repeticion(bool repetir_indefinidamente) {
     loop = repetir_indefinidamente;
     if (repetir_indefinidamente) 

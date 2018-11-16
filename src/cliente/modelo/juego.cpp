@@ -45,10 +45,6 @@ void Juego::detener() {
     esta_jugando = false;
 }
 
-std::vector<const Edificio*> Juego::obtener_edificios() const {
-    return jugador->obtener_edificios();
-}
-
 Infraestructura& Juego::obtener_infraestructura() {
     return jugador->obtener_infraestructura();
 }

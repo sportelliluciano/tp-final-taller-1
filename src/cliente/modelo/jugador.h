@@ -37,7 +37,6 @@ public:
      */
     void setear_dinero(int dinero_);
     
-    std::vector<const Edificio*> obtener_edificios() const;
     
     /**
      * \brief Obtiene la infraestructura del jugador.

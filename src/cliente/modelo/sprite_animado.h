@@ -87,6 +87,9 @@ public:
      * \brief Devuelve true si la animación finalizó
      */
     bool finalizado() const;
+    
+    int obtener_alto(Ventana& ventana);
+    int obtener_ancho(Ventana& ventana);
 
 private:
     std::vector<Sprite> cuadros;
