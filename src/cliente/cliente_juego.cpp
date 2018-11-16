@@ -65,18 +65,18 @@ bool ClienteJuego::ejecutar_juego() {
     Controlador controlador(ventana, *servidor, juego);
 
     while (!juego.esta_terminado()) {
-        // Procesar eventos
-        ventana.procesar_eventos(); // Cerrar ventana
-        controlador.procesar_entrada(); // Servidor / Mouse / teclado
-        
-        // Actualizar el modelo del juego
-        juego.actualizar(ventana.obtener_ms());
-        
         // Renderizar el juego
         controlador.renderizar();
 
         // Mostrar los cambios
         ventana.actualizar();
+        // Procesar eventos
+        ventana.procesar_eventos(); // Cerrar ventana
+        controlador.procesar_entrada(); // Servidor / Mouse / teclado
+        
+        // Actualizar el modelo del juego por último para salir
+        //  si se detecta que terminó
+        juego.actualizar(ventana.obtener_ms());
     }
 
     servidor->detener();
