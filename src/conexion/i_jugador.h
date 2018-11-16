@@ -109,7 +109,7 @@ public:
      * 
      * clase: Clase de la tropa a entrenar
      */
-    virtual void iniciar_entrenamiento(const std::string& clase) = 0;
+    virtual void iniciar_entrenamiento(const std::string& clase, int ms) = 0;
 
     /**
      * \brief Sincroniza el tiempo de entrenamiento con el jugador.
