@@ -19,9 +19,8 @@ Controlador::Controlador(Ventana& ventana_, Servidor& servidor_, Juego& juego_)
 }
 
 void Controlador::procesar_entrada() {
-    Evento *evento;
     while (servidor.hay_eventos()) {
-        evento = servidor.pop_evento();
+        Evento *evento = servidor.pop_evento();
         try {
             evento->actualizar(juego);
         } catch (const std::exception& e) {
