@@ -72,7 +72,7 @@ public:
     ~Sala();
 
 private:
-    IModelo *modelo = nullptr;
+    std::unique_ptr<IModelo> modelo = nullptr;
     std::mutex lock_modelo;
 
     std::thread hilo_partida;

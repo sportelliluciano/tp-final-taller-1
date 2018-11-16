@@ -16,8 +16,9 @@
 
 namespace servidor {
 
-Sala::Sala(size_t capacidad_maxima) {
-    modelo = new MockModelo();
+Sala::Sala(size_t capacidad_maxima) 
+: modelo(new MockModelo())
+{
     capacidad = capacidad_maxima;
 }
 
@@ -27,15 +28,13 @@ Sala::Sala(Sala&& otro) {
             "No se puede mover la sala con la partida iniciada");
     }
 
-    modelo = otro.modelo;
+    modelo = std::move(otro.modelo);
     jugadores = std::move(otro.jugadores);
     clientes = std::move(otro.clientes);
     ultimo_id = otro.ultimo_id;
     terminar = otro.terminar;
     capacidad = otro.capacidad;
     partida_iniciada = otro.partida_iniciada;
-
-    otro.modelo = nullptr;
 }
 
 bool Sala::puede_unirse() const {
@@ -139,10 +138,7 @@ size_t Sala::obtener_capacidad() {
     return capacidad;
 }
 
-Sala::~Sala() {
-    if (modelo)
-        delete modelo;
-}
+Sala::~Sala() { }
 
 // TODO: Chequear excepciones
 void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {
