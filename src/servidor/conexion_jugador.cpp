@@ -123,10 +123,11 @@ void ConexionJugador::eliminar_edificio(int id_edificio) {
     });
 }
 
-void ConexionJugador::iniciar_entrenamiento(const std::string& clase) {
+void ConexionJugador::iniciar_entrenamiento(const std::string& clase, int ms) {
     notificar({
         {"id", EVC_ENTRENAR_TROPA},
-        {"clase", clase}
+        {"clase", clase},
+        {"tiempo", ms}
     });
 }
 
