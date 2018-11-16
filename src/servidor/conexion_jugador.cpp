@@ -4,8 +4,8 @@
 
 #include "conexion/conexion.h"
 #include "conexion/eventos_cliente.h"
-#include "servidor/i_jugador.h"
-#include "servidor/i_modelo.h"
+#include "conexion/i_jugador.h"
+#include "conexion/i_modelo.h"
 #include "servidor/cliente.h"
 
 #define SIN_IMPLEMENTAR(evento) { \
