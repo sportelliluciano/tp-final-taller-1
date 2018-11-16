@@ -111,6 +111,8 @@ private:
 
     int last_ms = 0;
 
+    float velocidad_ee = 1.0f;
+
     std::unordered_map<std::string, int> entrenamiento_actual;
     std::unordered_map<std::string, int> colas_entrenamiento;
 

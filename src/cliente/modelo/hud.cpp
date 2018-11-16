@@ -99,9 +99,7 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
             [this, edificio] () { area_juego.ubicar_edificio(edificio); });
     }
 
-    for (const Tropa* tropa : 
-        juego.obtener_ejercito().obtener_tropas_base()) 
-    {
+    for (const Tropa* tropa : juego.obtener_ejercito().obtener_tropas_base()) {
         botones_entrenamiento.emplace_back(
             BotonEntrenamiento(
                 juego.obtener_ejercito(), 

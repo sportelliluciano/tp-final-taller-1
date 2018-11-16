@@ -1,8 +1,9 @@
 #ifndef _TROPA_H_
 #define _TROPA_H_
 
-#include <vector>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "libs/json.hpp"
 
@@ -13,7 +14,6 @@ namespace cliente {
 
 class Tropa {
 public:
-    Tropa(int id_tropa_, int x_, int y_);
     Tropa(const nlohmann::json& data);
 
     /**
@@ -63,6 +63,12 @@ public:
      * \brief Devuelve true si la tropa está disparando.
      */
     bool esta_disparando() const;
+
+    /**
+     * \brief Inicializa la instancia de la tropa.
+     */
+    void inicializar(int id, const Posicion& posicion, int vida_, 
+        int id_propietario_);
 
     /**
      * \brief Indica a la tropa que camine hacia la posición
@@ -116,6 +122,7 @@ private:
     int x_destino, y_destino;
 
     int id_tropa = -1;
+    int id_propietario = 0;
 
     std::vector<std::pair<int, int>> camino_actual;
     size_t paso_actual = 0;
@@ -130,6 +137,8 @@ private:
     SpriteAnimado sprites_parado[N_SPRITES];
     SpriteAnimado sprites_disparando[N_SPRITES];
     int posicion_sprite = 0; // Hacia donde está mirando la tropa
+
+    int sprite_boton;
 
     bool b_esta_disparando = false;
 

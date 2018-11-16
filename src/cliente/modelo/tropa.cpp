@@ -9,19 +9,9 @@
 namespace cliente {
 
 Tropa::Tropa(const nlohmann::json& data) {
-    for (int i=0;i<N_SPRITES;i++) {
-        sprites_caminando[i] = SpriteAnimado({SPRITE_BASE + i, 
-            SPRITE_BASE + N_SPRITES + i}, 5);
-        sprites_caminando[i].set_centrado(true);
-        sprites_caminando[i].configurar_repeticion(true);
-        
-        sprites_parado[i] = SpriteAnimado(SPRITE_BASE + i, SPRITE_BASE + i, 1);
-        sprites_parado[i].configurar_repeticion(true);
-        sprites_parado[i].set_centrado(true);
-    }
-}
-
-Tropa::Tropa(int id_tropa_, int x, int y) {
+    clase = data.at("id");
+    sprite_boton = data.at("sprite_boton");
+    int sprite_base = data.at("sprite_base");
     for (int i=0;i<N_SPRITES;i++) {
         std::vector<Sprite> cuadros_caminando, cuadros_disparando;
         for (int j=0; j<7; j++) {
@@ -39,9 +29,19 @@ Tropa::Tropa(int id_tropa_, int x, int y) {
         sprites_disparando[i].configurar_repeticion(true);
     }
 
-    x_destino = x_actual = x;
-    y_destino = y_actual = y;
-    id_tropa = id_tropa_;
+    fx_actual = x_destino = x_actual = 0;
+    fy_actual = y_destino = y_actual = 0;
+    id_tropa = -1;
+}
+
+void Tropa::inicializar(int id, const Posicion& posicion, int vida_, 
+    int id_propietario_)
+{
+    fx_actual = x_destino = x_actual = posicion.x;
+    fy_actual = y_destino = y_actual = posicion.y;
+    id_tropa = id;
+    vida = vida_;
+    id_propietario = id_propietario_;
 }
 
 SpriteAnimado& Tropa::obtener_sprite() {
@@ -150,7 +150,7 @@ const std::string& Tropa::obtener_clase() const {
 }
 
 int Tropa::obtener_sprite_boton() const {
-    return 4272;
+    return sprite_boton;
 }
 
 int Tropa::obtener_x() const {

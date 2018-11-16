@@ -6,10 +6,12 @@
 
 #include "cliente/modelo/terreno.h"
 
+#define MIN_TIEMPO_ENTRENAMIENTO 1
+
 namespace cliente {
 
 Ejercito::Ejercito(Terreno& terreno_juego) : terreno(terreno_juego) {
-    /*using nlohmann::json;
+    using nlohmann::json;
 
     std::ifstream entrada("../data/ejercito.json");
 
@@ -26,7 +28,7 @@ Ejercito::Ejercito(Terreno& terreno_juego) : terreno(terreno_juego) {
         elem.update(*it);
 
         tropas_base.emplace(elem.at("id"), Tropa(elem));
-    }*/
+    }
 }
 
 void Ejercito::renderizar(Ventana& ventana, Camara& camara) {
@@ -56,6 +58,20 @@ void Ejercito::actualizar(int t_ms) {
         tropa.actualizar(t_ms - last_ms);
         terreno.mover_tropa(tropa, x_ant, y_ant);
     }
+
+    int dt_ee = (int)((t_ms - last_ms) * velocidad_ee);
+    
+    for (auto it = entrenamiento_actual.begin(); 
+        it != entrenamiento_actual.end(); ++it) 
+    {
+        if (it->second <= MIN_TIEMPO_ENTRENAMIENTO)
+            continue;
+        if (it->second - dt_ee < MIN_TIEMPO_ENTRENAMIENTO)
+            it->second = MIN_TIEMPO_ENTRENAMIENTO;
+        else
+            it->second -= dt_ee;
+    }
+    
     last_ms = t_ms;
 }
 
@@ -68,7 +84,7 @@ int Ejercito::obtener_sprite_clase(const std::string& clase) const {
 }
 
 bool Ejercito::esta_habilitada(const std::string& clase) const {
-    return false;
+    return true;
 }
 
 bool Ejercito::esta_entrenando(const std::string& clase) const {
@@ -117,7 +133,14 @@ void Ejercito::actualizar_cola_entrenamiento(const std::string& clase,
 void Ejercito::crear_tropa(int id, const std::string& clase, 
     const std::vector<int>& posicion, int id_jugador) 
 {
-    tropas.emplace(id, Tropa(id, posicion.at(0), posicion.at(1)));
+    Tropa nueva_tropa = tropas_base.at(clase);
+    tropas.emplace(id, nueva_tropa);
+    tropas.at(id).inicializar(
+        id, 
+        Posicion(posicion.at(0), posicion.at(1)),
+        100,
+        id_jugador
+    );
     terreno.agregar_tropa(tropas.at(id));
 }
 

@@ -39,13 +39,10 @@ void BotonEntrenamiento::pre_renderizar(Ventana& ventana, int x, int y) {
 bool BotonEntrenamiento::mouse_click_izquierdo(int, int) {
     if (!ejercito.esta_habilitada(clase))
         return false;
-    if (ejercito.esta_entrenando(clase) && 
-        ejercito.obtener_segundos_restantes(clase) == 0)
-    {
-        Sonido::obtener_instancia().reproducir_sonido(SONIDO_BLEEP);
-        servidor.iniciar_entrenamiento(clase);
-        tostador.hacer_tostada("Iniciar entrenamiento: " + clase);
-    }
+    
+    Sonido::obtener_instancia().reproducir_sonido(SONIDO_BLEEP);
+    servidor.iniciar_entrenamiento(clase);
+    tostador.hacer_tostada("Iniciar entrenamiento: " + clase);
     return false;
 }
 
