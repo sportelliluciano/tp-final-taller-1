@@ -69,10 +69,15 @@ public:
      */
     float x() const;
     float y() const;
+    float px_x() const;
+    float px_y() const;
     void actualizar(float x,float y);
+    void actualizar_px_x(float x);
+    void actualizar_px_y(float y);
 
 private:
     float x_ = 0, y_ = 0;
+    float px_x_ = 0, px_y_ = 0;
 };
 
 } // namespace modelo

@@ -10,6 +10,7 @@ namespace modelo { class Unidad; }
 #include "modelo/edificio.h"
 #include "modelo/unidad_base.h"
 #include "modelo/posicion.h"
+#include "modelo/i_jugador.h"
 
 namespace modelo {
 
@@ -19,6 +20,9 @@ private:
     Posicion posicion;
     int vida;
     UnidadBase& unidad_base;
+    std::vector<Posicion> camino;
+    bool esta_en_camino = false;
+    unsigned int paso_actual = 0; 
 
 public:
     Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
@@ -33,6 +37,10 @@ public:
     Posicion& get_posicion();
     unsigned int x();
     unsigned int y();
+    bool llego_a(Posicion& posicion_);
+    void configurar_camino(std::vector<Posicion> nuevo_camino);
+    bool en_movimiento();
+    void actualizar_posicion(int dt,IJugador* jugador);
 };
 
 } // namespace modelo

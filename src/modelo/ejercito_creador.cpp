@@ -45,4 +45,8 @@ unsigned int EjercitoCreador::get_costo(std::string id_tipo){
 std::pair<int,int>& EjercitoCreador::get_dimensiones(std::string id_tipo){
     return prototipos_base.at(id_tipo).get_dimensiones();
 }
+unsigned int EjercitoCreador::get_tiempo(std::string id_tipo){
+    return prototipos_base.at(id_tipo).get_tiempo();
+
+}
 }

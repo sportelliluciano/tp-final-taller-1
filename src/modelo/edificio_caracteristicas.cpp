@@ -25,7 +25,7 @@ int EdificioCaracteristicas::get_id(){
 int EdificioCaracteristicas::get_vida(){
     return puntos_de_estructura;
 }
-Posicion& EdificioCaracteristicas::get_posicion()const{
+Posicion& EdificioCaracteristicas::get_posicion(){
     return posicion;
 }
 }

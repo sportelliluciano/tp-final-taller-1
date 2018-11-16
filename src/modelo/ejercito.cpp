@@ -29,23 +29,12 @@ void Ejercito::destruir(int id){
     tropas.erase(id);
     //crear y mandar el evento
 }
-void Ejercito::mover(int id,int x,int y){
-    //mandar el evento con el camino
-    std::cout << "Llegue a mover." << '\n';
-
-    std::vector<Posicion> v = terreno.buscar_camino_minimo(tropas.at(id).get_posicion(), 
+void Ejercito::mover(int id,int x,int y,IJugador* jugador){
+    std::vector<Posicion> a_estrella = terreno.buscar_camino_minimo(tropas.at(id).get_posicion(), 
                                                            Posicion(x,y));
-<<<<<<< HEAD
-    std::vector<int> v;                                                       
-    for (auto it = a_estrella.begin(); it!=a_estrella.end(); ++it){
-        std::cout << "(" << (*it).x() << " ; " << (*it).y() << ")" << '\n';
-        v.push_back((int)(*it).x());
-        v.push_back((int)(*it).y()); 
-=======
-    for (auto it = v.begin(); it!=v.end(); ++it){
-        std::cout << "(" << (*it).x() << " ; " << (*it).y() << "(" << '\n'; 
->>>>>>> 3c61bb700030f449533f62e48249fc3de9ee906b
-    }                                                       
+    tropas.at(id).configurar_camino(a_estrella);
+    tropas_en_movimiento.push_back(id);
+    //jugador->mover_tropa(id,a_estrella);
 }
 void Ejercito::actualizar_pos(int id,int x,int y){
     terreno.eliminar_tropa(tropas.at(id).get_posicion(),tropas.at(id).get_dimensiones());
@@ -65,5 +54,27 @@ Unidad& Ejercito::get(int id){
 }
 unsigned int Ejercito::get_costo(std::string id_tipo){
     return prototipos.get_costo(id_tipo);
+}
+void Ejercito::terminar_camino(int id){
+    for (std::vector<int>::iterator it = tropas_en_movimiento.begin();
+        it != tropas_en_movimiento.end();++it){
+            if ((*it) == id){
+                tropas_en_movimiento.erase(it);
+                break;
+            }
+        }
+}
+void Ejercito::actualizar_tropas(int dt,IJugador* jugador){
+    for (std::vector<int>::iterator it = tropas_en_movimiento.begin();
+            it != tropas_en_movimiento.end(); ++it){
+        if (tropas.at(*it).en_movimiento()){
+            it = tropas_en_movimiento.erase(it);
+            continue;
+        }
+        tropas.at(*it).actualizar_posicion(dt,jugador);
+    }
+}
+unsigned int Ejercito::get_tiempo(std::string id_tipo){
+    return prototipos.get_tiempo(id_tipo);
 }
 }

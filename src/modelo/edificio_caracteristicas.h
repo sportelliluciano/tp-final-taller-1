@@ -8,7 +8,6 @@ namespace modelo {
 class EdificioCaracteristicas{
     private:
     int id;
-    //Celda& posicion;
     Posicion posicion;
     unsigned int puntos_de_estructura;
 
@@ -19,7 +18,7 @@ class EdificioCaracteristicas{
     bool reducir_ptos_est(int dano);
     int get_id();
     int get_vida();
-    Posicion& get_posicion()const;
+    Posicion& get_posicion();
 };
 }
 #endif

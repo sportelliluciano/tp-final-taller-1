@@ -28,6 +28,7 @@ class Infraestructura{
     unsigned int get_energia(std::string id_tipo);
     unsigned int get_costo(int id);
     unsigned int get_energia(int id);
+    unsigned int get_tiempo(int id);
 };
 }
 #endif
