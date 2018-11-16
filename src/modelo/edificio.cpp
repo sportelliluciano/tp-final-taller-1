@@ -38,10 +38,13 @@ unsigned int Edificio::get_costo(){
 unsigned int Edificio::get_energia(){
     return info_base.get_energia();
 }
-std::pair<int,int>& Edificio::get_dimensiones()const{
+std::pair<int,int>& Edificio::get_dimensiones(){
     return info_base.get_dimensiones();
 }
-Posicion& Edificio::get_posicion()const{
-    return info_base.get_posicion();
+Posicion& Edificio::get_posicion(){
+    return caracteristicas.get_posicion();
+}
+unsigned int Edificio::get_tiempo(){
+    return info_base.get_tiempo();
 }
 }

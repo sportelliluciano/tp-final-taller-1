@@ -24,6 +24,7 @@ public:
     unsigned int get_costo() const;
     unsigned int get_ptos_est() ;
     std::pair<int,int>& get_dimensiones();
+    unsigned int get_tiempo() ;
 };
 
 } // namespace modelo

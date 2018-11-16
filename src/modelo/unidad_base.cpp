@@ -45,7 +45,7 @@ unsigned int UnidadBase::get_velocidad() const {
     return velocidad;
 }
 unsigned int UnidadBase::get_tiempo() const {
-    return tiempo_de_entrenamiento;
+    return tiempo_de_entrenamiento * 60000;//paso de segundos a milisengundos
 }
 unsigned int UnidadBase::get_costo() const {
     return costo;

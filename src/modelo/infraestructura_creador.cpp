@@ -41,7 +41,7 @@ unsigned int InfraestructuraCreador::get_costo(std::string id_tipo){
 unsigned int InfraestructuraCreador::get_energia(std::string id_tipo){
     return info_base.at(id_tipo).get_energia();
 }
-std::pair<int,int>& InfraestructuraCreador::get_dimensiones(std::string id_tipo)const{
+std::pair<int,int>& InfraestructuraCreador::get_dimensiones(std::string id_tipo){
     return info_base.at(id_tipo).get_dimensiones();
 }
 }

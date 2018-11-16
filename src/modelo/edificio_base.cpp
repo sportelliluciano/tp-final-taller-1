@@ -38,4 +38,7 @@ unsigned int EdificioBase::get_ptos_est() {
 std::pair<int,int>& EdificioBase::get_dimensiones(){
     return dimensiones;
 }
+ unsigned int EdificioBase::get_tiempo(){
+     return 5000;
+ }
 } // namespace modelo

@@ -5,15 +5,15 @@
 
 int main(int argc, char *argv[]) {
     
-    modelo::Terreno terreno("../data/terreno.csv");
-    modelo::Juego player(terreno);
-    player.agregar_jugador("mati");
+    //modelo::Terreno terreno("../data/terreno.csv");
+    //modelo::Juego player(terreno);
+    //player.agregar_jugador("mati");
     //std::cout << terreno.rango_valido_tropa(0,4,1,1) << '\n';
     //void crear_unidad(int id_jugador,std::string id_tipo,int x,int y);
-    player.crear_unidad(0,"tanque sonico",0,4);
+    //player.crear_unidad(0,"tanque sonico",0,4);
     
     //void mover_unidad(int id_jugador,int id,int x,int y);
-    player.mover_unidad(0,0,8,8);
+    //player.mover_unidad(0,0,8,8);
     /*
     player.crear_edificio("fabrica_ligera",3,4);
     std::cout<< "Fabrica ligera" << '\n';

@@ -10,7 +10,7 @@
 #include "modelo/infraestructura.h"
 #include "modelo/ejercito.h"
 #include "modelo/terreno.h"
-
+#include "modelo/i_jugador.h"
 namespace modelo {
 
 class Juego{
@@ -20,12 +20,38 @@ class Juego{
     Terreno& terreno;
     std::unordered_map<int,Jugador> jugadores;
     Id id;
+    bool empezo = false;
+    void actualizar_construcciones(int dt) ;
+    void actualizar_tropas(int dt);
+    IJugador* comunicacion_jugador;
 
     public:
     Juego(Terreno& terreno);
     ~Juego();
+    void iniciar_partida();
+    bool partida_iniciada();
+    bool juego_terminado();
+    void crear_jugador(IJugador* jugador);
+    void jugador_desconectado(IJugador* jugador);//no implementada
+    bool iniciar_construccion_edificio(IJugador* jugador,
+        const std::string& clase);
+    bool cancelar_construccion_edificio(IJugador* jugador, 
+        const std::string& clase);
+    bool ubicar_edificio(IJugador* jugador, int celda_x, int celda_y,
+        const std::string& clase);    
+    bool vender_edificio(IJugador* jugador, int id_edificio);//sin implementar
+    bool iniciar_entrenamiento_tropa(IJugador* jugador,
+        const std::string& clase);
+    bool cancelar_entrenamiento_tropa(IJugador* jugador,
+        const std::string& clase);
+    bool mover_tropas(IJugador* jugador, const std::vector<int>& ids,
+                                    int x, int y);
+    bool atacar_tropa(IJugador* jugador, 
+        const std::vector<int>& ids_atacantes, int id_atacado);//le falta                                    
+    bool indicar_especia_cosechadora(IJugador* jugador,
+    const std::vector<int>& ids, int celda_x, int celda_y);//sin implementar
 
-    void agregar_jugador(std::string casa);
+    void actualizar(int dt_ms);
     void eliminar_jugador(int id);
     void crear_edificio(int id_jugador,std::string id_tipo,int x,int y);
     void reciclar_edificio(int id_jugador,int id);

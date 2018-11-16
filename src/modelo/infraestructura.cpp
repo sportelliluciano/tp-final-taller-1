@@ -46,4 +46,7 @@ unsigned int Infraestructura::get_costo(int id){
 unsigned int Infraestructura::get_energia(int id){
     return edificios.at(id).get_energia();
 }
+unsigned int Infraestructura::get_tiempo(int id){
+    return edificios.at(id).get_tiempo();
+}
 }
