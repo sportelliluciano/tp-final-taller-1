@@ -1,5 +1,11 @@
 # Trabajo práctico final de Taller 1: Dune 2000
 
+#### Dependencias del cliente:
+- `libsdl2-dev`
+- `libsdl2-image-dev`
+- `libsdl2-mixer-dev`
+- `qt5-default`
+
 #### Lineamientos sobre el código:
 
 - Nombres de clases, variables y atributos en español.
@@ -30,8 +36,6 @@ Con eso se deben generar los siguientes ejecutables:
 - Pruebas unitarias del servidor: `build/test/servidor-unit-tests`
 - Pruebas unitarias del cliente: `build/test/cliente-unit-tests`
 - Pruebas unitarias del editor: `build/test/editor-unit-tests`
-
-El cliente requiere `libsdl2-dev` y `libsdl2-image-dev` para que compile.
 
 El editor requiere 'qt5-default' para que compile.
 
