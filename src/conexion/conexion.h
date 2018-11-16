@@ -1,6 +1,7 @@
 #ifndef _CONEXION_H_
 #define _CONEXION_H_
 
+#include <memory>
 #include <string>
 
 #include "libs/json.hpp"
@@ -105,7 +106,7 @@ public:
 
 private:
     SocketConexion conexion;
-    uint8_t *buffer_recepcion;
+    std::unique_ptr<uint8_t[]> buffer_recepcion;
 
     /* Deshabilitar copia */
     Conexion(const Conexion& otro) = delete;

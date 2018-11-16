@@ -35,23 +35,16 @@ Conexion::Conexion(const std::string& direccion, const std::string& servicio)
 { }
 
 Conexion::Conexion(Conexion&& otro) 
-    : conexion(std::move(otro.conexion))
-{
-    buffer_recepcion = otro.buffer_recepcion;
-    otro.buffer_recepcion = nullptr;
-}
+    : conexion(std::move(otro.conexion)), 
+      buffer_recepcion(std::move(otro.buffer_recepcion))
+{ }
 
 Conexion& Conexion::operator=(Conexion&& otro) {
     if (this == &otro)
         return *this;
 
     conexion = std::move(otro.conexion);
-    
-    if (buffer_recepcion)
-        delete buffer_recepcion;
-
-    buffer_recepcion = otro.buffer_recepcion;
-    otro.buffer_recepcion = nullptr;
+    buffer_recepcion = std::move(otro.buffer_recepcion);
     return *this;
 }
 
@@ -74,17 +67,17 @@ nlohmann::json Conexion::recibir_json() {
         throw ErrorConexion("Se recibió un tamaño de paquete inválido");
     }
 
-    if (conexion.recibir_bytes(buffer_recepcion, tamanio) != tamanio) {
+    if (conexion.recibir_bytes(buffer_recepcion.get(), tamanio) != tamanio) {
         throw ErrorConexion("Se cerró la conexión durante la recepción de "
             "un paquete");
     }
 
-    buffer_recepcion[tamanio] = 0;
+    buffer_recepcion.get()[tamanio] = 0;
 
     nlohmann::json resultado;
     
     try {
-        resultado = nlohmann::json::parse(buffer_recepcion);
+        resultado = nlohmann::json::parse(buffer_recepcion.get());
     } catch (const std::exception& e) {
         throw ErrorConexion("Se recibió un paquete inválido");
     }
@@ -124,12 +117,6 @@ void Conexion::cerrar(bool ignorar_errores) {
     conexion.close(ignorar_errores);
 }
 
-Conexion::~Conexion() {
-    if (buffer_recepcion)
-        delete buffer_recepcion;
-    
-    // Prevenir excepciones en el destructor.
-    cerrar(true);
-}
+Conexion::~Conexion() { }
 
 } // namespace conexion
