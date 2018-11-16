@@ -7,7 +7,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "libs/json.hpp"
 #include "conexion/i_modelo.h"
 
 namespace servidor {
@@ -19,7 +18,7 @@ public:
     MockModelo() { }
 
     void crear_jugador(IJugador* nuevo_jugador) { 
-        jugador = nuevo_jugador;
+        jugadores.emplace(nuevo_jugador, Jugador());
     }
     
     void iniciar_partida() {
@@ -35,12 +34,15 @@ public:
     }
 
     void jugador_desconectado(IJugador* jugador_act) {
-        terminado = true;
+        jugadores.erase(jugador_act);
     }
 
     bool iniciar_construccion_edificio(IJugador* jugador_act,
         const std::string& clase)
     {
+        auto& construcciones_en_cola = 
+            jugadores.at(jugador_act).construcciones_en_cola;
+        
         if (construcciones_en_cola.count(clase) == 0)
             construcciones_en_cola.insert({clase, 1});
         else
@@ -53,9 +55,13 @@ public:
     bool cancelar_construccion_edificio(IJugador* jugador_act, 
         const std::string& clase)
     {
+        auto& construcciones_en_cola = 
+            jugadores.at(jugador_act).construcciones_en_cola;
+
         if (construcciones_en_cola.count(clase) != 0) {
             construcciones_en_cola.at(clase)--;
-            jugador->actualizar_cola_cc(clase, construcciones_en_cola.at(clase));
+            jugador_act->actualizar_cola_cc(clase, 
+                construcciones_en_cola.at(clase));
             if (construcciones_en_cola.at(clase) <= 0)
                 construcciones_en_cola.erase(clase);
             
@@ -67,8 +73,11 @@ public:
     bool ubicar_edificio(IJugador* jugador_act, int celda_x, int celda_y,
         const std::string& clase)
     {
-        int id_edificio = edificios.size();
-        edificios.emplace(
+        auto& edificios = jugadores.at(jugador_act).edificios;
+        auto& construcciones_esperando_ubicacion 
+            = jugadores.at(jugador_act).construcciones_esperando_ubicacion;
+
+        edificios_global.emplace(
             id_edificio,
             Edificio(
                 id_edificio,
@@ -77,44 +86,93 @@ public:
                 clase
             )
         );
-        jugador->crear_edificio(
+        edificios.insert({id_edificio, &edificios_global.at(id_edificio)});
+        jugador_act->crear_edificio(
             id_edificio,
             clase, 
             celda_x, celda_y, 
-            jugador->obtener_id()
+            jugador_act->obtener_id()
         );
         construcciones_esperando_ubicacion.erase(clase);
+
+        broadcast([this, jugador_act,&clase, celda_x, celda_y] (IJugador* j) {
+            if (j != jugador_act) {
+                j->agregar_edificio(
+                    id_edificio,
+                    clase, 
+                    celda_x, celda_y, 
+                    jugador_act->obtener_id(),
+                    100
+                );
+            }
+        });
+
+        id_edificio++;
         return true;
     }
 
-    bool vender_edificio(IJugador* jugador_act, int id_edificio) {
-        edificios.erase(id_edificio);
-        jugador->eliminar_edificio(id_edificio);
+    bool vender_edificio(IJugador* jugador_act, int id) {
+        auto& edificios = jugadores.at(jugador_act).edificios;
+        edificios.erase(id);
+        broadcast([this, id] (IJugador* j) {
+            j->eliminar_edificio(id);
+        });
         return true;
     }
 
     bool iniciar_entrenamiento_tropa(IJugador* jugador_act,
         const std::string& clase) 
     {
-        return false;
+        auto& entrenamientos_en_cola = 
+            jugadores.at(jugador_act).entrenamientos_en_cola;
+        
+        if (entrenamientos_en_cola.count(clase) == 0)
+            entrenamientos_en_cola.insert({clase, 1});
+        else
+            entrenamientos_en_cola.at(clase)++;
+        
+        jugador_act->actualizar_cola_ee(clase, entrenamientos_en_cola.at(clase));
+        return true;
     }
 
     bool cancelar_entrenamiento_tropa(IJugador* jugador_act,
         const std::string& clase)
     {
+        auto& entrenamientos_en_cola = 
+            jugadores.at(jugador_act).entrenamientos_en_cola;
+
+        if (entrenamientos_en_cola.count(clase) != 0) {
+            entrenamientos_en_cola.at(clase)--;
+            jugador_act->actualizar_cola_ee(clase, entrenamientos_en_cola.at(clase));
+            if (entrenamientos_en_cola.at(clase) <= 0)
+                entrenamientos_en_cola.erase(clase);
+            
+            return true;
+        }
         return false;
     }
 
     bool mover_tropas(IJugador* jugador_act, const std::vector<int>& ids,
         int x_px, int y_px) 
     {
-        x_destino = x_px;
-        y_destino = y_px;
-        
+        unsigned int cant = sqrt(ids.size());
+        unsigned int n = 0;
         for (int id : ids) {
-            jugador->mover_tropa(id, { {x_tropa, y_tropa}, {x_px, y_px}});
-        }
+            Tropa* t = jugadores.at(jugador_act).tropas.at(id);
+            t->x_destino = x_px + n * 16;
+            t->y_destino = y_px;
+            n++;
+            if (n == cant) {
+                y_px += 16;
+                n = 0;
+            }
+            
 
+            broadcast([t] (IJugador* j) {
+                j->mover_tropa(t->id, 
+                    { {t->x_actual, t->y_actual}, {t->x_destino, t->y_destino}});
+            });
+        }
         return true;
     }
 
@@ -124,36 +182,29 @@ public:
         return false;
     }
 
-    bool indicar_especia_cosechadora(IJugador* jugador_act,
-        const std::vector<int>& ids, int celda_x, int celda_y)
+    bool indicar_especia_cosechadora(IJugador*,const std::vector<int>&, int, int)
     {
         return false;
     }
 
     void actualizar(int dt) {
-        if (!tropa_creada) {
-            jugador->crear_tropa(0, "a", x_tropa, y_tropa, 100, 
-                jugador->obtener_id());
-            tropa_creada = true;
+        for (auto& it : jugadores) {
+            actualizar_construcciones(it.first, dt);
+            actualizar_entrenamientos(it.first, dt);
+            actualizar_tropas(it.first, dt);
         }
-        actualizar_construcciones(dt);
-        if (wait <= 0 && !esta_en_camino && paso_actual == 0) {
-            jugador->mover_tropa(0, camino_tropa);
-            paso_actual = 0;
-            x_destino = camino_tropa[paso_actual].first;
-            y_destino = camino_tropa[paso_actual].second;
-            esta_en_camino = true;
-        } else {
-            wait -= dt;
-        }
-        actualizar_tropas(dt);
     }
 
     virtual ~MockModelo() noexcept { }
 
 private:
 
-    void actualizar_construcciones(int dt) {
+    void actualizar_construcciones(IJugador* jugador, int dt) {
+        auto& construcciones = jugadores.at(jugador).construcciones;
+        auto& construcciones_en_cola = jugadores.at(jugador).construcciones_en_cola;
+        auto& construcciones_esperando_ubicacion = 
+            jugadores.at(jugador).construcciones_esperando_ubicacion;
+
         for (auto it=construcciones.begin(); it != construcciones.end();) {
             if (it->second - dt < 0) {
                 construcciones_esperando_ubicacion.insert(it->first);
@@ -186,16 +237,115 @@ private:
         }
     }
 
-    bool llego_a(const std::pair<int, int>& posicion) {
-        return (abs(posicion.first - x_tropa) < 1) && 
-               (abs(posicion.second - y_tropa) < 1);
+    void actualizar_entrenamientos(IJugador *jugador, int dt) {
+        auto& entrenamientos = jugadores.at(jugador).entrenamientos;
+        auto& entrenamientos_en_cola = jugadores.at(jugador).entrenamientos_en_cola;
+        auto& tropas = jugadores.at(jugador).tropas;
+
+        for (auto it=entrenamientos.begin(); it != entrenamientos.end();) {
+            if (it->second - dt < 0) {
+                // Entrenamiento terminado
+                jugador->sincronizar_entrenamiento(it->first, 0);
+                broadcast([this, jugador, it] (IJugador* j) {
+                    j->crear_tropa(id_tropa, it->first, 
+                        300, 300, 100, jugador->obtener_id());
+                });
+                tropas_global.insert({id_tropa, Tropa(id_tropa, 300, 300, 100, 
+                    jugador->obtener_id())});
+                tropas.insert({id_tropa, &tropas_global.at(id_tropa)});
+                id_tropa++;
+                it = entrenamientos.erase(it);
+            } else {
+                it->second -= dt;
+                ++it;
+            }
+        }
+
+        for (auto it = entrenamientos_en_cola.begin(); it != entrenamientos_en_cola.end();) 
+        {
+            if (entrenamientos.count(it->first) == 0) {
+                entrenamientos[it->first] = 1000;
+                jugador->iniciar_entrenamiento(it->first, 1000);
+                it->second--;
+                jugador->actualizar_cola_ee(it->first, it->second);
+            }
+            if (it->second == 0) {
+                it = entrenamientos_en_cola.erase(it);
+            } else {
+                ++it;
+            }
+        }
     }
 
-    void actualizar_tropas(int dt) {
-        if (esta_en_camino) {
+    void actualizar_tropas(IJugador* jugador, int dt) {
+        for (auto& it : jugadores.at(jugador).tropas) {
+            Tropa* tropa = it.second;
+            if (tropa->actualizar_camino(dt)) {
+                broadcast([tropa] (IJugador* j) {
+                    j->sincronizar_tropa(tropa->id, tropa->x_actual, 
+                        tropa->y_actual);
+                });
+            }
+            tropa->actualizar(dt);
+        }
+    }
+
+    void broadcast(std::function<void(IJugador*)> mensaje) {
+        for (auto& it : jugadores) {
+            mensaje(it.first);
+        }
+    }
+
+    struct Edificio {
+        int id_edificio;
+        int celda_x, celda_y;
+        std::string clase;
+        int id_propietario;
+        Edificio(int id, int x, int y, int jugador, const std::string& clase_)
+            : id_edificio(id), celda_x(x), celda_y(y), clase(clase_), 
+              id_propietario(jugador)
+        { }
+    };
+
+    struct Tropa {
+        int id;
+    
+        int id_propietario;
+
+        int x_actual, y_actual;
+        int x_destino, y_destino;
+        float fx_actual, fy_actual;
+
+        std::vector<std::pair<int, int>> camino_tropa = 
+        { {1*32,5*32}, {2*32,5*32}, {3*32,6*32}, {4*32,6*32},
+          {5*32,7*32}, {6*32,7*32}, {7*32,7*32}, {8*32,8*32} };
+        
+        unsigned int paso_actual = 0;
+        bool esta_en_camino = false;
+
+        int vida;
+
+        Tropa(int id_, int x, int y, int vida_, int propie)
+            : id(id_), id_propietario(propie), vida(vida_)
+        { 
+            fx_actual = x_actual = x_destino = x;
+            fy_actual = y_actual = y_destino = y;
+        }
+
+        bool llego_a(const std::pair<int, int>& posicion) {
+            return (posicion.first == x_actual) && 
+                   (posicion.second == y_actual);
+        }
+
+        // devuelve true si hay que sync.
+        bool actualizar_camino(int) {
+            if (!esta_en_camino)
+                return false;
+            bool retval = false;
             if (llego_a(camino_tropa[paso_actual])) {
-                if (paso_actual > 0)
-                    jugador->sincronizar_tropa(0, x_tropa, y_tropa);
+                if (paso_actual > 0) {
+                    retval = true;
+                }
                 
                 paso_actual++;
 
@@ -206,70 +356,63 @@ private:
                     y_destino = camino_tropa[paso_actual].second;
                 }
             }
+            return retval;
         }
 
-        float vx = 0, vy = 0;
+        void actualizar(int dt) {
+            float vx = 0, vy = 0;
 
-        if (abs(x_destino - x_tropa) > 0) {
-            vx = (x_destino - fx_tropa) / abs(x_destino - fx_tropa);
+            if ((x_destino == x_actual) && (y_destino == y_actual))
+                return;
+
+            if (x_destino != x_actual)
+                vx = (x_destino - x_actual) / abs(x_destino - x_actual);
+            if (y_destino != y_actual)
+                vy = (y_destino - y_actual) / abs(y_destino - y_actual);
+
+            vx = vx / sqrt(vx*vx + vy*vy);
+            vy = vy / sqrt(vx*vx + vy*vy);
+
             vx *= 0.4 / 15;
-        }
-
-        if (abs(y_destino - y_tropa) > 0) {
-            vy = (y_destino - fy_tropa) / abs(y_destino - fy_tropa);
             vy *= 0.4 / 15;
+
+            float dx = vx * dt,
+                  dy = vy * dt;
+
+            if (abs(dx) < abs(x_destino - fx_actual))
+                fx_actual += dx;
+            else
+                fx_actual = x_destino;
+                
+            if (abs(dy) < abs(y_destino - fy_actual))
+                fy_actual += dy;
+            else
+                fy_actual = y_destino;
+
+            x_actual = round(fx_actual);
+            y_actual = round(fy_actual);
         }
-
-        float dx = vx * dt,
-            dy = vy * dt;
-
-        if (abs(dx) > abs(fx_tropa - x_destino))
-            fx_tropa = x_destino;
-        else
-            fx_tropa += dx;
-        
-        if (abs(dy) > abs(fy_tropa - y_destino))
-            fy_tropa = y_destino;
-        else
-            fy_tropa += dy;
-        
-        x_tropa = std::floor(fx_tropa);
-        y_tropa = std::floor(fy_tropa);
-    }
-
-    std::unordered_map<std::string, int> construcciones;
-    std::unordered_set<std::string> construcciones_esperando_ubicacion;
-    std::unordered_map<std::string, int> construcciones_en_cola;
-
-    struct Edificio {
-        int id_edificio;
-        int celda_x, celda_y;
-        std::string clase;
-        int id_jugador;
-        Edificio(int id, int x, int y, int jugador, const std::string& clase_)
-            : id_edificio(id), celda_x(x), celda_y(y), clase(clase_), 
-              id_jugador(jugador)
-        { }
     };
 
-    std::unordered_map<int, Edificio> edificios;
-    bool tropa_creada = false;
-    int x_tropa = 32, y_tropa = 32*5;
-    float fx_tropa = x_tropa, fy_tropa = y_tropa, 
-        x_destino = x_tropa, y_destino = y_tropa;
-    
-    //const std::vector<int> camino_tropa = {1*32,4*32,2*32,3*32,3*32,3*32,4*32,
-    //    2*32,5*32,2*32,6*32,1*32,7*32,1*32};
-    const std::vector<std::pair<int, int>> camino_tropa = 
-        { {1*32,5*32}, {2*32,5*32}, {3*32,6*32}, {4*32,6*32},
-          {5*32,7*32}, {6*32,7*32}, {7*32,7*32}, {8*32,8*32} };
-    int paso_actual = 0;
-    bool esta_en_camino = false;
+    struct Jugador {
+        std::unordered_map<std::string, int> construcciones;
+        std::unordered_set<std::string> construcciones_esperando_ubicacion;
+        std::unordered_map<std::string, int> construcciones_en_cola;
+        std::unordered_map<int, Edificio*> edificios;
 
-    int wait = 5000;
+        std::unordered_map<std::string, int> entrenamientos;
+        std::unordered_map<std::string, int> entrenamientos_en_cola;
+        std::unordered_map<int, Tropa*> tropas;
+    };
+
     bool terminado = false;
     bool b_partida_iniciada = false;
-    IJugador *jugador = nullptr;
+    
+    std::unordered_map<IJugador*, Jugador> jugadores;
+    std::unordered_map<int, Edificio> edificios_global;
+    std::unordered_map<int, Tropa> tropas_global;
+
+    int id_tropa = 0, id_edificio = 0;
 };
 
 } // namespace servidor
