@@ -166,7 +166,7 @@ private:
     std::mutex cola_eventos_mutex;
     std::list<Evento*> cola_eventos;
     
-    conexion::Conexion* conn;
+    conexion::Conexion conn;
 
     /**
      * \brief Ciclo de recepción de datos del servidor.

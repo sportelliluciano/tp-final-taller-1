@@ -21,17 +21,17 @@ using namespace conexion;
 
 Servidor::Servidor(const std::string& ip_servidor, 
     const std::string& puerto) 
+: conn(ip_servidor, puerto)
 {
     terminar = false;
-    conn = new Conexion(ip_servidor, puerto);
 }
 
 std::vector<std::string> Servidor::obtener_salas() {
-    conn->enviar_json({
+    conn.enviar_json({
         {"tipo", "listar_salas"}
     });
 
-    nlohmann::json data = conn->recibir_json();
+    nlohmann::json data = conn.recibir_json();
     if (data.at("estado") != "OK")
         throw std::runtime_error(data.at("mensaje"));
     
@@ -46,11 +46,11 @@ std::vector<std::string> Servidor::obtener_salas() {
 }
 
 std::vector<std::string> Servidor::obtener_mapas() {
-    conn->enviar_json({
+    conn.enviar_json({
         {"tipo", "listar_mapas"}
     });
 
-    nlohmann::json data = conn->recibir_json();
+    nlohmann::json data = conn.recibir_json();
     if (data.at("estado") != "OK")
         throw std::runtime_error(data.at("mensaje"));
     
@@ -65,12 +65,12 @@ std::vector<std::string> Servidor::obtener_mapas() {
 }
 
 bool Servidor::unirse_a_sala(const std::string& sala) {
-    conn->enviar_json({
+    conn.enviar_json({
         {"tipo", "unirse"},
         {"sala", sala}
     });
 
-    nlohmann::json respuesta = conn->recibir_json();
+    nlohmann::json respuesta = conn.recibir_json();
     if (respuesta.at("estado") != "OK")
         return false;
     
@@ -78,11 +78,11 @@ bool Servidor::unirse_a_sala(const std::string& sala) {
 }
 
 bool Servidor::dejar_sala() {
-    conn->enviar_json({
+    conn.enviar_json({
         {"tipo", "dejar_sala"},
     });
 
-    nlohmann::json respuesta = conn->recibir_json();
+    nlohmann::json respuesta = conn.recibir_json();
     if (respuesta.at("estado") != "OK")
         return false;
     
@@ -90,13 +90,13 @@ bool Servidor::dejar_sala() {
 }
 
 bool Servidor::crear_sala(const std::string& nombre, const std::string& mapa) {
-    conn->enviar_json({
+    conn.enviar_json({
         {"tipo", "crear_sala"},
         {"nombre", nombre},
         {"mapa", mapa}
     });
 
-    nlohmann::json respuesta = conn->recibir_json();
+    nlohmann::json respuesta = conn.recibir_json();
     if (respuesta.at("estado") != "OK")
         return false;
     
@@ -104,14 +104,14 @@ bool Servidor::crear_sala(const std::string& nombre, const std::string& mapa) {
 }
 
 void Servidor::avisar_jugador_listo() {
-    conn->enviar_json({
+    conn.enviar_json({
         {"tipo", "iniciar_juego"}
     });
 }
 
 void Servidor::iniciar_juego() {
     nlohmann::json data;
-    data = conn->recibir_json();
+    data = conn.recibir_json();
     
     if (data.at("tipo") != "juego_iniciando") {
         throw std::runtime_error("Se esperaba un comando juego_iniciando");
@@ -122,40 +122,27 @@ void Servidor::iniciar_juego() {
 
 void Servidor::recibir() {
     try {
-        while(conn->esta_conectada()) {
+        while(conn.esta_conectada()) {
             try {
-                Evento *ev = FactoryEvento::crear_desde_json(conn->recibir_json());
+                Evento *ev = FactoryEvento::crear_desde_json(conn.recibir_json());
                 push_evento(ev);
             } catch (const ErrorSocket& e) {
                 log_error("Error socket: %s", e.what());
+                break;
+            } catch (const ErrorConexion& e) {
+                log_error("Conexión perdida: %s", e.what());
                 break;
             } catch (const std::exception& e) {
                 log_error("Datos inválidos: %s", e.what());
             }
         }
-        /*while (std::cin.good()) {
-            std::string data;
-            std::getline(std::cin, data);
-            if (data == "")
-                continue;
-            try {
-                Evento* ev = 
-                    FactoryEvento::crear_desde_json(
-                        nlohmann::json::parse(data)
-                    );
-                push_evento(ev);
-            } catch (const std::exception& e) {
-                std::cout << e.what() << std::endl;
-            } catch(...) {
-                std::cout << "Error al parsear JSON" << std::endl;
-            }
-        }*/
-        push_evento(new EventoTerminar());
     } catch (const std::exception& e) {
-        std::cout << "Error en hilo servidor: " << e.what() << std::endl;
+        log_error("Explotó el hilo servidor: %s", e.what());
     } catch (...) {
-        std::cout << "El hilo died" << std::endl;
+        log_error("Se produjo un error desconocido en el servidor.", 0);
     }
+    
+    push_evento(new EventoTerminar());
 }
 
 bool Servidor::hay_eventos() const {
@@ -182,7 +169,7 @@ void Servidor::push_evento(Evento* evento) {
 
 void Servidor::enviar_evento(const nlohmann::json& evento) {
     std::cout << "<< " << evento.dump() << std::endl;
-    conn->enviar_json(evento);
+    conn.enviar_json(evento);
 }
 
 void Servidor::iniciar_construccion(const std::string& clase) {
@@ -257,8 +244,9 @@ void Servidor::indicar_especia_cosechadora(const std::vector<int>& ids,
 }
 
 void Servidor::detener() {
-    conn->cerrar(true);
-    delete conn;
+    if (conn.esta_conectada())
+        conn.cerrar();
+    
     if (hilo_receptor.joinable())
         hilo_receptor.join();
 }
@@ -267,7 +255,7 @@ Servidor::~Servidor() {
     for (auto it=cola_eventos.begin(); it != cola_eventos.end(); ++it)
         delete *it;
     
-    // delete conn;
+    detener();
 }
 
 } // namespace cliente
