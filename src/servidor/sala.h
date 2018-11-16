@@ -8,7 +8,7 @@
 #include <thread>
 
 #include "conexion/conexion.h"
-#include "servidor/i_modelo.h"
+#include "conexion/i_modelo.h"
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
 

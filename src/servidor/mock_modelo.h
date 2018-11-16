@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "libs/json.hpp"
-#include "servidor/i_modelo.h"
+#include "conexion/i_modelo.h"
 
 namespace servidor {
 
@@ -149,7 +149,7 @@ public:
         actualizar_tropas(dt);
     }
 
-    ~MockModelo() { }
+    virtual ~MockModelo() noexcept { }
 
 private:
 

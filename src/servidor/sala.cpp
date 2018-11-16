@@ -9,7 +9,7 @@
 
 #include "conexion/eventos_servidor.h"
 #include "conexion/lock.h"
-#include "servidor/i_modelo.h"
+#include "conexion/i_modelo.h"
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
 #include "servidor/mock_modelo.h"
