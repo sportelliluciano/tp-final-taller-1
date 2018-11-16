@@ -160,6 +160,9 @@ size_t SocketConexion::send(const uint8_t *buffer, size_t largo) {
 }
 
 void SocketConexion::shutdown(bool shut_rd, bool shut_wr, bool ignorar_error) {
+    if (socket_conexion == SOCKET_INVALIDO)
+        return;
+    
     int how = SHUT_RDWR;
     if (shut_rd && !shut_wr)
         how = SHUT_RD;
@@ -176,6 +179,9 @@ void SocketConexion::shutdown(bool shut_rd, bool shut_wr, bool ignorar_error) {
 }
 
 void SocketConexion::close(bool ignorar_error) {
+    if (socket_conexion == SOCKET_INVALIDO)
+        return;
+
     int retval = ::close(socket_conexion);
     socket_conexion = SOCKET_INVALIDO;
     esta_conectado_rd = esta_conectado_wr = false;
