@@ -13,11 +13,13 @@
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
 #include "servidor/mock_modelo.h"
+//#include "modelo/juego.h"
 
 namespace servidor {
 
 Sala::Sala(size_t capacidad_maxima) 
 : modelo(new MockModelo())
+//: modelo(new modelo::Juego())
 {
     capacidad = capacidad_maxima;
 }
