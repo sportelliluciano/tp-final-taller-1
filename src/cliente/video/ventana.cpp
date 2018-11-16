@@ -105,7 +105,7 @@ int Ventana::fps() const {
     return fps_;
 }
 
-int Ventana::obtener_ms() const {
+uint64_t Ventana::obtener_ms() const {
     return ticks_ultimo_cuadro;
 }
 

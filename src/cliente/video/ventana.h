@@ -70,7 +70,7 @@ public:
      * Devuelve la cantidad de milisegundos que pasaron hasta el último cuadro
      * presentado via Ventana::actualizar.
      */
-    int obtener_ms() const;
+    uint64_t obtener_ms() const;
 
     /**
      * \brief Registra un receptor de eventos de la ventana.
