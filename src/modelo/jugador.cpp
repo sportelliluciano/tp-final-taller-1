@@ -20,6 +20,14 @@ void Jugador::aumentar_consumo(unsigned int consumo_){
 void Jugador::reducir_consumo(unsigned int consumo_){
     consumo -= consumo_;
 }
+void Jugador::aumentar_energia(unsigned int energia_){
+    energia += energia_;
+    comunicacion_jugador->actualizar_energia(energia,energia_max);
+}
+void Jugador::reducir_energia(unsigned int energia_){
+    energia -= energia_;
+    comunicacion_jugador->actualizar_energia(energia,energia_max);
+}
 std::string Jugador::get_casa(){
     return casa;
 }
@@ -33,7 +41,7 @@ bool Jugador::empezar_construccion(const std::string& clase,unsigned int costo){
         construcciones_en_cola[clase]++;
         
     comunicacion_jugador->actualizar_cola_cc(clase, construcciones_en_cola[clase]);
-    energia -= costo;
+    reducir_energia(costo);
     return true;
 }
 bool Jugador::cancelar_construccion(const std::string& clase, unsigned int costo){
@@ -42,7 +50,7 @@ bool Jugador::cancelar_construccion(const std::string& clase, unsigned int costo
         comunicacion_jugador->actualizar_cola_cc(clase, construcciones_en_cola[clase]);
         if (construcciones_en_cola[clase] <= 0)
             construcciones_en_cola.erase(clase);
-        energia += costo;
+        aumentar_energia(costo);
         return true;
     }
     return false;
@@ -55,7 +63,7 @@ bool Jugador::empezar_entrenamiento(const std::string& clase,unsigned int costo)
         tropas_en_cola[clase]++;
         
     comunicacion_jugador->actualizar_cola_cc(clase, tropas_en_cola[clase]);
-    energia -= costo;
+    reducir_energia(costo);
     return true;
 }
 bool Jugador::cancelar_entrenamiento(const std::string& clase, unsigned int costo){
@@ -64,7 +72,7 @@ bool Jugador::cancelar_entrenamiento(const std::string& clase, unsigned int cost
         comunicacion_jugador->actualizar_cola_cc(clase, tropas_en_cola[clase]);
         if (tropas_en_cola[clase] <= 0)
             tropas_en_cola.erase(clase);
-        energia += costo;
+        aumentar_energia(costo);
         return true;
     }
     return false;

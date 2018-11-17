@@ -17,6 +17,7 @@ class Jugador{
     std::string casa;
     std::set<int> inventario;
     unsigned int energia = 100000;
+    unsigned int energia_max = 10000000;
     unsigned int consumo = 0;
     IJugador* comunicacion_jugador;
     std::unordered_map<std::string, int> construcciones;
@@ -31,6 +32,8 @@ class Jugador{
     ~Jugador();
     void aumentar_consumo(unsigned int consumo_);
     void reducir_consumo(unsigned int consumo_);
+    void aumentar_energia(unsigned int energia_);
+    void reducir_energia(unsigned int energia_);
     std::string get_casa();
     bool hay_suficiente_energia(unsigned int costo);
     bool empezar_construccion(const std::string& clase,unsigned int costo);

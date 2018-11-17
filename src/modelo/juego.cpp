@@ -119,10 +119,13 @@ bool Juego::vender_edificio(IJugador* jugador, int id_edificio) {
     for (auto it = jugadores.begin();it!= jugadores.end();++it){
         if ((it->second).pertenece(id_edificio)){
             (it->second).eliminar_elemento(id_edificio,consumo);
+            unsigned int energia_retorno = inf.reciclar(id_edificio);
+            (it->second).aumentar_energia(energia_retorno);
+            jugador->eliminar_edificio(id_edificio);
+            return true;
         }
     }
-    unsigned int energia_retorno = inf.reciclar(id_edificio);//no se comunica al jugador
-    jugador->eliminar_edificio(id_edificio);
+    return false;
 }
     /**
      * \brief Inicia el entrenamiento de una tropa de la clase indicada.
@@ -161,7 +164,7 @@ bool Juego::mover_tropas(IJugador* jugador, const std::vector<int>& ids,
                                     int x, int y){
     unsigned int cant = sqrt(ids.size());
     unsigned int n = 0;
-    for (int id : ids) {
+    for (int id_ : ids) {
         ejercito.mover(id_,x+n,y,jugador);
         n++;
         if (n == cant) {
