@@ -10,7 +10,7 @@
 #include "modelo/arma_creador.h"
 #include "modelo/edificio.h"
 #include "modelo/id.h"
-#include "modelo/i_jugador.h"
+#include "conexion/i_jugador.h"
 
 namespace modelo {
 

@@ -84,7 +84,6 @@ void Terreno::revertir_hash(int hash, int& x, int& y) const {
 // - Sólo se puede ir en diagonal si las dos diagonales opuestas no están 
 //   bloqueadas
 std::vector<int> Terreno::obtener_vecinos(int nodo) const {
-    std::cout << "Entre a la etapa 6 " << '\n';
     int x, y;
     revertir_hash(nodo, x, y);
     
@@ -93,12 +92,10 @@ std::vector<int> Terreno::obtener_vecinos(int nodo) const {
     // TODO: limpiar esto
 
     // Celdas que siempre son caminables (a menos que sean obstáculo)
-    std::cout << "Etapa 6.1 " << '\n';
     bool arriba = ((y - 1) > 0) && terreno[x][y - 1].es_caminable(), 
          abajo  = ((y + 1) < alto) && terreno[x][y + 1].es_caminable(), 
          izquierda = ((x - 1) > 0) && terreno[x - 1][y].es_caminable(), 
          derecha = ((x + 1) < ancho) && terreno[x + 1][y].es_caminable();
-    std::cout << "Etapa 6.2 " << '\n';    
     // Celdas que son caminables sólo si las aledañas son caminables
     //  (y no son obstáculos)
     bool arriba_izq = (arriba && izquierda) && terreno[x-1][y-1].es_caminable(),
@@ -147,18 +144,12 @@ std::vector<Posicion>
         int ancho_terreno_;
         const Terreno& terreno;
     };
-    std::cout << "Etapa 1 " << '\n';
     CalcularDistancia distancia_entre(*this);
-    std::cout << "Etapa 2 " << '\n';
     AEstrella algoritmo(distancia_entre);
-    std::cout << "Etapa 3 " << '\n';
     int id_inicio = hash_posicion(inicio.x(), inicio.y());
-    std::cout << "Etapa 4 " << '\n';
     int id_fin = hash_posicion(fin.x(), fin.y());
-    std::cout << "Etapa 5 " << '\n';
     std::vector<int> camino = algoritmo.calcular_camino(this, 
         id_inicio, id_fin);
-    std::cout << "Etapa 6 " << '\n';  
     std::vector<Posicion> resultado;
 
     for (auto it = camino.rbegin(); it != camino.rend(); ++it) {
@@ -167,7 +158,6 @@ std::vector<Posicion>
 
         resultado.push_back(Posicion((float)x, (float)y));
     }
-    std::cout << "Etapa 7 " << '\n';
     return resultado;
 }
 

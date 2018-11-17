@@ -10,7 +10,7 @@ namespace modelo { class Unidad; }
 #include "modelo/edificio.h"
 #include "modelo/unidad_base.h"
 #include "modelo/posicion.h"
-#include "modelo/i_jugador.h"
+#include "conexion/i_jugador.h"
 #include "modelo/terreno.h"
 
 namespace modelo {

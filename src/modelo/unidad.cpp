@@ -6,7 +6,7 @@
 #include "modelo/edificio.h"
 #include "modelo/unidad_base.h"
 #include "modelo/posicion.h"
-#include "modelo/i_jugador.h"
+#include "conexion/i_jugador.h"
 
 namespace modelo {
 
