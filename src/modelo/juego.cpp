@@ -159,11 +159,16 @@ bool Juego::cancelar_entrenamiento_tropa(IJugador* jugador,
      */
 bool Juego::mover_tropas(IJugador* jugador, const std::vector<int>& ids,
                                     int x, int y){
-    int dx = 0, dy = 0;
-    for (int id_ : ids) {
-        ejercito.mover(id_,x+dx,y+dy,jugador);
-        dx++;//agregar mas logica
-    } 
+    unsigned int cant = sqrt(ids.size());
+    unsigned int n = 0;
+    for (int id : ids) {
+        ejercito.mover(id_,x+n,y,jugador);
+        n++;
+        if (n == cant) {
+            y ++;
+            n = 0;
+        }
+    }
     return true;  
 }
 
