@@ -15,13 +15,15 @@ namespace modelo {
 
 Ejercito::Ejercito(Terreno& terreno_):prototipos(EjercitoCreador(terreno_)),
                                       terreno(terreno_){}
-Ejercito::~Ejercito(){}
-int Ejercito::crear(std::string id_tipo,int x,int y){
-    if (!(terreno.rango_valido_tropa(x,y,prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
+Ejercito::~Ejercito(){
+}
+int Ejercito::crear(std::string id_tipo,Posicion& pos){
+    Posicion posicion = terreno.obtener_posicion_libre_cercana(pos);
+    if (!(terreno.rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     std::cout << "Pase los condicionales." << '\n';
-    int nuevo_id = id_.nuevo_id(); 
-    tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,x,y));
-    terreno.agregar_tropa(x,y,prototipos.get_dimensiones(id_tipo));
+    int nuevo_id = id_.nuevo_id();
+    tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,posicion.x(),posicion.y()));
+    terreno.agregar_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo));
     return nuevo_id;
 }
 void Ejercito::destruir(int id){
@@ -34,12 +36,11 @@ void Ejercito::mover(int id,int x,int y,IJugador* jugador){
                                                            Posicion(x,y));
     tropas.at(id).configurar_camino(a_estrella);
     tropas_en_movimiento.push_back(id);
-    //jugador->mover_tropa(id,a_estrella);
-}
-void Ejercito::actualizar_pos(int id,int x,int y){
-    terreno.eliminar_tropa(tropas.at(id).get_posicion(),tropas.at(id).get_dimensiones());
-    tropas.at(id).mover(x,y);
-    terreno.agregar_tropa(x,y,tropas.at(id).get_dimensiones());
+    std::vector<std::pair<int,int>> v;
+    for (auto it = a_estrella.begin(); it!= a_estrella.end();++it){
+        v.emplace_back(std::pair<int,int>((*it).x(),(*it).y()));
+    }
+    jugador->mover_tropa(id,v);
 }
 void Ejercito::atacar(int id_victima,int id_atacante){
     //ver si hay que seguirlo o no
@@ -55,23 +56,14 @@ Unidad& Ejercito::get(int id){
 unsigned int Ejercito::get_costo(std::string id_tipo){
     return prototipos.get_costo(id_tipo);
 }
-void Ejercito::terminar_camino(int id){
-    for (std::vector<int>::iterator it = tropas_en_movimiento.begin();
-        it != tropas_en_movimiento.end();++it){
-            if ((*it) == id){
-                tropas_en_movimiento.erase(it);
-                break;
-            }
-        }
-}
 void Ejercito::actualizar_tropas(int dt,IJugador* jugador){
     for (std::vector<int>::iterator it = tropas_en_movimiento.begin();
             it != tropas_en_movimiento.end(); ++it){
-        if (tropas.at(*it).en_movimiento()){
+        if (!tropas.at(*it).en_movimiento()){
             it = tropas_en_movimiento.erase(it);
             continue;
         }
-        tropas.at(*it).actualizar_posicion(dt,jugador);
+        tropas.at(*it).actualizar_posicion(dt,jugador,terreno);
     }
 }
 unsigned int Ejercito::get_tiempo(std::string id_tipo){

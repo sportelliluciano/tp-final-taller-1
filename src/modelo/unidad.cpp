@@ -20,10 +20,11 @@ Unidad::Unidad(int id_, int x, int y, UnidadBase& unidad_base_):
 }
 Unidad::~Unidad() {
 
-}
+}/*
 void Unidad::mover(int x, int y){
     posicion.actualizar(x,y);
 }
+*/
 void Unidad::recibir_dano(unsigned int dano){
     vida -= dano;
     //if (vida <= 0) destruir
@@ -49,12 +50,13 @@ std::pair<int,int>& Unidad::get_dimensiones() {
 Posicion& Unidad::get_posicion(){
     return posicion;
 }
+/*
 unsigned int Unidad::x(){
     return posicion.x();
 }
 unsigned int Unidad::y(){
     return posicion.y();
-}
+}*/
 void Unidad::configurar_camino(std::vector<Posicion> nuevo_camino){
     camino = nuevo_camino;
     esta_en_camino = true;
@@ -68,20 +70,21 @@ bool Unidad::llego_a(Posicion& posicion_) {
     return (abs(posicion_.x() - posicion.x()) < 1) && 
         (abs(posicion_.y() - posicion.y()) < 1);
 }
-void Unidad::actualizar_posicion(int dt,IJugador* jugador) {
-    if (esta_en_camino) {
-        if (llego_a(camino[paso_actual])) {
-            if (paso_actual > 0)
-                jugador->sincronizar_tropa(0, posicion.x(), posicion.y());
-                
-            paso_actual++;
+void Unidad::actualizar_posicion(int dt,IJugador* jugador,Terreno terreno) {
+    if (llego_a(camino[paso_actual])) {
+        //if (paso_actual > 0){
+            jugador->sincronizar_tropa(0, posicion.x(), posicion.y());
+            terreno.eliminar_tropa(posicion,unidad_base.get_dimensiones());
+            terreno.agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
+        //}
+        paso_actual++;
 
-            if (paso_actual >= camino.size()) {
-                esta_en_camino = false;
-                paso_actual = 0;
-            } 
-        }
+        if (paso_actual >= camino.size()) {
+            esta_en_camino = false;
+            paso_actual = 0;
+        } 
     }
+
     int x_destino = camino[paso_actual].x();
     int y_destino = camino[paso_actual].y();
     float vx = 0, vy = 0;

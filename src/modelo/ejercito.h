@@ -25,17 +25,14 @@ class Ejercito{
     public:
     Ejercito(Terreno& terreno);
     ~Ejercito();
-    int crear(std::string id_tipo,int x,int y);
+    int crear(std::string id_tipo,Posicion& pos);
     void destruir(int id);
     void mover(int id,int x,int y,IJugador* jugador);
-    void actualizar_pos(int id,int x,int y);
     void atacar(int id_victima,int id_atacante);
     void atacar(Edificio& edificio,int id_atacante);
     Unidad& get(int id);
     unsigned int get_costo(std::string id_tipo);
     unsigned int get_tiempo(std::string id_tipo);
-    void empezar_movimiento(int id);
-    void terminar_camino(int id);
     void actualizar_tropas(int dt,IJugador* jugador);
 };
 }

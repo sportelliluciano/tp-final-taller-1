@@ -47,4 +47,7 @@ Posicion& Edificio::get_posicion(){
 unsigned int Edificio::get_tiempo(){
     return info_base.get_tiempo();
 }
+std::string& Edificio::get_tipo(){
+    return info_base.get_tipo();
+}
 }

@@ -12,7 +12,9 @@
 
 namespace modelo {
 
-Infraestructura::Infraestructura(Terreno& mapa):terreno(mapa){}
+Infraestructura::Infraestructura(Terreno& mapa):terreno(mapa){
+    
+}
 int Infraestructura::crear(std::string id_tipo,int x,int y){
     if (!terreno.rango_valido_edificio(x,y,prototipos.get_dimensiones(id_tipo)))return 0;//raise error;
     int nuevo_id = id_.nuevo_id();                                           
@@ -48,5 +50,10 @@ unsigned int Infraestructura::get_energia(int id){
 }
 unsigned int Infraestructura::get_tiempo(int id){
     return edificios.at(id).get_tiempo();
+}
+Posicion& Infraestructura::get_posicion(const std::string& clase){
+    for (auto it = edificios.begin();it!=edificios.end();++it){
+        if (it-> second.get_tipo()==clase)return it->second.get_posicion();
+    }
 }
 }

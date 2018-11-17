@@ -25,7 +25,8 @@ class Edificio{
     unsigned int get_energia();
     std::pair<int,int>& get_dimensiones();
     Posicion& get_posicion();
-     unsigned int get_tiempo();
+    unsigned int get_tiempo();
+    std::string& get_tipo();
 
 };
 }

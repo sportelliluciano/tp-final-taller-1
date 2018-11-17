@@ -11,6 +11,7 @@ namespace modelo { class Unidad; }
 #include "modelo/unidad_base.h"
 #include "modelo/posicion.h"
 #include "modelo/i_jugador.h"
+#include "modelo/terreno.h"
 
 namespace modelo {
 
@@ -27,7 +28,6 @@ private:
 public:
     Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
     ~Unidad();
-    void mover(int x, int y);
     void recibir_dano(unsigned int dano);
     void atacar(Unidad& victima);
     void atacar(Edificio& edificio);
@@ -35,12 +35,10 @@ public:
     unsigned int get_vida();
     std::pair<int,int>& get_dimensiones();
     Posicion& get_posicion();
-    unsigned int x();
-    unsigned int y();
     bool llego_a(Posicion& posicion_);
     void configurar_camino(std::vector<Posicion> nuevo_camino);
     bool en_movimiento();
-    void actualizar_posicion(int dt,IJugador* jugador);
+    void actualizar_posicion(int dt,IJugador* jugador,Terreno terreno);
 };
 
 } // namespace modelo

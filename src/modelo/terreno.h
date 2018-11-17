@@ -71,6 +71,7 @@ public:
     bool hay_tropa(int x_, int y_);
     void agregar_tropa(int x_, int y_,std::pair<int,int>& dim);
     void eliminar_tropa(Posicion& pos,std::pair<int,int>& dim);
+    Posicion obtener_posicion_libre_cercana(Posicion& posicion_i);
 
 private:
     /**

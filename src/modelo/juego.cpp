@@ -252,11 +252,12 @@ void Juego::actualizar_construcciones(int dt) {
         (it->second).actualizar_construcciones(dt,inf);
     }
 }
-void Juego::actualizar_tropas(int dt) {
+void Juego::actualizar_tropas(int dt) {//se necesita un IJugador!!!
+    Posicion& pos = inf.get_posicion("Centro de Construcción");
     for (auto it=jugadores.begin();it != jugadores.end();++it){
         std::string actualizacion=(it->second).actualizar_tropas(dt,ejercito);
-        if ( actualizacion != "ok"){
-            ejercito.crear(actualizacion,2,2);//cambiar la posicion
+        if ( actualizacion != "ok"){// se termino el entrenamiento 
+            ejercito.crear(actualizacion,pos);
         }
     }
     ejercito.actualizar_tropas(dt,comunicacion_jugador);//el puntero no apunta a nada

@@ -151,8 +151,8 @@ public:
      * entre un punto y el otro. El cliente debería esperar en cada punto a
      * que se emita un evento `sincronizar_tropa`.
      */
-    //virtual void mover_tropa(int id_tropa, 
-      //  const std::vector<Posicion>& camino) = 0;
+    virtual void mover_tropa(int id_tropa, 
+        const std::vector<std::pair<int, int>>& camino) = 0;
 
     /**
      * \brief Sincroniza la posición de una tropa del jugador con su posición

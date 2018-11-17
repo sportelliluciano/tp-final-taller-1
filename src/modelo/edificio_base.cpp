@@ -41,4 +41,7 @@ std::pair<int,int>& EdificioBase::get_dimensiones(){
  unsigned int EdificioBase::get_tiempo(){
      return 5000;
  }
+ std::string& EdificioBase::get_tipo(){
+     return tipo;
+ }
 } // namespace modelo

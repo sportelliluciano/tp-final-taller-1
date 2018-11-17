@@ -268,5 +268,15 @@ void Terreno::eliminar_tropa(Posicion& pos,std::pair<int,int>& dim){
         }
     }
 }
+Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i){
+    for (int j = posicion_i.y(); j <alto; j++){
+        for (int i = posicion_i.x(); i < ancho; i++){
+            if(terreno[j][i].tiene_edificio() ||
+                terreno[j][i].hay_tropa() ||
+                !terreno[j][i].es_caminable())continue;
+            return Posicion(terreno[j][i].x(),terreno[j][i].y());
+        }
+    }
+}
 
 } // namespace modelo

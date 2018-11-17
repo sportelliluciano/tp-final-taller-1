@@ -25,6 +25,7 @@ public:
     unsigned int get_ptos_est() ;
     std::pair<int,int>& get_dimensiones();
     unsigned int get_tiempo() ;
+    std::string& get_tipo();
 };
 
 } // namespace modelo
