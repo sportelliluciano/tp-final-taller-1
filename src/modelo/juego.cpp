@@ -114,8 +114,16 @@ bool Juego::ubicar_edificio(IJugador* jugador, int celda_x, int celda_y,
      * El método devuelve false si se produjo algún error lógico que impida la
      * venta del edificio.
      */
-bool Juego::vender_edificio(IJugador* jugador, int id_edificio) {}
-
+bool Juego::vender_edificio(IJugador* jugador, int id_edificio) {
+    unsigned int consumo = inf.get_energia(id_edificio);
+    for (auto it = jugadores.begin();it!= jugadores.end();++it){
+        if ((it->second).pertenece(id_edificio)){
+            (it->second).eliminar_elemento(id_edificio,consumo);
+        }
+    }
+    unsigned int energia_retorno = inf.reciclar(id_edificio);//no se comunica al jugador
+    jugador->eliminar_edificio(id_edificio);
+}
     /**
      * \brief Inicia el entrenamiento de una tropa de la clase indicada.
      * 
@@ -192,49 +200,12 @@ Juego::Juego():terreno(Terreno("../data/terreno.csv")),
                         inf(Infraestructura(terreno)),
                         ejercito(Ejercito(terreno))
 {}
-Juego::~Juego(){}
-/*
-void Juego::eliminar_jugador(int id_){
-    jugadores.erase(id_);
-}
-void Juego::crear_edificio(int id_jugador,std::string id_tipo,int x,int y){
-    unsigned int costo = inf.get_costo(id_tipo);
-    unsigned int consumo = inf.get_energia(id_tipo);
-    if (jugadores.at(id_jugador).hay_suficiente_energia(costo)){
-        jugadores.at(id_jugador).agregar_elemento(inf.crear(id_tipo,x,y),costo,consumo);
-    }
-}
-*/
-void Juego::reciclar_edificio(int id_jugador,int id_){
-    //necesito el consumo para bajarlo
-    //necesito la energia que me devuelve (me la da inf.reciclar())
-    //bajo el consumo
-    //aumento la energia
-    //borro del jugador 
-    //borro de inf
-    inf.reciclar(id_);
+Juego::~Juego(){
 }
 /*
-void Juego::destruir_edificio(int id_jugador,int id_){
-    unsigned int energia_consumida = inf.get_energia(id_);
-    inf.destruir(id_);
-    jugadores.at(id_jugador).eliminar_elemento(id_,energia_consumida);
-}
-Edificio& Juego::get(int id_){//temporal
-    return inf.get(id_);
-}
-void Juego::crear_unidad(int id_jugador,std::string id_tipo,int x,int y){
-    unsigned int costo = ejercito.get_costo(id_tipo);
-    if (jugadores.at(id_jugador).hay_suficiente_energia(costo)){
-        jugadores.at(id_jugador).agregar_elemento(ejercito.crear(id_tipo,x,y),costo,0);
-    }
-}
 void Juego::destruir_unidad(int id_jugador,int id_){
     ejercito.destruir(id_);
     jugadores.at(id_jugador).eliminar_elemento(id_,0);
-}
-void Juego::mover_unidad(int id_jugador,int id_,int x,int y){
-    ejercito.mover(id_,x,y);
 }
 void Juego::atacar_unidad(int id_jugador,int id_victima,int id_atacante){
     ejercito.atacar(id_victima,id_atacante);
