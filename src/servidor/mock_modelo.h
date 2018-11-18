@@ -9,6 +9,12 @@
 
 #include "conexion/i_modelo.h"
 
+#define DINERO_INICIAL 1000
+#define DINERO_MAXIMO_BASE 1000
+
+#define ENERGIA_INICIAL 1000
+#define ENERGIA_MAXIMA_BASE 1000
+
 namespace servidor {
 
 using namespace conexion;
@@ -23,6 +29,12 @@ public:
     
     void iniciar_partida() {
         b_partida_iniciada = true;
+        // Crear centros de construcción y enviar parámetros iniciales
+        // a los clientes
+        broadcast([this](IJugador* j) {
+            j->actualizar_dinero(DINERO_INICIAL, DINERO_MAXIMO_BASE);
+            j->actualizar_energia(ENERGIA_INICIAL, ENERGIA_MAXIMA_BASE);
+        });
     }
 
     bool partida_iniciada() const {
@@ -403,6 +415,12 @@ private:
         std::unordered_map<std::string, int> entrenamientos;
         std::unordered_map<std::string, int> entrenamientos_en_cola;
         std::unordered_map<int, Tropa*> tropas;
+
+        int dinero = DINERO_INICIAL;
+        int dinero_maximo = DINERO_MAXIMO_BASE;
+
+        int energia = ENERGIA_INICIAL;
+        int energia_maxima = ENERGIA_MAXIMA_BASE;
     };
 
     bool terminado = false;

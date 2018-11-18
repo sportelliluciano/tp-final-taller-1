@@ -13,7 +13,7 @@
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
 #include "servidor/mock_modelo.h"
-//#include "modelo/juego.h"
+#include "modelo/juego.h"
 
 namespace servidor {
 
@@ -65,10 +65,9 @@ void Sala::eliminar_cliente(Cliente& cliente) {
 
 void Sala::notificar_desconexion(Cliente& cliente) {
     if (partida_iniciada) {
-        terminar_partida();
-    } else {
-        eliminar_cliente(cliente);
-    }
+        modelo->jugador_desconectado(&clientes.at(&cliente));
+    } 
+    eliminar_cliente(cliente);
 }
 
 void Sala::configurar_recepcion_eventos() {
@@ -103,7 +102,8 @@ void Sala::iniciar_partida(Cliente& cliente) {
         for (auto it=clientes.begin();it!=clientes.end();++it) {
             Cliente* jugador = it->first;
             jugador->enviar({
-                {"tipo", "juego_iniciando"}
+                {"tipo", "juego_iniciando"},
+                {"id_jugador", it->second.obtener_id()}
             });
         }
         partida_iniciada = true;
