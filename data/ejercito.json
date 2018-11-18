@@ -11,7 +11,9 @@
         "costo":0,
         "vida":0,
         "sprite_boton": -1,
-        "sprite_base": -1
+        "sprite_base": 206,
+        "sprite_techo": -1,
+        "tipo": "unidad"
     },
     {
         "id":"infanteria ligera",
@@ -25,7 +27,8 @@
         "costo":50,
         "vida":50,
         "sprite_boton": 4272,
-        "sprite_base": 206
+        "sprite_base": 206,
+        "tipo": "unidad"
     },
     {
         "id":"infanteria pesada",
@@ -39,7 +42,8 @@
         "costo":70,
         "vida":80,
         "sprite_boton": 4273,
-        "sprite_base": 0
+        "sprite_base": 458,
+        "tipo": "unidad"
     },
     {
         "id":"fremen",
@@ -53,7 +57,8 @@
         "costo":100,
         "vida":50,
         "sprite_boton": 4293,
-        "sprite_base": 0
+        "sprite_base": 710,
+        "tipo": "unidad"
     },
     {
         "id":"sardaukar",
@@ -67,7 +72,8 @@
         "costo":100,
         "vida":80,
         "sprite_boton": 4276,
-        "sprite_base": 0
+        "sprite_base": 930,
+        "tipo": "unidad"
     },
     {
         "id":"trike",
@@ -81,7 +87,8 @@
         "costo":100,
         "vida":80,
         "sprite_boton": 4277,
-        "sprite_base": 0
+        "sprite_base": 1635,
+        "tipo": "vehiculo"
     },
     {
         "id":"raider",
@@ -95,11 +102,12 @@
         "costo":100,
         "vida":80,
         "sprite_boton": 4298,
-        "sprite_base": 0
+        "sprite_base": 1667,
+        "tipo": "vehiculo"
     },
     {
         "id":"tanque",
-        "nombre":"raider",
+        "nombre":"tanque",
         "casa":["atreides","Hatkonnen","ordos"],
         "requerimiento":["fabrica pesada"],
         "id_arma":"arma cañon",
@@ -109,7 +117,9 @@
         "costo":300,
         "vida":30,
         "sprite_boton": 4281,
-        "sprite_base": 0
+        "sprite_base": 1731,
+        "sprite_techo": 1859,
+        "tipo": "vehiculo"
     },
     {
         "id":"tanque sonico",
@@ -123,7 +133,8 @@
         "costo":300,
         "vida":300,
         "sprite_boton": 4288,
-        "sprite_base": 0
+        "sprite_base": 1827,
+        "tipo": "vehiculo"
     },
     {
         "id":"desviador",
@@ -137,7 +148,8 @@
         "costo":400,
         "vida":300,
         "sprite_boton": 4286,
-        "sprite_base": 0
+        "sprite_base": 1603,
+        "tipo": "vehiculo"
     },
     {
         "id":"devastador",
@@ -151,7 +163,8 @@
         "costo":400,
         "vida":400,
         "sprite_boton": 4289,
-        "sprite_base": 0
+        "sprite_base": 2083,
+        "tipo": "vehiculo"
     },
     {
         "id":"cosechadora",
@@ -165,6 +178,7 @@
         "costo":300,
         "vida":600,
         "sprite_boton": 4280,
-        "sprite_base": 0
+        "sprite_base": 1699,
+        "tipo": "vehiculo"
     }
 ]
