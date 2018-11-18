@@ -227,7 +227,7 @@ void ConexionJugador::actualizar_dinero(int nuevo_dinero, int nuevo_maximo) {
 
 void ConexionJugador::actualizar_energia(int nueva_energia, int nuevo_maximo) {
     notificar({
-        {"id", EVC_ACTUALIZAR_DINERO},
+        {"id", EVC_ACTUALIZAR_ENERGIA},
         {"nueva_energia", nueva_energia},
         {"nuevo_maximo", nuevo_maximo},
     });
