@@ -109,15 +109,19 @@ void Servidor::avisar_jugador_listo() {
     });
 }
 
-void Servidor::iniciar_juego() {
+int Servidor::iniciar_juego() {
     nlohmann::json data;
     data = conn.recibir_json();
     
-    if (data.at("tipo") != "juego_iniciando") {
+    const std::string& tipo = data.at("tipo");
+    if (tipo != "juego_iniciando") {
         throw std::runtime_error("Se esperaba un comando juego_iniciando");
     }
 
+    int id_jugador = data.at("id_jugador");
+
     hilo_receptor = std::thread(&Servidor::recibir, this);
+    return id_jugador;
 }
 
 void Servidor::recibir() {

@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/gusano_arena.h"
-#include "cliente/modelo/jugador.h"
+#include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
 #include "cliente/video/camara.h"
 #include "cliente/video/ventana.h"
@@ -14,7 +15,12 @@ namespace cliente {
 
 class Juego {
 public:
-    Juego();
+    /**
+     * \brief Inicializa el modelo de juego.
+     * 
+     * id_jugador_actual es el identificador del servidor del jugador actual.
+     */
+    Juego(int id_jugador_actual_);
 
     /**
      * \brief Devuelve true si el juego terminó.
@@ -39,28 +45,47 @@ public:
     void actualizar(int t_ms);
 
     /**
-     * \brief Devuelve la cantidad de dinero que posee el jugador.
-     */
-    int obtener_dinero() const;
-
-    /**
-     * \brief Setea el dinero del jugador.
-     */
-    void setear_dinero(int dinero);
-
-    /**
-     * \brief Hace aparecer al gusano de arena en la posición (x, y).
-     */
-    void mostrar_gusano(int x, int y);
-
-    /**
      * \brief Fuerza la finalización del juego.
      */
     void detener();
 
-    Infraestructura& obtener_infraestructura();
-    Ejercito& obtener_ejercito();
+    /**
+     * \brief Obtiene el dinero que el jugador posee actualmente.
+     */
+    int obtener_dinero() const;
+
+    /**
+     * \brief Devuelve el terreno del juego.
+     */
     Terreno& obtener_terreno();
+
+    /**
+     * \brief Devuelve el administrador de edificios del juego.
+     */
+    Infraestructura& obtener_infraestructura();
+    
+    /**
+     * \brief Devuelve el administrador de tropas del juego.
+     */
+    Ejercito& obtener_ejercito();
+
+
+    /***** Eventos recibidos desde el servidor *****/
+
+    /**
+     * \brief Actualiza el dinero del jugador actual
+     */
+    void actualizar_dinero(int nuevo_dinero, int nuevo_maximo);
+
+    /**
+     * \brief Actualiza la energía del jugador actual
+     */
+    void actualizar_energia(int nueva_energia, int nuevo_maximo);
+    
+    /**
+     * \brief Hace aparecer al gusano de arena en la posición (x, y).
+     */
+    void mostrar_gusano(int x, int y);
 
     /**
      * \brief Destructor.
@@ -68,10 +93,13 @@ public:
     ~Juego();
 
 private:
-    Terreno *terreno;
-    Jugador *jugador;
-    bool esta_jugando = true;
-    GusanoArena* gusano;
+    Terreno terreno;
+    GusanoArena gusano;
+    Infraestructura infraestructura;
+    Ejercito ejercito;
+    bool esta_jugando;
+    int dinero = 0, energia = 0;
+    int id_jugador_actual;
 };
 
 } // namespace cliente

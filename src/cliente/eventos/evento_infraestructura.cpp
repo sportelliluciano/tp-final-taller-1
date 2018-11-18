@@ -38,11 +38,11 @@ void EventoInfraestructura::actualizar(Juego& juego) {
             break;
         case EVC_CREAR_EDIFICIO:        // (id, posicion, id_jugador)
             infraestructura.crear_edificio(data.at("id_edificio"), 
-                data.at("clase"), data.at("posicion"), data.at("id_jugador"));
+                data.at("id_jugador"), data.at("clase"), data.at("posicion"));
             break;
         case EVC_AGREGAR_EDIFICIO:
             infraestructura.agregar_edificio(data.at("id_edificio"),
-                data.at("posicion"), data.at("id_jugador"), data.at("clase"),
+                data.at("id_jugador"), data.at("posicion"), data.at("clase"),
                 data.at("vida"));
             break;
         case EVC_ELIMINAR_EDIFICIO:

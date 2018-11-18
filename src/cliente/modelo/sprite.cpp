@@ -4,6 +4,23 @@
 
 namespace cliente {
 
+/**
+ * \brief Genera el nombre de la textura y la carga desde el administrador
+ *        de texturas de la ventana.
+ */
+static const Textura& cargar_textura(Ventana& ventana, int id) {
+    if (id == -1)
+        throw std::runtime_error("El sprite no fue cargado (-1)");
+    char nombre[300];
+    sprintf(nombre, RUTA_SPRITES_NUM "%05d.bmp", id);
+
+    const Textura& textura = ventana
+        .obtener_administrador_texturas()
+        .cargar_imagen(nombre);
+    
+    return textura;
+}
+
 Sprite::Sprite(int id_, int desplazamiento_x, int desplazamiento_y) {
     id = id_;
     dx = desplazamiento_x;
@@ -43,26 +60,30 @@ void Sprite::renderizar(Ventana& ventana, int x, int y) {
 int Sprite::obtener_alto(Ventana& ventana) const {
     if (id == -1)
         return 0;
-    return obtener_textura(ventana).obtener_alto();
+    return cargar_textura(ventana, id).obtener_alto();
 }
 
 int Sprite::obtener_ancho(Ventana& ventana) const {
     if (id == -1)
         return 0;
-    return obtener_textura(ventana).obtener_ancho();
+    return cargar_textura(ventana, id).obtener_ancho();
 }
 
-const Textura& Sprite::obtener_textura(Ventana& ventana) const {
-    if (id == -1)
-        throw std::runtime_error("El sprite no fue cargado (-1)");
-    char nombre[300];
-    sprintf(nombre, RUTA_SPRITES_NUM "%05d.bmp", id);
+int Sprite::obtener_desplazamiento_x() const {
+    return dx;
+}
 
-    const Textura& textura = ventana
-        .obtener_administrador_texturas()
-        .cargar_imagen(nombre);
-    
-    return textura;
+int Sprite::obtener_desplazamiento_y() const {
+    return dy;
+}
+
+
+int Sprite::obtener_id() const {
+    return id;
+}
+
+const Textura& Sprite::obtener_textura(Ventana& ventana) {
+    return cargar_textura(ventana, id);
 }
 
 } // namespace cliente

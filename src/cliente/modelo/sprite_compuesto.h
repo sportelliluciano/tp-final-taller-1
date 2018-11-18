@@ -1,6 +1,8 @@
 #ifndef _SPRITE_COMPUESTO_H_
 #define _SPRITE_COMPUESTO_H_
 
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include "cliente/modelo/sprite.h"
@@ -20,6 +22,11 @@ public:
      */
     SpriteCompuesto() = default;
 
+    SpriteCompuesto(const SpriteCompuesto& otro);
+
+    SpriteCompuesto& operator=(const SpriteCompuesto& otro);
+
+
     // SpriteCompuesto(const nlohmann::json& sprite);
 
     /**
@@ -30,6 +37,7 @@ public:
      * utilizar el constructor por defecto y luego agregar los cuadros uno por
      * uno en el orden en que se encuentran.
      */
+    SpriteCompuesto(const std::vector<int>& sprites_);
     SpriteCompuesto(const std::vector<Sprite>& sprites_);
 
     /**
@@ -60,8 +68,15 @@ public:
      */
     void renderizar(Ventana& ventana, int x, int y);
 
+    /**
+     * \brief Obtiene la textura del sprite.
+     */
+    const Textura& obtener_textura(Ventana& ventana) override;
+
 private:
     std::vector<Sprite> sprites;
+    std::stringstream s_nombre;
+    bool invalidar = true;
 };
 
 } // namespace cliente

@@ -63,13 +63,16 @@ public:
     void avisar_jugador_listo();
     
     /**
-     * \brief Espera a que el servidor sincronice el inicio del juego 
-     *        e inicia la recepción asincrónica de mensajes.
+     * \brief Espera el inicio del juego y devuelve el identificador de jugador
+     *        del jugador actual.
      * 
      * Este método bloquea hasta que el servidor sincronice el inicio del 
-     * juego.
+     * juego. Una vez sincronizado, iniciará la recepción asincrónica de 
+     * mensajes.
+     * 
+     * El mismo devuelve el identificador de jugador actual.
      */
-    void iniciar_juego();
+    int iniciar_juego();
 
     /**
      * \brief Verifica si hay nuevos eventos provenientes del servidor.

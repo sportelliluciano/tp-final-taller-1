@@ -16,16 +16,20 @@ public:
 
     explicit Sprite(const nlohmann::json& sprite);
 
-    Sprite(int id, int desplazamiento_x = 0, int desplazamiento_y = 0);
+    explicit Sprite(int id, int desplazamiento_x = 0, int desplazamiento_y = 0);
 
     virtual void desplazar(int desplazamiento_x, int desplazamiento_y);
 
     virtual void renderizar(Ventana& ventana, int x, int y);
 
-    virtual const Textura& obtener_textura(Ventana& ventana) const;
+    virtual const Textura& obtener_textura(Ventana& ventana);
 
     virtual int obtener_alto(Ventana& ventana) const;
     virtual int obtener_ancho(Ventana& ventana) const;
+    virtual int obtener_desplazamiento_x() const;
+    virtual int obtener_desplazamiento_y() const;
+
+    virtual int obtener_id() const;
 
 private:
     int id = -1;

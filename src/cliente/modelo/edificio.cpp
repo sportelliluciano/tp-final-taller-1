@@ -7,8 +7,7 @@
 
 namespace cliente {
 
-Edificio::Edificio(const nlohmann::json& data_edificio)
-{
+Edificio::Edificio(const nlohmann::json& data_edificio) {
     id = data_edificio["id"];
     nombre = data_edificio["nombre"];
 
@@ -20,7 +19,9 @@ Edificio::Edificio(const nlohmann::json& data_edificio)
     sprite_roto = SpriteCompuesto({sprite_destruido, sprite_base});
 
     sprite_construccion = SpriteAnimado(3765, 3783);
+    sprite_construccion.set_centrado(true);
     sprite_destruccion  = SpriteAnimado(3686, 3700);
+    sprite_destruccion.set_centrado(true);
     
     sprite_boton = data_edificio["sprite_boton"];
 
@@ -33,22 +34,26 @@ void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
     if (!esta_vivo())
         return;
 
-    if (!esta_destruido) {
-        if (!esta_construido) {
-            sprite_construccion.renderizar(ventana, x_px, y_px);
-            esta_construido = sprite_construccion.finalizado();
-        } else {
-            sprite.renderizar(ventana, x_px, y_px);
-            if (marcado) {
-                ventana
-                    .obtener_administrador_texturas()
-                    .cargar_imagen("./assets/nuevos/seleccion-edificio.png")
-                    .renderizar(x_px + sprite.obtener_ancho(ventana) / 2, y_px);
-            }
-        }
-    } else {
+    if (esta_destruido) {
         sprite_destruccion.renderizar(ventana, x_px, y_px);
+        return;
+    } else if (!esta_construido) {
+        sprite_construccion.renderizar(ventana, x_px, y_px);
+        esta_construido = sprite_construccion.finalizado();
+    } else {
+        const Textura& t = sprite.obtener_textura(ventana);
+        sprite.renderizar(ventana, 
+            x_px - (t.obtener_ancho() / 2), 
+            y_px - (t.obtener_alto() / 2)
+        );
+        if (marcado) {
+            ventana
+                .obtener_administrador_texturas()
+                .cargar_imagen("./assets/nuevos/seleccion-edificio.png")
+                .renderizar(x_px + sprite.obtener_ancho(ventana) / 2, y_px);
+        }
     }
+    
 }
 
 void Edificio::inicializar(int id_, int x, int y, bool construido) {

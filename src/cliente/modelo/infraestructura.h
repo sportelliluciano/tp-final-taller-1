@@ -14,7 +14,7 @@ namespace cliente {
 
 class Infraestructura {
 public:
-    Infraestructura(Terreno& terreno);
+    Infraestructura(int id_jugador_actual_, Terreno& terreno);
 
     /**
      * \brief Renderiza los edificios en la ventana.
@@ -90,15 +90,15 @@ public:
     /**
      * Crea un nuevo edificio sobre el terreno.
      */
-    void crear_edificio(int id, const std::string& clase, 
-        const std::vector<int>& posicion, int id_jugador);
+    void crear_edificio(int id, int jugador, const std::string& clase, 
+        const std::vector<int>& posicion);
     
     /**
      * Agrega un edificio que ya existía pero entró en el campo de visión del
      * jugador.
      */
-    void agregar_edificio(int id, const std::vector<int>& posicion, 
-        int id_jugador, const std::string& clase, int vida);
+    void agregar_edificio(int id, int jugador, const std::vector<int>& posicion, 
+        const std::string& clase, int vida);
     
     /**
      * Elimina un edificio que fue eliminado previamente pero recién ahora
@@ -124,6 +124,8 @@ private:
     float velocidad_cc = 1.0f;
 
     int last_ms = -1;
+
+    int id_jugador_actual;
 };
 
 } // namespace cliente

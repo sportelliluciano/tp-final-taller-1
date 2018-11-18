@@ -55,12 +55,12 @@ bool ClienteJuego::ejecutar_juego() {
     ventana.actualizar();
 
     // TODO: configurar sonido
-
-    Juego juego;
     
     Servidor *servidor = partida.servidor();
     partida.servidor(nullptr);
-    servidor->iniciar_juego();
+    int id_jugador_actual = servidor->iniciar_juego();
+    
+    Juego juego(id_jugador_actual);
     
     Controlador controlador(ventana, *servidor, juego);
 

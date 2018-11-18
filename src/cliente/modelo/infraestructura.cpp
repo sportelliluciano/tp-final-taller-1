@@ -17,8 +17,9 @@
 
 namespace cliente {
 
-Infraestructura::Infraestructura(Terreno& terreno_juego) 
-: terreno(terreno_juego)
+Infraestructura::Infraestructura(int id_jugador_actual_, Terreno& terreno_juego) 
+: terreno(terreno_juego),
+  id_jugador_actual(id_jugador_actual_)
 { 
     using nlohmann::json;
 
@@ -59,8 +60,20 @@ void Infraestructura::renderizar(Ventana& ventana, Camara& camara) {
         }
         /*** Fin pintar celda ***/
 
+        Posicion esq_sup = camara.traducir_a_visual(
+            terreno.obtener_posicion(x_celda, y_celda));
+        Posicion esq_inf = camara.traducir_a_visual(
+            terreno.obtener_posicion(
+                x_celda + edificio->obtener_ancho_celdas(),
+                y_celda + edificio->obtener_alto_celdas()
+            ));
+        
+        int offset_x = (esq_inf.x - esq_sup.x) / 2;
+        int offset_y = (esq_inf.y - esq_sup.y) / 2;
+        
+
         visual = camara.traducir_a_visual(terreno.obtener_posicion(edificio));
-        edificio->renderizar(ventana, visual.x, visual.y);
+        edificio->renderizar(ventana, visual.x + offset_x, visual.y + offset_y);
     }
 }
 
@@ -151,22 +164,21 @@ void Infraestructura::atacar(int id, int nueva_vida) {
     edificios_construidos.at(id).set_vida(nueva_vida);
 }
 
-void Infraestructura::crear_edificio(int id, const std::string& clase, 
-    const std::vector<int>& posicion, int)
+void Infraestructura::crear_edificio(int id, int, const std::string& clase, 
+    const std::vector<int>& posicion)
 {
     construcciones_iniciadas.erase(clase);
     Edificio nuevo = edificios.at(clase);
 
     int x = posicion.at(0), y = posicion.at(1);
 
-    // TODO: por que el edificio conoce su posicion?
     nuevo.inicializar(id, x, y, false);
     edificios_construidos.emplace(id, nuevo);
     terreno.agregar_edificio(edificios_construidos.at(id));
 }
 
-void Infraestructura::agregar_edificio(int id, const std::vector<int>& posicion, 
-    int, const std::string& clase, int vida)
+void Infraestructura::agregar_edificio(int id, int, 
+    const std::vector<int>& posicion, const std::string& clase, int vida)
 {
     Edificio nuevo = edificios.at(clase);
 

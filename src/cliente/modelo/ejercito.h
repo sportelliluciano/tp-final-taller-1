@@ -10,7 +10,7 @@ namespace cliente {
 
 class Ejercito {
 public:
-    Ejercito(Terreno& terreno);
+    Ejercito(int id_jugador_actual_, Terreno& terreno);
 
     /**
      * \brief Dibuja las tropas sobre la ventana.
@@ -107,7 +107,6 @@ public:
 private:
     Terreno& terreno;
     std::unordered_map<int, Tropa> tropas;
-    std::unordered_set<int> unidades_seleccionadas;
 
     int last_ms = 0;
 
@@ -117,6 +116,8 @@ private:
     std::unordered_map<std::string, int> colas_entrenamiento;
 
     std::unordered_map<std::string, Tropa> tropas_base;
+
+    int id_jugador_actual;
 };
 
 } // namespace cliente

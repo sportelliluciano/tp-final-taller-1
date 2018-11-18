@@ -200,6 +200,11 @@ std::unordered_set<Tropa*> Terreno::obtener_tropas_en(const Rectangulo& area) {
 }
 
 bool Terreno::es_construible(int x_celda, int y_celda) const {
+    if ((x_celda < 0) || (x_celda >= ancho) || 
+        (y_celda < 0) || (y_celda >= alto)) 
+    {
+        return false;
+    }
     return terreno[y_celda][x_celda].es_construible();
 }
 
