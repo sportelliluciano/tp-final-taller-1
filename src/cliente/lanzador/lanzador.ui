@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
-    <height>600</height>
+    <width>1024</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>353</x>
-     <y>520</y>
+     <y>410</y>
      <width>671</width>
      <height>80</height>
     </rect>
@@ -338,7 +338,7 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>540</y>
+      <y>460</y>
       <width>201</width>
       <height>29</height>
      </rect>
@@ -367,7 +367,7 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>390</y>
+      <y>340</y>
       <width>111</width>
       <height>29</height>
      </rect>
@@ -383,7 +383,7 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>460</y>
+      <y>380</y>
       <width>321</width>
       <height>29</height>
      </rect>
@@ -399,7 +399,7 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>500</y>
+      <y>420</y>
       <width>261</width>
       <height>25</height>
      </rect>
@@ -409,7 +409,7 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>505</y>
+      <y>425</y>
       <width>67</width>
       <height>17</height>
      </rect>
@@ -438,7 +438,7 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>440</y>
+      <y>360</y>
       <width>321</width>
       <height>17</height>
      </rect>
@@ -456,7 +456,7 @@ QCheckBox::indicator:unchecked {
       <x>10</x>
       <y>250</y>
       <width>321</width>
-      <height>131</height>
+      <height>81</height>
      </rect>
     </property>
    </widget>
@@ -467,7 +467,7 @@ QCheckBox::indicator:unchecked {
      <x>349</x>
      <y>1</y>
      <width>681</width>
-     <height>509</height>
+     <height>361</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -504,7 +504,7 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>310</y>
+      <y>250</y>
       <width>331</width>
       <height>17</height>
      </rect>
@@ -520,9 +520,9 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>330</y>
+      <y>270</y>
       <width>321</width>
-      <height>171</height>
+      <height>81</height>
      </rect>
     </property>
    </widget>
@@ -604,7 +604,7 @@ QCheckBox::indicator:unchecked {
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>300</y>
+      <y>240</y>
       <width>111</width>
       <height>29</height>
      </rect>

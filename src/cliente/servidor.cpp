@@ -257,8 +257,6 @@ void Servidor::detener() {
 Servidor::~Servidor() {
     for (auto it=cola_eventos.begin(); it != cola_eventos.end(); ++it)
         delete *it;
-    
-    detener();
 }
 
 } // namespace cliente

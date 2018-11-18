@@ -64,6 +64,8 @@ bool ClienteJuego::ejecutar_juego() {
     
     Controlador controlador(ventana, *servidor, juego);
 
+    //controlador.recibir_configuracion();
+
     while (!juego.esta_terminado()) {
         // Renderizar el juego
         controlador.renderizar();

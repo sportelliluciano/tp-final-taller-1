@@ -61,7 +61,7 @@ public:
      * \brief Avisa el servidor que el jugador ya inició el cliente del juego.
      */
     void avisar_jugador_listo();
-    
+
     /**
      * \brief Espera el inicio del juego y devuelve el identificador de jugador
      *        del jugador actual.
