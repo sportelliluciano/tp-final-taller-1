@@ -34,14 +34,12 @@ typedef enum {
     EVC_LANZAR_PLASMA,            // (id, pos_inicio, pos_fin)
     EVC_SINCRONIZAR_DISPARO,      // (id, pos_actual, pos_fin)
 
-    // Cosechadoras
-    EVC_COSECHADORA_DESCARGAR,    // (id)
-
-    // Terreno
-    EVC_ELIMINAR_ESPECIA,         // (posicion)
-
     // Entorno
     EVC_MOSTRAR_GUSANO,           // (posicion)
+    EVC_ELIMINAR_ESPECIA,         // (posicion)
+    EVC_COSECHADORA_DESCARGAR,    // (id)
+
+    // Jugador
     EVC_ACTUALIZAR_DINERO,        // (nuevo_dinero, nuevo_maximo)
     EVC_ACTUALIZAR_ENERGIA,       // (nueva_energia, nuevo_maximo)
 
