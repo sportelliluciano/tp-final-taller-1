@@ -15,6 +15,9 @@
 #define ANCHO_CELDA 32
 #define ALTO_CELDA 32
 
+#define ANCHO_SELECCION 16
+#define ALTO_SELECCION 16
+
 namespace cliente {
 
 Terreno::Terreno(const char *ruta_csv) {
@@ -70,8 +73,8 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     int celda_inicial_x, celda_inicial_y,
         celda_final_x, celda_final_y;
     
-    obtener_celda(vista.esq_sup_izq, celda_inicial_x, celda_inicial_y);
-    obtener_celda(vista.esq_inf_der, celda_final_x, celda_final_y);
+    obtener_celda(vista.esquina_sup_izq(), celda_inicial_x, celda_inicial_y);
+    obtener_celda(vista.esquina_inf_der(), celda_final_x, celda_final_y);
 
     // Evitar rectángulo negro al final
     celda_final_x += 1;
@@ -82,7 +85,7 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
        (celda_inicial_y == ultimo_celda_y0) && 
        (celda_final_y == ultimo_celda_y1))
     {
-        Posicion visual = camara.traducir_a_visual(vista.esq_sup_izq);
+        Posicion visual = camara.traducir_a_visual(vista.esquina_sup_izq());
         ventana
             .obtener_administrador_texturas()
             .obtener_textura("terreno")
@@ -119,7 +122,7 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     ultimo_celda_y0 = celda_inicial_y;
     ultimo_celda_y1 = celda_final_y;
 
-    Posicion visual = camara.traducir_a_visual(vista.esq_sup_izq);
+    Posicion visual = camara.traducir_a_visual(vista.esquina_sup_izq());
     textura.renderizar(visual.x, visual.y);
     ventana.dibujar_grilla(visual.x, visual.y);
 }
@@ -143,18 +146,16 @@ Posicion Terreno::obtener_posicion(const Tropa* tropa) {
 }
 
 void Terreno::para_cada_celda_en(const Rectangulo& area, 
-    std::function<bool(int, int)> accion, bool considerar_overflow) 
+    std::function<bool(int, int, bool)> accion) 
 {
     int celda_inicial_x, celda_inicial_y,
         celda_final_x, celda_final_y;
     
-    obtener_celda(area.esq_sup_izq, celda_inicial_x, celda_inicial_y);
-    obtener_celda(area.esq_inf_der, celda_final_x, celda_final_y);
+    obtener_celda(area.esquina_sup_izq(), celda_inicial_x, celda_inicial_y);
+    obtener_celda(area.esquina_inf_der(), celda_final_x, celda_final_y);
 
-    if (considerar_overflow) {
-        celda_final_x += 1;
-        celda_final_y += 1;
-    }
+    celda_final_x += 1;
+    celda_final_y += 1;
 
     for (int x = celda_inicial_x; x <= celda_final_x; x++) {
         if ((x < 0) || (x > ancho))
@@ -162,7 +163,16 @@ void Terreno::para_cada_celda_en(const Rectangulo& area,
         for (int y = celda_inicial_y; y <= celda_final_y; y++) {
             if ((y < 0) || (y > alto))
                 continue;
-            if (!accion(x, y))
+            
+            Posicion esq_sup_izq_celda = obtener_posicion(x, y);
+            Posicion esq_inf_der_celda = obtener_posicion(x + 1, y + 1);
+
+            bool contenida_totalmente = 
+                (area.contiene_punto(esq_sup_izq_celda)
+                    && area.contiene_punto(esq_inf_der_celda));
+
+
+            if (!accion(x, y, contenida_totalmente))
                 return;
         }
     }
@@ -174,27 +184,36 @@ std::unordered_set<Edificio*> Terreno::obtener_edificios_en(
     std::unordered_set<Edificio*> edificios;
     
     para_cada_celda_en(area, 
-        [this, &edificios] (int x, int y) {
+        [this, &edificios] (int x, int y, bool) {
             if (terreno[y][x].contiene_edificio())
                 edificios.insert(&terreno[y][x].obtener_edificio());
             return true;
-        }, false);
+        });
     
     return edificios;
 }
 
 std::unordered_set<Tropa*> Terreno::obtener_tropas_en(const Rectangulo& area) {
     std::unordered_set<Tropa*> tropas;
-    
+
     para_cada_celda_en(area, 
-        [this, &tropas] (int x, int y) {
-            if (terreno[y][x].contiene_tropas()) {
+        [this, &tropas, &area] (int x, int y, bool contenida_totalmente) {
+            if (!terreno[y][x].contiene_tropas()) {
+                return true;
+            }
+            if (contenida_totalmente) {
                 for (Tropa* tropa : terreno[y][x].obtener_tropas()) {
                     tropas.insert(tropa);
                 }
+            } else {
+                for (Tropa* tropa : terreno[y][x].obtener_tropas()) {
+                    Posicion pos_tropa(tropa->obtener_x(), tropa->obtener_y());
+                    if (area.contiene_punto(pos_tropa))
+                        tropas.insert(tropa);
+                }
             }
             return true;
-        }, false);
+        });
     
     return tropas;
 }
@@ -208,28 +227,12 @@ bool Terreno::es_construible(int x_celda, int y_celda) const {
     return terreno[y_celda][x_celda].es_construible();
 }
 
-/**
- * Intercambia el contenido de a con el contenido de b.
- */
-static inline void swap(int& a, int& b) {
-    int tmp = b;
-    b = a;
-    a = tmp;
-}
+std::unordered_set<Tropa*> Terreno::obtener_tropas_en(const Posicion& punto) {
+    Rectangulo area = Rectangulo(
+        punto.x - (ANCHO_SELECCION / 2), punto.y - (ALTO_SELECCION / 2),
+        ANCHO_SELECCION, ALTO_SELECCION);
 
-Tropa* Terreno::obtener_tropa_en(const Posicion& pos) {
-    Tropa* tropa = nullptr;
-    
-    para_cada_celda_en(Rectangulo(pos.x, pos.y, ANCHO_CELDA, ALTO_CELDA),
-        [this, &tropa] (int x, int y) {
-            if (terreno[y][x].contiene_tropas()) {
-                tropa = terreno[y][x].obtener_tropas().front();
-                return false;
-            }
-            return true;
-        }, true);
-
-    return tropa;
+    return obtener_tropas_en(area);
 }
 
 Edificio* Terreno::obtener_edificio_en(const Posicion& pos) {

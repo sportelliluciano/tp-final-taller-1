@@ -11,10 +11,12 @@ Edificio::Edificio(const nlohmann::json& data_edificio) {
     id = data_edificio["id"];
     nombre = data_edificio["nombre"];
 
-    Sprite sprite_base = Sprite(data_edificio["sprite_base"]);
-    Sprite sprite_construido = Sprite(data_edificio["sprite_construido"]);
-    Sprite sprite_destruido = Sprite(data_edificio["sprite_destruido"]);
-
+    Sprite sprite_base = Sprite::desde_json(data_edificio["sprite_base"]);
+    Sprite sprite_construido = 
+        Sprite::desde_json(data_edificio["sprite_construido"]);
+    Sprite sprite_destruido = 
+        Sprite::desde_json(data_edificio["sprite_destruido"]);
+    
     sprite = SpriteCompuesto({sprite_construido, sprite_base});
     sprite_roto = SpriteCompuesto({sprite_destruido, sprite_base});
 

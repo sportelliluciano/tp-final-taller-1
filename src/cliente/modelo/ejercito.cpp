@@ -49,6 +49,8 @@ void Ejercito::renderizar(Ventana& ventana, Camara& camara) {
 
         visual = camara.traducir_a_visual(terreno.obtener_posicion(tropa));
         tropa->renderizar(ventana, visual.x, visual.y);
+        ventana.dibujar_rectangulo(visual.x, visual.y, visual.x+1, visual.y+1, 3);
+        ventana.dibujar_rectangulo(visual.x-1, visual.y-1, visual.x+2, visual.y+2, 3);
     }
 }
 
@@ -115,6 +117,34 @@ std::vector<const Tropa*> Ejercito::obtener_tropas_base() const {
         resultado.push_back(&it.second);
     }
     return resultado;
+}
+
+bool Ejercito::hay_tropas_enemigas_en(const Posicion& punto) {
+    for (Tropa *t : terreno.obtener_tropas_en(punto)) {
+        if (t->obtener_propietario() != id_jugador_actual)
+            return true;
+    }
+    return false;
+}
+
+Tropa* Ejercito::obtener_tropa_enemiga_en(const Posicion& punto) {
+    for (Tropa *t : terreno.obtener_tropas_en(punto)) {
+        if (t->obtener_propietario() != id_jugador_actual)
+            return t;
+    }
+    return nullptr;
+}
+
+std::unordered_set<Tropa*> Ejercito::obtener_tropas_propias_en(
+    const Rectangulo& area) 
+{
+    std::unordered_set<Tropa*> tropas_propias;
+    for (Tropa* tropa : terreno.obtener_tropas_en(area)) {
+        if (tropa->obtener_propietario() == id_jugador_actual)
+            tropas_propias.insert(tropa);
+    }
+
+    return tropas_propias;
 }
 
 void Ejercito::entrenar(const std::string& clase, int tiempo_ms) {

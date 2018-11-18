@@ -22,12 +22,10 @@ public:
      */
     int obtener_ancho() const override;
 
-    virtual void pre_renderizar(Ventana& ventana, int x, int y);
-
     /**
      * \brief Renderiza el botón en la posición indicada.
      */
-    void renderizar(Ventana& ventana, int x, int y) override;
+    virtual void renderizar(Ventana& ventana, int x, int y) override;
 
     /**
      * \brief Setea la cola a mostrar en el botón. Sólo se mostrará si el 

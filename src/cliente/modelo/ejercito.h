@@ -55,6 +55,25 @@ public:
 
     void set_tropa_disparando(int id_tropa, bool disparando);
 
+    /**
+     * \brief Devuelve true si hay al menos una tropa enemiga en el punto dado.
+     */
+    bool hay_tropas_enemigas_en(const Posicion& punto);
+
+    /**
+     * \brief Obtiene una tropa enemiga parada en el punto indicado.
+     * 
+     * Si no hay tropas enemigas en el punto devuelve nullptr.
+     */
+    Tropa* obtener_tropa_enemiga_en(const Posicion& punto);
+
+    /**
+     * \brief Obtiene las tropas del jugador actual que estén en el área 
+     *        indicada.
+     */
+    std::unordered_set<Tropa*> obtener_tropas_propias_en(
+        const Rectangulo& area);
+
     
     /**** Eventos provenientes del servidor *****/
 

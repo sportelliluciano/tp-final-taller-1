@@ -172,7 +172,6 @@ void Servidor::push_evento(Evento* evento) {
 }
 
 void Servidor::enviar_evento(const nlohmann::json& evento) {
-    std::cout << "<< " << evento.dump() << std::endl;
     conn.enviar_json(evento);
 }
 

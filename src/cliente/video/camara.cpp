@@ -30,8 +30,8 @@ Posicion Camara::traducir_a_logica(const Posicion& posicion_visual) {
 }
 
 bool Camara::es_visible(const Rectangulo& area) {
-    return (abs(area.esq_sup_izq.x - cam_x) * 2 < (area.w + ancho)) &&
-         (abs(area.esq_sup_izq.y - cam_y) * 2 < (area.h + alto));
+    return (abs(area.x() - cam_x) * 2 < (area.ancho() + ancho)) &&
+         (abs(area.y() - cam_y) * 2 < (area.alto() + alto));
 }
 
 Rectangulo Camara::obtener_vista() {

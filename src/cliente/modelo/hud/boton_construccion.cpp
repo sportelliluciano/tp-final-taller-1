@@ -19,7 +19,7 @@ BotonConstruccion::BotonConstruccion(Infraestructura& infraestructura_,
   tostador(tostador_)
 { }
 
-void BotonConstruccion::pre_renderizar(Ventana& ventana, int x, int y) {
+void BotonConstruccion::renderizar(Ventana& ventana, int x, int y) {
     if (infraestructura.esta_construyendo(clase)) {
         set_cola(infraestructura.obtener_cola_construccion(clase));
         set_tiempo(infraestructura.obtener_segundos_restantes(clase));
@@ -31,6 +31,7 @@ void BotonConstruccion::pre_renderizar(Ventana& ventana, int x, int y) {
     } else {
         reiniciar();
     }
+    BotonTemporizado::renderizar(ventana, x, y);
 }
 
 bool BotonConstruccion::mouse_click_izquierdo(int, int) {

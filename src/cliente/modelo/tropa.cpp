@@ -3,7 +3,6 @@
 #include "cliente/video/log.h"
 #include "cliente/video/ventana.h"
 
-#define SPRITE_BASE 206
 #define THRESHOLD_SYNC_CAMINO 10
 
 namespace cliente {
@@ -12,26 +11,39 @@ Tropa::Tropa(const nlohmann::json& data) {
     clase = data.at("id");
     sprite_boton = data.at("sprite_boton");
     int sprite_base = data.at("sprite_base");
-    for (int i=0;i<N_SPRITES;i++) {
-        std::vector<Sprite> cuadros_caminando, cuadros_disparando;
-        for (int j=0; j<7; j++) {
-            cuadros_caminando.push_back(Sprite(SPRITE_BASE + j*N_SPRITES + i));
-            cuadros_disparando.push_back(Sprite(SPRITE_BASE + (j+7)*N_SPRITES + i));
+    es_vehiculo = (data.at("tipo") == "vehiculo");
+    velocidad = data.at("velocidad");
+
+    if (es_vehiculo) {
+        for (int i=0;i<N_SPRITES*4;i++) {
+            sprites_vehiculo[i] = SpriteAnimado({Sprite(sprite_base + i)}, 1);
+            sprites_vehiculo[i].configurar_repeticion(true);
+            sprites_vehiculo[i].set_centrado(true);
         }
-        sprites_caminando[i] = SpriteAnimado(cuadros_caminando, 10);
-        sprites_caminando[i].configurar_repeticion(true);
-        sprites_caminando[i].set_centrado(true);
-        sprites_parado[i] = SpriteAnimado(SPRITE_BASE + i, SPRITE_BASE + i, 1);
-        sprites_parado[i].configurar_repeticion(true);
-        sprites_parado[i].set_centrado(true);
-        sprites_disparando[i] = SpriteAnimado(cuadros_disparando);
-        sprites_disparando[i].set_centrado(true);
-        sprites_disparando[i].configurar_repeticion(true);
+    } else {
+        for (int i=0;i<N_SPRITES;i++) {
+            std::vector<Sprite> cuadros_caminando, cuadros_disparando;
+            for (int j=0; j<7; j++) {
+                cuadros_caminando.push_back(Sprite(sprite_base + j*N_SPRITES + i));
+            }
+            for (int j=0; j<5; j++) {
+                cuadros_disparando.push_back(Sprite(sprite_base + (j+7)*N_SPRITES + i));
+            }
+            sprites_caminando[i] = SpriteAnimado(cuadros_caminando, 5);
+            sprites_caminando[i].configurar_repeticion(true);
+            sprites_caminando[i].set_centrado(true);
+            sprites_parado[i] = SpriteAnimado(sprite_base + i, sprite_base + i, 1);
+            sprites_parado[i].configurar_repeticion(true);
+            sprites_parado[i].set_centrado(true);
+            sprites_disparando[i] = SpriteAnimado(cuadros_disparando, 10);
+            sprites_disparando[i].set_centrado(true);
+            sprites_disparando[i].configurar_repeticion(true);
+        }
     }
 
     fx_actual = x_destino = x_actual = 0;
     fy_actual = y_destino = y_actual = 0;
-    id_tropa = -1;
+    id_tropa = -1;   
 }
 
 void Tropa::inicializar(int id, const Posicion& posicion, int vida_, 
@@ -45,7 +57,9 @@ void Tropa::inicializar(int id, const Posicion& posicion, int vida_,
 }
 
 SpriteAnimado& Tropa::obtener_sprite() {
-    if (esta_moviendo()) {
+    if (es_vehiculo) {
+        return sprites_vehiculo[posicion_sprite];
+    } else if (esta_moviendo()) {
         return sprites_caminando[posicion_sprite];
     } else if (esta_disparando()) {
         return sprites_disparando[posicion_sprite];
@@ -105,6 +119,7 @@ static int calcular_posicion_sprite(int vx, int vy) {
     return 0;
 }
 
+
 void Tropa::actualizar(int dt_ms) {
     if (!esta_moviendo())
         return;
@@ -112,17 +127,21 @@ void Tropa::actualizar(int dt_ms) {
     float vx = 0, vy = 0;
 
     if (x_destino != x_actual)
-        vx = (x_destino - x_actual) / abs(x_destino - x_actual);
+        vx = x_destino - x_actual;
     if (y_destino != y_actual)
-        vy = (y_destino - y_actual) / abs(y_destino - y_actual);
+        vy = y_destino - y_actual;
 
-    posicion_sprite = calcular_posicion_sprite(vx, vy);
+    nueva_pos_sprite = calcular_posicion_sprite(vx, vy);
+    if (es_vehiculo)
+        nueva_pos_sprite *= 4;
+    else
+        posicion_sprite = nueva_pos_sprite;
 
     vx = vx / sqrt(vx*vx + vy*vy);
     vy = vy / sqrt(vx*vx + vy*vy);
 
-    vx *= 0.4 / 15;
-    vy *= 0.4 / 15;
+    vx *= ((0.4 / 15) / 16) * velocidad;
+    vy *= ((0.4 / 15) / 16) * velocidad;
 
     float dx = vx * dt_ms,
           dy = vy * dt_ms;
@@ -139,6 +158,16 @@ void Tropa::actualizar(int dt_ms) {
 
     x_actual = round(fx_actual);
     y_actual = round(fy_actual);
+
+    last_ms += dt_ms;
+    if ((posicion_sprite != nueva_pos_sprite) && (last_ms > (60 * 12.0f / velocidad))) {
+        if (nueva_pos_sprite - posicion_sprite < 16)
+            posicion_sprite = (posicion_sprite + 1) % 32;
+        else
+            posicion_sprite = (posicion_sprite - 1) < 0 ? 31:(posicion_sprite - 1);
+        
+        last_ms = 0;
+    }
 }
 
 int Tropa::obtener_id() const {
@@ -163,6 +192,10 @@ int Tropa::obtener_y() const {
 
 bool Tropa::esta_moviendo() const {
     return (x_destino != x_actual) || (y_destino != y_actual);
+}
+
+int Tropa::obtener_propietario() const {
+    return id_propietario;
 }
 
 void Tropa::set_esta_disparando(bool disparando) {

@@ -92,6 +92,8 @@ private:
     int ancho = 0, alto = 0;
     Camara camara;
     Juego& juego;
+    Ejercito& ejercito;
+    Infraestructura& infraestructura;
     Servidor& servidor;
     Tostador& tostador;
 
@@ -113,10 +115,11 @@ private:
     bool en_modo_vender = false;
 
     Posicion mouse;
+    SpriteAnimado* sprite_mouse = nullptr;
 
+    SpriteAnimado mouse_atacar;
     SpriteAnimado mouse_vender;
     SpriteAnimado mouse_mover_tropa;
-    bool animar_mover_tropas = false;
 
     Edificio* edificio_seleccionado = nullptr;
     std::unordered_set<Tropa*> unidades_seleccionadas;

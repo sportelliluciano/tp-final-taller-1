@@ -103,6 +103,11 @@ public:
      * \brief Setea la vida de la tropa.
      */
     void set_vida(int nueva_vida);
+    
+    /**
+     * \brief Devuelve el ID del jugador a quien pertenece esta tropa.
+     */
+    int obtener_propietario() const;
 
     void set_esta_disparando(bool disparando);
 
@@ -136,6 +141,7 @@ private:
     SpriteAnimado sprites_caminando[N_SPRITES];
     SpriteAnimado sprites_parado[N_SPRITES];
     SpriteAnimado sprites_disparando[N_SPRITES];
+    SpriteAnimado sprites_vehiculo[N_SPRITES*4];
     int posicion_sprite = 0; // Hacia donde está mirando la tropa
 
     int sprite_boton;
@@ -143,6 +149,12 @@ private:
     bool b_esta_disparando = false;
 
     SpriteAnimado& obtener_sprite();
+
+    bool es_vehiculo = false;
+    int nueva_pos_sprite = 0;
+    int velocidad = 0;
+
+    int last_ms = 0;
 };
 
 } // namespace cliente

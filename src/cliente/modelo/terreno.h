@@ -51,8 +51,12 @@ public:
 
     /**
      * \brief Devuelve las tropas que se encuentran en el área indicada.
+     * 
+     * En caso de pasarse una posición se devolverán las tropas que se 
+     * encuentran en el rectángulo de 8x8 con centro en la posición.
      */
     std::unordered_set<Tropa*> obtener_tropas_en(const Rectangulo& area);
+    std::unordered_set<Tropa*> obtener_tropas_en(const Posicion& punto);
 
     /**
      * \brief Obtiene la celda en la posición dada.
@@ -63,14 +67,6 @@ public:
      * \brief Devuelve true si se puede construir sobre la celda.
      */
     bool es_construible(int x_celda, int y_celda) const;
-
-    /**
-     * \brief Selecciona la unidad que está en la posición indicada.
-     * 
-     * Si no hubiera unidad se devolverá un puntero nulo.
-     * Las coordenadas están dadas en píxeles globales
-     */
-    Tropa* obtener_tropa_en(const Posicion& posicion);
 
     /**
      * \brief Devuelve el edificio que se encuentra en la posición indicada.
@@ -153,13 +149,19 @@ private:
      * para cada una de ellas aplica "accion". Si considerar_overflow es true
      * entonces se agregará una celda hacia abajo y hacia la izquierda.
      * 
-     * bool accion(const Posicion& posicion): Callback a ejecutar para cada 
-     * celda. Debe devolver true si se quiere seguir iterando o false en caso 
-     * contrario.
+     * bool accion(int celda_x, int celda_y, bool contenida_totalmente): 
+     * Callback a ejecutar para cada celda. Los parámetros celda_x y celda_y
+     * indican cual es la celda sobre la que se está ejecutando la acción.
+     * El parámetro contenida_totalmente indica si la celda está contenida 
+     * totalemte por el rectángulo o si es un borde (está contenida 
+     * parcialemente). 
+     * Si el parámetro contenida_totalmente es false podría darse que la
+     * celda no esté contenida en absoluto.
+     * La función debe devolver true si se quiere seguir iterando sobre el 
+     * resto de las celdas o false para detener la iteración inmediatamente.
      */
     void para_cada_celda_en(const Rectangulo& area, 
-        std::function<bool(int, int)> accion, 
-        bool considerar_overflow = false);
+        std::function<bool(int, int, bool)> accion);
 };
 
 } // namespace cliente

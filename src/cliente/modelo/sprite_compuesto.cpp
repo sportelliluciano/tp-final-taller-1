@@ -23,8 +23,11 @@ SpriteCompuesto::SpriteCompuesto(const SpriteCompuesto& otro) {
 }
 
 SpriteCompuesto& SpriteCompuesto::operator=(const SpriteCompuesto& otro) {
-    sprites = otro.sprites;
-    s_nombre.str(otro.s_nombre.str());
+    if (this != &otro) {
+        sprites = otro.sprites;
+        s_nombre.str(otro.s_nombre.str());
+    }
+    return *this;
 }
 
 void SpriteCompuesto::agregar_sprite(const Sprite& sprite) {

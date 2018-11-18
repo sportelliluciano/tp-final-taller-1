@@ -11,7 +11,7 @@ EventoDisparo::EventoDisparo(const nlohmann::json& serializado) {
     data = serializado;
 }
 
-void EventoDisparo::actualizar(Juego& juego) {
+void EventoDisparo::actualizar(Juego&) {
     using namespace conexion;
     evento_cliente_t id_evento = (evento_cliente_t)data.at("id").get<int>();
     switch(id_evento) {

@@ -40,7 +40,8 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
     ventana.alto() - ALTO_BARRA_SUPERIOR),
   panel_lateral(ventana.ancho() - ANCHO_BOTONERA, 0, 
     ANCHO_BOTONERA, ventana.alto()),
-  tostador(MARGEN_TOSTADOR_X, MARGEN_TOSTADOR_Y)
+  tostador(MARGEN_TOSTADOR_X, MARGEN_TOSTADOR_Y),
+  dinero(juego)
 {
     setear_hijo(&base);
     base.empaquetar_al_frente(area_general);

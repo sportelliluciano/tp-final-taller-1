@@ -14,7 +14,9 @@ class Sprite {
 public:
     Sprite() = default;
 
-    explicit Sprite(const nlohmann::json& sprite);
+    static Sprite desde_json(const nlohmann::json& data);
+
+    explicit Sprite(const std::string& ruta_);
 
     explicit Sprite(int id, int desplazamiento_x = 0, int desplazamiento_y = 0);
 
@@ -34,6 +36,7 @@ public:
 private:
     int id = -1;
     int dx = 0, dy = 0;
+    std::string ruta;
 };
 
 } // namespace cliente

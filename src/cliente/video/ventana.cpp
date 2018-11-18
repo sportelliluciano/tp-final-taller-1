@@ -256,9 +256,6 @@ AdministradorTexturas& Ventana::obtener_administrador_texturas() {
 
 // TODO: Sacar esto
 void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
-    if ((abs(x1 - x0) * abs(y1 - y0)) < 32)
-        return;
-    
     Uint8 r, g, b, a;
     SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
     if (color == 0)
@@ -297,11 +294,11 @@ void Ventana::dibujar_grilla(int x_offset, int y_offset) {
 }
 
 void Ventana::setear_viewport(const Rectangulo& seccion) {
-    if (SDL_RenderSetViewport(renderer, &seccion.sdl_rect) != 0)
+    if (SDL_RenderSetViewport(renderer, &seccion.rect()) != 0)
         throw ErrorSDL("SDL_RenderSetViewport");
     
-    ancho_vp = seccion.sdl_rect.w;
-    alto_vp = seccion.sdl_rect.h;
+    ancho_vp = seccion.ancho();
+    alto_vp = seccion.alto();
 }
 
 void Ventana::reestablecer_viewport() {

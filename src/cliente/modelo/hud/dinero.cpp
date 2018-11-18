@@ -14,7 +14,7 @@
 
 namespace cliente {
 
-Dinero::Dinero() {
+Dinero::Dinero(Juego& juego_) : juego(juego_) {
     for (int i=0;i<11;i++)
         digitos[i] = Sprite(DIGITO_0 + i, 0, 0);
     
@@ -41,6 +41,7 @@ int Dinero::obtener_ancho() const {
 }
 
 void Dinero::renderizar(Ventana& ventana, int x, int y) {
+    setear_dinero(juego.obtener_dinero());
     int digito;
     int dx = 0;
     for (digito=N_DIGITOS_DINERO-1; digito > 0; digito--) {

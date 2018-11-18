@@ -19,7 +19,7 @@ BotonEntrenamiento::BotonEntrenamiento(Ejercito& ejercito_,
   tostador(tostador_)
 { }
 
-void BotonEntrenamiento::pre_renderizar(Ventana& ventana, int x, int y) {
+void BotonEntrenamiento::renderizar(Ventana& ventana, int x, int y) {
     if (!ejercito.esta_habilitada(clase)) {
         reiniciar();
         set_filtro(true, false);
@@ -34,6 +34,7 @@ void BotonEntrenamiento::pre_renderizar(Ventana& ventana, int x, int y) {
     } else {
         reiniciar();
     }
+    BotonTemporizado::renderizar(ventana, x, y);
 }
 
 bool BotonEntrenamiento::mouse_click_izquierdo(int, int) {

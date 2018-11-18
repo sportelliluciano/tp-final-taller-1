@@ -3,6 +3,7 @@
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
 #include "cliente/video/camara.h"
+#include "cliente/modelo/sprite.h"
 #include "cliente/servidor.h"
 
 #define ANCHO_MOV_CAMARA 15
@@ -16,11 +17,15 @@
 namespace cliente {
 
 AreaJuego::AreaJuego(Juego& juego_, Servidor& servidor_, Tostador& tostador_) 
-    : juego(juego_), servidor(servidor_), tostador(tostador_), 
+    : juego(juego_), ejercito(juego.obtener_ejercito()), 
+      infraestructura(juego.obtener_infraestructura()), 
+      servidor(servidor_), tostador(tostador_), 
       mouse_vender(3932, 3939), mouse_mover_tropa(5010, 5023)
 { 
     mouse_vender.configurar_repeticion(true);
     mouse_mover_tropa.set_centrado(true);
+    mouse_atacar = SpriteAnimado({Sprite("./assets/nuevos/atacar.png")}, 1);
+    mouse_atacar.configurar_repeticion(true);
 }
     
 int AreaJuego::obtener_alto() const {
@@ -74,14 +79,11 @@ void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
     }
 
     if (mouse_en_ventana) {
-        if (en_modo_vender) {
+        if (sprite_mouse) {
             ventana.ocultar_mouse();
-            mouse_vender.renderizar(ventana, mouse.x, mouse.y);
-        } else if (animar_mover_tropas) {
-            ventana.ocultar_mouse();
-            mouse_mover_tropa.renderizar(ventana, mouse.x, mouse.y);
-            if (mouse_mover_tropa.finalizado())
-                animar_mover_tropas = false;
+            sprite_mouse->renderizar(ventana, mouse.x, mouse.y);
+            if (sprite_mouse->finalizado())
+                sprite_mouse = nullptr;
         } else {
             ventana.mostrar_mouse();
         }
@@ -94,6 +96,10 @@ void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
 
 void AreaJuego::set_modo_vender(bool habilitado) {
     en_modo_vender = habilitado;
+    if (habilitado)
+        sprite_mouse = &mouse_vender;
+    else
+        sprite_mouse = nullptr;
 }
 
 bool AreaJuego::seleccionar_edificio(int x, int y) {
@@ -114,8 +120,7 @@ bool AreaJuego::seleccionar_edificio(int x, int y) {
 
 bool AreaJuego::seleccionar_tropas(int x0, int y0, int x1, int y1) {
     std::unordered_set<Tropa*> nueva_seleccion =
-        juego.obtener_terreno()
-            .obtener_tropas_en(
+        ejercito.obtener_tropas_propias_en(
                 Rectangulo(
                     camara.traducir_a_logica(Posicion(x0, y0)), 
                     camara.traducir_a_logica(Posicion(x1, y1))
@@ -154,7 +159,7 @@ bool AreaJuego::mouse_click_izquierdo(int x, int y) {
 
     if (en_modo_vender) {
         if (!seleccionar_edificio(x, y)) {
-            en_modo_vender = false;
+            set_modo_vender(false);
             return false;
         }
 
@@ -174,21 +179,28 @@ bool AreaJuego::mouse_click_izquierdo(int x, int y) {
 }
 
 bool AreaJuego::mouse_click_derecho(int x, int y) {
+    if (unidades_seleccionadas.empty())
+        return false;
+    
     Posicion pos_logica = camara.traducir_a_logica(Posicion(x, y));
-    int celda_x, celda_y;
-    juego.obtener_terreno().obtener_celda(
-        pos_logica, celda_x, celda_y);
     
     std::vector<int> ids;
     for (Tropa* tropa : unidades_seleccionadas) {
         ids.push_back(tropa->obtener_id());
     }
 
-    servidor.mover_tropas(ids, pos_logica.x, pos_logica.y);
-    tostador.hacer_tostada("Mover tropas");
+    if (ejercito.hay_tropas_enemigas_en(camara.traducir_a_logica(mouse))) {
+        Tropa* enemigo = 
+            ejercito.obtener_tropa_enemiga_en(camara.traducir_a_logica(mouse));
+        servidor.atacar_tropa(ids, enemigo->obtener_id());
+        tostador.hacer_tostada("Atacar tropas");    
+    } else {
+        servidor.mover_tropas(ids, pos_logica.x, pos_logica.y);
+        tostador.hacer_tostada("Mover tropas");
+        mouse_mover_tropa.reiniciar();
+        sprite_mouse = &mouse_mover_tropa;
+    }
     
-    animar_mover_tropas = true;
-    mouse_mover_tropa.reiniciar();
     return false;
 }
 
@@ -206,24 +218,32 @@ bool AreaJuego::mouse_movimiento(int x, int y) {
     if (esta_draggeando) {
         drag_end_x = x;
         drag_end_y = y;
-    } else {
-        if (x < ANCHO_MOV_CAMARA)
-            mover_camara_x = -1;
-        else if (x > obtener_ancho() - ANCHO_MOV_CAMARA)
-            mover_camara_x = 1;
-        else
-            mover_camara_x = 0;
-        
-        if (y < ALTO_MOV_CAMARA)
-            mover_camara_y = -1;
-        else if (y > obtener_alto() - ALTO_MOV_CAMARA)
-            mover_camara_y = 1;
-        else
-            mover_camara_y = 0;
+        return false;
     }
+    
+    if (x < ANCHO_MOV_CAMARA)
+        mover_camara_x = -1;
+    else if (x > obtener_ancho() - ANCHO_MOV_CAMARA)
+        mover_camara_x = 1;
+    else
+        mover_camara_x = 0;
+    
+    if (y < ALTO_MOV_CAMARA)
+        mover_camara_y = -1;
+    else if (y > obtener_alto() - ALTO_MOV_CAMARA)
+        mover_camara_y = 1;
+    else
+        mover_camara_y = 0;
     
     if (en_modo_vender) {
         seleccionar_edificio(x, y);
+    } else if (!unidades_seleccionadas.empty() &&
+        ejercito.hay_tropas_enemigas_en(camara.traducir_a_logica(mouse))) 
+    {
+        if (sprite_mouse == nullptr)
+            sprite_mouse = &mouse_atacar;
+    } else if (sprite_mouse == &mouse_atacar) {
+        sprite_mouse = nullptr;
     }
 
     return false;

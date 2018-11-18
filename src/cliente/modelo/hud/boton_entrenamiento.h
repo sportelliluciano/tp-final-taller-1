@@ -18,7 +18,7 @@ public:
     
     bool mouse_click_izquierdo(int x, int y) override;
     bool mouse_click_derecho(int x, int y) override;
-    void pre_renderizar(Ventana& ventana, int x, int y) override;
+    void renderizar(Ventana& ventana, int x, int y) override;
 
 private:
     std::string clase;

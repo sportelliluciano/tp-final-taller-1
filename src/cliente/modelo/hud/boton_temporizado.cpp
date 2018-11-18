@@ -42,12 +42,8 @@ void BotonTemporizado::set_filtro(bool gris, bool verde) {
     con_filtro_verde = verde;
 }
 
-void BotonTemporizado::pre_renderizar(Ventana&, int, int) {
-    
-}
 
 void BotonTemporizado::renderizar(Ventana& ventana, int x, int y) {
-    pre_renderizar(ventana, x, y);
     Sprite(sprite_id).renderizar(ventana, x, y);
     if (con_filtro_gris) {
         ventana

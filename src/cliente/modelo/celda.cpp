@@ -63,7 +63,7 @@ bool Celda::contiene_edificio() const {
 
 Edificio& Celda::obtener_edificio() {
     if (!contiene_edificio())
-        throw std::runtime_error("La celda no contiene nigún edificio");
+        throw std::runtime_error("La celda no contiene ningún edificio");
     
     return *edificio;
 }

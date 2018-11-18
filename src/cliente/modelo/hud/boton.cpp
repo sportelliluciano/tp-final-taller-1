@@ -55,8 +55,8 @@ void Boton::renderizar(Ventana& ventana, int x, int y) {
         Rectangulo seccion(0, 0, t.obtener_ancho(), t.obtener_alto());
         Rectangulo destino = boton;
 
-        int h_boton = boton.sdl_rect.h;
-        int w_boton = boton.sdl_rect.w;
+        int h_boton = boton.alto();
+        int w_boton = boton.ancho();
         float relacion_boton = h_boton / (1.0f * w_boton);
         int h_img = t.obtener_ancho();
         int w_img = t.obtener_alto();
@@ -74,12 +74,12 @@ void Boton::renderizar(Ventana& ventana, int x, int y) {
             w_img = w_boton;
         }
 
-        destino.sdl_rect.w = w_img;
-        destino.sdl_rect.h = h_img;
+        destino.ancho(w_img);
+        destino.alto(h_img);
 
         if (autopadding) {
-            padding_x = (boton.sdl_rect.w - w_img) / 2;
-            padding_y = (boton.sdl_rect.h - h_img) / 2;
+            padding_x = (boton.ancho() - w_img) / 2;
+            padding_y = (boton.alto() - h_img) / 2;
         }
 
         t.renderizar(x + padding_x, y + padding_y, seccion, destino);
@@ -96,11 +96,11 @@ void Boton::set_padding(int x, int y) {
 }
 
 int Boton::obtener_alto() const {
-    return boton.sdl_rect.h;
+    return boton.alto();
 }
 
 int Boton::obtener_ancho() const {
-    return boton.sdl_rect.w;
+    return boton.ancho();
 }
 
 bool Boton::mouse_click_izquierdo(int x, int y) {

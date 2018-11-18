@@ -8,9 +8,12 @@ namespace cliente {
  * \brief Genera el nombre de la textura y la carga desde el administrador
  *        de texturas de la ventana.
  */
-static const Textura& cargar_textura(Ventana& ventana, int id) {
+static const Textura& cargar_textura(Ventana& ventana, int id,
+    const std::string& ruta) 
+{
     if (id == -1)
-        throw std::runtime_error("El sprite no fue cargado (-1)");
+        return ventana.obtener_administrador_texturas().cargar_imagen(ruta);
+    
     char nombre[300];
     sprintf(nombre, RUTA_SPRITES_NUM "%05d.bmp", id);
 
@@ -27,7 +30,8 @@ Sprite::Sprite(int id_, int desplazamiento_x, int desplazamiento_y) {
     dy = desplazamiento_y;
 }
 
-Sprite::Sprite(const nlohmann::json& sprite) {
+Sprite Sprite::desde_json(const nlohmann::json& sprite) {
+    int id = -1, dx = 0, dy = 0;
     if (sprite.find("id") != sprite.end())
         id = sprite["id"];
     
@@ -36,6 +40,12 @@ Sprite::Sprite(const nlohmann::json& sprite) {
     
     if (sprite.find("y") != sprite.end())
         dy = sprite["y"];
+    
+    return Sprite(id, dx, dy);
+}
+
+Sprite::Sprite(const std::string& ruta_) {
+    ruta = ruta_;
 }
 
 void Sprite::desplazar(int desplazamiento_x, int desplazamiento_y) {
@@ -44,8 +54,13 @@ void Sprite::desplazar(int desplazamiento_x, int desplazamiento_y) {
 }
 
 void Sprite::renderizar(Ventana& ventana, int x, int y) {
-    if (id == -1)
+    if (id == -1) {
+        const Textura& textura = ventana
+            .obtener_administrador_texturas()
+            .cargar_imagen(ruta);
+        textura.renderizar(x + dx, y + dy);
         return;
+    }
     
     char nombre[300];
     sprintf(nombre, RUTA_SPRITES_NUM "%05d.bmp", id);
@@ -60,13 +75,13 @@ void Sprite::renderizar(Ventana& ventana, int x, int y) {
 int Sprite::obtener_alto(Ventana& ventana) const {
     if (id == -1)
         return 0;
-    return cargar_textura(ventana, id).obtener_alto();
+    return cargar_textura(ventana, id, ruta).obtener_alto();
 }
 
 int Sprite::obtener_ancho(Ventana& ventana) const {
     if (id == -1)
         return 0;
-    return cargar_textura(ventana, id).obtener_ancho();
+    return cargar_textura(ventana, id, ruta).obtener_ancho();
 }
 
 int Sprite::obtener_desplazamiento_x() const {
@@ -83,7 +98,7 @@ int Sprite::obtener_id() const {
 }
 
 const Textura& Sprite::obtener_textura(Ventana& ventana) {
-    return cargar_textura(ventana, id);
+    return cargar_textura(ventana, id, ruta);
 }
 
 } // namespace cliente

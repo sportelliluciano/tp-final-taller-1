@@ -81,18 +81,18 @@ void Textura::renderizar(int x, int y, Textura& otro) const {
 void Textura::renderizar(int x, int y, const Rectangulo& seccion) const {
     SDL_Rect dst;
     dst.x = x; dst.y = y;
-    dst.w = seccion.sdl_rect.w; dst.h = seccion.sdl_rect.h;
+    dst.w = seccion.ancho(); dst.h = seccion.alto();
 
-    if (SDL_RenderCopy(renderer, textura, &seccion.sdl_rect, &dst) != 0)
+    if (SDL_RenderCopy(renderer, textura, &seccion.rect(), &dst) != 0)
         throw ErrorSDL("SDL_RenderCopy");
 }
 
 void Textura::renderizar(int x, int y, const Rectangulo& seccion, 
     const Rectangulo& destino) const 
 {
-    SDL_Rect dst = destino.sdl_rect;
+    SDL_Rect dst = destino.rect();
     dst.x = x; dst.y = y;
-    if (SDL_RenderCopy(renderer, textura, &seccion.sdl_rect, &dst) != 0) {
+    if (SDL_RenderCopy(renderer, textura, &seccion.rect(), &dst) != 0) {
         throw ErrorSDL("SDL_RenderCopy");
     }
 }
@@ -105,9 +105,9 @@ void Textura::renderizar(int x, int y, const Rectangulo& seccion,
     
     SDL_Rect dst;
     dst.x = x; dst.y = y;
-    dst.w = seccion.sdl_rect.w; dst.h = seccion.sdl_rect.h;
+    dst.w = seccion.ancho(); dst.h = seccion.alto();
 
-    if (SDL_RenderCopy(renderer, textura, &seccion.sdl_rect, &dst) != 0)
+    if (SDL_RenderCopy(renderer, textura, &seccion.rect(), &dst) != 0)
         throw ErrorSDL("SDL_RenderCopy");
     
     if (SDL_SetRenderTarget(renderer, old_target) != 0)
