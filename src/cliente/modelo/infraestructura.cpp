@@ -125,6 +125,16 @@ void Infraestructura::actualizar(int t_ms) {
     last_ms = t_ms;
 }
 
+Edificio* Infraestructura::obtener_centro_construccion() {
+    for (auto& it : edificios_construidos) {
+        if (it.second.obtener_clase() == "centro_construccion") {
+            if (it.second.obtener_propietario() == id_jugador_actual)
+                return &it.second;
+        }
+    }
+    return nullptr;
+}
+
 std::vector<const Edificio*> Infraestructura::obtener_edificios_base() const {
     std::vector<const Edificio*> edificios_disponibles;
 
@@ -179,28 +189,27 @@ void Infraestructura::atacar(int id, int nueva_vida) {
     edificios_construidos.at(id).set_vida(nueva_vida);
 }
 
-void Infraestructura::crear_edificio(int id, int, const std::string& clase, 
-    const std::vector<int>& posicion)
+void Infraestructura::crear_edificio(int id, int id_jugador, 
+    const std::string& clase, const std::vector<int>& posicion)
 {
     construcciones_iniciadas.erase(clase);
     Edificio nuevo = edificios.at(clase);
 
     int x = posicion.at(0), y = posicion.at(1);
 
-    nuevo.inicializar(id, x, y, false);
+    nuevo.inicializar(id, x, y, id_jugador, false);
     edificios_construidos.emplace(id, nuevo);
     terreno.agregar_edificio(edificios_construidos.at(id));
 }
 
-void Infraestructura::agregar_edificio(int id, int, 
+void Infraestructura::agregar_edificio(int id, int id_jugador, 
     const std::vector<int>& posicion, const std::string& clase, int vida)
 {
     Edificio nuevo = edificios.at(clase);
 
     int x = posicion.at(0), y = posicion.at(1);
 
-    nuevo.inicializar(id, x, y, true);
-    nuevo.set_vida(vida);
+    nuevo.inicializar(id, x, y, id_jugador, true, vida);
     edificios_construidos.emplace(id, nuevo);
     terreno.agregar_edificio(edificios_construidos.at(id));
 }

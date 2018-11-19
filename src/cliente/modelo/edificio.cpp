@@ -69,16 +69,25 @@ void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
     
 }
 
-void Edificio::inicializar(int id_, int x, int y, bool construido) {
+void Edificio::inicializar(int id_, int x, int y, int propietario, 
+    bool construido, int nueva_vida) 
+{
     id_edificio = id_;
     pos_x = x;
     pos_y = y;
     esta_construido = construido;
     esta_destruido = false;
+    if (nueva_vida != -1)
+        vida = nueva_vida;
+    id_jugador = propietario;
 }
 
 int Edificio::obtener_id() const {
     return id_edificio;
+}
+
+int Edificio::obtener_propietario() const {
+    return id_jugador;
 }
 
 const std::string& Edificio::obtener_clase() const {

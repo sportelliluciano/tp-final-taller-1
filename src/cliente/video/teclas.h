@@ -15,7 +15,8 @@ typedef enum {
     TECLA_ARRIBA,
     TECLA_ABAJO,
     TECLA_DERECHA,
-    TECLA_IZQUIERDA
+    TECLA_IZQUIERDA,
+    TECLA_F2
 } tecla_t; 
 
 } // namespace cliente

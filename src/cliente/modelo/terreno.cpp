@@ -108,16 +108,19 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     obtener_celda(vista.esquina_sup_izq(), celda_inicial_x, celda_inicial_y);
     obtener_celda(vista.esquina_inf_der(), celda_final_x, celda_final_y);
 
-    // Evitar rectángulo negro al final
-    celda_final_x += 1;
-    celda_final_y += 1;
+    // Evitar rectángulos negros en los alrededores
+    celda_inicial_x -= 2;
+    celda_inicial_y -= 2;
+    celda_final_x += 2;
+    celda_final_y += 2;
 
     if ((celda_inicial_x == ultimo_celda_x0) && 
        (celda_final_x == ultimo_celda_x1)  && 
        (celda_inicial_y == ultimo_celda_y0) && 
        (celda_final_y == ultimo_celda_y1))
     {
-        Posicion visual = camara.traducir_a_visual(vista.esquina_sup_izq());
+        Posicion visual = camara.traducir_a_visual(
+            obtener_posicion(celda_inicial_x, celda_inicial_y));
         ventana
             .obtener_administrador_texturas()
             .obtener_textura("terreno")
@@ -133,7 +136,7 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
         admin_texturas.eliminar_textura("terreno"); 
 
     Textura& textura = admin_texturas.crear_textura("terreno", 
-        ventana.ancho(), ventana.alto());
+        ventana.ancho() + 128, ventana.alto() + 128);
 
     textura.limpiar(0, 0, 0, 255);
 
@@ -144,8 +147,9 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
             if ((y < 0) || (y >= alto))
                 continue;
             
-            Posicion visual = camara.traducir_a_visual(obtener_posicion(x, y));
-            terreno[y][x].renderizar(ventana, visual.x, visual.y, textura);
+            int x_px = (x - celda_inicial_x) * ANCHO_CELDA;
+            int y_px = (y - celda_inicial_y) * ALTO_CELDA;
+            terreno[y][x].renderizar(ventana, x_px, y_px, textura);
         }
     }
 
@@ -154,7 +158,8 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     ultimo_celda_y0 = celda_inicial_y;
     ultimo_celda_y1 = celda_final_y;
 
-    Posicion visual = camara.traducir_a_visual(vista.esquina_sup_izq());
+    Posicion visual = camara.traducir_a_visual(
+        obtener_posicion(celda_inicial_x, celda_inicial_y));
     textura.renderizar(visual.x, visual.y);
     ventana.dibujar_grilla(visual.x, visual.y);
 }

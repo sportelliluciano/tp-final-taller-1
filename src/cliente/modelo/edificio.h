@@ -39,7 +39,8 @@ public:
     /**
      * \brief Inicializa el edificio.
      */
-    void inicializar(int id_, int x, int y, bool construido);
+    void inicializar(int id_, int x, int y, int propietario, bool construido, 
+        int nueva_vida = -1);
 
     /**
      * \brief Destruye el edificio.
@@ -63,6 +64,11 @@ public:
      * \brief Devuelve el ID de edificio
      */
     int obtener_id() const;
+
+    /**
+     * \brief Devuelve el ID del jugador propietario del edificio.
+     */
+    int obtener_propietario() const;
 
     /**
      * \brief Devuelve la clase de edificio
@@ -115,6 +121,7 @@ private:
     int vida;
 
     int id_edificio = -1;
+    int id_jugador = 0;
 
     int pos_x, pos_y;
     

@@ -60,6 +60,13 @@ public:
     int obtener_dinero() const;
 
     /**
+     * \brief Obtiene la posición central del jugador.
+     * 
+     * La posición central es el centro de construcciones.
+     */
+    Posicion obtener_centro();
+
+    /**
      * \brief Devuelve el terreno del juego.
      */
     Terreno& obtener_terreno();

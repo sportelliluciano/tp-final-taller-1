@@ -9,10 +9,7 @@
 #define ANCHO_MOV_CAMARA 15
 #define ALTO_MOV_CAMARA  15 
 
-/**
- * \brief Delay de la cámara en milisegundos.
- */
-#define DELAY_CAMARA_MS 200
+#define VELOCIDAD_CAMARA 4
 
 namespace cliente {
 
@@ -46,11 +43,8 @@ void AreaJuego::renderizar(Ventana& ventana, const Posicion& punto) {
     ventana.setear_viewport(Rectangulo(punto.x, punto.y, ancho, alto));
     
     if ((mover_camara_x != 0) || (mover_camara_y != 0)) {
-        if (ventana.obtener_ms() - delay_camara > DELAY_CAMARA_MS) {
-            camara.desplazar_camara(Posicion(32 * mover_camara_x, 
-                32 * mover_camara_y));
-            delay_camara = ventana.obtener_ms();
-        }
+        camara.desplazar_camara(Posicion(VELOCIDAD_CAMARA * mover_camara_x, 
+            VELOCIDAD_CAMARA * mover_camara_y));
     }
 
     juego.renderizar(ventana, camara);
@@ -300,6 +294,15 @@ bool AreaJuego::teclado_presionado(tecla_t tecla) {
     return false;
 }
 
+void AreaJuego::centrar_camara() {
+    Posicion centro = juego.obtener_centro();
+    Posicion centro_camara(
+        centro.x - (camara.obtener_vista().ancho() / 2),
+        centro.y - (camara.obtener_vista().alto() / 2)
+    );
+    camara.mover_camara(centro_camara);
+}
+
 bool AreaJuego::teclado_suelto(tecla_t tecla) {
     switch(tecla) {
         case TECLA_ABAJO:
@@ -312,6 +315,9 @@ bool AreaJuego::teclado_suelto(tecla_t tecla) {
             break;
         case TECLA_CTRL:
             ctrl_presionado = false;
+            break;
+        case TECLA_F2:
+            centrar_camara();
             break;
         default:
             break;

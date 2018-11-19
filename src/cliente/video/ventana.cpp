@@ -131,6 +131,9 @@ static tecla_t map_sdl_key(SDL_Keycode k) {
         case SDLK_DOWN:
             return TECLA_ABAJO;
         
+        case SDLK_F2:
+            return TECLA_F2;
+        
         default:
             return TECLA_NO_MAPEADA;
     }
@@ -277,15 +280,27 @@ void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
 }
 
 void Ventana::dibujar_grilla(int x_offset, int y_offset) {
+    if (x_offset > 0)
+        x_offset = (x_offset % 32);
+    else
+        x_offset = -((-x_offset) % 32);
+    
+    if (y_offset > 0)
+        y_offset = (y_offset % 32);
+    else
+        y_offset = -((-y_offset) % 32);
+
     Uint8 r, g, b, a;
     SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     /******** GRILLA DEPURACION *********/
-    for (int i=0;i<ancho() / 32; i++) {
-        SDL_RenderDrawLine(renderer, x_offset + i*32, y_offset, 
+    for (int i=0; i<=ancho() / 32; i++) {
+        SDL_RenderDrawLine(renderer, 
+            x_offset + i*32, y_offset, 
             x_offset + i*32, alto() + y_offset);
-        for (int j=0;j<=alto() / 32; j++) {
-            SDL_RenderDrawLine(renderer, x_offset, j * 32 + y_offset, 
+        for (int j=0; j<= alto() / 32; j++) {
+            SDL_RenderDrawLine(renderer, 
+                x_offset, j * 32 + y_offset, 
                 ancho() + x_offset, j * 32 + y_offset);
         }
     }

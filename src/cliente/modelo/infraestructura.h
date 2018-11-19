@@ -33,6 +33,11 @@ public:
     /******* Métodos para actualizar el HUD *******/
 
     /**
+     * \brief Obtiene el centro de construcción del jugador actual.
+     */
+    Edificio* obtener_centro_construccion();
+
+    /**
      * \brief Devuelve los edificios disponibles para construir.
      */
     std::vector<const Edificio*> obtener_edificios_base() const;

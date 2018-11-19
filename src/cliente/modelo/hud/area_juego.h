@@ -128,6 +128,7 @@ private:
     void deseleccionar_edificio();
     bool seleccionar_tropas(int x0, int y0, int x1, int y1);
     void deseleccionar_tropas();
+    void centrar_camara();
 
     const Edificio* edificio_a_ubicar = nullptr;
 };

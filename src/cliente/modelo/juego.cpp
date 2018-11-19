@@ -48,6 +48,13 @@ int Juego::obtener_dinero() const {
     return dinero;
 }
 
+Posicion Juego::obtener_centro() {
+    Edificio* centro = infraestructura.obtener_centro_construccion();
+    if (!centro)
+        return Posicion(0, 0);
+    return terreno.obtener_posicion(centro);
+}
+
 Infraestructura& Juego::obtener_infraestructura() {
     return infraestructura;
 }
