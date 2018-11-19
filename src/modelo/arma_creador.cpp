@@ -12,6 +12,10 @@ namespace modelo {
 
 ArmaCreador::ArmaCreador(){
 
+}
+
+void ArmaCreador::inicializar(){
+
     armas_base_iniziaizador();
     //armas_caracteristicas();
 
@@ -30,10 +34,6 @@ ArmaCreador::ArmaCreador(){
         // Mergear valores por defecto con el elemento actual
         json elem = valores_por_defecto;
         elem.update(*it);
-        /*prototipos.emplace(elem["id"], Arma(armas_base.at(elem["id_base"]),
-                                    armas_caracteristicas.at(elem["id_bono"])));*/
-        std::cout << "arma creada: " << elem["id"] << '\n';
-        std::cout << "con arma base: " << elem["id_base"] << '\n';
         prototipos.emplace(elem["id"], Arma(armas_base.at(elem["id_base"])));
     }
 }
@@ -58,7 +58,6 @@ void ArmaCreador::armas_base_iniziaizador(){
         // Mergear valores por defecto con el elemento actual
         json elem = valores_por_defecto;
         elem.update(*it);
-        std::cout << "arma base creada: " << elem["id"] << '\n'; 
         armas_base.emplace(elem["id"], ArmaBase(elem));
     }
 }

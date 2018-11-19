@@ -12,13 +12,11 @@
 namespace modelo {
 
 InfraestructuraCreador::InfraestructuraCreador(){
+
+}
+
+void InfraestructuraCreador::inicializar(const nlohmann::json& edificios_json){
     using nlohmann::json;
-
-    std::ifstream entrada("../data/edificios.json");
-
-    json edificios_json;
-
-    entrada >> edificios_json;
 
     auto it = edificios_json.begin();
     const json& valores_por_defecto = *it;

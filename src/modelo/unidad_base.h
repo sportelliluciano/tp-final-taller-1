@@ -14,6 +14,7 @@ namespace modelo {
 class UnidadBase {
 private: 
     //std::string casa;
+    std::string clase;
     unsigned int rango;
     unsigned int velocidad;
     unsigned int tiempo_de_entrenamiento;
@@ -34,6 +35,7 @@ public:
     unsigned int get_costo() const;
     unsigned int get_vida() const;
     std::pair<int,int>& get_dimensiones();
+    std::string& get_clase();
 };
 
 } // namespace modelo

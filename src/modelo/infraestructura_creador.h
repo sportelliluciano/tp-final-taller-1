@@ -16,6 +16,7 @@ class InfraestructuraCreador{
     public:
 
     InfraestructuraCreador();
+    void inicializar(const nlohmann::json& edificios);
     ~InfraestructuraCreador();
     Edificio clonar(std::string id_tipo,int id,int x,int y);
     unsigned int get_costo(std::string id_tipo);

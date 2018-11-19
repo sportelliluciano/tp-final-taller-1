@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <set>
 
-#include "infraestructura.h"
+#include "modelo/infraestructura.h"
 
 namespace modelo {
 
@@ -36,7 +36,7 @@ bool Jugador::hay_suficiente_energia(unsigned int costo){
 }
 bool Jugador::empezar_construccion(const std::string& clase,unsigned int costo){
     if (construcciones_en_cola.count(clase) == 0)
-            construcciones_en_cola[clase] = 1;
+        construcciones_en_cola[clase] = 1;
     else
         construcciones_en_cola[clase]++;
         
@@ -62,14 +62,14 @@ bool Jugador::empezar_entrenamiento(const std::string& clase,unsigned int costo)
     else
         tropas_en_cola[clase]++;
         
-    comunicacion_jugador->actualizar_cola_cc(clase, tropas_en_cola[clase]);
+    comunicacion_jugador->actualizar_cola_ee(clase, tropas_en_cola[clase]);
     reducir_energia(costo);
     return true;
 }
 bool Jugador::cancelar_entrenamiento(const std::string& clase, unsigned int costo){
     if (tropas_en_cola.count(clase) != 0) {
         tropas_en_cola[clase]--;
-        comunicacion_jugador->actualizar_cola_cc(clase, tropas_en_cola[clase]);
+        comunicacion_jugador->actualizar_cola_ee(clase, tropas_en_cola[clase]);
         if (tropas_en_cola[clase] <= 0)
             tropas_en_cola.erase(clase);
         aumentar_energia(costo);
@@ -131,11 +131,12 @@ void Jugador::actualizar_construcciones(int dt,Infraestructura& inf) {
 std::string Jugador::actualizar_tropas(int dt,Ejercito& ejercito) {
     for (auto it=tropas.begin(); it != tropas.end();) {
         if (it->second - dt < 0) {
-            // Construccion terminada
-            comunicacion_jugador->sincronizar_construccion(it->first, 0);
+            // Tropa entrenada
+            comunicacion_jugador->sincronizar_entrenamiento(it->first, 0);
             
+            std::string id_tipo = (it->first);
             it = tropas.erase(it);
-            return(it->first);
+            return id_tipo;
         } else {
             it->second -= dt;
             ++it;
@@ -146,10 +147,10 @@ std::string Jugador::actualizar_tropas(int dt,Ejercito& ejercito) {
     {   //se procesa cada construccion a la vez
         if ((tropas.count(it->first) == 0)) 
         {
-            tropas[it->first] = ejercito.get_tiempo(it->first);
-            comunicacion_jugador->iniciar_construccion(it->first, ejercito.get_tiempo(it->first));//tropa
+            tropas[it->first] = ejercito.get_tiempo(it->first)/8;
+            comunicacion_jugador->iniciar_entrenamiento(it->first, ejercito.get_tiempo(it->first)/8);//tropa
             it->second--;
-            comunicacion_jugador->actualizar_cola_cc(it->first, it->second);
+            comunicacion_jugador->actualizar_cola_ee(it->first, it->second);
         }
         if (it->second == 0) {
             it = tropas_en_cola.erase(it);
@@ -158,6 +159,9 @@ std::string Jugador::actualizar_tropas(int dt,Ejercito& ejercito) {
         }
     }
     return std::string("ok");
+}
+IJugador* Jugador::get_jugador(){
+    return comunicacion_jugador;
 }
 
 }
