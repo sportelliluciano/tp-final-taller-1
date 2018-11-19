@@ -1,5 +1,7 @@
 #include "modelo/unidad.h"
 
+#include <iostream>
+
 #include "libs/json.hpp"
 
 #include "modelo/arma.h"
@@ -70,12 +72,17 @@ bool Unidad::llego_a(Posicion& posicion_) {
     return (abs(posicion_.x() - posicion.x()) < 1) && 
         (abs(posicion_.y() - posicion.y()) < 1);
 }
-void Unidad::actualizar_posicion(int dt,IJugador* jugador,Terreno terreno) {
+void Unidad::actualizar_posicion(int dt,Terreno* terreno,
+                    std::vector<IJugador*>& jugadores) {
     if (llego_a(camino[paso_actual])) {
+        std::cout << "Llegue a la celda:  "<<camino[paso_actual].x()<<camino[paso_actual].y() << std::endl;
         //if (paso_actual > 0){
-            jugador->sincronizar_tropa(0, posicion.x(), posicion.y());
-            terreno.eliminar_tropa(posicion,unidad_base.get_dimensiones());
-            terreno.agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
+            for (auto it=jugadores.begin();it != jugadores.end();++it){
+            (*it)-> sincronizar_tropa(0,
+                                        posicion.x()*8,posicion.y()*8);
+            }
+            terreno->eliminar_tropa(posicion,unidad_base.get_dimensiones());
+            terreno->agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
         //}
         paso_actual++;
 
@@ -84,24 +91,27 @@ void Unidad::actualizar_posicion(int dt,IJugador* jugador,Terreno terreno) {
             paso_actual = 0;
         } 
     }
-
+    std::cout << "Antes de avanzar x: "<<posicion.x() <<" en px: "<<posicion.px_x() << std::endl;
+    std::cout << "Antes de avanzar y: "<<posicion.y() <<" en px: "<<posicion.px_y() << std::endl;
     int x_destino = camino[paso_actual].x();
     int y_destino = camino[paso_actual].y();
     float vx = 0, vy = 0;
-
+    std::cout << "Destino x: "<<x_destino << std::endl;
+    std::cout << "Destino y: "<<y_destino << std::endl;
     if (abs(x_destino - posicion.x()) > 0) {
-        vx = (x_destino - posicion.px_x()) / abs(x_destino - posicion.px_x());
+        vx = (x_destino - posicion.px_x()/8) / abs(x_destino - posicion.px_x()/8);
         vx *= 0.4 / 15;
     }
 
     if (abs(y_destino - posicion.y()) > 0) {
-        vy = (y_destino - posicion.y()) / abs(y_destino - posicion.y());
+        vy = (y_destino - posicion.px_y()/8) / abs(y_destino - posicion.px_y()/8);
         vy *= 0.4 / 15;
     }
 
     float dx = vx * dt,
         dy = vy * dt;
-
+    std::cout << "paso en x: "<<dx << std::endl;
+    std::cout << "Paso en y: "<<dy << std::endl;
     if (abs(dx) > abs(posicion.px_x() - x_destino))
         posicion.actualizar_px_x(x_destino);
     else
@@ -112,7 +122,12 @@ void Unidad::actualizar_posicion(int dt,IJugador* jugador,Terreno terreno) {
     else
         posicion.actualizar_px_y(posicion.px_y()+ dy);
         
-    posicion.actualizar(std::floor(posicion.px_x()),
-                        std::floor(posicion.px_y()));
+    posicion.actualizar(std::floor(posicion.px_x()/8),
+                        std::floor(posicion.px_y()/8));
+    std::cout << "Despues de avanzar x: "<<posicion.x() <<" en px: "<<posicion.px_x() << std::endl;
+    std::cout << "Despues de avanzar y: "<<posicion.y() <<" en px: "<<posicion.px_y() << std::endl;                    
+}
+std::string& Unidad::get_clase() const {
+    return unidad_base.get_clase();
 }
 }  // namespace modelo

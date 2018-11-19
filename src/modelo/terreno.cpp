@@ -13,45 +13,29 @@
 #define RANGO 5
 
 namespace modelo {
+Terreno::Terreno(){
 
-Terreno::Terreno(const char *ruta_csv) {
-    std::ifstream entrada(ruta_csv);
-    if (!entrada.good())
-        throw std::runtime_error("No se pudo abrir el archivo de terreno");
-    
-    int x = 0, y = 0;
+}
+void Terreno::inicializar(const nlohmann::json& mapa) {
     alto = ancho = 0;
+    const std::vector<std::vector<int>>& tipos = 
+        mapa.at("tipo").get<std::vector<std::vector<int>>>();
 
-    while (!entrada.eof()) {
-        std::string linea, tile;
-        std::getline(entrada, linea);
-        std::stringstream s_linea(linea);
-        
+    alto = tipos.size();
+
+    if (alto == 0) {
+        throw std::runtime_error("Terreno inválido");
+    }
+
+    ancho = tipos.at(0).size();
+
+    for (int y=0;y<alto;y++) {
         std::vector<Celda> fila_actual;
-        
-        while (std::getline(s_linea, tile, ';')) {
-            std::stringstream s_tile(tile);
-            int tile_no = 0;
-            if (!(s_tile >> tile_no))
-                throw std::runtime_error("Archivo de terreno inválido");
-            
-            tipo_celda_t tipo = CELDA_ARENA;
-            if (tile_no == 1)
-                tipo = CELDA_ROCA;
-
-            fila_actual.push_back(Celda(tipo,x,y));
-            
-            if (x > ancho)
-                ancho = x;
-            
-            x++;
+        for (int x=0;x<ancho;x++) {
+            fila_actual.push_back(
+                Celda((tipo_celda_t)tipos[y][x], x, y)
+            );
         }
-        
-        if (y > alto)
-            alto = y;
-
-        x = 0;
-        y++;
         terreno.push_back(fila_actual);
     }
 }
@@ -269,4 +253,14 @@ Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i){
     }
 }
 
+void Terreno::agregar_refineria(int x_, int y_,int id_jugador){
+    refinerias.emplace(id_jugador,Posicion(x_,y_));
+}
+std::vector<Posicion> Terreno::obtener_refinerias(int id_jugador){
+    std::vector<Posicion> pos;
+    for (auto it=refinerias.begin();it!=refinerias.end();++it){
+        if ((it->first)==id_jugador) pos.push_back(it->second);
+    }
+    return pos;
+}
 } // namespace modelo

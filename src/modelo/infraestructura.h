@@ -13,13 +13,14 @@ namespace modelo {
 
 class Infraestructura{
     private:
-    Terreno& terreno;
+    Terreno* terreno;
     std::unordered_map<int,Edificio> edificios;
     InfraestructuraCreador prototipos;
     Id id_;
 
     public:
-    Infraestructura(Terreno& mapa);
+    Infraestructura();
+    void inicializar(Terreno* mapa,const nlohmann::json& edificios);
     int crear(std::string id_tipo,int x,int y);
     unsigned int reciclar(int id);
     void destruir(int id);

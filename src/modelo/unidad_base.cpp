@@ -14,6 +14,7 @@
 #define VIDA "vida"
 #define ALTO "alto"
 #define ANCHO "ancho"
+#define ID "id"
 
 namespace modelo {
 
@@ -23,6 +24,7 @@ UnidadBase::UnidadBase(const nlohmann::json& data_unidad,Arma& arma_):
                             //                               data_unidad[ALTO])) 
                                                         {
     //casa = data_unidad[CASA];
+    clase = data_unidad[ID];
     rango = data_unidad[RANGO];
     velocidad = data_unidad[VEL];
     tiempo_de_entrenamiento = data_unidad[TIEMPO];
@@ -56,5 +58,7 @@ unsigned int UnidadBase::get_vida() const {
 std::pair<int,int>& UnidadBase::get_dimensiones() {
     return dimensiones;
 }
-
+std::string& UnidadBase::get_clase() {
+    return clase;
+}
 } // namespace modelo

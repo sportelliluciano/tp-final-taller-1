@@ -2,6 +2,9 @@
 #define _TERRENO_H_
 
 #include <vector>
+#include <unordered_map>
+
+#include "libs/json.hpp"
 
 #include "modelo/celda.h"
 #include "modelo/grafo.h"
@@ -29,7 +32,8 @@ public:
      * \brief Constructor.
      * 
      */
-    Terreno(const char *ruta_csv);
+    Terreno();
+    void inicializar(const nlohmann::json& mapa);
 
     /**
      * \brief Devuelve una referencia a la celda en la posición (x, y).
@@ -72,7 +76,8 @@ public:
     void agregar_tropa(int x_, int y_,std::pair<int,int>& dim);
     void eliminar_tropa(Posicion& pos,std::pair<int,int>& dim);
     Posicion obtener_posicion_libre_cercana(Posicion& posicion_i);
-
+    void agregar_refineria(int x_, int y_,int id_jugador);
+    std::vector<Posicion> obtener_refinerias(int id_jugador);
 private:
     /**
      * \brief Representación del terreno como un arreglo de celdas.
@@ -80,6 +85,8 @@ private:
      * El terreno se representa como un arreglo de celdas de 32x32 píxeles.
      */
     std::vector<std::vector<Celda>> terreno;
+
+    std::unordered_map<int,Posicion> refinerias;
 
     /**
      * \brief Dimensiones del terreno, en celdas.

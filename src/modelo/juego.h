@@ -3,6 +3,9 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
+
+#include "libs/json.hpp"
 
 #include "modelo/id.h"
 #include "modelo/jugador.h"
@@ -25,11 +28,13 @@ class Juego : public IModelo {
     bool empezo = false;
     void actualizar_construcciones(int dt) ;
     void actualizar_tropas(int dt);
-    IJugador* comunicacion_jugador;
+    std::vector<IJugador*> comunicacion_jugadores;
 
     public:
     Juego();
     ~Juego();
+    void inicializar(const nlohmann::json& mapa, 
+        const nlohmann::json& edificios, const nlohmann::json& ejercito_);
     void iniciar_partida();
     bool partida_iniciada() const override;
     bool juego_terminado() const override;

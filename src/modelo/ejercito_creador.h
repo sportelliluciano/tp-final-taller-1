@@ -8,21 +8,24 @@
 #include "modelo/unidad.h"
 #include "modelo/terreno.h"
 #include "modelo/arma_creador.h"
+#include "modelo/cosechadora.h"
 
 namespace modelo {
 
 class EjercitoCreador{
     private:
-    Terreno& terreno;
+    Terreno* terreno;
     ArmaCreador armamento;
-    //std::unordered_map<char,Unidad> prototipos;
     std::unordered_map<std::string,UnidadBase> prototipos_base;
 
     public:
-    EjercitoCreador(Terreno& terreno_);
+    EjercitoCreador();
+    void inicializar(Terreno* terreno_,const nlohmann::json& ejercito);
     ~EjercitoCreador();
     Unidad clonar(std::string id_tipo,int id,int x,int y);
+    Cosechadora clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_,IJugador* jugador);
     unsigned int get_costo(std::string id_tipo);
+    unsigned int get_vida(std::string id_tipo);
     unsigned int get_tiempo(std::string id_tipo);
     std::pair<int,int>& get_dimensiones(std::string id_tipo);
 };

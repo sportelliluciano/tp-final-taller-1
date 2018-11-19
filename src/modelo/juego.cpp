@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 #include "modelo/juego.h"
 #include "modelo/infraestructura.h"
@@ -6,6 +7,13 @@
 #include "modelo/terreno.h"
 
 namespace modelo {
+
+void Juego::inicializar(const nlohmann::json& mapa, 
+        const nlohmann::json& edificios, const nlohmann::json& ejercito_){
+            terreno.inicializar(mapa);
+            inf.inicializar(&terreno,edificios);
+            ejercito.inicializar(&terreno,ejercito_);
+        }
 
 void Juego::iniciar_partida(){
     //bla bla
@@ -48,6 +56,7 @@ void Juego::actualizar(int dt_ms){
      */
 void Juego::crear_jugador(IJugador* jugador){
     jugadores.emplace(jugador->obtener_id(),Jugador("casa",jugador));
+    comunicacion_jugadores.push_back(jugador);
 }
 
     /**
@@ -93,14 +102,22 @@ bool Juego::ubicar_edificio(IJugador* jugador, int celda_x, int celda_y,
     int id_edificio;
     if (jugadores.at(jugador->obtener_id()).hay_suficiente_energia(consumo)){
         id_edificio = inf.crear(clase,celda_x,celda_y);
+        //
+        std::cout << "------------------Dentro del modelo------------------" <<'\n';
+        std::cout << "Id edificio: "<<id_edificio <<'\n';
+        //
         jugadores.at(jugador->obtener_id()).agregar_elemento(
                             id_edificio,consumo,clase);
-        jugador->crear_edificio(
+        for (auto it=comunicacion_jugadores.begin();it != comunicacion_jugadores.end();++it){
+            (*it)->crear_edificio(
             id_edificio,
             clase, 
             celda_x, celda_y, 
             jugador->obtener_id()
         );
+        }
+        if (clase=="refineria")
+            terreno.agregar_refineria(celda_x,celda_y,jugador->obtener_id());
         return true;
     }
     return false;
@@ -116,16 +133,17 @@ bool Juego::ubicar_edificio(IJugador* jugador, int celda_x, int celda_y,
      */
 bool Juego::vender_edificio(IJugador* jugador, int id_edificio) {
     unsigned int consumo = inf.get_energia(id_edificio);
+    bool esta_bien = false;
     for (auto it = jugadores.begin();it!= jugadores.end();++it){
         if ((it->second).pertenece(id_edificio)){
             (it->second).eliminar_elemento(id_edificio,consumo);
             unsigned int energia_retorno = inf.reciclar(id_edificio);
             (it->second).aumentar_energia(energia_retorno);
-            jugador->eliminar_edificio(id_edificio);
-            return true;
+            esta_bien = true;
         }
+        ((it->second).get_jugador())->eliminar_edificio(id_edificio);
     }
-    return false;
+    return esta_bien;
 }
     /**
      * \brief Inicia el entrenamiento de una tropa de la clase indicada.
@@ -165,7 +183,7 @@ bool Juego::mover_tropas(IJugador* jugador, const std::vector<int>& ids,
     unsigned int cant = sqrt(ids.size());
     unsigned int n = 0;
     for (int id_ : ids) {
-        ejercito.mover(id_,x+n,y,jugador);
+        ejercito.mover(id_,(x+n)/8,y/8,jugador);
         n++;
         if (n == cant) {
             y ++;
@@ -203,11 +221,12 @@ bool Juego::atacar_tropa(IJugador* jugador,
 bool Juego::indicar_especia_cosechadora(IJugador* jugador,
     const std::vector<int>& ids, int celda_x, int celda_y) {}
 
-
+/*
 Juego::Juego():terreno(Terreno("../data/terreno.csv")),
                         inf(Infraestructura(terreno)),
                         ejercito(Ejercito(terreno))
 {}
+*/
 Juego::~Juego(){
 }
 /*
@@ -232,13 +251,21 @@ void Juego::actualizar_construcciones(int dt) {
     }
 }
 void Juego::actualizar_tropas(int dt) {//se necesita un IJugador!!!
-    Posicion& pos = inf.get_posicion("Centro de Construcción");
+    //Posicion& pos = inf.get_posicion("Centro de Construcción");
+    Posicion pos(43,56);//ejemplo
     for (auto it=jugadores.begin();it != jugadores.end();++it){
         std::string actualizacion=(it->second).actualizar_tropas(dt,ejercito);
-        if ( actualizacion != "ok"){// se termino el entrenamiento 
-            ejercito.crear(actualizacion,pos);
+        if ( actualizacion != "ok"){// se termino el entrenamiento
+        //crear_tropa(int id_tropa, const std::string& clase, 
+        //int pos_x, int pos_y, int vida, int id_propietario) = 0; 
+            (it->second).agregar_elemento(ejercito.crear(
+                                    actualizacion
+                                    ,pos
+                                    ,comunicacion_jugadores
+                                    ,(it->second).get_jugador()->obtener_id()
+                                    ),0,actualizacion);
         }
     }
-    ejercito.actualizar_tropas(dt,comunicacion_jugador);//el puntero no apunta a nada
+    ejercito.actualizar_tropas(dt,comunicacion_jugadores);//el puntero no apunta a nada
 }
 }

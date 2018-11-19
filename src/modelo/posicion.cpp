@@ -5,7 +5,7 @@
 namespace modelo {
 
 Posicion::Posicion(float x, float y) : x_(x), y_(y),
-                                        px_x_(x), px_y_(y){ }
+                                        px_x_(x*8), px_y_(y*8){ }
 
 Posicion Posicion::operator+(const Posicion& otro) const {
     Posicion resultado(x_ + otro.x_, y_ + otro.y_);

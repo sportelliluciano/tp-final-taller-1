@@ -13,11 +13,11 @@ class ArmaCreador{
     private:
     std::unordered_map<std::string,Arma> prototipos;
     std::unordered_map<std::string,ArmaBase> armas_base;
-    //std::unordered_map<std::string,ArmaCaracteristicas>armas_caracteristicas;
     void armas_base_iniziaizador();
 
     public:
     ArmaCreador();
+    void inicializar();
     ~ArmaCreador();
     Arma& get(std::string id);
     bool tiene(std::string id);

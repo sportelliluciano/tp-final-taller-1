@@ -18,12 +18,15 @@ namespace modelo {
 class Unidad {
 private:
     int id;
-    Posicion posicion;
     int vida;
+    //UnidadBase& unidad_base;
+
+protected:
     UnidadBase& unidad_base;
-    std::vector<Posicion> camino;
+    std::vector<Posicion> camino; 
+    Posicion posicion;
     bool esta_en_camino = false;
-    unsigned int paso_actual = 0; 
+    unsigned int paso_actual = 0;
 
 public:
     Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
@@ -38,7 +41,9 @@ public:
     bool llego_a(Posicion& posicion_);
     void configurar_camino(std::vector<Posicion> nuevo_camino);
     bool en_movimiento();
-    void actualizar_posicion(int dt,IJugador* jugador,Terreno terreno);
+    virtual void actualizar_posicion(int dt,Terreno* terreno,
+                std::vector<IJugador*>& jugadores);
+    std::string& get_clase() const;
 };
 
 } // namespace modelo

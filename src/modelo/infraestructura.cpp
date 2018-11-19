@@ -12,14 +12,18 @@
 
 namespace modelo {
 
-Infraestructura::Infraestructura(Terreno& mapa):terreno(mapa){
+Infraestructura::Infraestructura(){
 
 }
+void Infraestructura::inicializar(Terreno* mapa,const nlohmann::json& edificios){
+    terreno = mapa;
+    prototipos.inicializar(edificios);
+}
 int Infraestructura::crear(std::string id_tipo,int x,int y){
-    if (!terreno.rango_valido_edificio(x,y,prototipos.get_dimensiones(id_tipo)))return 0;//raise error;
+    //if (!terreno->rango_valido_edificio(x,y,prototipos.get_dimensiones(id_tipo)))return 0;//raise error;
     int nuevo_id = id_.nuevo_id();                                           
     edificios.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,x,y));
-    terreno.agregar_edificio(x,y,prototipos.get_dimensiones(id_tipo));
+    terreno->agregar_edificio(x,y,prototipos.get_dimensiones(id_tipo));
     return nuevo_id;
 }
 unsigned int Infraestructura::reciclar(int id){
@@ -29,7 +33,7 @@ unsigned int Infraestructura::reciclar(int id){
     return energia_retorno;
 }
 void Infraestructura::destruir(int id){
-    terreno.eliminar_edificio(edificios.at(id).get_posicion(),edificios.at(id).get_dimensiones());
+    terreno->eliminar_edificio(edificios.at(id).get_posicion(),edificios.at(id).get_dimensiones());
     edificios.erase (id);
 }
 Edificio& Infraestructura::get(int id){

@@ -6,9 +6,10 @@
 #include <set>
 #include <unordered_set>
 
-#include "modelo/i_modelo.h"
-#include "infraestructura.h"
-#include "ejercito.h"
+#include "conexion/i_modelo.h"
+#include "conexion/i_jugador.h"
+#include "modelo/infraestructura.h"
+#include "modelo/ejercito.h"
 
 namespace modelo {
 
@@ -16,7 +17,7 @@ class Jugador{
     private:
     std::string casa;
     std::set<int> inventario;
-    unsigned int energia = 100000;
+    int energia = 100000;
     unsigned int energia_max = 10000000;
     unsigned int consumo = 0;
     IJugador* comunicacion_jugador;
@@ -45,6 +46,7 @@ class Jugador{
     bool pertenece(int id);
     void actualizar_construcciones(int dt,Infraestructura& inf);
     std::string actualizar_tropas(int dt,Ejercito& ejercito);
+    IJugador* get_jugador();
 };
 }
 #endif
