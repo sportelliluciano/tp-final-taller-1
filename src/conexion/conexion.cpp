@@ -12,7 +12,7 @@
 #include "conexion/socket_conexion.h"
 
 /**
- * La conexión sólo permite enviar paquetes de un tamaño máximo de 8KB.
+ * La conexión sólo permite enviar paquetes de un tamaño máximo de 2MB.
  * Este valor debería ser más que suficiente para todos los propósitos de
  * este proyecto (Dune Remake).
  * 
@@ -20,7 +20,7 @@
  * termine ocupando toda la memoria del cliente/servidor.
  * 
  */
-#define TAMANIO_MAXIMO_PAQUETE 8192
+#define TAMANIO_MAXIMO_PAQUETE (2048 * 1024)
 
 namespace conexion {
 
@@ -82,7 +82,12 @@ nlohmann::json Conexion::recibir_json() {
         throw ErrorConexion("Se recibió un paquete inválido");
     }
 
-    std::cout << "\x1b[32m>> \x1b[0m" << resultado.dump() << std::endl;
+    if (tamanio > 200) {
+        std::cout << "\x1b[32m>> \x1b[0m {JSON de " << tamanio << " bytes}" 
+                  << std::endl;
+    } else {
+        std::cout << "\x1b[32m>> \x1b[0m" << resultado.dump() << std::endl;
+    }
     return resultado;
 }
 
@@ -105,7 +110,13 @@ void Conexion::enviar_json(const nlohmann::json& json_data) {
         throw ErrorConexion("Se cerró la conexión en medio del envío");
     }
     
-    std::cout << "\x1b[31m<< \x1b[0m" << json_data.dump() << std::endl;
+    if (tamanio > 200) {
+        std::cout << "\x1b[31m<< \x1b[0m {JSON de " << tamanio << " bytes}"
+                  << std::endl;
+    } else {
+        std::cout << "\x1b[31m<< \x1b[0m" << json_data.dump() << std::endl;
+    }
+    
 }
 
 bool Conexion::esta_conectada() const {

@@ -26,6 +26,10 @@ Servidor::Servidor(const std::string& ip_servidor,
     terminar = false;
 }
 
+nlohmann::json Servidor::recibir_json() {
+    return conn.recibir_json();
+}
+
 std::vector<std::string> Servidor::obtener_salas() {
     conn.enviar_json({
         {"tipo", "listar_salas"}

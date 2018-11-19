@@ -26,8 +26,17 @@ public:
 
     /**
      * \brief Notifica al lobby la desconexión de un cliente.
+     * 
+     * El lobby eliminará el cliente del mismo, con lo cual es seguro eliminar
+     * el cliente luego de llamar a este método.
      */
     void notificar_desconexion(Cliente& cliente);
+
+    /**
+     * \brief Verifica las salas existentes y realiza una limpieza eliminado
+     *        aquellas que no tienen jugadores conectados.
+     */
+    void limpiar_salas();
 
     /**
      * \brief Detiene todas las partidas en curso y cierra el lobby.

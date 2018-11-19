@@ -6,24 +6,7 @@
         "costo": 0,
         "dimensiones": [1, 1],
         "puntos_estructura": 1000,
-        "requiere": [ "centro_construccion" ],
-        "capacidad_especia": 0,
-        "sprite_base": {
-            "id": -1,
-            "x": 0,
-            "y": 0
-        },
-        "sprite_construido": {
-            "id": -1,
-            "x": 0,
-            "y": 0
-        },
-        "sprite_destruido": {
-            "id": -1,
-            "x": 0,
-            "y": 0
-        },
-        "sprite_boton": -1
+        "capacidad_especia": 0
     },
     {
         "id": "centro_construccion",
@@ -31,10 +14,7 @@
         "energia": 0,
         "costo": 0,
         "dimensiones": [3, 3],
-        "puntos_estructura": 3000,
-        "requiere": [ ],
-        "sprite_construido": { "id": 2967 },
-        "sprite_destruido": { "id": 2968 }
+        "puntos_estructura": 3000
     },
     {
         "id": "fabrica_ligera",
@@ -42,19 +22,7 @@
         "energia": 500,
         "costo": 800,
         "dimensiones": [3, 3],
-        "puntos_estructura": 500,
-        "sprite_base": { "id": 2921 },
-        "sprite_construido": {
-            "id": 2922,
-            "x": 1,
-            "y": 0
-        },
-        "sprite_destruido": {
-            "id": 2923,
-            "x": 1,
-            "y": 0
-        },
-        "sprite_boton": 4345
+        "puntos_estructura": 500
     },
     {
         "id": "fabrica_pesada",
@@ -62,19 +30,7 @@
         "energia": 800,
         "costo": 1500,
         "dimensiones": [4, 4],
-        "puntos_estructura": 1500,
-        "sprite_base": { "id": 2926 },
-        "sprite_construido": {
-            "id": 2927,
-            "x": 2,
-            "y": -42
-        },
-        "sprite_destruido": {
-            "id": 2928,
-            "x": 2,
-            "y": -35
-        },
-        "sprite_boton": 4351
+        "puntos_estructura": 1500
     },
     {
         "id": "trampas_aire",
@@ -82,10 +38,7 @@
         "energia": -500,
         "costo": 800,
         "dimensiones": [3, 3],
-        "puntos_estructura": 500,
-        "sprite_construido": { "id": 2931 },
-        "sprite_destruido": { "id": 2932 },
-        "sprite_boton": 4320
+        "puntos_estructura": 500
     },
     {
         "id": "refineria",
@@ -94,19 +47,7 @@
         "costo": 500,
         "dimensiones": [3, 3],
         "puntos_estructura": 500,
-        "capacidad_especia": 5000,
-        "sprite_base": { "id": 2969 },
-        "sprite_construido": {
-            "id": 2970,
-            "x": 5,
-            "y": -27
-        },
-        "sprite_destruido": { 
-            "id": 2971,
-            "x": 2,
-            "y": -32
-        },
-        "sprite_boton": 4330
+        "capacidad_especia": 5000
     },
     {
         "id": "silo",
@@ -115,10 +56,7 @@
         "costo": 200,
         "dimensiones": [1, 1],
         "puntos_estructura": 200,
-        "capacidad_especia": 1000,
-        "sprite_construido": { "id": 2977 },
-        "sprite_destruido": { "id": 2978 },
-        "sprite_boton": 4348
+        "capacidad_especia": 1000
     },
     {
         "id": "cuartel",
@@ -126,10 +64,7 @@
         "energia": 100,
         "costo": 300,
         "dimensiones": [3, 2],
-        "puntos_estructura": 300,
-        "sprite_construido": { "id": 2933 },
-        "sprite_destruido": { "id": 2934 },
-        "sprite_boton": 4323
+        "puntos_estructura": 300
     },
     {
         "id": "palacio",
@@ -137,10 +72,7 @@
         "energia": 800,
         "costo": 2000,
         "dimensiones": [3, 3],
-        "puntos_estructura": 1000,
-        "sprite_construido": { "id": 2924 },
-        "sprite_destruido": { "id": 2925 },
-        "sprite_boton": 4366
+        "puntos_estructura": 1000
     }
 ]
 

@@ -31,6 +31,14 @@ int ConexionJugador::obtener_id() const {
     return id;
 }
 
+const std::string& ConexionJugador::obtener_casa() const {
+    return casa;
+}
+
+const std::string& ConexionJugador::obtener_nombre() const {
+    return nombre;
+}
+
 void ConexionJugador::notificar(const nlohmann::json& data) {
     conexion_cliente.enviar(data);
 }
@@ -40,6 +48,36 @@ ConexionJugador::~ConexionJugador() {
 }
 
 /***** Implementaciones de mensajes *****/
+
+void ConexionJugador::enviar_mapa(const nlohmann::json& mapa) {
+    notificar({
+        {"id", EVC_INICIALIZAR_MAPA},
+        {"mapa", mapa}
+    });
+}
+
+void ConexionJugador::enviar_infraestructura(
+    const nlohmann::json& infraestructura) 
+{
+    notificar({
+        {"id", EVC_INICIALIZAR_INFRAESTRUCTURA},
+        {"infraestructura", infraestructura}
+    });
+}
+
+void ConexionJugador::enviar_ejercito(const nlohmann::json& ejercito) {
+    notificar({
+        {"id", EVC_INICIALIZAR_EJERCITO},
+        {"ejercito", ejercito}
+    });
+}
+
+void ConexionJugador::juego_iniciando() {
+    notificar({
+        {"id", EVC_JUEGO_INICIANDO},
+        {"id_jugador", id}
+    });
+}
 
 void ConexionJugador::iniciar_construccion(const std::string& clase, int tiempo)
 {
@@ -255,20 +293,29 @@ void ConexionJugador::eliminar_especia() {
     SIN_IMPLEMENTAR("eliminar_especia");
 }
 
-void ConexionJugador::iniciar_juego() {
-    SIN_IMPLEMENTAR("iniciar_juego");
+void ConexionJugador::crear_jugador(int id_jugador, const std::string& nombre_, 
+    const std::string& casa_)
+{
+    notificar({
+        {"id", EVC_CREAR_JUGADOR},
+        {"id_jugador", id_jugador},
+        {"nombre", nombre_},
+        {"casa", casa_}
+    });
 }
 
-void ConexionJugador::crear_jugador() {
-    SIN_IMPLEMENTAR("crear_jugador");
+void ConexionJugador::jugador_listo(int id_jugador) {
+    notificar({
+        {"id", EVC_JUGADOR_LISTO},
+        {"id_jugador", id_jugador}
+    });
 }
 
-void ConexionJugador::jugador_listo() {
-    SIN_IMPLEMENTAR("jugador_listo");
-}
-
-void ConexionJugador::juego_terminado() {
-    SIN_IMPLEMENTAR("juego_terminado");
+void ConexionJugador::juego_terminado(int id_ganador) {
+    notificar({
+        {"id", EVC_JUEGO_TERMINADO},
+        {"id_ganador", id_ganador}
+    });
 }
 
 } // namespace servidor

@@ -5,6 +5,8 @@
 #include <thread>
 #include <mutex>
 
+#include "libs/json.hpp"
+
 #include "conexion/conexion.h"
 #include "cliente/eventos/evento.h"
 
@@ -22,6 +24,8 @@ public:
      * \brief Abre la conexión al servidor.
      */
     Servidor(const std::string& ip_servidor, const std::string& puerto);
+
+    nlohmann::json recibir_json();
     
     /**
      * \brief Obtiene las salas disponibles en el servidor.

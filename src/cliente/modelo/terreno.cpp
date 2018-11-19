@@ -67,6 +67,38 @@ Terreno::Terreno(const char *ruta_csv) {
     ultimo_celda_y1 = alto + 1;
 }
 
+Terreno::Terreno(const nlohmann::json& mapa) {
+    alto = ancho = 0;
+    const std::vector<std::vector<int>>& tipos = 
+        mapa.at("tipo").get<std::vector<std::vector<int>>>();
+    
+    const std::vector<std::vector<int>>& sprites = 
+        mapa.at("sprite").get<std::vector<std::vector<int>>>();
+
+    alto = tipos.size();
+
+    if (alto == 0) {
+        throw std::runtime_error("Terreno inválido");
+    }
+
+    ancho = tipos.at(0).size();
+
+    for (int y=0;y<alto;y++) {
+        std::vector<Celda> fila_actual;
+        for (int x=0;x<ancho;x++) {
+            fila_actual.push_back(
+                Celda((tipo_celda_t)tipos[y][x], sprites, x, y)
+            );
+        }
+        terreno.push_back(fila_actual);
+    }
+
+    ultimo_celda_x0 = ancho + 1;
+    ultimo_celda_x1 = ancho + 1;
+    ultimo_celda_y0 = alto + 1;
+    ultimo_celda_y1 = alto + 1;
+}
+
 void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     Rectangulo vista = camara.obtener_vista();
     
@@ -106,10 +138,10 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     textura.limpiar(0, 0, 0, 255);
 
     for (int x = celda_inicial_x; x <= celda_final_x; x++) {
-        if ((x < 0) || (x > ancho))
+        if ((x < 0) || (x >= ancho))
             continue;
         for (int y = celda_inicial_y; y <= celda_final_y; y++) {
-            if ((y < 0) || (y > alto))
+            if ((y < 0) || (y >= alto))
                 continue;
             
             Posicion visual = camara.traducir_a_visual(obtener_posicion(x, y));
@@ -158,10 +190,10 @@ void Terreno::para_cada_celda_en(const Rectangulo& area,
     celda_final_y += 1;
 
     for (int x = celda_inicial_x; x <= celda_final_x; x++) {
-        if ((x < 0) || (x > ancho))
+        if ((x < 0) || (x >= ancho))
             continue;
         for (int y = celda_inicial_y; y <= celda_final_y; y++) {
-            if ((y < 0) || (y > alto))
+            if ((y < 0) || (y >= alto))
                 continue;
             
             Posicion esq_sup_izq_celda = obtener_posicion(x, y);
@@ -239,9 +271,9 @@ Edificio* Terreno::obtener_edificio_en(const Posicion& pos) {
     int celda_x = pos.x / ANCHO_CELDA;
     int celda_y = pos.y / ALTO_CELDA;
 
-    if ((celda_x < 0) || (celda_x > ancho))
+    if ((celda_x < 0) || (celda_x >= ancho))
         return nullptr;
-    if ((celda_y < 0) || (celda_y > alto))
+    if ((celda_y < 0) || (celda_y >= alto))
         return nullptr;
     
     if (terreno[celda_y][celda_x].contiene_edificio())
@@ -254,7 +286,7 @@ void Terreno::agregar_tropa(Tropa& tropa) {
     int celda_x = tropa.obtener_x() / ANCHO_CELDA;
     int celda_y = tropa.obtener_y() / ALTO_CELDA;
 
-    if ((celda_x > ancho) || (celda_y > alto) || 
+    if ((celda_x >= ancho) || (celda_y >= alto) || 
         (celda_x < 0) || (celda_y < 0))
     {
         throw std::runtime_error("Terreno::agregar_tropa: Fuera de rango");
@@ -273,9 +305,9 @@ void Terreno::mover_tropa(Tropa& tropa, int x_ant, int y_ant) {
     if ((nuevo_celda_x == celda_x) && (nuevo_celda_y == celda_y))
         return;
 
-    if ((celda_x > ancho) || (celda_y > alto) || 
+    if ((celda_x >= ancho) || (celda_y >= alto) || 
         (celda_x < 0) || (celda_y < 0) ||
-        (nuevo_celda_x > ancho) || (nuevo_celda_y > alto) || 
+        (nuevo_celda_x >= ancho) || (nuevo_celda_y >= alto) || 
         (nuevo_celda_x < 0) || (nuevo_celda_y < 0))
     {
         throw std::runtime_error("Terreno::agregar_tropa: Fuera de rango");
@@ -291,7 +323,7 @@ void Terreno::eliminar_tropa(const Tropa& tropa) {
     int celda_x = tropa.obtener_x() / ANCHO_CELDA;
     int celda_y = tropa.obtener_y() / ALTO_CELDA;
 
-    if ((celda_x > ancho) || (celda_y > alto) || 
+    if ((celda_x >= ancho) || (celda_y >= alto) || 
         (celda_x < 0) || (celda_y < 0))
     {
         throw std::runtime_error("Terreno::agregar_tropa: Fuera de rango");
@@ -309,7 +341,7 @@ void Terreno::agregar_edificio(Edificio& edificio) {
     
     for (int i=0;i<edificio.obtener_ancho_celdas();i++) {
         for (int j=0;j<edificio.obtener_alto_celdas();j++) {        
-            if (((celda_x + i) > ancho) || ((celda_y + j) > alto)) {
+            if (((celda_x + i) >= ancho) || ((celda_y + j) >= alto)) {
                 throw std::runtime_error(
                     "Terreno::agregar_edificio: Fuera de rango");
             }
@@ -328,7 +360,7 @@ void Terreno::eliminar_edificio(const Edificio& edificio) {
     
     for (int i=0;i<edificio.obtener_ancho_celdas();i++) {
         for (int j=0;j<edificio.obtener_alto_celdas();j++) {        
-            if (((celda_x + i) > ancho) || ((celda_y + j) > alto)) {
+            if (((celda_x + i) >= ancho) || ((celda_y + j) >= alto)) {
                 throw std::runtime_error(
                     "Terreno::agregar_edificio: Fuera de rango");
             }

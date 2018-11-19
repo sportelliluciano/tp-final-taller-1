@@ -16,7 +16,7 @@ namespace servidor {
 
 class Sala {
 public:
-    Sala(size_t capacidad_maxima);
+    Sala(const std::string& nombre_, size_t capacidad_maxima);
 
     /**
      * \brief Constructor por movimiento
@@ -33,6 +33,9 @@ public:
 
     /**
      * \brief Indica a la sala que un cliente se desconectó.
+     * 
+     * La sala eliminará al cliente de la misma con lo cual es seguro eliminar
+     * al mismo luego de llamar a este método.
      */
     void notificar_desconexion(Cliente& cliente);
 
@@ -69,11 +72,18 @@ public:
      */
     size_t obtener_capacidad();
 
+    /**
+     * \brief Devuelve la cantidad de jugadores conectados a la sala.
+     */
+    int cantidad_jugadores_conectados();
+
     ~Sala();
 
 private:
     std::unique_ptr<IModelo> modelo = nullptr;
     std::mutex lock_modelo;
+
+    std::string nombre;
 
     std::thread hilo_partida;
 
@@ -87,6 +97,8 @@ private:
     const int TICK_MS = 20;
 
     size_t capacidad = 0;
+
+    nlohmann::json mapa, edificios, ejercito;
 
     void actualizar_modelo(IJugador* jugador, const nlohmann::json& evento);
     

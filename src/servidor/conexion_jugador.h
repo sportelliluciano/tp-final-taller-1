@@ -23,6 +23,38 @@ public:
     int obtener_id() const;
 
     /**
+     * \brief Devuelve la casa a la que pertenece el jugador.
+     */
+    virtual const std::string& obtener_casa() const;
+    
+    /**
+     * \brief Devuelve el nombre del jugador.
+     */
+    virtual const std::string& obtener_nombre() const;
+
+    /**
+     * \brief Envia el mapa al cliente.
+     */
+    virtual void enviar_mapa(const nlohmann::json& mapa);
+    
+    /**
+     * \brief Envia los datos sobre la infraestructura al cliente.
+     */
+    virtual void enviar_infraestructura(
+        const nlohmann::json& infraestructura);
+    
+    /**
+     * \brief Envia los datos sobre el ejército al cliente.
+     */    
+    virtual void enviar_ejercito(const nlohmann::json& ejercito);
+
+    /**
+     * \brief Indica al jugador que el juego está iniciando y le comunica
+     *        su ID de jugador.
+     */
+    virtual void juego_iniciando();
+
+    /**
      * \brief Indica al jugador que inicie la construcción de un edificio
      *        de la clase indicada.
      * 
@@ -235,10 +267,28 @@ public:
     /**
      * \brief Eventos misceláneos.
      */
-    void iniciar_juego();
-    void crear_jugador();
-    void jugador_listo();
-    void juego_terminado();
+
+    /**
+     * \brief Indica al jugador que se agregó un nuevo jugador.
+     * 
+     * El jugador agregado estará por defecto en "espera", es decir, 
+     * inicializando el juego hasta que no envíe un evento jugador_listo.
+     */
+    virtual void crear_jugador(int id_jugador, const std::string& nombre_, 
+        const std::string& casa_);
+    
+    /**
+     * \brief Indica al jugador que el jugador con el id indicado ya está
+     *        listo para iniciar la partida.
+     */
+    virtual void jugador_listo(int id_jugador);
+
+    /**
+     * \brief Indica al cliente que el juego terminó.
+     * 
+     * Luego de enviarse este evento se cerrará la conexión.
+     */
+    virtual void juego_terminado(int id_ganador);
 
     void set_estado(bool listo_);
     bool esta_listo() const;
@@ -248,6 +298,7 @@ public:
 private:
     Cliente& conexion_cliente;
     int id;
+    std::string casa = "ordos", nombre = "Jugador";
     bool listo = false;
 
     /**

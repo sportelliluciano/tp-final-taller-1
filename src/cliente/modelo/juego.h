@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "libs/json.hpp"
+
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/gusano_arena.h"
 #include "cliente/modelo/infraestructura.h"
@@ -20,7 +22,10 @@ public:
      * 
      * id_jugador_actual es el identificador del servidor del jugador actual.
      */
-    Juego(int id_jugador_actual_);
+    Juego(int id_jugador_actual_, 
+        const nlohmann::json& mapa,
+        const nlohmann::json& edificios,
+        const nlohmann::json& ejercito);
 
     /**
      * \brief Devuelve true si el juego terminó.

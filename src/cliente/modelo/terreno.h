@@ -23,6 +23,7 @@ public:
      * \brief Constructor. Carga el terreno a partir de un archivo CSV.
      */
     Terreno(const char *ruta_csv);
+    Terreno(const nlohmann::json& mapa);
     
     /**
      * \brief Renderiza el terreno en la ventana indicada.

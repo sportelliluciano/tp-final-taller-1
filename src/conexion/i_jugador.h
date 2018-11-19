@@ -5,6 +5,8 @@
 #include <vector>
 #include <utility>
 
+#include "libs/json.hpp"
+
 /**
  * \brief Interfaz Jugador. Permite notificar al jugador los eventos 
  *        precedentes del modelo.
@@ -19,6 +21,32 @@ public:
      * Este ID es único.
      */
     virtual int obtener_id() const = 0;
+
+    /**
+     * \brief Devuelve la casa a la que pertenece el jugador.
+     */
+    virtual const std::string& obtener_casa() const = 0;
+
+    /**
+     * \brief Devuelve el nombre del jugador.
+     */
+    virtual const std::string& obtener_nombre() const = 0;
+    
+    /**
+     * \brief Envia el mapa al cliente.
+     */
+    virtual void enviar_mapa(const nlohmann::json& mapa) = 0;
+    
+    /**
+     * \brief Envia los datos sobre la infraestructura al cliente.
+     */
+    virtual void enviar_infraestructura(
+        const nlohmann::json& infraestructura) = 0;
+    
+    /**
+     * \brief Envia los datos sobre el ejército al cliente.
+     */    
+    virtual void enviar_ejercito(const nlohmann::json& ejercito) = 0;
 
     /**
      * \brief Indica al jugador que inicie la construcción de un edificio
@@ -233,11 +261,37 @@ public:
     /**
      * \brief Eventos misceláneos.
      */
-    virtual void iniciar_juego() = 0;
-    virtual void crear_jugador() = 0;
-    virtual void jugador_listo() = 0;
-    virtual void juego_terminado() = 0;
 
+    /**
+     * \brief Indica al jugador que el juego está iniciando y su ID de jugador.
+     */
+    virtual void juego_iniciando() = 0;
+
+    /**
+     * \brief Indica al jugador que se agregó un nuevo jugador.
+     * 
+     * El jugador agregado estará por defecto en "espera", es decir, 
+     * inicializando el juego hasta que no envíe un evento jugador_listo.
+     */
+    virtual void crear_jugador(int id, const std::string& nombre, 
+        const std::string& casa) = 0;
+    
+    /**
+     * \brief Indica al jugador que el jugador con el id indicado ya está
+     *        listo para iniciar la partida.
+     */
+    virtual void jugador_listo(int id) = 0;
+
+    /**
+     * \brief Indica al cliente que el juego terminó.
+     * 
+     * Luego de enviarse este evento se cerrará la conexión.
+     */
+    virtual void juego_terminado(int id_ganador) = 0;
+
+    /**
+     * \brief Destructor virtual.
+     */
     virtual ~IJugador() { }
 };
 

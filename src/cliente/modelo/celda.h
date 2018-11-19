@@ -14,8 +14,8 @@ namespace cliente {
  * \brief Tipos de celda.
  */
 typedef enum {
-    CELDA_ROCA,       // Se puede construir y caminar sobre este terreno
     CELDA_ARENA,      // Sólo se puede caminar sobre este terreno.
+    CELDA_ROCA,       // Se puede construir y caminar sobre este terreno
     CELDA_PRECIPICIO, // Barrera natural.
     CELDA_DUNA,       // Se puede caminar por este terreno a menos velocidad
     CELDA_ESPECIA     // Especia recolectable.
@@ -36,6 +36,14 @@ public:
      * Crea una nueva celda del tipo indicado.
      */
     Celda(tipo_celda_t tipo);
+
+    /**
+     * \brief Constructor desde tipo. 
+     * 
+     * Crea una nueva celda del tipo indicado.
+     */
+    Celda(tipo_celda_t tipo, const std::vector<std::vector<int>>& sprites,
+        size_t x, size_t y);
 
     /**
      * \brief Renderiza la celda sobre la textura destino
@@ -125,6 +133,11 @@ private:
      * \brief Identificador único de celda.
      */
     int id_celda;
+
+    const static int N_SPRITES_POR_CELDA = 16;
+    bool tiene_sprites = false;
+    int sprites_celda[N_SPRITES_POR_CELDA];
+    static int uid_celda;
 };
 
 } // namespace cliente

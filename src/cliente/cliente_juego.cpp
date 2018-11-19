@@ -58,13 +58,15 @@ bool ClienteJuego::ejecutar_juego() {
     
     Servidor *servidor = partida.servidor();
     partida.servidor(nullptr);
+
+    nlohmann::json mapa = servidor->recibir_json();
+    nlohmann::json edificios = servidor->recibir_json();
+    nlohmann::json ejercito = servidor->recibir_json();
     int id_jugador_actual = servidor->iniciar_juego();
     
-    Juego juego(id_jugador_actual);
+    Juego juego(id_jugador_actual, mapa, edificios, ejercito);
     
     Controlador controlador(ventana, *servidor, juego);
-
-    //controlador.recibir_configuracion();
 
     while (!juego.esta_terminado()) {
         // Renderizar el juego

@@ -81,7 +81,9 @@ void Tropa::renderizar(Ventana& ventana, int x, int y) {
     sprite_tropa.renderizar(ventana, x, y);
 }
 
-static int calcular_posicion_sprite(int vx, int vy) {
+static int calcular_posicion_sprite(float veloc_x, float veloc_y) {
+    int vx = std::round(veloc_x);
+    int vy = std::round(veloc_y);
     switch(vx) {
         case -1:
         switch(vy) {
@@ -124,27 +126,31 @@ void Tropa::actualizar(int dt_ms) {
     if (!esta_moviendo())
         return;
 
-    float vx = 0, vy = 0;
+    int vx = 0, vy = 0;
 
     if (x_destino != x_actual)
         vx = x_destino - x_actual;
     if (y_destino != y_actual)
         vy = y_destino - y_actual;
 
-    nueva_pos_sprite = calcular_posicion_sprite(vx / abs(vx), vy / abs(vy));
+    if ((vx == 0) && (vy == 0))
+        return;
+    
+    float veloc_x = vx / sqrt(vx*vx + vy*vy),
+          veloc_y = vy / sqrt(vx*vx + vy*vy);
+
+    nueva_pos_sprite = calcular_posicion_sprite(veloc_x, veloc_y);
+    
     if (es_vehiculo)
         nueva_pos_sprite *= 4;
     else
         posicion_sprite = nueva_pos_sprite;
 
-    vx = vx / sqrt(vx*vx + vy*vy);
-    vy = vy / sqrt(vx*vx + vy*vy);
+    veloc_x *= ((0.4 / 15) / 16) * velocidad;
+    veloc_y *= ((0.4 / 15) / 16) * velocidad;
 
-    vx *= ((0.4 / 15) / 16) * velocidad;
-    vy *= ((0.4 / 15) / 16) * velocidad;
-
-    float dx = vx * dt_ms,
-          dy = vy * dt_ms;
+    float dx = veloc_x * dt_ms,
+          dy = veloc_y * dt_ms;
 
     if (abs(dx) < abs(x_destino - fx_actual))
         fx_actual += dx;

@@ -5,31 +5,42 @@
 #include "cliente/modelo/celda.h"
 #include "cliente/video/ventana.h"
 
+#define SPRITE_CONSTRUCCION_INICIO 3765
+#define SPRITE_CONSTRUCCION_FIN 3783
+
+#define SPRITE_DESTRUCCION_INICIO 3686
+#define SPRITE_DESTRUCCION_FIN 3700
+
 namespace cliente {
 
 Edificio::Edificio(const nlohmann::json& data_edificio) {
-    id = data_edificio["id"];
-    nombre = data_edificio["nombre"];
+    id = data_edificio.at("id");
 
-    Sprite sprite_base = Sprite::desde_json(data_edificio["sprite_base"]);
+    Sprite sprite_base = Sprite::desde_json(data_edificio.at("sprite_base"));
     Sprite sprite_construido = 
-        Sprite::desde_json(data_edificio["sprite_construido"]);
+        Sprite::desde_json(data_edificio.at("sprite_construido"));
     Sprite sprite_destruido = 
-        Sprite::desde_json(data_edificio["sprite_destruido"]);
+        Sprite::desde_json(data_edificio.at("sprite_destruido"));
     
     sprite = SpriteCompuesto({sprite_construido, sprite_base});
     sprite_roto = SpriteCompuesto({sprite_destruido, sprite_base});
 
-    sprite_construccion = SpriteAnimado(3765, 3783);
+    sprite_construccion = 
+        SpriteAnimado(SPRITE_CONSTRUCCION_INICIO, SPRITE_CONSTRUCCION_FIN);
     sprite_construccion.set_centrado(true);
-    sprite_destruccion  = SpriteAnimado(3686, 3700);
+    
+    sprite_destruccion = 
+        SpriteAnimado(SPRITE_DESTRUCCION_INICIO, SPRITE_DESTRUCCION_FIN);
     sprite_destruccion.set_centrado(true);
     
-    sprite_boton = data_edificio["sprite_boton"];
+    sprite_boton = data_edificio.at("sprite_boton");
+}
 
-    ancho = data_edificio["dimensiones"][0];
-    alto = data_edificio["dimensiones"][1];
-    vida = 100;
+void Edificio::actualizar_prototipo(const nlohmann::json& data_edificio) {
+    nombre = data_edificio.at("nombre");
+    ancho = data_edificio.at("dimensiones").at(0);
+    alto = data_edificio.at("dimensiones").at(1);
+    vida = data_edificio.at("puntos_estructura");
 }
 
 void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {

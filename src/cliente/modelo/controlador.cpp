@@ -30,6 +30,9 @@ void Controlador::procesar_entrada() {
     }
 }
 
+void Controlador::inicializar_juego() {
+}
+
 void Controlador::renderizar() {
     hud.renderizar(ventana, Posicion(0, 0));
 }

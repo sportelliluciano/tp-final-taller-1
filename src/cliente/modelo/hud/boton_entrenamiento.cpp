@@ -28,8 +28,6 @@ void BotonEntrenamiento::renderizar(Ventana& ventana, const Posicion& punto) {
         set_tiempo(ejercito.obtener_segundos_restantes(clase));
         if (ejercito.obtener_segundos_restantes(clase) != 0) {
             set_filtro(true, false);
-        } else {
-            set_filtro(false, true);
         }
     } else {
         reiniciar();

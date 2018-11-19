@@ -14,7 +14,10 @@ namespace cliente {
 
 class Infraestructura {
 public:
-    Infraestructura(int id_jugador_actual_, Terreno& terreno);
+    Infraestructura(int id_jugador_actual_, Terreno& terreno, 
+        const nlohmann::json& edificios);
+
+    void actualizar_prototipos(const nlohmann::json& data);
 
     /**
      * \brief Renderiza los edificios en la ventana.

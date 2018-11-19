@@ -40,6 +40,12 @@ private:
     std::list<Cliente> clientes;
     Lobby lobby;
     bool terminar = false;
+
+    /**
+     * \brief Elimina y libera los recursos asociados a los clientes que
+     *        se desconectaron.
+     */
+    void limpiar_clientes();
 };
 
 } // namespace servidor

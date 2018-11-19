@@ -18,6 +18,8 @@ void Lobby::agregar_cliente(Cliente& cliente) {
         }
     );
 
+    cliente.iniciar_async();
+
     clientes.insert(&cliente);
 }
 
@@ -42,6 +44,7 @@ static void enviar_error(Cliente& cliente, const std::string& mensaje) {
     });
 }
 
+// TODO: refactorizar esto
 void Lobby::procesar_evento(Cliente& cliente, const nlohmann::json& evento) {
     Lock l(m_lobby);
 
@@ -111,9 +114,9 @@ void Lobby::procesar_evento(Cliente& cliente, const nlohmann::json& evento) {
         } 
         
         if (mapa == "mapa-2-jugadores") {
-            salas.emplace(nombre, Sala(2));
+            salas.emplace(nombre, Sala(nombre, 2));
         } else if (mapa == "mapa-4-jugadores") {
-            salas.emplace(nombre, Sala(4));
+            salas.emplace(nombre, Sala(nombre, 4));
         } else {
             enviar_error(cliente, "El mapa no existe");
             return;
@@ -138,7 +141,17 @@ void Lobby::procesar_evento(Cliente& cliente, const nlohmann::json& evento) {
     } else {
         enviar_error(cliente, "Acción desconocida");
     }
+}
 
+void Lobby::limpiar_salas() {
+    for (auto it = salas.begin(); it != salas.end(); ) {
+        Sala& sala = it->second;
+
+        if (sala.cantidad_jugadores_conectados() == 0)
+            it = salas.erase(it);
+        else
+            ++it;
+    }
 }
 
 void Lobby::detener_todo() {

@@ -32,8 +32,8 @@ nlohmann::json Cola::pull() {
     m_hay_datos.lock();
 
     Lock l(m_cola);
-    nlohmann::json data = cola.back();
-    cola.pop_back();
+    nlohmann::json data = cola.front();
+    cola.pop_front();
     
     if (!cola.empty())
         m_hay_datos.unlock();

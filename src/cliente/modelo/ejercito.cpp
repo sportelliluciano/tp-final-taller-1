@@ -10,17 +10,12 @@
 
 namespace cliente {
 
-Ejercito::Ejercito(int id_jugador_actual_, Terreno& terreno_juego) 
+Ejercito::Ejercito(int id_jugador_actual_, Terreno& terreno_juego, 
+    const nlohmann::json& tropas_json) 
 : terreno(terreno_juego),
   id_jugador_actual(id_jugador_actual_)
 {
     using nlohmann::json;
-
-    std::ifstream entrada("../data/ejercito.json");
-
-    json tropas_json;
-
-    entrada >> tropas_json;
 
     auto it = tropas_json.begin();
     const json& valores_por_defecto = *it;

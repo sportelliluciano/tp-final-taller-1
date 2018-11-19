@@ -3,6 +3,8 @@
 
 #include <unordered_map>
 
+#include "libs/json.hpp"
+
 #include "cliente/modelo/terreno.h"
 #include "cliente/modelo/tropa.h"
 
@@ -10,7 +12,8 @@ namespace cliente {
 
 class Ejercito {
 public:
-    Ejercito(int id_jugador_actual_, Terreno& terreno);
+    Ejercito(int id_jugador_actual_, Terreno& terreno, 
+        const nlohmann::json& ejercito);
 
     /**
      * \brief Dibuja las tropas sobre la ventana.

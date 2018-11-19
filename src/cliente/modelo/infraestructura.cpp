@@ -17,13 +17,14 @@
 
 namespace cliente {
 
-Infraestructura::Infraestructura(int id_jugador_actual_, Terreno& terreno_juego) 
+Infraestructura::Infraestructura(int id_jugador_actual_, Terreno& terreno_juego,
+    const nlohmann::json& data_edificios) 
 : terreno(terreno_juego),
   id_jugador_actual(id_jugador_actual_)
 { 
     using nlohmann::json;
 
-    std::ifstream entrada("../data/edificios.json");
+    std::ifstream entrada("../data/edificios-cliente.json");
 
     json edificios_json;
 
@@ -37,7 +38,21 @@ Infraestructura::Infraestructura(int id_jugador_actual_, Terreno& terreno_juego)
         json elem = valores_por_defecto;
         elem.update(*it);
 
-        edificios.emplace(elem["id"], Edificio(elem));
+        edificios.emplace(elem.at("id"), Edificio(elem));
+    }
+
+    actualizar_prototipos(data_edificios);
+}
+
+void Infraestructura::actualizar_prototipos(const nlohmann::json& data) {
+    auto it = data.begin();
+    const nlohmann::json& valores_por_defecto = *it;
+    ++it;
+    for(; it != data.end(); ++it) {
+        nlohmann::json elem = valores_por_defecto;
+        elem.update(*it);
+
+        edificios.at(elem.at("id")).actualizar_prototipo(elem);
     }
 }
 

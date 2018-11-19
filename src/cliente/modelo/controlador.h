@@ -25,6 +25,11 @@ public:
     void renderizar();
 
     /**
+     * \brief Espera las configuraciones iniciales desde el servidor.
+     */
+    void inicializar_juego();
+
+    /**
      * \brief Procesa las distintas entradas y actualiza el modelo de juego.
      */
     void procesar_entrada();

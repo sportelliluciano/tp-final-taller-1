@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "libs/json.hpp"
+
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/gusano_arena.h"
 #include "cliente/modelo/infraestructura.h"
@@ -10,11 +12,14 @@
 
 namespace cliente {
 
-Juego::Juego(int id_jugador_actual_) 
-: terreno("../data/terreno.csv"), 
+Juego::Juego(int id_jugador_actual_, 
+        const nlohmann::json& mapa,
+        const nlohmann::json& edificios,
+        const nlohmann::json& ejercito)
+: terreno(mapa), 
   gusano(terreno), 
-  infraestructura(id_jugador_actual_, terreno), 
-  ejercito(id_jugador_actual_, terreno), 
+  infraestructura(id_jugador_actual_, terreno, edificios), 
+  ejercito(id_jugador_actual_, terreno, ejercito), 
   esta_jugando(true), 
   id_jugador_actual(id_jugador_actual_)
 { }

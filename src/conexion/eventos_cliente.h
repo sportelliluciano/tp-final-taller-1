@@ -44,10 +44,13 @@ typedef enum {
     EVC_ACTUALIZAR_ENERGIA,       // (nueva_energia, nuevo_maximo)
 
     // Configuración / Misc
-    EVC_INICIAR_JUEGO,            // (-)
+    EVC_INICIALIZAR_MAPA,         // (mapa)
+    EVC_INICIALIZAR_INFRAESTRUCTURA, // (infra)
+    EVC_INICIALIZAR_EJERCITO,     // (ejercito)
+    EVC_JUEGO_INICIANDO,          // (id)
     EVC_CREAR_JUGADOR,            // (id, nombre, casa)
-    EVC_JUGADOR_LISTO,            // (id) 
-    EVC_JUEGO_TERMINADO           // (-)
+    EVC_JUGADOR_LISTO,            // (id)
+    EVC_JUEGO_TERMINADO           // (id_ganador)
 } evento_cliente_t;
 
 } // namespace conexion
