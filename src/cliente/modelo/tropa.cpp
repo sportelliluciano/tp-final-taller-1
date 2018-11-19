@@ -131,7 +131,7 @@ void Tropa::actualizar(int dt_ms) {
     if (y_destino != y_actual)
         vy = y_destino - y_actual;
 
-    nueva_pos_sprite = calcular_posicion_sprite(vx, vy);
+    nueva_pos_sprite = calcular_posicion_sprite(vx / abs(vx), vy / abs(vy));
     if (es_vehiculo)
         nueva_pos_sprite *= 4;
     else
