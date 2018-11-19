@@ -6,14 +6,14 @@
 #include "cliente/modelo/hud/boton_construccion.h"
 #include "cliente/video/rectangulo.h"
 #include "cliente/video/ventana.h"
-#include "cliente/video/widgets/widget.h"
+#include "cliente/video/widgets/contenedor.h"
 
 namespace cliente {
 
 /**
  * \brief Contenedor de botones movible.
  */
-class Botonera : public Widget {
+class Botonera : public Contenedor {
 public:
     Botonera(int ancho_, int alto_);
 
@@ -30,7 +30,7 @@ public:
      * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
      * la ventana (global).
      */
-    void renderizar(Ventana& ventana, int x, int y) override;
+    void renderizar(Ventana& ventana, const Posicion& punto) override;
 
 
     /**
@@ -38,15 +38,11 @@ public:
      */
     void agregar_widget(Widget& widget);
 
-    /**
-     * \brief Manejador para el click del mouse.
-     * 
-     * Este método es llamado cuando se hace click en el área de la botonera, 
-     * pasándole como parámetro la posición donde se hizo click, *relativa* a la
-     * botonera.
-     */
-    bool mouse_click_izquierdo(int x, int y) override;
-    bool mouse_click_derecho(int x, int y) override;
+protected:
+    virtual std::vector<Widget*> obtener_widgets();
+
+    virtual std::vector<std::pair<Posicion, Widget*>>
+        obtener_widgets(const Posicion& punto);
 
 private:
     std::list<Widget*> widgets;

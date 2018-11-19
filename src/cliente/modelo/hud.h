@@ -29,16 +29,6 @@ public:
     HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_);
 
     /**
-     * \brief Se ejecuta cuando el usuario presiona una tecla.
-     */
-    virtual bool teclado_presionado(tecla_t tecla);
-
-    /**
-     * \brief Se ejecuta cuando el usuario suelta una tecla.
-     */
-    virtual bool teclado_suelto(tecla_t tecla);
-
-    /**
      * \brief Este evento se ejecuta cuando el usuario decide cerrar la ventana.
      */
     virtual bool cerrar_ventana();
@@ -52,7 +42,7 @@ private:
     CajaVertical area_general, panel_lateral;
 
     Boton modo_construccion, modo_entrenamiento, modo_vender;
-
+    
     Tostador tostador;
     
     Boton mutear_sonido, mutear_musica;

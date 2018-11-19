@@ -18,60 +18,17 @@ int WidgetRaiz::obtener_ancho() const {
     return ancho;
 }
 
-void WidgetRaiz::renderizar(Ventana& ventana, int x, int y) {
+void WidgetRaiz::renderizar(Ventana& ventana, const Posicion& punto) {
     if (hijo)
-        hijo->renderizar(ventana, x, y);
+        hijo->renderizar(ventana, punto);
 }
 
-bool WidgetRaiz::mouse_click_izquierdo(int x, int y) {
+std::vector<Widget*> WidgetRaiz::obtener_widgets() {
+    std::vector<Widget*> resultado;
     if (hijo)
-        return hijo->mouse_click_izquierdo(x, y);
+        resultado.push_back(hijo);
     
-    return false;
-}
-
-bool WidgetRaiz::mouse_click_derecho(int x, int y) {
-    if (hijo)
-        return hijo->mouse_click_derecho(x, y);
-    
-    return false;
-}
-
-bool WidgetRaiz::mouse_scroll(int x, int y, int dy) {
-    if (hijo)
-        return hijo->mouse_scroll(x, y, dy);
-    
-    return false;
-}
-
-bool WidgetRaiz::mouse_inicio_arrastre(int x, int y) {
-    if (hijo)
-        return hijo->mouse_inicio_arrastre(x, y);
-    return false;
-}
-
-bool WidgetRaiz::mouse_movimiento(int x, int y) {
-    if (hijo)
-        return hijo->mouse_movimiento(x, y);
-    return false;
-}
-
-bool WidgetRaiz::mouse_fin_arrastre(int x, int y) {
-    if (hijo)
-        return hijo->mouse_fin_arrastre(x, y);
-    return false;
-}
-
-bool WidgetRaiz::mouse_entra(int x, int y) {
-    if (hijo)
-        return hijo->mouse_entra(x, y);
-    return false;
-}
-
-bool WidgetRaiz::mouse_sale(int x, int y) {
-    if (hijo)
-        return hijo->mouse_sale(x, y);
-    return false;
+    return resultado;
 }
 
 void WidgetRaiz::setear_hijo(Widget* widget) {

@@ -25,7 +25,7 @@ public:
     /**
      * \brief Renderiza el botón en la posición indicada.
      */
-    virtual void renderizar(Ventana& ventana, int x, int y) override;
+    virtual void renderizar(Ventana& ventana, const Posicion& punto) override;
 
     /**
      * \brief Setea la cola a mostrar en el botón. Sólo se mostrará si el 

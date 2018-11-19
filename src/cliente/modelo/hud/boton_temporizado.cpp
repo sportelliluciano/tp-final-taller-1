@@ -42,14 +42,13 @@ void BotonTemporizado::set_filtro(bool gris, bool verde) {
     con_filtro_verde = verde;
 }
 
-
-void BotonTemporizado::renderizar(Ventana& ventana, int x, int y) {
-    Sprite(sprite_id).renderizar(ventana, x, y);
+void BotonTemporizado::renderizar(Ventana& ventana, const Posicion& punto) {
+    Sprite(sprite_id).renderizar(ventana, punto.x, punto.y);
     if (con_filtro_gris) {
         ventana
             .obtener_administrador_texturas()
             .cargar_imagen("./assets/nuevos/filtro-boton-construccion.png")
-            .renderizar(x, y);
+            .renderizar(punto.x, punto.y);
     } else if (con_filtro_verde) {
         if (!ventana.obtener_administrador_texturas().contiene_textura("filtro-verde")) {
             ventana
@@ -60,7 +59,7 @@ void BotonTemporizado::renderizar(Ventana& ventana, int x, int y) {
         ventana
             .obtener_administrador_texturas()
             .obtener_textura("filtro-verde")
-            .renderizar(x, y);
+            .renderizar(punto.x, punto.y);
     }
 
     if (cola > 0) {
@@ -69,7 +68,7 @@ void BotonTemporizado::renderizar(Ventana& ventana, int x, int y) {
         ventana
             .obtener_administrador_texturas()
             .crear_texto(s.str())
-            .renderizar(x + 5, y);
+            .renderizar(punto.x + 5, punto.y);
     }
 
     if (segundos_restantes > 0) {
@@ -78,7 +77,7 @@ void BotonTemporizado::renderizar(Ventana& ventana, int x, int y) {
         ventana
             .obtener_administrador_texturas()
             .crear_texto(s.str())
-            .renderizar(x + 5, y + ALTO_BOTON - 20);
+            .renderizar(punto.x + 5, punto.y + ALTO_BOTON - 20);
     }
 }
 

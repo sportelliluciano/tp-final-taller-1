@@ -40,7 +40,7 @@ public:
     /**
      * \brief Renderiza los mensajes de notificación sobre la ventana.
      */
-    void renderizar(Ventana& ventana, int x, int y) override;
+    void renderizar(Ventana& ventana, const Posicion& punto) override;
 
     /**
      * \brief Agrega una nueva notificación.

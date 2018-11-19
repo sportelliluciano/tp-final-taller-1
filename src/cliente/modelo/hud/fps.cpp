@@ -21,15 +21,19 @@ int FPS::obtener_ancho() const {
     return ANCHO_FPS;
 }
 
-void FPS::renderizar(Ventana& ventana, int x, int y) {
-    std::stringstream s_fps;
-    s_fps << "FPS: " << ventana.fps();
+void FPS::renderizar(Ventana& ventana, const Posicion& punto) {
+    if (last_fps != ventana.fps()) {
+        std::stringstream s_fps;
+        s_fps << "FPS: " << ventana.fps();
+        last_fps = ventana.fps();
+        s_last_fps = s_fps.str();
+    }
 
     Textura& textura_fps = ventana
         .obtener_administrador_texturas()
-        .crear_texto(s_fps.str());
+        .crear_texto(s_last_fps);
     
-    textura_fps.renderizar(x + PADDING_FPS_X, y + PADDING_FPS_Y);
+    textura_fps.renderizar(punto.x + PADDING_FPS_X, punto.y + PADDING_FPS_Y);
 }
 
 } // namespace cliente

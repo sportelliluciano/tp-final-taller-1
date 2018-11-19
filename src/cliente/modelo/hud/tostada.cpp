@@ -9,7 +9,8 @@
 namespace cliente {
 
 Tostada::Tostada(const std::string& mensaje, int duracion_)
- : texto(mensaje), duracion(duracion_), terminada(false), fin_ms(-1)
+ : texto(mensaje), duracion(duracion_), terminada(false), fin_ms(0), 
+   iniciada(false)
 { }
 
 bool Tostada::esta_terminada() const {
@@ -24,8 +25,10 @@ void Tostada::renderizar(Ventana& ventana, int x, int y) {
     if (terminada)
         return;
     
-    if (fin_ms == -1)
+    if (!iniciada) {
+        iniciada = true;
         fin_ms = ventana.obtener_ms() + duracion;
+    }
     
     AdministradorTexturas& admin_texturas = ventana
         .obtener_administrador_texturas();

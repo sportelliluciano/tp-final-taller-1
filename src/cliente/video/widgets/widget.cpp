@@ -12,35 +12,35 @@ void Widget::set_padre(Widget* nuevo_padre) {
     padre = nuevo_padre;
 }
 
-bool Widget::mouse_click_izquierdo(int, int) {
+bool Widget::mouse_click_izquierdo(const Posicion&) {
     return true;
 }
 
-bool Widget::mouse_click_derecho(int, int) {
+bool Widget::mouse_click_derecho(const Posicion&) {
     return true;
 }
 
-bool Widget::mouse_scroll(int, int , int) {
+bool Widget::mouse_scroll(const Posicion& , int) {
     return true;
 }
 
-bool Widget::mouse_inicio_arrastre(int, int) {
+bool Widget::mouse_inicio_arrastre(const Posicion&) {
     return true;
 }
 
-bool Widget::mouse_movimiento(int, int) {
+bool Widget::mouse_movimiento(const Posicion&) {
     return true;
 }
 
-bool Widget::mouse_fin_arrastre(int, int) {
+bool Widget::mouse_fin_arrastre(const Posicion&) {
     return true;
 }
 
-bool Widget::mouse_entra(int, int) {
+bool Widget::mouse_entra(const Posicion&) {
     return true;
 }
 
-bool Widget::mouse_sale(int, int) {
+bool Widget::mouse_sale(const Posicion&) {
     return true;
 }
 

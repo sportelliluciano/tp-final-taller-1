@@ -31,17 +31,17 @@ public:
      * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
      * la ventana (global).
      */
-    virtual void renderizar(Ventana& ventana, int x, int y) override;
+    virtual void renderizar(Ventana& ventana, const Posicion& punto) override;
 
     /**
      * \brief Se ejecuta cuando el usuario hace clic con el botón izquierdo.
      */
-    virtual bool mouse_click_izquierdo(int x, int y);
+    virtual bool mouse_click_izquierdo(const Posicion& punto) override;
 
     /**
      * \brief Se ejecuta cuando el usuario hace clic con el botón derecho.
      */
-    virtual bool mouse_click_derecho(int x, int y);
+    virtual bool mouse_click_derecho(const Posicion& punto) override;
 
     /**
      * \brief Se ejecuta cuando el usuario arrastra el mouse mientras hace
@@ -55,14 +55,14 @@ public:
      * 
      * Devuelve false si el evento debe dejar de propagarse.
      */
-    virtual bool mouse_inicio_arrastre(int x, int y);
+    virtual bool mouse_inicio_arrastre(const Posicion& punto) override;
 
     /**
      * \brief Se ejecuta cuando el usuario mueve el mouse sobre la ventana.
      * 
      * (x, y) coordenadas del mouse.
      */
-    virtual bool mouse_movimiento(int x, int y);
+    virtual bool mouse_movimiento(const Posicion& punto) override;
 
     /**
      * \brief Se ejecuta cuando el usuario suelta el mouse luego de haber 
@@ -76,13 +76,13 @@ public:
      * 
      * Devuelve false si el evento debe dejar de propagarse.
      */
-    virtual bool mouse_fin_arrastre(int x, int y);
+    virtual bool mouse_fin_arrastre(const Posicion& punto) override;
 
-    virtual bool mouse_entra(int x, int y);
-    virtual bool mouse_sale(int x, int y);
+    virtual bool mouse_entra(const Posicion& punto) override;
+    virtual bool mouse_sale(const Posicion& punto) override;
 
-    virtual bool teclado_presionado(tecla_t tecla);
-    virtual bool teclado_suelto(tecla_t tecla);
+    virtual bool teclado_presionado(tecla_t tecla) override;
+    virtual bool teclado_suelto(tecla_t tecla) override;
 
     void set_modo_vender(bool habilitado);
 
@@ -100,8 +100,8 @@ private:
     bool esta_draggeando = false;
     bool ctrl_presionado = false;
 
-    int drag_start_x, drag_start_y;
-    int drag_end_x, drag_end_y;
+    Posicion drag_start;
+    Posicion drag_end;
 
     int mover_camara_x = 0;
     int mover_camara_y = 0;
@@ -124,8 +124,10 @@ private:
     Edificio* edificio_seleccionado = nullptr;
     std::unordered_set<Tropa*> unidades_seleccionadas;
 
-    bool seleccionar_edificio(int x, int y);
+    bool seleccionar_edificio(const Posicion& punto);
+    void deseleccionar_edificio();
     bool seleccionar_tropas(int x0, int y0, int x1, int y1);
+    void deseleccionar_tropas();
 
     const Edificio* edificio_a_ubicar = nullptr;
 };

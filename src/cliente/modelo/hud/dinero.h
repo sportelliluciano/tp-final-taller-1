@@ -28,7 +28,7 @@ public:
      * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
      * la ventana (global).
      */
-    void renderizar(Ventana& ventana, int x, int y) override;
+    void renderizar(Ventana& ventana, const Posicion& punto) override;
 
 private:
     Juego& juego;

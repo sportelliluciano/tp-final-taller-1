@@ -42,8 +42,8 @@ void AreaJuego::set_tamanio(int ancho_, int alto_) {
     camara = Camara(ancho, alto);
 }
 
-void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
-    ventana.setear_viewport(Rectangulo(x, y, ancho, alto));
+void AreaJuego::renderizar(Ventana& ventana, const Posicion& punto) {
+    ventana.setear_viewport(Rectangulo(punto.x, punto.y, ancho, alto));
     
     if ((mover_camara_x != 0) || (mover_camara_y != 0)) {
         if (ventana.obtener_ms() - delay_camara > DELAY_CAMARA_MS) {
@@ -56,8 +56,8 @@ void AreaJuego::renderizar(Ventana& ventana, int x, int y) {
     juego.renderizar(ventana, camara);
 
     if (esta_draggeando) {
-        ventana.dibujar_rectangulo(drag_start_x, drag_start_y,
-            drag_end_x, drag_end_y, 3);
+        ventana.dibujar_rectangulo(drag_start.x, drag_start.y,
+            drag_end.x, drag_end.y, 3);
     }
 
     if (edificio_a_ubicar) {
@@ -102,13 +102,12 @@ void AreaJuego::set_modo_vender(bool habilitado) {
         sprite_mouse = nullptr;
 }
 
-bool AreaJuego::seleccionar_edificio(int x, int y) {
+bool AreaJuego::seleccionar_edificio(const Posicion& punto) {
     Edificio* nuevo_seleccionado = 
         juego.obtener_terreno()
-            .obtener_edificio_en(camara.traducir_a_logica(Posicion(x, y)));
+            .obtener_edificio_en(camara.traducir_a_logica(punto));
     
-    if (edificio_seleccionado)
-        edificio_seleccionado->desmarcar();
+    deseleccionar_edificio();
     
     if (nuevo_seleccionado)
         nuevo_seleccionado->marcar();
@@ -116,6 +115,12 @@ bool AreaJuego::seleccionar_edificio(int x, int y) {
     edificio_seleccionado = nuevo_seleccionado;
 
     return edificio_seleccionado != nullptr;
+}
+
+void AreaJuego::deseleccionar_edificio() {
+    if (edificio_seleccionado)
+        edificio_seleccionado->desmarcar();
+    edificio_seleccionado = nullptr;
 }
 
 bool AreaJuego::seleccionar_tropas(int x0, int y0, int x1, int y1) {
@@ -128,9 +133,7 @@ bool AreaJuego::seleccionar_tropas(int x0, int y0, int x1, int y1) {
             );
     
     if (!ctrl_presionado) {
-        for (Tropa* tropa : unidades_seleccionadas) {
-            tropa->desmarcar();
-        }
+        deseleccionar_tropas();
         for (Tropa* tropa : nueva_seleccion) {
             tropa->marcar();
         }
@@ -145,11 +148,18 @@ bool AreaJuego::seleccionar_tropas(int x0, int y0, int x1, int y1) {
     return !unidades_seleccionadas.empty();
 }
 
-bool AreaJuego::mouse_click_izquierdo(int x, int y) {
+void AreaJuego::deseleccionar_tropas() {
+    for (Tropa* tropa : unidades_seleccionadas) {
+        tropa->desmarcar();
+    }
+    unidades_seleccionadas.clear();
+}
+
+bool AreaJuego::mouse_click_izquierdo(const Posicion& punto) {
     if (edificio_a_ubicar) {
         int celda_x, celda_y;
         juego.obtener_terreno().obtener_celda(
-                camara.traducir_a_logica(Posicion(x, y)), celda_x, celda_y);
+                camara.traducir_a_logica(punto), celda_x, celda_y);
         servidor.ubicar_edificio(edificio_a_ubicar->obtener_clase(),
             celda_x, celda_y);
         tostador.hacer_tostada("Ubicando edificio: " + 
@@ -158,7 +168,7 @@ bool AreaJuego::mouse_click_izquierdo(int x, int y) {
     }
 
     if (en_modo_vender) {
-        if (!seleccionar_edificio(x, y)) {
+        if (!seleccionar_edificio(punto)) {
             set_modo_vender(false);
             return false;
         }
@@ -174,15 +184,15 @@ bool AreaJuego::mouse_click_izquierdo(int x, int y) {
         }
     }
 
-    seleccionar_tropas(0, 0, 0, 0);
+    deseleccionar_tropas();
     return false;
 }
 
-bool AreaJuego::mouse_click_derecho(int x, int y) {
+bool AreaJuego::mouse_click_derecho(const Posicion& punto) {
     if (unidades_seleccionadas.empty())
         return false;
     
-    Posicion pos_logica = camara.traducir_a_logica(Posicion(x, y));
+    Posicion pos_logica = camara.traducir_a_logica(punto);
     
     std::vector<int> ids;
     for (Tropa* tropa : unidades_seleccionadas) {
@@ -204,39 +214,36 @@ bool AreaJuego::mouse_click_derecho(int x, int y) {
     return false;
 }
 
-bool AreaJuego::mouse_inicio_arrastre(int x, int y) {
-    drag_start_x = x;
-    drag_start_y = y;
+bool AreaJuego::mouse_inicio_arrastre(const Posicion& punto) {
+    drag_start = punto;
     esta_draggeando = true;
     return false;
 }
 
-bool AreaJuego::mouse_movimiento(int x, int y) {
-    mouse.x = x;
-    mouse.y = y;
+bool AreaJuego::mouse_movimiento(const Posicion& punto) {
+    mouse = punto;
 
     if (esta_draggeando) {
-        drag_end_x = x;
-        drag_end_y = y;
+        drag_end = punto;
         return false;
     }
     
-    if (x < ANCHO_MOV_CAMARA)
+    if (punto.x < ANCHO_MOV_CAMARA)
         mover_camara_x = -1;
-    else if (x > obtener_ancho() - ANCHO_MOV_CAMARA)
+    else if (punto.x > obtener_ancho() - ANCHO_MOV_CAMARA)
         mover_camara_x = 1;
     else
         mover_camara_x = 0;
     
-    if (y < ALTO_MOV_CAMARA)
+    if (punto.y < ALTO_MOV_CAMARA)
         mover_camara_y = -1;
-    else if (y > obtener_alto() - ALTO_MOV_CAMARA)
+    else if (punto.y > obtener_alto() - ALTO_MOV_CAMARA)
         mover_camara_y = 1;
     else
         mover_camara_y = 0;
     
     if (en_modo_vender) {
-        seleccionar_edificio(x, y);
+        seleccionar_edificio(punto);
     } else if (!unidades_seleccionadas.empty() &&
         ejercito.hay_tropas_enemigas_en(camara.traducir_a_logica(mouse))) 
     {
@@ -249,26 +256,24 @@ bool AreaJuego::mouse_movimiento(int x, int y) {
     return false;
 }
 
-bool AreaJuego::mouse_entra(int, int) {
+bool AreaJuego::mouse_entra(const Posicion&) {
     mover_camara_x = mover_camara_y = 0;
     mouse_en_ventana = true;
     return false;
 }
 
-bool AreaJuego::mouse_sale(int, int) {
+bool AreaJuego::mouse_sale(const Posicion&) {
     mover_camara_x = mover_camara_y = 0;
     mouse_en_ventana = false;
     esta_draggeando = false;
     return false;
 }
 
-bool AreaJuego::mouse_fin_arrastre(int x, int y) {
-    drag_end_x = x;
-    drag_end_y = y;
+bool AreaJuego::mouse_fin_arrastre(const Posicion& punto) {
+    drag_end = punto;
     esta_draggeando = false;
-    seleccionar_tropas(drag_start_x, drag_start_y,
-        drag_end_x, drag_end_y);
-    seleccionar_edificio(-1, -1);
+    seleccionar_tropas(drag_start.x, drag_start.y, drag_end.x, drag_end.y);
+    deseleccionar_edificio();
     return false;
 }
 

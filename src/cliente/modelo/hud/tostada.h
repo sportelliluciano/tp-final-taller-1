@@ -33,7 +33,8 @@ private:
     std::string texto;
     int duracion;
     bool terminada;
-    int fin_ms;
+    uint64_t fin_ms;
+    bool iniciada;
 };
 
 } // namespace cliente

@@ -156,11 +156,11 @@ void Ventana::procesar_eventos() {
                 if (evento.window.event == SDL_WINDOWEVENT_ENTER) {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
-                    receptor_eventos->mouse_entra(x, y);
+                    receptor_eventos->mouse_entra(Posicion(x, y));
                 } else if (evento.window.event == SDL_WINDOWEVENT_LEAVE) {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
-                    receptor_eventos->mouse_sale(x, y);
+                    receptor_eventos->mouse_sale(Posicion(x, y));
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
@@ -175,11 +175,11 @@ void Ventana::procesar_eventos() {
                 SDL_GetMouseState(&x, &y);
                 if (!mouse_arrastre_iniciado && mouse_down && (abs(x - mouse_inicio_arrastre_x) > 4) && (abs(x - mouse_inicio_arrastre_y) > 4)) {
                     mouse_arrastre_iniciado = true;
-                    receptor_eventos->mouse_inicio_arrastre(mouse_inicio_arrastre_x, 
-                        mouse_inicio_arrastre_y);
+                    receptor_eventos->mouse_inicio_arrastre(Posicion(mouse_inicio_arrastre_x, 
+                        mouse_inicio_arrastre_y));
                 }
-                receptor_eventos->mouse_movimiento(evento.motion.x, 
-                        evento.motion.y);
+                receptor_eventos->mouse_movimiento(Posicion(evento.motion.x, 
+                        evento.motion.y));
                 } break;
             case SDL_MOUSEBUTTONUP: {
                     int x = evento.button.x,
@@ -187,21 +187,21 @@ void Ventana::procesar_eventos() {
                     
                     if (evento.button.button == SDL_BUTTON_LEFT) {
                         if (mouse_arrastre_iniciado) {
-                            receptor_eventos->mouse_fin_arrastre(x, y);
+                            receptor_eventos->mouse_fin_arrastre(Posicion(x, y));
                             mouse_arrastre_iniciado = false;
                         } else {
-                            receptor_eventos->mouse_click_izquierdo(x, y);
+                            receptor_eventos->mouse_click_izquierdo(Posicion(x, y));
                         }
                         mouse_down = false;
                     } else if (evento.button.button == SDL_BUTTON_RIGHT) {
-                        receptor_eventos->mouse_click_derecho(x, y);
+                        receptor_eventos->mouse_click_derecho(Posicion(x, y));
                     }
                 }
                 break;
             case SDL_MOUSEWHEEL: {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
-                    receptor_eventos->mouse_scroll(x, y, evento.wheel.y);
+                    receptor_eventos->mouse_scroll(Posicion(x, y), evento.wheel.y);
                 }
                 break;
             case SDL_KEYDOWN: {

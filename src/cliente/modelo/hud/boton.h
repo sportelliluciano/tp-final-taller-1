@@ -37,9 +37,9 @@ public:
     /**
      * \brief Renderiza el botón en la posición indicada.
      */
-    void renderizar(Ventana& ventana, int x, int y);
+    void renderizar(Ventana& ventana, const Posicion& punto);
 
-    bool mouse_click_izquierdo(int x, int y) override;
+    bool mouse_click_izquierdo(const Posicion& punto) override;
 
 private:
     const char *imagen;

@@ -16,9 +16,9 @@ public:
     BotonEntrenamiento(Ejercito& ejercito_, 
         const std::string& clase, Servidor& servidor_, Tostador& tostador_);
     
-    bool mouse_click_izquierdo(int x, int y) override;
-    bool mouse_click_derecho(int x, int y) override;
-    void renderizar(Ventana& ventana, int x, int y) override;
+    bool mouse_click_izquierdo(const Posicion& punto) override;
+    bool mouse_click_derecho(const Posicion& punto) override;
+    void renderizar(Ventana& ventana, const Posicion& punto) override;
 
 private:
     std::string clase;

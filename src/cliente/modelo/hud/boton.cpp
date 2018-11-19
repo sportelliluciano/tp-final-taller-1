@@ -40,12 +40,12 @@ void Boton::autoresize(bool activar) {
     autoresize_activo = activar;
 }
 
-void Boton::renderizar(Ventana& ventana, int x, int y) {
+void Boton::renderizar(Ventana& ventana, const Posicion& punto) {
     if (sprite != -1) {
         const Textura& t = Sprite(sprite).obtener_textura(ventana);
         if (autoresize_activo)
             boton = t.obtener_rect();
-        t.renderizar(x, y, boton, t.obtener_rect());
+        t.renderizar(punto.x, punto.y, boton, t.obtener_rect());
     } else if (imagen != nullptr) {
         const Textura& t = 
             ventana.obtener_administrador_texturas().cargar_imagen(imagen);
@@ -82,7 +82,8 @@ void Boton::renderizar(Ventana& ventana, int x, int y) {
             padding_y = (boton.alto() - h_img) / 2;
         }
 
-        t.renderizar(x + padding_x, y + padding_y, seccion, destino);
+        t.renderizar(punto.x + padding_x, punto.y + padding_y, 
+            seccion, destino);
     }
 }
 
@@ -103,8 +104,7 @@ int Boton::obtener_ancho() const {
     return boton.ancho();
 }
 
-bool Boton::mouse_click_izquierdo(int x, int y) {
-    std::cout << "Boton: click izq en (" << x << "," << y << ")" << std::endl;
+bool Boton::mouse_click_izquierdo(const Posicion&) {
     if (cb_click)
         cb_click();
     return false;

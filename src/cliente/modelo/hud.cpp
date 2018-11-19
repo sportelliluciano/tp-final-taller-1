@@ -122,44 +122,6 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
         ventana.alto() - barra_superior.obtener_alto());
 }
 
-bool HUD::teclado_presionado(tecla_t tecla) {
-    switch(tecla) {
-        case TECLA_SHIFT:
-            shift_presionado = true;
-            juego.obtener_ejercito().set_tropa_disparando(0, true);
-            break;
-        case TECLA_IZQUIERDA:
-        case TECLA_DERECHA:
-        case TECLA_ABAJO:
-        case TECLA_ARRIBA:
-        case TECLA_CTRL:
-            return area_juego.teclado_presionado(tecla);
-        default:
-            break;
-    }
-    
-    return false;
-}
-
-bool HUD::teclado_suelto(tecla_t tecla) {
-    switch(tecla) {
-        case TECLA_SHIFT:
-            shift_presionado = true;
-            juego.obtener_ejercito().set_tropa_disparando(0, false);
-            break;
-        case TECLA_IZQUIERDA:
-        case TECLA_DERECHA:
-        case TECLA_ABAJO:
-        case TECLA_ARRIBA:
-        case TECLA_CTRL:
-            return area_juego.teclado_suelto(tecla);
-        default:
-            break;
-    }
-    
-    return false;
-}
-
 void HUD::toggle_sonido() {
     if (!sonido_activo) {
         mutear_sonido.set_imagen("./assets/nuevos/sin-sonido.png");

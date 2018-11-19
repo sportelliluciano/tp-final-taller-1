@@ -40,7 +40,7 @@ int Dinero::obtener_ancho() const {
     return ANCHO_DINERO;
 }
 
-void Dinero::renderizar(Ventana& ventana, int x, int y) {
+void Dinero::renderizar(Ventana& ventana, const Posicion& punto) {
     setear_dinero(juego.obtener_dinero());
     int digito;
     int dx = 0;
@@ -49,13 +49,13 @@ void Dinero::renderizar(Ventana& ventana, int x, int y) {
             break;
         
         digitos[10].renderizar(ventana, 
-            x + PADDING_DINERO_X + dx, y + PADDING_DINERO_Y);
+            punto.x + PADDING_DINERO_X + dx, punto.y + PADDING_DINERO_Y);
         dx += digitos[10].obtener_textura(ventana).obtener_ancho();
     }
 
     for (; digito >= 0; digito--) {
         digitos[digitos_dinero[digito]].renderizar(ventana, 
-            x + PADDING_DINERO_X + dx, y + PADDING_DINERO_Y);
+            punto.x + PADDING_DINERO_X + dx, punto.y + PADDING_DINERO_Y);
         dx += digitos[digitos_dinero[digito]]
             .obtener_textura(ventana).obtener_ancho();
     }

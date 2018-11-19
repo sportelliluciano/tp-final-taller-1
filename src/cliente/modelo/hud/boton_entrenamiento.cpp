@@ -19,7 +19,7 @@ BotonEntrenamiento::BotonEntrenamiento(Ejercito& ejercito_,
   tostador(tostador_)
 { }
 
-void BotonEntrenamiento::renderizar(Ventana& ventana, int x, int y) {
+void BotonEntrenamiento::renderizar(Ventana& ventana, const Posicion& punto) {
     if (!ejercito.esta_habilitada(clase)) {
         reiniciar();
         set_filtro(true, false);
@@ -34,10 +34,10 @@ void BotonEntrenamiento::renderizar(Ventana& ventana, int x, int y) {
     } else {
         reiniciar();
     }
-    BotonTemporizado::renderizar(ventana, x, y);
+    BotonTemporizado::renderizar(ventana, punto);
 }
 
-bool BotonEntrenamiento::mouse_click_izquierdo(int, int) {
+bool BotonEntrenamiento::mouse_click_izquierdo(const Posicion&) {
     if (!ejercito.esta_habilitada(clase))
         return false;
     
@@ -47,7 +47,7 @@ bool BotonEntrenamiento::mouse_click_izquierdo(int, int) {
     return false;
 }
 
-bool BotonEntrenamiento::mouse_click_derecho(int, int) {
+bool BotonEntrenamiento::mouse_click_derecho(const Posicion&) {
     if (!ejercito.esta_habilitada(clase))
         return false;
     if (ejercito.esta_entrenando(clase)) {

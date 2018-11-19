@@ -19,7 +19,7 @@ BotonConstruccion::BotonConstruccion(Infraestructura& infraestructura_,
   tostador(tostador_)
 { }
 
-void BotonConstruccion::renderizar(Ventana& ventana, int x, int y) {
+void BotonConstruccion::renderizar(Ventana& ventana, const Posicion& punto) {
     if (infraestructura.esta_construyendo(clase)) {
         set_cola(infraestructura.obtener_cola_construccion(clase));
         set_tiempo(infraestructura.obtener_segundos_restantes(clase));
@@ -31,10 +31,10 @@ void BotonConstruccion::renderizar(Ventana& ventana, int x, int y) {
     } else {
         reiniciar();
     }
-    BotonTemporizado::renderizar(ventana, x, y);
+    BotonTemporizado::renderizar(ventana, punto);
 }
 
-bool BotonConstruccion::mouse_click_izquierdo(int, int) {
+bool BotonConstruccion::mouse_click_izquierdo(const Posicion&) {
     if (infraestructura.esta_construyendo(clase) && 
         infraestructura.obtener_segundos_restantes(clase) == 0)
     {
@@ -48,7 +48,7 @@ bool BotonConstruccion::mouse_click_izquierdo(int, int) {
     return false;
 }
 
-bool BotonConstruccion::mouse_click_derecho(int, int) {
+bool BotonConstruccion::mouse_click_derecho(const Posicion&) {
     if (infraestructura.esta_construyendo(clase)) {
         servidor.cancelar_construccion(clase);
         tostador.hacer_tostada("Cancelar construcción: " + clase);

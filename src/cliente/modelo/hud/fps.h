@@ -21,10 +21,12 @@ public:
      * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
      * la ventana (global).
      */
-    void renderizar(Ventana& ventana, int x, int y) override;
+    void renderizar(Ventana& ventana, const Posicion& punto) override;
 
 private:
     int ancho = 0, alto = 0;
+    int last_fps = -1;
+    std::string s_last_fps;
 };
 
 } // namespace cliente

@@ -19,7 +19,7 @@ int Tostador::obtener_alto() const {
     return 0;
 }
 
-void Tostador::renderizar(Ventana& ventana, int, int) {
+void Tostador::renderizar(Ventana& ventana, const Posicion&) {
     int dy = 0;
     for (auto it=tostadas.begin(); it != tostadas.end();) {
         Tostada& tostada = *it;
