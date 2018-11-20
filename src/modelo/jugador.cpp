@@ -8,10 +8,9 @@
 
 namespace modelo {
 
-Jugador::Jugador(std::string casa_,IJugador* comunicacion_jugador_):
-                                casa(casa_),
-                                comunicacion_jugador(comunicacion_jugador_){
-}
+Jugador::Jugador(std::string casa_,IJugador* comunicacion_jugador_)
+: casa(casa_), comunicacion_jugador(comunicacion_jugador_)
+{ }
 Jugador::~Jugador(){
 }
 void Jugador::aumentar_consumo(unsigned int consumo_){
@@ -56,7 +55,8 @@ bool Jugador::cancelar_construccion(const std::string& clase, unsigned int costo
     return false;
 }
 
-bool Jugador::empezar_entrenamiento(const std::string& clase,unsigned int costo){
+bool Jugador::empezar_entrenamiento(const std::string& clase,unsigned int costo)
+{
     if (tropas_en_cola.count(clase) == 0)
             tropas_en_cola[clase] = 1;
     else
@@ -95,6 +95,23 @@ bool Jugador::pertenece(int id){
     return inventario.count(id)>0;
 }
 
+bool Jugador::ubicar_edificio(const std::string& clase, int celda_x, 
+    int celda_y, Infraestructura& inf) 
+{
+    if (construcciones_esperando_ubicacion.count(clase) == 0)
+        return false;
+    
+    //if (!hay_suficiente_energia(inf.get_energia(clase)))
+    //    return false;
+
+    construcciones_esperando_ubicacion.erase(clase);
+    
+    int id_edificio = inf.crear(clase, celda_x, celda_y, 
+        comunicacion_jugador->obtener_id());
+    agregar_elemento(id_edificio, consumo, clase);
+    return true;
+}
+
 void Jugador::actualizar_construcciones(int dt,Infraestructura& inf) {
     for (auto it=construcciones.begin(); it != construcciones.end();) {
         if (it->second - dt < 0) {
@@ -119,24 +136,25 @@ void Jugador::actualizar_construcciones(int dt,Infraestructura& inf) {
             comunicacion_jugador->iniciar_construccion(it->first, 5000);
             it->second--;
             comunicacion_jugador->actualizar_cola_cc(it->first, it->second);
-        }
-        if (it->second == 0) {
-            it = construcciones_en_cola.erase(it);
-        } else {
-            ++it;
-        }
+            if (it->second == 0) {
+                it = construcciones_en_cola.erase(it);
+                continue;
+            }
+        } 
+        ++it;
     }
 }
 
-std::string Jugador::actualizar_tropas(int dt,Ejercito& ejercito) {
+void Jugador::actualizar_entrenamientos(int dt, Ejercito& ejercito) {
     for (auto it=tropas.begin(); it != tropas.end();) {
         if (it->second - dt < 0) {
             // Tropa entrenada
             comunicacion_jugador->sincronizar_entrenamiento(it->first, 0);
-            
-            std::string id_tipo = (it->first);
+            const std::string& id_tipo = it->first;
+            int nuevo_id = ejercito.crear(id_tipo, 
+                comunicacion_jugador->obtener_id());
+            agregar_elemento(nuevo_id, 0, id_tipo);
             it = tropas.erase(it);
-            return id_tipo;
         } else {
             it->second -= dt;
             ++it;
@@ -158,7 +176,6 @@ std::string Jugador::actualizar_tropas(int dt,Ejercito& ejercito) {
             ++it;
         }
     }
-    return std::string("ok");
 }
 IJugador* Jugador::get_jugador(){
     return comunicacion_jugador;

@@ -11,7 +11,7 @@
 namespace modelo {
 
 ArmaCreador::ArmaCreador(){
-
+    inicializar();
 }
 
 void ArmaCreador::inicializar(){

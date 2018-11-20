@@ -10,7 +10,6 @@ namespace modelo { class Unidad; }
 #include "modelo/edificio.h"
 #include "modelo/unidad_base.h"
 #include "modelo/posicion.h"
-#include "conexion/i_jugador.h"
 #include "modelo/terreno.h"
 
 namespace modelo {
@@ -41,8 +40,10 @@ public:
     bool llego_a(Posicion& posicion_);
     void configurar_camino(std::vector<Posicion> nuevo_camino);
     bool en_movimiento();
-    virtual void actualizar_posicion(int dt,Terreno* terreno,
-                std::vector<IJugador*>& jugadores);
+    /**
+     * Devuelve true si hay que sincronizar con los jugadores
+     */
+    virtual bool actualizar_posicion(int dt,Terreno* terreno);
     std::string& get_clase() const;
 };
 

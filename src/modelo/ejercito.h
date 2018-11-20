@@ -12,11 +12,13 @@
 #include "modelo/id.h"
 #include "conexion/i_jugador.h"
 #include "modelo/cosechadora.h"
+#include "modelo/broadcaster.h"
 
 namespace modelo {
 
 class Ejercito{
     private:
+    Broadcaster& comunicacion_jugadores;
     std::unordered_map<int,Unidad> tropas;
     EjercitoCreador prototipos;
     Terreno* terreno;
@@ -25,11 +27,10 @@ class Ejercito{
     std::unordered_map<int,Cosechadora> cosechadoras;
 
     public:
-    Ejercito();
+    Ejercito(Broadcaster& broadcaster);
     void inicializar(Terreno* terreno,const nlohmann::json& ejercito_);
     ~Ejercito();
-    int crear(std::string id_tipo,Posicion& pos,
-        std::vector<IJugador*>& jugadores,int id_propietario);
+    int crear(const std::string& id_tipo, int id_propietario);
     int crear_cosechadora(std::string id_tipo,Posicion& pos,
         std::vector<IJugador*>& jugadores,int id_propietario);    
     void destruir(int id);
@@ -40,7 +41,7 @@ class Ejercito{
     Unidad& get(int id);
     unsigned int get_costo(std::string id_tipo);
     unsigned int get_tiempo(std::string id_tipo);
-    void actualizar_tropas(int dt,std::vector<IJugador*>& jugadores);
+    void actualizar_tropas(int dt);
 };
 }
 #endif

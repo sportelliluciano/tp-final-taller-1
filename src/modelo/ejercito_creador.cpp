@@ -13,7 +13,7 @@ namespace modelo {
 
 EjercitoCreador::EjercitoCreador(){
 }
-void EjercitoCreador::inicializae(Terreno* terreno_,const nlohmann::json& ejercito){
+void EjercitoCreador::inicializar(Terreno* terreno_,const nlohmann::json& ejercito){
     terreno = terreno_;
     using nlohmann::json;
 
@@ -33,7 +33,7 @@ Unidad EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y){
     return Unidad(id,x,y,prototipos_base.at(id_tipo));
 }
 Cosechadora EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_,IJugador* jugador){
-    return Cosechadora(id,x,y,prototipos_base.at(id_tipo),terreno_,jugador);
+    return Cosechadora(id,x,y,prototipos_base.at(id_tipo),*terreno_,jugador);
 }
 unsigned int EjercitoCreador::get_costo(std::string id_tipo){
     return prototipos_base.at(id_tipo).get_costo();

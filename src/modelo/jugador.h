@@ -41,11 +41,12 @@ class Jugador{
     bool empezar_entrenamiento(const std::string& clase,unsigned int costo);
     bool cancelar_construccion(const std::string& clase,unsigned int costo);
     bool cancelar_entrenamiento(const std::string& clase,unsigned int costo);
+    bool ubicar_edificio(const std::string& clase, int celda_x, int celda_y, Infraestructura& inf);
     void agregar_elemento(int id,unsigned int energia_,const std::string& clase);
     void eliminar_elemento(int id,unsigned int energia_consumida);
     bool pertenece(int id);
-    void actualizar_construcciones(int dt,Infraestructura& inf);
-    std::string actualizar_tropas(int dt,Ejercito& ejercito);
+    void actualizar_construcciones(int dt, Infraestructura& infraestructura);
+    void actualizar_entrenamientos(int dt, Ejercito& ejercito);
     IJugador* get_jugador();
 };
 }

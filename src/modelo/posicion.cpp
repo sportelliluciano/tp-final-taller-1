@@ -4,6 +4,8 @@
 
 namespace modelo {
 
+Posicion::Posicion() : x_(0), y_(0), px_x_(0), px_y_(0) { }
+
 Posicion::Posicion(float x, float y) : x_(x), y_(y),
                                         px_x_(x*8), px_y_(y*8){ }
 
@@ -42,6 +44,8 @@ float Posicion::y() const {
 void Posicion::actualizar(float x,float y){
     x_ = x;
     y_ = y;
+    px_x_ = x * 8;
+    px_y_ = y * 8;
 }
 float Posicion::px_x() const {
     return px_x_;
@@ -52,9 +56,11 @@ float Posicion::px_y() const {
 }
 void Posicion::actualizar_px_x(float x){
     px_x_ = x;
+    x_ = x / 8;
 }
 void Posicion::actualizar_px_y(float y){
     px_y_ = y;
+    y_ = y / 8;
 }
 
 } // namespace modelo

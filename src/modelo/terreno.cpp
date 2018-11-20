@@ -238,7 +238,7 @@ void Terreno::eliminar_tropa(Posicion& pos,std::pair<int,int>& dim){
     int dim_y = dim.second;
     for (int j = y_; j < y_ + dim_y; j++){
         for (int i = x_; i < x_ + dim_x; i++){
-            terreno[j][i].eliminar_tropa();
+            terreno.at(j).at(i).eliminar_tropa();
         }
     }
 }

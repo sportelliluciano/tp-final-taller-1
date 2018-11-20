@@ -10,31 +10,37 @@
 #include "modelo/arma_creador.h"
 #include "modelo/edificio.h"
 #include "modelo/id.h"
+#include "modelo/broadcaster.h"
 
 namespace modelo {
     
-Ejercito::Ejercito(){
-}
+Ejercito::Ejercito(Broadcaster& broadcaster) 
+: comunicacion_jugadores(broadcaster) 
+{ }
+
 void Ejercito::inicializar(Terreno* terreno_,const nlohmann::json& ejercito_){
     prototipos.inicializar(terreno_,ejercito_);
     terreno=terreno_;
 }
+
 Ejercito::~Ejercito(){
 }
-int Ejercito::crear(std::string id_tipo,Posicion& pos,
-        std::vector<IJugador*>& jugadores,int id_propietario){
+
+int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
+    Posicion pos(43,56);
     Posicion posicion = terreno->obtener_posicion_libre_cercana(pos);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     //std::cout << "Pase los condicionales." << '\n';
     int nuevo_id = id_.nuevo_id();
     tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,posicion.x(),posicion.y()));
     terreno->agregar_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo));
-    for (auto it=jugadores.begin();it != jugadores.end();++it){
-            (*it)->crear_tropa(nuevo_id,id_tipo,posicion.px_x(),
-                            posicion.px_y(),prototipos.get_vida(id_tipo),id_propietario);
-    }
+    comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        j->crear_tropa(nuevo_id, id_tipo, posicion.px_x(), posicion.px_y(),
+            prototipos.get_vida(id_tipo), id_propietario);
+    });
     return nuevo_id;
 }
+
 int Ejercito::crear_cosechadora(std::string id_tipo,Posicion& pos,
         std::vector<IJugador*>& jugadores,int id_propietario){
     Posicion posicion = terreno->obtener_posicion_libre_cercana(pos);
@@ -66,17 +72,28 @@ void Ejercito::destruir(int id){
     }
     //crear y mandar el evento
 }
-void Ejercito::mover(int id,int x,int y,IJugador* jugador){
-    std::vector<Posicion> a_estrella = terreno->buscar_camino_minimo(tropas.at(id).get_posicion(), 
-                                                           Posicion(x,y));
+
+void Ejercito::mover(int id, int x, int y, IJugador*) {
+    std::vector<Posicion> a_estrella = 
+        terreno->buscar_camino_minimo(tropas.at(id).get_posicion(), 
+            Posicion(x,y));
+    
     tropas.at(id).configurar_camino(a_estrella);
+    
     tropas_en_movimiento.push_back(id);
+    
     std::vector<std::pair<int,int>> v;
-    for (auto it = a_estrella.begin(); it!= a_estrella.end();++it){
-        v.emplace_back(std::pair<int,int>((*it).x(),(*it).y()));
+    
+    for (auto it = a_estrella.begin(); it!= a_estrella.end();++it) {
+        // Convertir a píxeles
+        v.emplace_back(std::pair<int,int>((*it).px_x(), (*it).px_y()));
     }
-    jugador->mover_tropa(id,v);
+    
+    comunicacion_jugadores.broadcast([&] (IJugador *j) {
+        j->mover_tropa(id,v);
+    });
 }
+
 void Ejercito::mover_cosechadora(int id,int x,int y,IJugador* jugador){
     std::vector<Posicion> a_estrella = terreno->buscar_camino_minimo(cosechadoras.at(id).get_posicion(), 
                                                            Posicion(x,y));
@@ -104,21 +121,25 @@ void Ejercito::atacar(Edificio& edificio,int id_atacante){
         tropas.at(id_atacante).atacar(edificio);
     }
 }
-Unidad& Ejercito::get(int id){
+
+Unidad& Ejercito::get(int id) {
     if (cosechadoras.count(id)!=0){
         return cosechadoras.at(id);
     } else{
         return tropas.at(id);
     }
 }
-unsigned int Ejercito::get_costo(std::string id_tipo){
+
+unsigned int Ejercito::get_costo(std::string id_tipo) {
     return prototipos.get_costo(id_tipo);
 }
-void Ejercito::actualizar_tropas(int dt,
-                                std::vector<IJugador*>& jugadores){
+
+void Ejercito::actualizar_tropas(int dt) {
     for (std::vector<int>::iterator it = tropas_en_movimiento.begin();
-            it != tropas_en_movimiento.end(); ++it){
-        if (!tropas.at(*it).en_movimiento()){
+            it != tropas_en_movimiento.end();)
+    {
+        Unidad& unidad = tropas.at(*it);
+        if (!unidad.en_movimiento()){
             it = tropas_en_movimiento.erase(it);
             continue;
         }
@@ -135,7 +156,16 @@ void Ejercito::actualizar_tropas(int dt,
             continue;        
         }
         */
-        tropas.at(*it).actualizar_posicion(dt,terreno,jugadores);
+        
+        if (unidad.actualizar_posicion(dt,terreno)) {
+            comunicacion_jugadores.broadcast([this, &unidad] (IJugador *j) {
+                j->sincronizar_tropa(unidad.get_id(), 
+                    unidad.get_posicion().px_x(),
+                    unidad.get_posicion().px_y()
+                );
+            });
+        }
+        ++it;
     }
 }
 unsigned int Ejercito::get_tiempo(std::string id_tipo){

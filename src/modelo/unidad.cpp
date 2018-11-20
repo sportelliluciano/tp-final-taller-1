@@ -8,7 +8,6 @@
 #include "modelo/edificio.h"
 #include "modelo/unidad_base.h"
 #include "modelo/posicion.h"
-#include "conexion/i_jugador.h"
 
 namespace modelo {
 
@@ -61,6 +60,7 @@ unsigned int Unidad::y(){
 }*/
 void Unidad::configurar_camino(std::vector<Posicion> nuevo_camino){
     camino = nuevo_camino;
+    paso_actual = 1;
     esta_en_camino = true;
 }
 
@@ -69,65 +69,76 @@ bool Unidad::en_movimiento(){
 }
 
 bool Unidad::llego_a(Posicion& posicion_) {
-    return (abs(posicion_.x() - posicion.x()) < 1) && 
-        (abs(posicion_.y() - posicion.y()) < 1);
+    int x_destino = posicion_.px_x();
+    int y_destino = posicion_.px_y();
+    int x_actual = posicion.px_x();
+    int y_actual = posicion.px_y();
+    return (x_destino == x_actual) && (y_destino == y_actual);
 }
-void Unidad::actualizar_posicion(int dt,Terreno* terreno,
-                    std::vector<IJugador*>& jugadores) {
+
+bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
+    if (!esta_en_camino)
+        return false;
+    
+    bool resincronizar = false;
     if (llego_a(camino[paso_actual])) {
-        std::cout << "Llegue a la celda:  "<<camino[paso_actual].x()<<camino[paso_actual].y() << std::endl;
-        //if (paso_actual > 0){
-            for (auto it=jugadores.begin();it != jugadores.end();++it){
-            (*it)-> sincronizar_tropa(0,
-                                        posicion.x()*8,posicion.y()*8);
-            }
-            terreno->eliminar_tropa(posicion,unidad_base.get_dimensiones());
-            terreno->agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
-        //}
+        terreno->eliminar_tropa(posicion,unidad_base.get_dimensiones());
+        terreno->agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
+        resincronizar = true;
         paso_actual++;
 
         if (paso_actual >= camino.size()) {
             esta_en_camino = false;
             paso_actual = 0;
-        } 
-    }
-    std::cout << "Antes de avanzar x: "<<posicion.x() <<" en px: "<<posicion.px_x() << std::endl;
-    std::cout << "Antes de avanzar y: "<<posicion.y() <<" en px: "<<posicion.px_y() << std::endl;
-    int x_destino = camino[paso_actual].x();
-    int y_destino = camino[paso_actual].y();
-    float vx = 0, vy = 0;
-    std::cout << "Destino x: "<<x_destino << std::endl;
-    std::cout << "Destino y: "<<y_destino << std::endl;
-    if (abs(x_destino - posicion.x()) > 0) {
-        vx = (x_destino - posicion.px_x()/8) / abs(x_destino - posicion.px_x()/8);
-        vx *= 0.4 / 15;
+            return resincronizar;
+        }
     }
 
-    if (abs(y_destino - posicion.y()) > 0) {
-        vy = (y_destino - posicion.px_y()/8) / abs(y_destino - posicion.px_y()/8);
-        vy *= 0.4 / 15;
-    }
+    float velocidad = 16; // Velocidad de la tropa en unidades del enunciado
 
-    float dx = vx * dt,
-        dy = vy * dt;
-    std::cout << "paso en x: "<<dx << std::endl;
-    std::cout << "Paso en y: "<<dy << std::endl;
-    if (abs(dx) > abs(posicion.px_x() - x_destino))
-        posicion.actualizar_px_x(x_destino);
+    int x_destino = camino[paso_actual].px_x();
+    int y_destino = camino[paso_actual].px_y();
+    int x_actual = posicion.px_x();
+    int y_actual = posicion.px_y();
+    float fx_actual = posicion.px_x();
+    float fy_actual = posicion.px_y();
+    int vx = 0, vy = 0;
+
+    if (x_destino != x_actual)
+        vx = x_destino - x_actual;
+    if (y_destino != y_actual)
+        vy = y_destino - y_actual;
+
+    if ((vx == 0) && (vy == 0))
+        return false;
+    
+    float veloc_x = vx / sqrt(vx*vx + vy*vy),
+          veloc_y = vy / sqrt(vx*vx + vy*vy);
+    
+    veloc_x *= ((0.4 / 15) / 16) * unidad_base.get_velocidad();
+    veloc_y *= ((0.4 / 15) / 16) * unidad_base.get_velocidad();
+
+    float dx = veloc_x * dt,
+          dy = veloc_y * dt;
+
+    if (abs(dx) < abs(x_destino - fx_actual))
+        fx_actual += dx;
     else
-        posicion.actualizar_px_x(posicion.px_x()+ dx);
+        fx_actual = x_destino;
         
-    if (abs(dy) > abs(posicion.px_y() - y_destino))
-        posicion.actualizar_px_y(y_destino);
+    if (abs(dy) < abs(y_destino - fy_actual))
+        fy_actual += dy;
     else
-        posicion.actualizar_px_y(posicion.px_y()+ dy);
-        
-    posicion.actualizar(std::floor(posicion.px_x()/8),
-                        std::floor(posicion.px_y()/8));
-    std::cout << "Despues de avanzar x: "<<posicion.x() <<" en px: "<<posicion.px_x() << std::endl;
-    std::cout << "Despues de avanzar y: "<<posicion.y() <<" en px: "<<posicion.px_y() << std::endl;                    
+        fy_actual = y_destino;
+
+    posicion.actualizar_px_x(fx_actual);
+    posicion.actualizar_px_y(fy_actual);
+    return resincronizar;
 }
+
 std::string& Unidad::get_clase() const {
     return unidad_base.get_clase();
 }
+
 }  // namespace modelo
+

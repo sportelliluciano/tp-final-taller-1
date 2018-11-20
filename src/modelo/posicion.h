@@ -24,7 +24,7 @@ public:
      *
      * Inicializa la posición en (0, 0).
      */
-    Posicion() = default;
+    Posicion();
 
     /**
      * \brief Constructor desde una posición.
