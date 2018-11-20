@@ -113,6 +113,7 @@ void Ejercito::atacar(int id_victima,int id_atacante){
     }else {
         //tropas.at(id_atacante).atacar(tropas.at(id_victima));
         tropas.at(id_atacante).configurar_ataque(&tropas.at(id_victima));
+        tropas_atacando.push_back(id_atacante);
     }
 }
 void Ejercito::atacar(Edificio& edificio,int id_atacante){
@@ -173,40 +174,49 @@ void Ejercito::actualizar_tropas(int dt) {
     for (std::vector<int>::iterator it = tropas_atacando.begin();
             it != tropas_atacando.end();)
     {
+        bool borrado = false;
         Unidad& unidad = tropas.at(*it);//ojo:se podria morir, verficar que este en el un_map
         if (!unidad.esta_atacando()){
             it = tropas_atacando.erase(it);
             continue;
         }
+
         int vida_nueva_victima = unidad.actualizar_ataque(dt,terreno);
         int id_victima = unidad.id_victima();
+        // comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        //     j->atacar_tropa(id_victima, tropas.at(id_victima).get_vida());
+        // });
         if (vida_nueva_victima <= 0){
-            //falta ver el tema del rango
-            for (std::vector<int>::iterator it2 = tropas_atacando.begin();
-                it2 != tropas_atacando.end();)
-            {
-                Unidad& atacante = tropas.at(*it2);
-                if(atacante.id_victima() == id_victima){
-                    atacante.parar_ataque();
-                }
-                if(*it == id_victima){
-                    it = tropas_atacando.erase(it);//esto rompe???
-                }
-            }
+            // //falta ver el tema del rango
+            // for (std::vector<int>::iterator it2 = tropas_atacando.begin();
+            //     it2 != tropas_atacando.end();)
+            // {
+            //     Unidad& atacante = tropas.at(*it2);
+            //     if(atacante.id_victima() == id_victima){
+            //         atacante.parar_ataque();
+            //     }
+            //     if(*it == id_victima){
+            //         it = tropas_atacando.erase(it);//esto rompe???
+            //     } else {
+            //         ++it;
+            //     }
+            // }
             //comunicacion_jugadores.broadcast()//destruir_tropa(id_victima)
-            //comunicacion_jugadores.broadcast([this, &unidad] (IJugador *j) {
-            //    j->destruir_tropa(id_victima
-            //    );
-            //});
+            it = tropas_atacando.erase(it);
+            borrado = true;
+            comunicacion_jugadores.broadcast([&] (IJugador *j) {
+               j->destruir_tropa(id_victima);
+            });
             //eliminar tropa muerta del modelo y comunicar
-            tropas.erase(id_victima);
+            //tropas.erase(id_victima);
             //como le aviso a jugador(clase Jugador)??
         }
-        //comunicacion_jugadores.broadcast([this, &unidad] (IJugador *j) {
-        //        j->atacar_tropa(id_vicitma,vida_nueva_victima
-        //        );
-        //});
+        comunicacion_jugadores.broadcast([&] (IJugador *j) {
+               j->atacar_tropa(id_victima,vida_nueva_victima);
+        });
         //comunicacion_jugadores.broadcast()//atacar_tropa(id_victima,vida_nueva_victima)
+        if (!borrado)
+            ++it;
     }
 }
 unsigned int Ejercito::get_tiempo(std::string id_tipo){

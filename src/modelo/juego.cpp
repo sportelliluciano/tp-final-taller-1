@@ -148,7 +148,7 @@ void Juego::atacar_tropa(IJugador* jugador,
     }        
     for (int id_ : ids_atacantes) {
         for (auto it=jugadores.begin();it != jugadores.end();++it){
-            if ((it->second).pertenece(id_) && (it->second).get_casa()==casa)return;
+            //if ((it->second).pertenece(id_) && (it->second).get_casa()==casa)return;
         }
         ejercito.atacar(id_atacado,id_);
     }

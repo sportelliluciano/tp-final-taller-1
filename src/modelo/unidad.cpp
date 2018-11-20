@@ -32,8 +32,8 @@ int Unidad::recibir_dano(unsigned int dano){
     return vida;
 }
 
-int Unidad::atacar(Unidad* victima){
-    return unidad_base.atacar_a(victima);
+int Unidad::atacar(Unidad* victima_){
+    return unidad_base.atacar_a(victima_);
 }
 
 void Unidad::atacar(Edificio& edificio){
@@ -95,8 +95,6 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
         }
     }
 
-    float velocidad = 16; // Velocidad de la tropa en unidades del enunciado
-
     int x_destino = camino[paso_actual].px_x();
     int y_destino = camino[paso_actual].px_y();
     int x_actual = posicion.px_x();
@@ -144,19 +142,16 @@ void Unidad::configurar_ataque(Unidad* victima_){
 }
 
 //NOTA: aca se puede chequear el rango
-bool Unidad::actualizar_ataque(int dt, Terreno* terreno) {
+int Unidad::actualizar_ataque(int dt, Terreno* terreno) {
     tiempo_para_atacar+=dt;
     if (!victima) return false;
-    if (tiempo_para_atacar >= 1/(1000*unidad_base.obtener_frecuencia())){
-        if (!atacar(victima)){
+    if (tiempo_para_atacar >= 1000/(unidad_base.obtener_frecuencia())){
+        tiempo_para_atacar = 0;
             //murio la victima
             //victima=nullptr;
             //atacando=false;
-            return false;
-        }
-        tiempo_para_atacar = 0;
     }
-    return true;
+    return (atacar(victima));
 }
 
 std::string& Unidad::get_clase() const {

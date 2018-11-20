@@ -47,7 +47,7 @@ public:
      * Devuelve true si hay que sincronizar con los jugadores
      */
     virtual bool actualizar_posicion(int dt,Terreno* terreno);
-    virtual bool actualizar_ataque(int dt,Terreno* terreno);
+    virtual int actualizar_ataque(int dt,Terreno* terreno);
     void configurar_ataque(Unidad* victima);
     std::string& get_clase() const;
     bool esta_atacando();

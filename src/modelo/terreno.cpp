@@ -192,8 +192,8 @@ bool Terreno::tiene_edificio(int x_, int y_){
 }
 
 void Terreno::agregar_edificio(int x_, int y_,std::pair<int,int>& dim){
-    int dim_x = dim.first;
-    int dim_y = dim.second;
+    int dim_x = dim.first*4;
+    int dim_y = dim.second*4;
     for (int j = y_; j < y_ + dim_y; j++){
         for (int i = x_; i < x_ + dim_x; i++){
             terreno[j][i].agregar_edificio();
