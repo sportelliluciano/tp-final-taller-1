@@ -48,6 +48,10 @@ int Juego::obtener_dinero() const {
     return dinero;
 }
 
+int Juego::obtener_energia() const {
+    return energia;
+}
+
 Posicion Juego::obtener_centro() {
     Edificio* centro = infraestructura.obtener_centro_construccion();
     if (!centro)

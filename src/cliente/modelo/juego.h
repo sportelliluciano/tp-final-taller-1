@@ -60,6 +60,11 @@ public:
     int obtener_dinero() const;
 
     /**
+     * \brief Obtiene la energia que el jugador posee actualmente.
+     */
+    int obtener_energia() const;
+
+    /**
      * \brief Obtiene la posición central del jugador.
      * 
      * La posición central es el centro de construcciones.

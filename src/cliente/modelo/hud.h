@@ -7,6 +7,7 @@
 #include "cliente/modelo/hud/boton.h"
 #include "cliente/modelo/hud/botonera.h"
 #include "cliente/modelo/hud/dinero.h"
+#include "cliente/modelo/hud/energia.h"
 #include "cliente/modelo/hud/fps.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
@@ -45,8 +46,9 @@ private:
     
     Tostador tostador;
     
-    Boton mutear_sonido, mutear_musica;
+    Boton mutear_sonido, mutear_musica, salir;
     Dinero dinero;
+    Energia energia;
     FPS fps;
 
     void toggle_sonido();

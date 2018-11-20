@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "cliente/modelo/hud/area_juego.h"
+#include "cliente/modelo/hud/energia.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
 #include "cliente/servidor.h"
@@ -41,7 +42,8 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
   panel_lateral(ventana.ancho() - ANCHO_BOTONERA, 0, 
     ANCHO_BOTONERA, ventana.alto()),
   tostador(MARGEN_TOSTADOR_X, MARGEN_TOSTADOR_Y),
-  dinero(juego)
+  dinero(juego),
+  energia(juego)
 {
     setear_hijo(&base);
     base.empaquetar_al_frente(area_general);
@@ -73,6 +75,10 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
     modo_vender.set_autopadding(true);
     modo_vender.registrar_click([this](){ click_modo_vender(); });    
     
+    salir.set_tamanio(42, 32);
+    salir.set_imagen("./assets/nuevos/salir.png");
+    salir.set_padding(5, 4);
+    salir.registrar_click([this] () { juego.detener(); });
 
     mutear_sonido.set_tamanio(42, 32);
     mutear_sonido.set_imagen("./assets/nuevos/sin-sonido.png");
@@ -112,8 +118,10 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
         botonera_entrenamiento.agregar_widget(botones_entrenamiento.back());
     }
 
+    barra_superior.empaquetar_al_frente(salir);
     barra_superior.empaquetar_al_frente(mutear_sonido);
     barra_superior.empaquetar_al_frente(mutear_musica);
+    barra_superior.empaquetar_al_fondo(energia);
     barra_superior.empaquetar_al_fondo(dinero);
     barra_superior.empaquetar_al_fondo(fps);
 
