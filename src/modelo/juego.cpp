@@ -141,7 +141,10 @@ void Juego::atacar_tropa(IJugador* jugador,
 {
     std::string casa;
     for (auto it=jugadores.begin();it != jugadores.end();++it){
-        if ((it->second).pertenece(id_atacado))casa = (it->second).get_casa();
+        if ((it->second).pertenece(id_atacado)){
+            casa = (it->second).get_casa();
+            break;
+        }
     }        
     for (int id_ : ids_atacantes) {
         for (auto it=jugadores.begin();it != jugadores.end();++it){

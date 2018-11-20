@@ -19,8 +19,8 @@ ArmaBase::ArmaBase(const nlohmann::json& data_arma){
 }
 ArmaBase::~ArmaBase(){
 }
-void ArmaBase::atacar_a(Unidad* victima){
-    victima->recibir_dano(dano);
+int ArmaBase::atacar_a(Unidad* victima){
+    return victima->recibir_dano(dano);
     //if (bonificaciones.count(victima.get_id())){
         //victima.recibir_dano(bonificaciones[victima.get_id()]);
     //}
@@ -30,6 +30,9 @@ void ArmaBase::atacar_a(Edificio* victima){
     //if (bonificaciones.count(victima.get_id())){
         //victima.recibir_dano(bonificaciones[victima.get_id()]);
     //}
+}
+unsigned int ArmaBase::obtener_frecuencia(){
+    return frecuencia;
 }
 
 } // namespace modelo

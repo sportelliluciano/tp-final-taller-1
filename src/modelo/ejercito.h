@@ -24,6 +24,7 @@ class Ejercito{
     Terreno* terreno;
     Id id_;
     std::vector<int> tropas_en_movimiento;
+    std::vector<int> tropas_atacando;
     std::unordered_map<int,Cosechadora> cosechadoras;
 
     public:

@@ -34,8 +34,8 @@ UnidadBase::UnidadBase(const nlohmann::json& data_unidad,Arma& arma_):
 UnidadBase::~UnidadBase() { 
 
 }
-void UnidadBase::atacar_a(Unidad* victima){
-    arma.atacar_a(victima);
+int UnidadBase::atacar_a(Unidad* victima){
+    return arma.atacar_a(victima);
 }
 void UnidadBase::atacar_a(Edificio* victima){
     arma.atacar_a(victima);
@@ -60,5 +60,8 @@ std::pair<int,int>& UnidadBase::get_dimensiones() {
 }
 std::string& UnidadBase::get_clase() {
     return clase;
+}
+unsigned int UnidadBase::obtener_frecuencia(){
+    return arma.obtener_frecuencia();
 }
 } // namespace modelo

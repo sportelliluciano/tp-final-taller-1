@@ -21,8 +21,9 @@ public:
     Arma(ArmaBase& info_base);
     //Arma(ArmaBase& info_base, ArmaCaracteristicas& caracteristicas);
     ~Arma();
-    void atacar_a(Unidad* victima);
+    int atacar_a(Unidad* victima);
     void atacar_a(Edificio* victima);
+    unsigned int obtener_frecuencia();
 };
 
 } // namespace modelo

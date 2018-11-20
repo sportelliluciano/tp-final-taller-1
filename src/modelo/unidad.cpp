@@ -26,13 +26,14 @@ void Unidad::mover(int x, int y){
     posicion.actualizar(x,y);
 }
 */
-void Unidad::recibir_dano(unsigned int dano){
+//false = muerto ,true= vivo
+int Unidad::recibir_dano(unsigned int dano){
     vida -= dano;
-    //if (vida <= 0) destruir
+    return vida;
 }
 
-void Unidad::atacar(Unidad& victima){
-    unidad_base.atacar_a(&victima);
+int Unidad::atacar(Unidad* victima){
+    return unidad_base.atacar_a(victima);
 }
 
 void Unidad::atacar(Edificio& edificio){
@@ -136,9 +137,41 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
     return resincronizar;
 }
 
+void Unidad::configurar_ataque(Unidad* victima_){
+    victima = victima_;
+    atacando = true;
+    tiempo_para_atacar = 0;
+}
+
+//NOTA: aca se puede chequear el rango
+bool Unidad::actualizar_ataque(int dt, Terreno* terreno) {
+    tiempo_para_atacar+=dt;
+    if (!victima) return false;
+    if (tiempo_para_atacar >= 1/(1000*unidad_base.obtener_frecuencia())){
+        if (!atacar(victima)){
+            //murio la victima
+            //victima=nullptr;
+            //atacando=false;
+            return false;
+        }
+        tiempo_para_atacar = 0;
+    }
+    return true;
+}
+
 std::string& Unidad::get_clase() const {
     return unidad_base.get_clase();
 }
-
+bool Unidad::esta_atacando(){
+    return atacando;
+}
+void Unidad::parar_ataque(){
+    atacando = false;
+    victima = nullptr;
+    tiempo_para_atacar=0;
+}
+int Unidad::id_victima(){
+    return victima -> get_id();
+}
 }  // namespace modelo
 

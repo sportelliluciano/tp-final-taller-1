@@ -19,6 +19,9 @@ private:
     int id;
     int vida;
     //UnidadBase& unidad_base;
+    int tiempo_para_atacar = 0;
+    bool atacando = false;
+    Unidad* victima = nullptr;
 
 protected:
     UnidadBase& unidad_base;
@@ -30,8 +33,8 @@ protected:
 public:
     Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
     ~Unidad();
-    void recibir_dano(unsigned int dano);
-    void atacar(Unidad& victima);
+    int recibir_dano(unsigned int dano);
+    int atacar(Unidad* victima);
     void atacar(Edificio& edificio);
     int get_id();
     unsigned int get_vida();
@@ -44,7 +47,12 @@ public:
      * Devuelve true si hay que sincronizar con los jugadores
      */
     virtual bool actualizar_posicion(int dt,Terreno* terreno);
+    virtual bool actualizar_ataque(int dt,Terreno* terreno);
+    void configurar_ataque(Unidad* victima);
     std::string& get_clase() const;
+    bool esta_atacando();
+    void parar_ataque();
+    int id_victima();
 };
 
 } // namespace modelo

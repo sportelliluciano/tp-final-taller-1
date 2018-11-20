@@ -27,7 +27,7 @@ public:
     //UnidadBase();
     UnidadBase(const nlohmann::json& data_unidad,Arma& arma_);
     ~UnidadBase();
-    void atacar_a(Unidad* victima);
+    int atacar_a(Unidad* victima);
     void atacar_a(Edificio* edificio);
     unsigned int get_rango() const;
     unsigned int get_velocidad() const;
@@ -36,6 +36,7 @@ public:
     unsigned int get_vida() const;
     std::pair<int,int>& get_dimensiones();
     std::string& get_clase();
+    unsigned int obtener_frecuencia();
 };
 
 } // namespace modelo

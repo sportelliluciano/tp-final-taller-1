@@ -18,12 +18,14 @@ Arma::Arma(ArmaBase& info_base_,ArmaCaracteristicas& caracteristicas_):
 //Arma::Arma(){}
 Arma::~Arma(){}
 
-void Arma::atacar_a(Unidad* victima){
-    arma_base.atacar_a(victima);
+int Arma::atacar_a(Unidad* victima){
+    return arma_base.atacar_a(victima);
 }
 
 void Arma::atacar_a(Edificio* victima){
     arma_base.atacar_a(victima);
 }
-
+unsigned int Arma::obtener_frecuencia(){
+    return arma_base.obtener_frecuencia();
+}
 } // namespace modelo
