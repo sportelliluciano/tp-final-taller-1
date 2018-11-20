@@ -8,6 +8,7 @@
 #include "libs/json.hpp"
 
 #include "cliente/modelo/sprite_animado.h"
+#include "cliente/modelo/hud/barra_vida.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -155,6 +156,7 @@ private:
     int velocidad = 0;
 
     int last_ms = 0;
+    BarraVida barra_vida;
 };
 
 } // namespace cliente

@@ -133,6 +133,55 @@ void Textura::limpiar(int r, int g, int b, int a) {
         throw ErrorSDL("SDL_SetRenderTarget");
 }
 
+void Textura::dibujar_rectangulo(const Rectangulo& rc, int ancho_linea, 
+    Uint8 r, Uint8 g, Uint8 b, Uint8 a) 
+{
+    SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
+    if (SDL_SetRenderTarget(renderer, textura) != 0)
+        throw ErrorSDL("SDL_SetRenderTarget");
+    
+    Uint8 rr, gg, bb, aa;
+    SDL_GetRenderDrawColor(renderer, &rr, &gg, &bb, &aa);
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+
+    Rectangulo linea = Rectangulo(rc.x() + ancho_linea, rc.y(), rc.ancho(), 
+        ancho_linea);
+    SDL_RenderFillRect(renderer, &linea.rect());
+
+    linea.y(rc.y() + rc.alto());
+    SDL_RenderFillRect(renderer, &linea.rect());
+
+    linea.x(rc.x());
+    linea.y(rc.y());
+    linea.ancho(ancho_linea);
+    linea.alto(rc.alto() + ancho_linea);
+    SDL_RenderFillRect(renderer, &linea.rect());
+
+    linea.x(rc.x() + rc.ancho());
+    SDL_RenderFillRect(renderer, &linea.rect());
+    SDL_SetRenderDrawColor(renderer, rr, gg, bb, aa);
+    if (SDL_SetRenderTarget(renderer, old_target) != 0)
+        throw ErrorSDL("SDL_SetRenderTarget");
+}
+
+void Textura::rellenar_rectangulo(const Rectangulo& rc,Uint8 r, Uint8 g, 
+    Uint8 b, Uint8 a)
+{
+    SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
+    if (SDL_SetRenderTarget(renderer, textura) != 0)
+        throw ErrorSDL("SDL_SetRenderTarget");
+    
+    Uint8 rr, gg, bb, aa;
+    SDL_GetRenderDrawColor(renderer, &rr, &gg, &bb, &aa);
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+
+    SDL_RenderFillRect(renderer, &rc.rect());
+
+    SDL_SetRenderDrawColor(renderer, rr, gg, bb, aa);
+    if (SDL_SetRenderTarget(renderer, old_target) != 0)
+        throw ErrorSDL("SDL_SetRenderTarget");
+}
+
 Textura::~Textura() {
     if (textura)
         SDL_DestroyTexture(textura);

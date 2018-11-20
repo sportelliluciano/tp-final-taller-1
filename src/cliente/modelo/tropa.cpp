@@ -1,5 +1,6 @@
 #include "cliente/modelo/tropa.h"
 
+#include "cliente/modelo/hud/barra_vida.h"
 #include "cliente/video/log.h"
 #include "cliente/video/ventana.h"
 
@@ -44,6 +45,7 @@ Tropa::Tropa(const nlohmann::json& data) {
     fx_actual = x_destino = x_actual = 0;
     fy_actual = y_destino = y_actual = 0;
     id_tropa = -1;   
+    vida = 50;
 }
 
 void Tropa::inicializar(int id, const Posicion& posicion, int vida_, 
@@ -79,6 +81,10 @@ void Tropa::renderizar(Ventana& ventana, int x, int y) {
     }
 
     sprite_tropa.renderizar(ventana, x, y);
+    barra_vida.renderizar(ventana, 
+        x - sprite_tropa.obtener_ancho(ventana) / 2, 
+        y - sprite_tropa.obtener_alto(ventana) / 2,
+        vida);
 }
 
 static int calcular_posicion_sprite(float veloc_x, float veloc_y) {

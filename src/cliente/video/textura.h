@@ -68,6 +68,18 @@ public:
      * \brief Limpia la textura a un fondo de color, por defecto negro.
      */
     void limpiar(int r = 0, int g = 0, int b = 0, int a = 0);
+
+    /**
+     * \brief Dibuja un rectángulo sin relleno sobre la textura.
+     */
+    void dibujar_rectangulo(const Rectangulo& rc, int ancho_linea, 
+        Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+
+    /**
+     * \brief Dibuja un rectángulo con relleno sobre la textura.
+     */
+    void rellenar_rectangulo(const Rectangulo& rc,
+        Uint8 r, Uint8 g, Uint8 b, Uint8 a);
     
     Rectangulo obtener_rect() const;
     
