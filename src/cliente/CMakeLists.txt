@@ -1,20 +1,16 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-add_subdirectory(lanzador)
-add_subdirectory(video)
-add_subdirectory(sonido)
-add_subdirectory(modelo)
-
 # Tomar los archivos fuente del cliente (todos los *.cpp)
 file(GLOB libcliente_srcs *.cpp)
 file(GLOB eventos_cliente_src eventos/*.cpp)
 list(APPEND libcliente_srcs ${eventos_cliente_src})
 list(REMOVE_ITEM libcliente_srcs "main.cpp")
 
+add_subdirectory(video)
+add_subdirectory(sonido)
+add_subdirectory(modelo)
+add_subdirectory(lanzador)
+
 # Generar una libería estática con todo el cliente EXCEPTO el main
 add_library(libcliente ${libcliente_srcs})
 target_link_libraries(libcliente lanzadorcliente conexion clientevideo clientemodelo clientesonido)
-
-# La idea de generar la librería es poder linkear más adelante con el
-#  ejecutable de pruebas unitarias.
-#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")

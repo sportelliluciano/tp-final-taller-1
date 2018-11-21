@@ -1,14 +1,21 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 project(dune-remake)
 
+set (CMAKE_BUILD_TYPE Debug)
+
 # Modo DEBUG
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0 -fno-inline" CACHE STRING "" FORCE)
+set (CMAKE_CXX_FLAGS_DEBUG "-ggdb -O0 -fno-inline")
+#set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
 #### FIN MODO DEBUG
 
-# Flags de compilación a utilizar **para** el source.
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic")
+# Estándar C++11
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 en lugar de -std=gnu++11
+
+# Flags de compilación a utilizar en general.
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Wno-sign-conversion")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wshadow -Wpointer-arith")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunreachable-code -Wformat=2")
@@ -16,10 +23,14 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunreachable-code -Wformat=2")
 # Todos los #include son relativos a src
 include_directories(src)
 
-add_subdirectory(src)
+add_subdirectory(src/conexion)
+add_subdirectory(src/cliente)
+add_subdirectory(src/modelo)
+add_subdirectory(src/servidor)
 
 # Generar el cliente
 add_executable(cliente src/cliente/main.cpp)
+#target_link_libraries(cliente asan libcliente)
 target_link_libraries(cliente libcliente)
 
 # Generar el servidor
