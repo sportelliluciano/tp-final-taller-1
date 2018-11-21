@@ -23,12 +23,13 @@ void Tostador::renderizar(Ventana& ventana, const Posicion&) {
     int dy = 0;
     for (auto it=tostadas.begin(); it != tostadas.end();) {
         Tostada& tostada = *it;
-        if (tostada.esta_terminada())
+        if (tostada.esta_terminada()) {
             it = tostadas.erase(it);
-        else
-            ++it;
+            continue;
+        }
         tostada.renderizar(ventana, pos_x, pos_y + dy);
         dy += tostada.obtener_alto();
+        ++it;
     }
 }
 
