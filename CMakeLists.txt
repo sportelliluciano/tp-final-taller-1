@@ -3,11 +3,14 @@ cmake_minimum_required(VERSION 3.1)
 project(dune-remake)
 
 set (CMAKE_BUILD_TYPE Debug)
+option(CLIENTE_USAR_ASAN "Compilar el cliente con address sanitizer" OFF)
 
 # Modo DEBUG
 set (CMAKE_CXX_FLAGS_DEBUG "-ggdb -O0 -fno-inline")
-#set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
-#### FIN MODO DEBUG
+
+if(CLIENTE_USAR_ASAN)
+ set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
+endif(CLIENTE_USAR_ASAN)
 
 # Estándar C++11
 set (CMAKE_CXX_STANDARD 11)
@@ -30,8 +33,11 @@ add_subdirectory(src/servidor)
 
 # Generar el cliente
 add_executable(cliente src/cliente/main.cpp)
-#target_link_libraries(cliente asan libcliente)
-target_link_libraries(cliente libcliente)
+if(CLIENTE_USAR_ASAN)
+ target_link_libraries(cliente asan libcliente)
+else(CLIENTE_USAR_ASAN)
+ target_link_libraries(cliente libcliente)
+endif(CLIENTE_USAR_ASAN)
 
 # Generar el servidor
 add_executable(servidor src/servidor/main.cpp)
