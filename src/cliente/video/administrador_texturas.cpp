@@ -13,7 +13,7 @@ AdministradorTexturas::AdministradorTexturas(SDL_Renderer *renderer_) {
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
         throw ErrorSDL("IMG_Init", IMG_GetError());
     renderer = renderer_;
-    fuente = TTF_OpenFont("../data/PatrickHand-Regular.ttf", 16);
+    fuente = TTF_OpenFont("./assets/fuente.ttf", 16);
     if (!fuente)
         throw ErrorSDL("TTF_OpenFont", TTF_GetError());
 }

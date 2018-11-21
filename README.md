@@ -1,10 +1,64 @@
 # Trabajo práctico final de Taller 1: Dune 2000
 
-#### Dependencias del cliente:
+### Para compilar el cliente
+#### Bibliotecas requeridas:
 - `libsdl2-dev`
 - `libsdl2-image-dev`
 - `libsdl2-mixer-dev`
 - `qt5-default`
+
+#### Compilación
+Para compilar el proyecto (cliente y servidor) se deben utilizar los siguientes 
+comandos, una vez clonado el repositorio:
+```bash
+~/tp-final-taller-1 $ mkdir build
+~/tp-final-taller-1 $ cd build
+~/tp-final-taller-1/build $ cmake ..
+~/tp-final-taller-1/build $ make
+```
+Observar que la carpeta build esta ignorada en el `.gitignore`.
+
+#### Archivos requeridos
+El cliente requiere que todos los sprites del juego, las imágenes de los botones,
+los sonidos y las fuentes estén en una estructura de carpetas con la siguiente
+forma:
+```
+build/
+├── cliente*
+└── assets/
+    ├── imgs
+    |   └── imgs
+    |       ├── 00001.bmp
+    |       ├── 00002.bmp
+    |       ├── ...
+    |       └── 05104.bmp
+    ├── sonidos
+    |   ├── bleep.wav
+    |   └── this_sick_beat.mp3
+    ├── nuevos
+    |   ├── atacar.png
+    |   ├── con-sonido.png
+    |   ├── ...
+    |   └── unidad-seleccionada.png
+    ├── terrain
+    |   └── d2k_BLOXBASE.bmp
+    └── fuente.ttf
+```
+El contenido de las carpetas `sonidos` y `nuevos` y el archivo `fuente.ttf` 
+están en el repositorio, dentro de la carpeta `data`.
+El contenido de las carpetas imgs y terrain fue provisto por la cátedra.
+Observar que las imágenes que estan en `imgs` no tienen los mismos nombres que
+las provistas por la cátedra. Las mismas fueron renombradas utilizando un 
+script que se encuentra en `data/renombrar-imagenes.py`.
+El uso del mismo es el siguiente:
+```bash
+build/assets $ python3 renombrar_imagenes.py imgs/imgs > renombrar.sh
+build/assets $ chmod +x renombrar.sh
+build/assets $ ./renombrar.sh
+```
+
+Observar que `imgs/imgs` es el directorio con las imágenes provistas por la 
+cátedra y que se renombran *in-place*.
 
 #### Lineamientos sobre el código:
 
