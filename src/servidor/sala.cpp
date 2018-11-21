@@ -21,8 +21,7 @@
 namespace servidor {
 
 Sala::Sala(const std::string& nombre_, size_t capacidad_maxima) 
-: modelo(new MockModelo()), nombre(nombre_)
-//: modelo(new modelo::Juego())
+: modelo(new modelo::Juego()), nombre(nombre_)
 {
     capacidad = capacidad_maxima;
     std::ifstream f_mapa("../data/mapa2.json");

@@ -1,4 +1,4 @@
-#include "servidor/cola.h"
+#include "servidor/cola_protegida.h"
 
 #include <list>
 #include <mutex>
@@ -9,7 +9,7 @@
 
 namespace servidor {
 
-Cola::Cola() { 
+ColaProtegida::ColaProtegida() { 
     // Inicialmente la cola está vacía.
     m_hay_datos.lock();
 }
@@ -20,7 +20,7 @@ Cola::Cola() {
  * 
  * El mutex m_cola protege a la estructura de datos del acceso concurrente.
  */
-void Cola::push(const nlohmann::json& data) {
+void ColaProtegida::push(const nlohmann::json& data) {
     Lock l(m_cola);
     bool cola_estaba_vacia = cola.empty();
     cola.push_back(data);
@@ -28,7 +28,10 @@ void Cola::push(const nlohmann::json& data) {
         m_hay_datos.unlock();
 }
 
-nlohmann::json Cola::pull() {
+nlohmann::json ColaProtegida::pull(bool bloquear) {
+    if (!bloquear && cola.empty())
+        throw std::runtime_error("La cola está vacía");
+    
     m_hay_datos.lock();
 
     Lock l(m_cola);
@@ -41,7 +44,7 @@ nlohmann::json Cola::pull() {
     return data;
 }
 
-bool Cola::esta_vacia() const {
+bool ColaProtegida::esta_vacia() const {
     return cola.empty();
 }
 

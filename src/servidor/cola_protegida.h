@@ -1,5 +1,5 @@
-#ifndef _COLA_H_
-#define _COLA_H_
+#ifndef _COLA_PROTEGIDA_H_
+#define _COLA_PROTEGIDA_H_
 
 #include <list>
 #include <mutex>
@@ -16,12 +16,12 @@ namespace servidor {
  * Esto significa que intentar obtener un elemento de una cola vacía bloqueará
  * hasta que se agregue un nuevo elemento.
  */
-class Cola {
+class ColaProtegida {
 public:
     /**
      * \brief Crea una nueva cola vacía.
      */
-    Cola();
+    ColaProtegida();
 
     /**
      * \brief Agrega un nuevo elemento a la cola.
@@ -33,12 +33,13 @@ public:
     /**
      * \brief Obtiene un elemento de la cola.
      * 
-     * Si la cola está vacía esta función bloqueará hasta que se inserte un
-     * elemento.
+     * Por defecto, si la cola está vacía esta función bloqueará hasta que se 
+     * inserte un elemento. Si se setea bloquear en false la función lanzará
+     * una excepción en caso de que esté vacía.
      *
      * Este método es thread-safe.
      */
-    nlohmann::json pull();
+    nlohmann::json pull(bool bloquear = true);
 
     /**
      * \brief Devuelve true si la cola está vacía.
@@ -54,4 +55,4 @@ private:
 
 } // namespace servidor
 
-#endif // _COLA_H_
+#endif // _COLA_PROTEGIDA_H_

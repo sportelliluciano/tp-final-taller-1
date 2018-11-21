@@ -9,7 +9,7 @@
 
 #include "conexion/conexion.h"
 #include "conexion/socket_conexion.h"
-#include "servidor/cola.h"
+#include "servidor/cola_protegida.h"
 
 namespace servidor {
 
@@ -84,7 +84,7 @@ public:
 private:
     conexion::Conexion conexion;
     std::thread hilo_emisor, hilo_receptor;
-    Cola cola_salida;
+    ColaProtegida cola_salida;
 
     std::mutex m_cb_al_recibir_datos;
     std::function<void(const nlohmann::json&)> cb_al_recibir_datos = nullptr;

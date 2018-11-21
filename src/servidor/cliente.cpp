@@ -10,7 +10,7 @@
 #include "conexion/conexion.h"
 #include "conexion/lock.h"
 #include "conexion/socket_conexion.h"
-#include "servidor/cola.h"
+#include "servidor/cola_protegida.h"
 
 namespace servidor {
 
