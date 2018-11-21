@@ -251,6 +251,7 @@ Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i){
             return Posicion(terreno[j][i].x(),terreno[j][i].y());
         }
     }
+    throw std::runtime_error("wut");
 }
 
 void Terreno::agregar_refineria(int x_, int y_,int id_jugador){
