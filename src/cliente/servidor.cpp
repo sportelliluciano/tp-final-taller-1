@@ -141,7 +141,7 @@ void Servidor::recibir() {
                 log_error("Conexión perdida: %s", e.what());
                 break;
             } catch (const std::exception& e) {
-                log_error("Datos inválidos: %s", e.what());
+                log_advertencia("Datos inválidos: %s", e.what());
             }
         }
     } catch (const std::exception& e) {
