@@ -1,10 +1,17 @@
 #include "cliente/modelo/tropa.h"
 
+#include <string>
+#include <vector>
+#include <unordered_set>
+#include <unordered_map>
+
 #include "cliente/modelo/hud/barra_vida.h"
 #include "cliente/video/log.h"
 #include "cliente/video/ventana.h"
 
 #define THRESHOLD_SYNC_CAMINO 10
+
+#define CONSTANTE_VELOCIDAD ((0.4 / 15) / 16)
 
 namespace cliente {
 
@@ -14,6 +21,16 @@ Tropa::Tropa(const nlohmann::json& data) {
     int sprite_base = data.at("sprite_base");
     es_vehiculo = (data.at("tipo") == "vehiculo");
     velocidad = data.at("velocidad");
+    requerimientos = data.at("requerimiento").get<std::vector<std::string>>();
+    casas_habilitadas = data.at("casa").get<std::unordered_set<std::string>>();
+    nombre = data.at("nombre");
+    descripcion = data.at("descripcion");
+    costo = data.at("costo");
+    tiempo_entrenamiento = data.at("tiempo de entrenamiento");
+
+    for (auto& it : data.at("metadata").get<std::unordered_map<std::string, std::string>>()) {
+        metadata.push_back({it.first, it.second});
+    }
 
     if (es_vehiculo) {
         for (int i=0;i<N_SPRITES*4;i++) {
@@ -41,6 +58,8 @@ Tropa::Tropa(const nlohmann::json& data) {
             sprites_disparando[i].configurar_repeticion(true);
         }
     }
+
+    posicion_sprite = nueva_pos_sprite = 0;
 
     fx_actual = x_destino = x_actual = 0;
     fy_actual = y_destino = y_actual = 0;
@@ -87,44 +106,59 @@ void Tropa::renderizar(Ventana& ventana, int x, int y) {
         vida);
 }
 
-static int calcular_posicion_sprite(float veloc_x, float veloc_y) {
+static int calcular_posicion_sprite(float veloc_x, float veloc_y, 
+    bool es_vehiculo) 
+{
     int vx = std::round(veloc_x);
     int vy = std::round(veloc_y);
+    int pos_sprite = 0;
     switch(vx) {
         case -1:
         switch(vy) {
             case -1:
-                return 7; //28;
+                pos_sprite = 7; //28;
+                break;
             case  0:
-                return 6; //24;
+                pos_sprite = 6; //24;
+                break;
             case  1:
-                return 5; //20;
+                pos_sprite = 5; //20;
+                break;
         }
 
         case  0:
         switch(vy) {
             case -1:
-                return 0; // 0; 
+                pos_sprite = 0; // 0; 
+                break;
             case  0:
-                log_advertencia("Se pidió calcular dirección de sprite para una tropa inmóvil", 0);
-                return 0;
+                log_advertencia("Se pidió calcular dirección de sprite para"
+                    " una tropa inmóvil", 0);
+                pos_sprite = 0;
+                break;
             case  1:
-                return 4; //16;  
+                pos_sprite = 4; //16;  
+                break;
         }
 
         case  1:
         switch(vy) {
             case -1:
-                return 1; //4;
+                pos_sprite = 1; //4;
+                break;
             case  0:
-                return 2; //8;
+                pos_sprite = 2; //8;
+                break;
             case  1:
-                return 3; //12;
+                pos_sprite = 3; //12;
+                break;
         }
     }
 
-    log_advertencia("ERROR en calcular_pos_sprite", 0);
-    return 0;
+    if (es_vehiculo)
+        return pos_sprite * 4;
+    
+    return pos_sprite;
 }
 
 
@@ -145,15 +179,10 @@ void Tropa::actualizar(int dt_ms) {
     float veloc_x = vx / sqrt(vx*vx + vy*vy),
           veloc_y = vy / sqrt(vx*vx + vy*vy);
 
-    nueva_pos_sprite = calcular_posicion_sprite(veloc_x, veloc_y);
+    nueva_pos_sprite = calcular_posicion_sprite(veloc_x, veloc_y, es_vehiculo);
     
-    if (es_vehiculo)
-        nueva_pos_sprite *= 4;
-    else
-        posicion_sprite = nueva_pos_sprite;
-
-    veloc_x *= ((0.4 / 15) / 16) * velocidad;
-    veloc_y *= ((0.4 / 15) / 16) * velocidad;
+    veloc_x *= CONSTANTE_VELOCIDAD * velocidad;
+    veloc_y *= CONSTANTE_VELOCIDAD * velocidad;
 
     float dx = veloc_x * dt_ms,
           dy = veloc_y * dt_ms;
@@ -171,12 +200,15 @@ void Tropa::actualizar(int dt_ms) {
     x_actual = round(fx_actual);
     y_actual = round(fy_actual);
 
+    // 0 1 2 3 4 5 6 7 8 9 10 11 12 ... 28 29 30 31 [32 33 34 35 36]
+
     last_ms += dt_ms;
-    if ((posicion_sprite != nueva_pos_sprite) && (last_ms > (60 * 12.0f / velocidad))) {
-        if (nueva_pos_sprite - posicion_sprite < 16)
+    if ((posicion_sprite != nueva_pos_sprite) && (last_ms > (30 * 12.0f / velocidad))) {
+        log_advertencia("Cambio pos sprite: %d; objetivo: %d", posicion_sprite, nueva_pos_sprite);
+        if (nueva_pos_sprite - posicion_sprite > 0)
             posicion_sprite = (posicion_sprite + 1) % 32;
         else
-            posicion_sprite = (posicion_sprite - 1) < 0 ? 31:(posicion_sprite - 1);
+            posicion_sprite = ((posicion_sprite - 1) < 0) ? 31:(posicion_sprite - 1);
         
         last_ms = 0;
     }
@@ -223,7 +255,7 @@ void Tropa::caminar_hacia(int x_dest, int y_dest) {
     y_destino = y_dest;
 
     // TODO
-    log_depuracion("Caminando hacia (%.2f, %.2f)", x_destino, y_destino);
+    log_depuracion("Caminando hacia (%d, %d)", x_destino, y_destino);
 }
 
 void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
@@ -265,5 +297,37 @@ void Tropa::marcar() {
 void Tropa::desmarcar() {
     esta_marcada = false;
 }
+
+const std::vector<std::string>& Tropa::obtener_requerimientos() const {
+    return requerimientos;
+}
+
+bool Tropa::casa_puede_entrenar(const std::string& casa) const {
+    //return casas_habilitadas.count(casa) != 0;
+    return true;
+}
+
+const std::string& Tropa::obtener_nombre() const {
+    return nombre;
+}
+
+const std::string& Tropa::obtener_descripcion() const {
+    return descripcion;
+}
+
+const std::vector<std::pair<std::string, std::string>>& 
+    Tropa::obtener_metadata() const
+{
+    return metadata;
+}
+
+int Tropa::obtener_costo() const {
+    return costo;
+}
+
+float Tropa::obtener_tiempo_entrenamiento() const {
+    return tiempo_entrenamiento;
+}
+
 
 } // namespace cliente

@@ -23,6 +23,7 @@ public:
      * id_jugador_actual es el identificador del servidor del jugador actual.
      */
     Juego(int id_jugador_actual_, 
+        const std::string& casa_jugador_actual,
         const nlohmann::json& mapa,
         const nlohmann::json& edificios,
         const nlohmann::json& ejercito);
@@ -63,6 +64,8 @@ public:
      * \brief Obtiene la energia que el jugador posee actualmente.
      */
     int obtener_energia() const;
+
+    const std::string& obtener_casa_jugador() const;
 
     /**
      * \brief Obtiene la posición central del jugador.
@@ -117,6 +120,7 @@ private:
     bool esta_jugando;
     int dinero = 0, energia = 0;
     int id_jugador_actual;
+    std::string casa;
 };
 
 } // namespace cliente

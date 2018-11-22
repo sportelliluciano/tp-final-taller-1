@@ -1,5 +1,10 @@
 #include "cliente/modelo/edificio.h"
 
+#include <string>
+#include <vector>
+#include <map>
+#include <utility>
+
 #include "libs/json.hpp"
 
 #include "cliente/modelo/celda.h"
@@ -14,7 +19,7 @@
 namespace cliente {
 
 Edificio::Edificio(const nlohmann::json& data_edificio) {
-    id = data_edificio.at("id");
+    clase = data_edificio.at("id");
 
     Sprite sprite_base = Sprite::desde_json(data_edificio.at("sprite_base"));
     Sprite sprite_construido = 
@@ -34,13 +39,18 @@ Edificio::Edificio(const nlohmann::json& data_edificio) {
     sprite_destruccion.set_centrado(true);
     
     sprite_boton = data_edificio.at("sprite_boton");
-}
-
-void Edificio::actualizar_prototipo(const nlohmann::json& data_edificio) {
     nombre = data_edificio.at("nombre");
     ancho = data_edificio.at("dimensiones").at(0);
     alto = data_edificio.at("dimensiones").at(1);
     vida = data_edificio.at("puntos_estructura");
+    nombre = data_edificio.at("nombre");
+    descripcion = data_edificio.at("descripcion");
+    costo = data_edificio.at("costo");
+    tiempo_construccion = data_edificio.at("tiempo_construccion");
+
+    for (auto& it : data_edificio.at("metadata").get<std::map<std::string, std::string>>()) {
+        metadata.push_back({it.first, it.second});
+    }
 }
 
 void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
@@ -91,7 +101,7 @@ int Edificio::obtener_propietario() const {
 }
 
 const std::string& Edificio::obtener_clase() const {
-    return id;
+    return clase;
 }
 
 int Edificio::obtener_sprite_boton() const {
@@ -133,5 +143,28 @@ void Edificio::marcar() {
 void Edificio::desmarcar() {
     marcado = false;
 }
+
+const std::string& Edificio::obtener_nombre() const {
+    return nombre;
+}
+
+const std::string& Edificio::obtener_descripcion() const {
+    return descripcion;
+}
+
+const std::vector<std::pair<std::string, std::string>>& 
+    Edificio::obtener_metadata() const 
+{
+    return metadata;
+}
+
+int Edificio::obtener_costo() const {
+    return costo;
+}
+
+float Edificio::obtener_tiempo_construccion() const {
+    return tiempo_construccion;
+}
+
 
 } // namespace cliente

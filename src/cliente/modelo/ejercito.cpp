@@ -1,18 +1,21 @@
 #include "cliente/modelo/ejercito.h"
 
-#include <fstream>
-
 #include "libs/json.hpp"
 
+#include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
 
 #define MIN_TIEMPO_ENTRENAMIENTO 1
 
+#define COLOR_ROJO 1
+
 namespace cliente {
 
-Ejercito::Ejercito(int id_jugador_actual_, Terreno& terreno_juego, 
-    const nlohmann::json& tropas_json) 
-: terreno(terreno_juego),
+Ejercito::Ejercito(const nlohmann::json& tropas_json, Infraestructura& inf, 
+    Terreno& terreno_juego, int id_jugador_actual_, const std::string& casa_) 
+: casa(casa_),
+  infraestructura(inf),
+  terreno(terreno_juego),
   id_jugador_actual(id_jugador_actual_)
 {
     using nlohmann::json;
@@ -26,26 +29,37 @@ Ejercito::Ejercito(int id_jugador_actual_, Terreno& terreno_juego,
         elem.update(*it);
 
         tropas_base.emplace(elem.at("id"), Tropa(elem));
+        tropas_base_ordenadas.push_back(&tropas_base.at(elem.at("id")));
     }
 }
 
 void Ejercito::renderizar(Ventana& ventana, Camara& camara) {
     for (Tropa* tropa : terreno.obtener_tropas_en(camara.obtener_vista())) {
+#ifdef DEPURACION_DIBUJO
         /*** Pintar celda ***/
-        
         int celda_x, celda_y;
         terreno.obtener_celda(terreno.obtener_posicion(tropa), 
             celda_x, celda_y);
         
-        Posicion visual = camara.traducir_a_visual(
+        Posicion grilla = camara.traducir_a_visual(
             terreno.obtener_posicion(celda_x, celda_y));
-        Sprite(1).renderizar(ventana, visual.x, visual.y);
+        Sprite(1).renderizar(ventana, grilla.x, grilla.y);
         /*** Fin pintar celda ***/
-
-        visual = camara.traducir_a_visual(terreno.obtener_posicion(tropa));
+#endif
+        Posicion visual = camara.traducir_a_visual(terreno.obtener_posicion(tropa));
         tropa->renderizar(ventana, visual.x, visual.y);
-        ventana.dibujar_rectangulo(visual.x, visual.y, visual.x+1, visual.y+1, 3);
-        ventana.dibujar_rectangulo(visual.x-1, visual.y-1, visual.x+2, visual.y+2, 3);
+
+        if (tropa->obtener_propietario() != id_jugador_actual) {
+            // Agregar marca para identificar el jugador
+            ventana.dibujar_rectangulo(visual.x, visual.y, visual.x+1, 
+                visual.y+1, COLOR_ROJO);
+            ventana.dibujar_rectangulo(visual.x-1, visual.y-1, visual.x+2, 
+                visual.y+2, COLOR_ROJO);
+            ventana.dibujar_rectangulo(visual.x-2, visual.y, visual.x+3, 
+                visual.y+1, COLOR_ROJO);
+            ventana.dibujar_rectangulo(visual.x-3, visual.y-1, visual.x+4, 
+                visual.y+2, COLOR_ROJO);
+        }
     }
 }
 
@@ -79,11 +93,21 @@ void Ejercito::set_tropa_disparando(int id_tropa, bool disparando) {
     tropas.at(id_tropa).set_esta_disparando(disparando);
 }
 
+const Tropa& Ejercito::obtener_tropa_base(const std::string& clase) const {
+    return tropas_base.at(clase);
+}
+
 int Ejercito::obtener_sprite_clase(const std::string& clase) const {
     return tropas_base.at(clase).obtener_sprite_boton();
 }
 
 bool Ejercito::esta_habilitada(const std::string& clase) const {
+    // for (const std::string& requerimiento : 
+    //     tropas_base.at(clase).obtener_requerimientos()) 
+    // {
+    //     if (!infraestructura.jugador_actual_tiene(requerimiento))
+    //         return false;
+    // }
     return true;
 }
 
@@ -107,11 +131,7 @@ int Ejercito::obtener_segundos_restantes(const std::string& clase) const {
 }
 
 std::vector<const Tropa*> Ejercito::obtener_tropas_base() const {
-    std::vector<const Tropa*> resultado;
-    for (auto& it : tropas_base) {
-        resultado.push_back(&it.second);
-    }
-    return resultado;
+    return tropas_base_ordenadas;
 }
 
 bool Ejercito::hay_tropas_enemigas_en(const Posicion& punto) {

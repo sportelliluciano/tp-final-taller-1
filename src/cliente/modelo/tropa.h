@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <unordered_set>
 
 #include "libs/json.hpp"
 
@@ -27,21 +28,6 @@ public:
      *        necesario.
      */
     void actualizar(int t_ms);
-
-    /**
-     * \brief Devuelve el ID de tropa.
-     */
-    int obtener_id() const;
-
-    /**
-     * \brief Devuelve la clase a la que pertenece la tropa
-     */
-    const std::string& obtener_clase() const;
-
-    /**
-     * \brief Devuelve el identificador del botón para entrenar la tropa.
-     */
-    int obtener_sprite_boton() const;
     
     /**
      * \brief Devuelve la coordenada x de la posición de la tropa en 
@@ -105,10 +91,7 @@ public:
      */
     void set_vida(int nueva_vida);
     
-    /**
-     * \brief Devuelve el ID del jugador a quien pertenece esta tropa.
-     */
-    int obtener_propietario() const;
+    
 
     void set_esta_disparando(bool disparando);
 
@@ -121,6 +104,46 @@ public:
      * \brief Elimina la marca de selección de la tropa.
      */
     void desmarcar();
+
+    /**
+     * \brief Devuelve el ID del jugador a quien pertenece esta tropa.
+     */
+    int obtener_propietario() const;
+
+    /**
+     * \brief Devuelve el ID de tropa.
+     */
+    int obtener_id() const;
+
+    /**
+     * \brief Devuelve la clase a la que pertenece la tropa
+     */
+    const std::string& obtener_clase() const;
+
+    /**
+     * \brief Devuelve el identificador del botón para entrenar la tropa.
+     */
+    int obtener_sprite_boton() const;
+
+    /**
+     * \brief Devuelve un vector con las clases de edificios requeridas para
+     *        poder entrenar esta tropa.
+     */
+    const std::vector<std::string>& obtener_requerimientos() const;
+
+    /**
+     * \brief Devuelve true si la casa indicada puede entrenar esta tropa, 
+     *        false en caso contrario.
+     */
+    bool casa_puede_entrenar(const std::string& casa) const;
+
+    const std::string& obtener_nombre() const;
+    const std::string& obtener_descripcion() const;
+    const std::vector<std::pair<std::string, std::string>>& 
+        obtener_metadata() const;
+    
+    int obtener_costo() const;
+    float obtener_tiempo_entrenamiento() const;
 
 private:
     int x_actual, y_actual;
@@ -157,6 +180,13 @@ private:
 
     int last_ms = 0;
     BarraVida barra_vida;
+
+    std::vector<std::string> requerimientos;
+    std::unordered_set<std::string> casas_habilitadas;
+    std::string nombre, descripcion;
+    std::vector<std::pair<std::string, std::string>> metadata;
+    int costo;
+    float tiempo_entrenamiento;
 };
 
 } // namespace cliente

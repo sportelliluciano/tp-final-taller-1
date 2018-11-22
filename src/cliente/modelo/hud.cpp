@@ -107,6 +107,8 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
     }
 
     for (const Tropa* tropa : juego.obtener_ejercito().obtener_tropas_base()) {
+        if (!tropa->casa_puede_entrenar(juego.obtener_casa_jugador()))
+            continue;
         botones_entrenamiento.emplace_back(
             BotonEntrenamiento(
                 juego.obtener_ejercito(), 

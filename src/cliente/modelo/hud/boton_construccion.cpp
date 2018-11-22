@@ -1,6 +1,7 @@
 #include "cliente/modelo/hud/boton_construccion.h"
 
 #include <string>
+#include <sstream>
 
 #include "cliente/modelo/hud/boton_temporizado.h"
 #include "cliente/modelo/hud/tostador.h"
@@ -17,10 +18,13 @@ BotonConstruccion::BotonConstruccion(Infraestructura& infraestructura_,
   clase(clase_),
   servidor(servidor_),
   tostador(tostador_)
-{ 
-    tooltip.set_titulo(clase_);
-    tooltip.set_cuerpo("Este es un botón de construcción; acá iría el tipo de edificio");
-    tooltip.set_pie("Costo: $ 1.500");
+{
+    const Edificio& base = infraestructura.obtener_edificio_base(clase);
+    tooltip.set_titulo(base.obtener_nombre());
+    tooltip.set_cuerpo(base.obtener_descripcion());
+    tooltip.set_metadata(base.obtener_metadata());
+    tooltip.set_costo_tiempo(base.obtener_costo(), 
+        base.obtener_tiempo_construccion());
 }
 
 void BotonConstruccion::renderizar(Ventana& ventana, const Posicion& punto) {

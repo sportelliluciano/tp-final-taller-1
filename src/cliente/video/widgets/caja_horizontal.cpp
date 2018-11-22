@@ -39,8 +39,10 @@ void CajaHorizontal::renderizar(Ventana& ventana, const Posicion& punto) {
     int pos_x = punto.x;
     int limite_x = obtener_ancho();
 
+#ifdef DEPURACION_DIBUJO
     ventana.dibujar_rectangulo(punto.x, punto.y, punto.x + ancho, 
         punto.y + alto, 2);
+#endif
 
     for (auto it=frente.begin(); it != frente.end(); ++it) {
         Widget& widget = **it;

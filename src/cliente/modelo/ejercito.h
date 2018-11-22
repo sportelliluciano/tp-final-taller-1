@@ -1,10 +1,12 @@
 #ifndef _EJERCITO_H_
 #define _EJERCITO_H_
 
+#include <string>
 #include <unordered_map>
 
 #include "libs/json.hpp"
 
+#include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
 #include "cliente/modelo/tropa.h"
 
@@ -12,8 +14,8 @@ namespace cliente {
 
 class Ejercito {
 public:
-    Ejercito(int id_jugador_actual_, Terreno& terreno, 
-        const nlohmann::json& ejercito);
+    Ejercito(const nlohmann::json& ejercito, Infraestructura& inf, 
+        Terreno& terreno, int id_jugador_actual_, const std::string& casa);
 
     /**
      * \brief Dibuja las tropas sobre la ventana.
@@ -59,6 +61,8 @@ public:
     bool existe(int id_tropa) const;
 
     Tropa& obtener(int id_tropa);
+
+    const Tropa& obtener_tropa_base(const std::string& clase) const;
 
     void set_tropa_disparando(int id_tropa, bool disparando);
 
@@ -131,6 +135,8 @@ public:
     void destruir_tropa(int id);
 
 private:
+    std::string casa;
+    Infraestructura& infraestructura;
     Terreno& terreno;
     std::unordered_map<int, Tropa> tropas;
 
@@ -142,6 +148,7 @@ private:
     std::unordered_map<std::string, int> colas_entrenamiento;
 
     std::unordered_map<std::string, Tropa> tropas_base;
+    std::vector<const Tropa*> tropas_base_ordenadas;
 
     int id_jugador_actual;
 };

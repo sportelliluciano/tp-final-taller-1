@@ -9,6 +9,10 @@
 #define ANCHO_BOTON 60
 #define ALTO_BOTON 50
 
+#define PADDING_X 5
+#define PADDING_Y_TIEMPO 20
+#define PADDING_Y_COLA 0
+
 namespace cliente {
 
 BotonTemporizado::BotonTemporizado(int sprite) { 
@@ -68,7 +72,7 @@ void BotonTemporizado::renderizar(Ventana& ventana, const Posicion& punto) {
         ventana
             .obtener_administrador_texturas()
             .crear_texto(s.str())
-            .renderizar(punto.x + 5, punto.y);
+            .renderizar(punto.x + PADDING_X, punto.y - PADDING_Y_COLA);
     }
 
     if (segundos_restantes > 0) {
@@ -77,8 +81,10 @@ void BotonTemporizado::renderizar(Ventana& ventana, const Posicion& punto) {
         ventana
             .obtener_administrador_texturas()
             .crear_texto(s.str())
-            .renderizar(punto.x + 5, punto.y + ALTO_BOTON - 20);
+            .renderizar(punto.x + PADDING_X, 
+                punto.y + ALTO_BOTON - PADDING_Y_TIEMPO);
     }
+
     if (mostrar_tooltip) {
         ventana.cambiar_plano(true);
         tooltip.renderizar(ventana, punto.x, punto.y);
@@ -86,12 +92,12 @@ void BotonTemporizado::renderizar(Ventana& ventana, const Posicion& punto) {
     }
 }
 
-bool BotonTemporizado::mouse_entra(const Posicion& pos) {
+bool BotonTemporizado::mouse_entra(const Posicion&) {
     mostrar_tooltip = true;
     return false;
 }
 
-bool BotonTemporizado::mouse_sale(const Posicion& pos) {
+bool BotonTemporizado::mouse_sale(const Posicion&) {
     mostrar_tooltip = false;
     return false;
 }

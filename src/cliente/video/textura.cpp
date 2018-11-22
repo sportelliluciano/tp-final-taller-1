@@ -114,6 +114,25 @@ void Textura::renderizar(int x, int y, const Rectangulo& seccion,
         throw ErrorSDL("SDL_SetRenderTarget");
 }
 
+void Textura::renderizar(int x, int y, const Rectangulo& seccion, 
+    const Rectangulo& destino, Textura& renderizable) const
+{
+    SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
+    if (SDL_SetRenderTarget(renderer, renderizable.textura) != 0)
+        throw ErrorSDL("SDL_SetRenderTarget");
+    
+    SDL_Rect dst;
+    dst.x = x; dst.y = y;
+    dst.w = destino.ancho(); dst.h = destino.alto();
+
+
+    if (SDL_RenderCopy(renderer, textura, &seccion.rect(), &dst) != 0)
+        throw ErrorSDL("SDL_RenderCopy");
+    
+    if (SDL_SetRenderTarget(renderer, old_target) != 0)
+        throw ErrorSDL("SDL_SetRenderTarget");   
+}
+
 Rectangulo Textura::obtener_rect() const {
     return Rectangulo(0, 0, src.w, src.h);
 }
@@ -126,7 +145,7 @@ void Textura::limpiar(int r, int g, int b, int a) {
     Uint8 rr, gg, bb, aa;
     SDL_GetRenderDrawColor(renderer, &rr, &gg, &bb, &aa);
     SDL_SetRenderDrawColor(renderer, (Uint8)r, (Uint8)g, (Uint8)b, (Uint8) a);
-    SDL_RenderFillRect(renderer, &src);
+    SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, rr, gg, bb, aa);
     
     if (SDL_SetRenderTarget(renderer, old_target) != 0)

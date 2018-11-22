@@ -22,37 +22,17 @@ Infraestructura::Infraestructura(int id_jugador_actual_, Terreno& terreno_juego,
 : terreno(terreno_juego),
   id_jugador_actual(id_jugador_actual_)
 { 
-    using nlohmann::json;
-
-    std::ifstream entrada("../data/edificios-cliente.json");
-
-    json edificios_json;
-
-    entrada >> edificios_json;
-
-    auto it = edificios_json.begin();
-    const json& valores_por_defecto = *it;
-    ++it;
-    for(; it != edificios_json.end(); ++it) {
-        // Mergear valores por defecto con el elemento actual
-        json elem = valores_por_defecto;
-        elem.update(*it);
-
-        edificios.emplace(elem.at("id"), Edificio(elem));
-    }
-
-    actualizar_prototipos(data_edificios);
-}
-
-void Infraestructura::actualizar_prototipos(const nlohmann::json& data) {
-    auto it = data.begin();
+    auto it = data_edificios.begin();
     const nlohmann::json& valores_por_defecto = *it;
     ++it;
-    for(; it != data.end(); ++it) {
+    for(; it != data_edificios.end(); ++it) {
+        // Mergear valores por defecto con el elemento actual
         nlohmann::json elem = valores_por_defecto;
         elem.update(*it);
 
-        edificios.at(elem.at("id")).actualizar_prototipo(elem);
+        edificios.emplace(elem.at("id"), Edificio(elem));
+        if (elem.at("id") != "centro_construccion")
+            edificios_base_ordenados.push_back(&edificios.at(elem.at("id")));
     }
 }
 
@@ -61,11 +41,11 @@ void Infraestructura::renderizar(Ventana& ventana, Camara& camara) {
         terreno.obtener_edificios_en(camara.obtener_vista())) 
     {
         Posicion visual;
-
-        /*** Pintar celda ***/
         int x_celda = edificio->obtener_celda_x(),
             y_celda = edificio->obtener_celda_y();
 
+#ifdef DEPURACION_DIBUJO
+        /*** Pintar celda ***/
         for (int x=0; x<edificio->obtener_ancho_celdas();x++) {
             for (int y=0; y<edificio->obtener_alto_celdas();y++) {
                 visual = camara.traducir_a_visual(
@@ -74,6 +54,7 @@ void Infraestructura::renderizar(Ventana& ventana, Camara& camara) {
             }
         }
         /*** Fin pintar celda ***/
+#endif
 
         Posicion esq_sup = camara.traducir_a_visual(
             terreno.obtener_posicion(x_celda, y_celda));
@@ -159,16 +140,16 @@ Edificio* Infraestructura::obtener_centro_construccion() {
     return nullptr;
 }
 
-std::vector<const Edificio*> Infraestructura::obtener_edificios_base() const {
-    std::vector<const Edificio*> edificios_disponibles;
+const Edificio& Infraestructura::obtener_edificio_base(
+        const std::string& clase) const 
+{
+    return edificios.at(clase);
+}
 
-    for (auto it=edificios.begin(); it != edificios.end(); ++it) {
-        if (it->first == "centro_construccion")
-            continue;
-        edificios_disponibles.push_back(&it->second);
-    }
-
-    return edificios_disponibles;
+const std::vector<const Edificio*>& 
+    Infraestructura::obtener_edificios_base() const 
+{
+    return edificios_base_ordenados;
 }
 
 bool Infraestructura::esta_construyendo(const std::string& clase) const {
@@ -188,6 +169,15 @@ int Infraestructura::obtener_segundos_restantes(const std::string& clase) const
     return construcciones_iniciadas.at(clase);
 }
 
+bool Infraestructura::jugador_actual_tiene(const std::string& clase) const {
+    for (auto& it : edificios_construidos) {
+        if (it.second.obtener_clase() == clase) {
+            if (it.second.obtener_propietario() == id_jugador_actual)
+                return true;
+        }
+    }
+    return false;
+}
 
 void Infraestructura::iniciar_construccion(const std::string& clase, 
     int tiempo_ms)

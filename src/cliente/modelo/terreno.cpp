@@ -125,7 +125,9 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
             .obtener_administrador_texturas()
             .obtener_textura("terreno")
             .renderizar(visual.x, visual.y);
+#ifdef DEPURACION_DIBUJO
         ventana.dibujar_grilla(visual.x, visual.y);
+#endif
         return;
     }
     
@@ -161,7 +163,9 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     Posicion visual = camara.traducir_a_visual(
         obtener_posicion(celda_inicial_x, celda_inicial_y));
     textura.renderizar(visual.x, visual.y);
-    ventana.dibujar_grilla(visual.x, visual.y);
+#ifdef DEPURACION_DIBUJO
+        ventana.dibujar_grilla(visual.x, visual.y);
+#endif
 }
 
 void Terreno::obtener_celda(const Posicion& pos, int& celda_x, int& celda_y) {

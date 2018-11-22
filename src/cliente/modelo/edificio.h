@@ -1,7 +1,9 @@
 #ifndef _EDIFICIO_H_
 #define _EDIFICIO_H_
 
+#include <string>
 #include <vector>
+#include <utility>
 
 #include "libs/json.hpp"
 
@@ -112,10 +114,15 @@ public:
      */
     void desmarcar();
 
-private:
-    std::string id;
-    std::string nombre;
+    const std::string& obtener_nombre() const;
+    const std::string& obtener_descripcion() const;
+    const std::vector<std::pair<std::string, std::string>>& 
+        obtener_metadata() const;
     
+    int obtener_costo() const;
+    float obtener_tiempo_construccion() const;
+
+private:  
     int ancho, alto;
     
     int vida;
@@ -134,6 +141,11 @@ private:
 
     SpriteAnimado sprite_construccion, sprite_destruccion;
     SpriteCompuesto sprite, sprite_roto;
+
+    std::string clase, nombre, descripcion;
+    std::vector<std::pair<std::string, std::string>> metadata;
+    int costo;
+    float tiempo_construccion;
 };
 
 } // namespace cliente

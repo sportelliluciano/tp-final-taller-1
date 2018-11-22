@@ -17,8 +17,6 @@ public:
     Infraestructura(int id_jugador_actual_, Terreno& terreno, 
         const nlohmann::json& edificios);
 
-    void actualizar_prototipos(const nlohmann::json& data);
-
     /**
      * \brief Renderiza los edificios en la ventana.
      */
@@ -48,7 +46,7 @@ public:
     /**
      * \brief Devuelve los edificios disponibles para construir.
      */
-    std::vector<const Edificio*> obtener_edificios_base() const;
+    const std::vector<const Edificio*>& obtener_edificios_base() const;
 
     /**
      * \brief Devuelve true si se está construyendo un edificio de la clase
@@ -74,6 +72,10 @@ public:
     int obtener_sprite_clase(const std::string& clase) const;
 
     
+    bool jugador_actual_tiene(const std::string& clase) const;
+
+    const Edificio& obtener_edificio_base(const std::string& clase) const;
+
     /******* Métodos para actualizar desde el servidor *******/
 
     
@@ -136,6 +138,7 @@ private:
     std::unordered_map<std::string, int> construcciones_iniciadas;
     std::unordered_map<std::string, int> colas_construccion;
 
+    std::vector<const Edificio*> edificios_base_ordenados;
 
     float velocidad_cc = 1.0f;
 

@@ -18,9 +18,12 @@ BotonEntrenamiento::BotonEntrenamiento(Ejercito& ejercito_,
   servidor(servidor_),
   tostador(tostador_)
 { 
-    tooltip.set_titulo(clase_);
-    tooltip.set_cuerpo("Este es un botón de entrenamiento; acá iria el tipo de tropa");
-    tooltip.set_pie("Costo: $ 1.500");
+    const Tropa& base = ejercito.obtener_tropa_base(clase);
+    tooltip.set_titulo(base.obtener_nombre());
+    tooltip.set_cuerpo(base.obtener_descripcion());
+    tooltip.set_metadata(base.obtener_metadata());
+    tooltip.set_costo_tiempo(base.obtener_costo(), 
+        base.obtener_tiempo_entrenamiento());
 }
 
 void BotonEntrenamiento::renderizar(Ventana& ventana, const Posicion& punto) {

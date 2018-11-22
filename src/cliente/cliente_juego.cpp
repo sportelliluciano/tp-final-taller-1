@@ -64,7 +64,7 @@ bool ClienteJuego::ejecutar_juego() {
     nlohmann::json ejercito = servidor->recibir_json();
     int id_jugador_actual = servidor->iniciar_juego();
     
-    Juego juego(id_jugador_actual, mapa, edificios, ejercito);
+    Juego juego(id_jugador_actual, "ordos", mapa, edificios, ejercito);
     
     Controlador controlador(ventana, *servidor, juego);
 

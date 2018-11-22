@@ -8,7 +8,7 @@ Botonera::Botonera(int ancho_, int alto_) {
     ancho = ancho_;
     alto = alto_;
     padding_x = 10;
-    padding_y = 0;
+    padding_y = 10;
     spacing = 4;
 }
 
@@ -72,8 +72,11 @@ std::vector<std::pair<Posicion, Widget*>>
 
 void Botonera::renderizar(Ventana& ventana, const Posicion& punto) {
     calcular_padding();
+
+#ifdef DEPURACION_DIBUJO
     ventana.dibujar_rectangulo(punto.x, punto.y, punto.x + ancho, 
         punto.y + alto);
+#endif
 
     int dx = padding_x, dy = padding_y, max_alto = 0;
     for (Widget* wx : widgets) {
@@ -83,11 +86,12 @@ void Botonera::renderizar(Ventana& ventana, const Posicion& punto) {
         }
 
         wx->renderizar(ventana, Posicion(punto.x + dx, punto.y + dy));
+#ifdef DEPURACION_DIBUJO
         ventana.dibujar_rectangulo(
             punto.x + dx, punto.y + dy, 
             punto.x + dx + wx->obtener_ancho(), 
             punto.y + dy + wx->obtener_alto());
-        
+#endif
         if (wx->obtener_alto() > max_alto)
             max_alto = wx->obtener_alto();
         

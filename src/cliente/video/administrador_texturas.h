@@ -12,6 +12,13 @@
 
 namespace cliente {
 
+typedef enum {
+    TAM_FUENTE_GRANDE,
+    TAM_FUENTE_NORMAL,
+    TAM_FUENTE_CHICO,
+    TAM_FUENTE_MICRO
+} tamanio_fuente_t;
+
 class AdministradorTexturas {
 public:
     /**
@@ -69,8 +76,9 @@ public:
      */
     Textura crear_texto_nc(const std::string& texto);
 
-    Textura& crear_texto(const std::string& texto,
-        const Rectangulo& caja, int color);
+    Textura crear_texto(const std::string& texto,
+        const Rectangulo& caja, int color, 
+        tamanio_fuente_t tamanio = TAM_FUENTE_NORMAL);
 
     /**
      * \brief Destructor.
@@ -81,7 +89,7 @@ public:
 
 private:
     SDL_Renderer *renderer;
-    TTF_Font* fuente;
+    TTF_Font* fuente_grande, *fuente_normal, *fuente_chico, *fuente_micro;
     std::unordered_map<std::string, Textura> texturas;
     std::map<std::string, Textura> texturas_creadas;
 };

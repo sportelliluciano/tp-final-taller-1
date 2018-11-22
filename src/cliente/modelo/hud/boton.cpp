@@ -58,8 +58,8 @@ void Boton::renderizar(Ventana& ventana, const Posicion& punto) {
         int h_boton = boton.alto();
         int w_boton = boton.ancho();
         float relacion_boton = h_boton / (1.0f * w_boton);
-        int h_img = t.obtener_ancho();
-        int w_img = t.obtener_alto();
+        int h_img = t.obtener_alto();
+        int w_img = t.obtener_ancho();
         float relacion_img = h_img / (1.0f * w_img);
 
         if (relacion_boton < relacion_img) {

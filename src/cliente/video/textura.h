@@ -64,6 +64,9 @@ public:
     void renderizar(int x, int y, const Rectangulo& seccion, 
         const Rectangulo& destino) const;
     
+    void renderizar(int x, int y, const Rectangulo& seccion, 
+        const Rectangulo& destino, Textura& renderizable) const;
+
     /**
      * \brief Limpia la textura a un fondo de color, por defecto negro.
      */
@@ -91,6 +94,7 @@ private:
     SDL_Renderer *renderer;
     SDL_Rect src;
 
+    friend class Ventana;
     friend class AdministradorTexturas;
 };
 

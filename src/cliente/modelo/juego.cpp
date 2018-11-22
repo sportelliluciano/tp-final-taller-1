@@ -13,15 +13,17 @@
 namespace cliente {
 
 Juego::Juego(int id_jugador_actual_, 
+        const std::string& casa_,
         const nlohmann::json& mapa,
         const nlohmann::json& edificios,
         const nlohmann::json& ejercito)
 : terreno(mapa), 
   gusano(terreno), 
   infraestructura(id_jugador_actual_, terreno, edificios), 
-  ejercito(id_jugador_actual_, terreno, ejercito), 
+  ejercito(ejercito, infraestructura, terreno, id_jugador_actual_, casa_), 
   esta_jugando(true), 
-  id_jugador_actual(id_jugador_actual_)
+  id_jugador_actual(id_jugador_actual_),
+  casa(casa_)
 { }
 
 bool Juego::esta_terminado() const {
@@ -50,6 +52,10 @@ int Juego::obtener_dinero() const {
 
 int Juego::obtener_energia() const {
     return energia;
+}
+
+const std::string& Juego::obtener_casa_jugador() const {
+    return casa;
 }
 
 Posicion Juego::obtener_centro() {

@@ -203,14 +203,14 @@ bool AreaJuego::mouse_click_derecho(const Posicion& punto) {
             ids.push_back(id_tropa);
     }
 
-    if (ejercito.hay_tropas_enemigas_en(camara.traducir_a_logica(mouse))) {
+    if (ejercito.hay_tropas_enemigas_en(pos_logica)) {
         Tropa* enemigo = 
-            ejercito.obtener_tropa_enemiga_en(camara.traducir_a_logica(mouse));
+            ejercito.obtener_tropa_enemiga_en(pos_logica);
         servidor.atacar_tropa(ids, enemigo->obtener_id());
         tostador.hacer_tostada("Atacar tropas");    
-    } else if (infraestructura.hay_edificio_enemigo_en(camara.traducir_a_logica(mouse))) {
+    } else if (infraestructura.hay_edificio_enemigo_en(pos_logica)) {
         Edificio& enemigo =
-            infraestructura.obtener_edificio_enemigo_en(camara.traducir_a_logica(mouse));
+            infraestructura.obtener_edificio_enemigo_en(pos_logica);
         servidor.atacar_tropa(ids, enemigo.obtener_id());
         tostador.hacer_tostada("Atacar edificios");
     } else {

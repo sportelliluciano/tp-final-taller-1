@@ -61,8 +61,10 @@ void CajaVertical::renderizar(Ventana& ventana, const Posicion& punto) {
     int pos_y = punto.y;
     int limite_y = obtener_alto() + punto.y;
 
+#ifdef DEPURACION_DIBUJO
     ventana.dibujar_rectangulo(punto.x, punto.y, punto.x + ancho, 
         punto.y + alto, 1);
+#endif
 
     for (auto it=arriba.begin(); it != arriba.end(); ++it) {
         Widget& widget = **it;

@@ -11,8 +11,12 @@ namespace cliente {
 
 AdministradorTexturas::AdministradorTexturas(SDL_Renderer *renderer_) {
     renderer = renderer_;
-    fuente = TTF_OpenFont("./assets/fuente.ttf", 16);
-    if (!fuente)
+    // TODO: refactorizar esto / chequear errores correctamente
+    fuente_micro = TTF_OpenFont("./assets/fuente.ttf", 12);
+    fuente_chico = TTF_OpenFont("./assets/fuente.ttf", 14);
+    fuente_normal = TTF_OpenFont("./assets/fuente.ttf", 18);
+    fuente_grande = TTF_OpenFont("./assets/fuente.ttf", 30);
+    if (!fuente_micro || !fuente_chico || !fuente_normal || !fuente_grande)
         throw ErrorSDL("TTF_OpenFont", TTF_GetError());
 }
 
@@ -49,7 +53,7 @@ bool AdministradorTexturas::contiene_textura(const std::string& id) {
 }
 
 Textura& AdministradorTexturas::obtener_textura(const std::string& id) {
-    return texturas_creadas.find(id)->second;
+    return texturas_creadas.at(id);
 }
 
 Textura AdministradorTexturas::eliminar_textura(const std::string& id) {
@@ -87,7 +91,7 @@ Textura& AdministradorTexturas::crear_texto(const std::string& texto) {
     if (texturas_creadas.find("texto-" + texto) != texturas_creadas.end())
         return texturas_creadas.find("texto-" + texto)->second;
 
-    SDL_Surface *sf = TTF_RenderUTF8_Blended(fuente, texto.c_str(), {255, 255, 255, 0});
+    SDL_Surface *sf = TTF_RenderUTF8_Blended(fuente_normal, texto.c_str(), {255, 255, 255, 0});
     if (!sf)
         throw ErrorSDL("TTF_RenderUTF8_Blended", TTF_GetError());
     
@@ -101,16 +105,21 @@ Textura& AdministradorTexturas::crear_texto(const std::string& texto) {
     return texturas_creadas.find("texto-" + texto)->second;
 }
 
-Textura& AdministradorTexturas::crear_texto(const std::string& texto,
-    const Rectangulo& caja, int color) 
+Textura AdministradorTexturas::crear_texto(const std::string& texto,
+    const Rectangulo& caja, int color, tamanio_fuente_t tamanio) 
 {
-    if (texturas_creadas.find("ctexto-" + texto) != texturas_creadas.end())
-        return texturas_creadas.find("ctexto-" + texto)->second;
-
     SDL_Color c = {255, 255, 255, 0};
 
     if (color == 1)
-        c = {170, 20, 20, 0};
+        c = {0xff, 0x73, 0x73, 255};
+
+    TTF_Font* fuente = fuente_normal;
+    if (tamanio == TAM_FUENTE_GRANDE)
+        fuente = fuente_grande;
+    else if (tamanio == TAM_FUENTE_CHICO)
+        fuente = fuente_chico;
+    else if (tamanio == TAM_FUENTE_MICRO)
+        fuente = fuente_micro;
 
     SDL_Surface *sf = TTF_RenderUTF8_Blended_Wrapped(fuente, texto.c_str(), 
         c, caja.ancho());
@@ -123,12 +132,11 @@ Textura& AdministradorTexturas::crear_texto(const std::string& texto,
     if (!textura)
         throw ErrorSDL("SDL_CreateTextureFromSurface");
     
-    texturas_creadas.emplace("ctexto-" + texto, Textura(renderer, textura));
-    return texturas_creadas.find("ctexto-" + texto)->second;
+    return Textura(renderer, textura);
 }
 
 Textura AdministradorTexturas::crear_texto_nc(const std::string& texto) {
-    SDL_Surface *sf = TTF_RenderUTF8_Blended(fuente, texto.c_str(), {255, 255, 255, 0});
+    SDL_Surface *sf = TTF_RenderUTF8_Blended(fuente_normal, texto.c_str(), {255, 255, 255, 0});
     if (!sf)
         throw ErrorSDL("TTF_RenderUTF8_Blended", TTF_GetError());
     
@@ -142,7 +150,10 @@ Textura AdministradorTexturas::crear_texto_nc(const std::string& texto) {
 }
 
 AdministradorTexturas::~AdministradorTexturas() {
-    TTF_CloseFont(fuente);
+    TTF_CloseFont(fuente_micro);
+    TTF_CloseFont(fuente_normal);
+    TTF_CloseFont(fuente_chico);
+    TTF_CloseFont(fuente_grande);
 }
 
 } // namespace cliente
