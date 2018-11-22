@@ -77,7 +77,6 @@ public:
 
 private:
     float x_ = 0, y_ = 0;
-    float px_x_ = 0, px_y_ = 0;
 };
 
 } // namespace modelo

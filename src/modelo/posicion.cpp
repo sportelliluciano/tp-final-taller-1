@@ -1,13 +1,12 @@
-#include "posicion.h"
+#include "modelo/posicion.h"
 
 #include <cmath>
 
 namespace modelo {
 
-Posicion::Posicion() : x_(0), y_(0), px_x_(0), px_y_(0) { }
+Posicion::Posicion() : x_(0), y_(0) { }
 
-Posicion::Posicion(float x, float y) : x_(x), y_(y),
-                                        px_x_(x*8), px_y_(y*8){ }
+Posicion::Posicion(float x, float y) : x_(x*8), y_(y*8) { }
 
 Posicion Posicion::operator+(const Posicion& otro) const {
     Posicion resultado(x_ + otro.x_, y_ + otro.y_);
@@ -35,32 +34,32 @@ float Posicion::distancia_a(const Posicion& otro) const {
 }
 
 float Posicion::x() const {
-    return x_;
+    return x_ / 8;
 }
 
 float Posicion::y() const {
-    return y_;
+    return y_ / 8;
 }
-void Posicion::actualizar(float x,float y){
-    x_ = x;
-    y_ = y;
-    px_x_ = x * 8;
-    px_y_ = y * 8;
+
+void Posicion::actualizar(float x,float y) {
+    x_ = x * 8;
+    y_ = y * 8;
 }
+
 float Posicion::px_x() const {
-    return px_x_;
+    return x_;
 }
 
 float Posicion::px_y() const {
-    return px_y_;
+    return y_;
 }
-void Posicion::actualizar_px_x(float x){
-    px_x_ = x;
-    x_ = x / 8;
+
+void Posicion::actualizar_px_x(float x) {
+    x_ = x;
 }
-void Posicion::actualizar_px_y(float y){
-    px_y_ = y;
-    y_ = y / 8;
+
+void Posicion::actualizar_px_y(float y) {
+    y_ = y;
 }
 
 } // namespace modelo
