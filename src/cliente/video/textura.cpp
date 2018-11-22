@@ -126,7 +126,7 @@ void Textura::limpiar(int r, int g, int b, int a) {
     Uint8 rr, gg, bb, aa;
     SDL_GetRenderDrawColor(renderer, &rr, &gg, &bb, &aa);
     SDL_SetRenderDrawColor(renderer, (Uint8)r, (Uint8)g, (Uint8)b, (Uint8) a);
-    SDL_RenderFillRect(renderer, NULL);
+    SDL_RenderFillRect(renderer, &src);
     SDL_SetRenderDrawColor(renderer, rr, gg, bb, aa);
     
     if (SDL_SetRenderTarget(renderer, old_target) != 0)
