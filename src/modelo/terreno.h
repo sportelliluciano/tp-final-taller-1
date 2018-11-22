@@ -73,8 +73,8 @@ public:
     void eliminar_edificio(Posicion& pos,std::pair<int,int>& dim);
     bool es_caminable(int x_, int y_);
     bool hay_tropa(int x_, int y_);
-    void agregar_tropa(int x_, int y_,std::pair<int,int>& dim);
-    void eliminar_tropa(Posicion& pos,std::pair<int,int>& dim);
+    void agregar_tropa(const Posicion& posicion, std::pair<int,int>& dim);
+    void eliminar_tropa(const Posicion& posicion, std::pair<int,int>& dim);
     Posicion obtener_posicion_libre_cercana(Posicion& posicion_i);
     void agregar_refineria(int x_, int y_,int id_jugador);
     std::vector<Posicion> obtener_refinerias(int id_jugador);

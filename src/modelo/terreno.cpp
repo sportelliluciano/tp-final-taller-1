@@ -222,24 +222,22 @@ bool Terreno::hay_tropa(int x_, int y_) {
     return obtener_celda(x_, y_).hay_tropa();
 }
 
-void Terreno::agregar_tropa(int x_, int y_,std::pair<int,int>& dim) {
+void Terreno::agregar_tropa(const Posicion& posicion, std::pair<int,int>& dim) {
     int dim_x = dim.first;
     int dim_y = dim.second;
-    for (int j = y_; j < y_ + dim_y; j++){
-        for (int i = x_; i < x_ + dim_x; i++){
+    for (int j = posicion.y(); j < posicion.y() + dim_y; j++){
+        for (int i = posicion.x(); i < posicion.x() + dim_x; i++){
             terreno[j][i].agregar_tropa();
         }
     }
 }
 
-void Terreno::eliminar_tropa(Posicion& pos,std::pair<int,int>& dim) {
-    int x_ = pos.x();
-    int y_ = pos.y();
+void Terreno::eliminar_tropa(const Posicion& pos, std::pair<int,int>& dim) {
     int dim_x = dim.first;
     int dim_y = dim.second;
-    for (int j = y_; j < y_ + dim_y; j++){
-        for (int i = x_; i < x_ + dim_x; i++){
-            terreno.at(j).at(i).eliminar_tropa();
+    for (int j = pos.y(); j < pos.y() + dim_y; j++){
+        for (int i = pos.x(); i < pos.x() + dim_x; i++){
+            terreno[j][i].eliminar_tropa();
         }
     }
 }

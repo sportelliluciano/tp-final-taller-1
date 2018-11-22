@@ -32,7 +32,7 @@ void Cosechadora::actualizar_posicion(int dt,Terreno terreno,
                                         posicion.x(),posicion.y());
             }
             terreno.eliminar_tropa(posicion,unidad_base.get_dimensiones());
-            terreno.agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
+            terreno.agregar_tropa(posicion, unidad_base.get_dimensiones());
         //}
         paso_actual++;
 

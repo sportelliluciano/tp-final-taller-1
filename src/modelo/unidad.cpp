@@ -100,6 +100,7 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
     if ((vx == 0) && (vy == 0))
         return false;
     
+    terreno->eliminar_tropa(posicion,unidad_base.get_dimensiones());
     float veloc_x = vx / sqrt(vx*vx + vy*vy),
           veloc_y = vy / sqrt(vx*vx + vy*vy);
     
@@ -121,8 +122,8 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
 
     posicion.actualizar_px_x(fx_actual);
     posicion.actualizar_px_y(fy_actual);
-    terreno->eliminar_tropa(posicion,unidad_base.get_dimensiones());
-    terreno->agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
+    terreno->agregar_tropa(posicion,unidad_base.get_dimensiones());
+    
     return resincronizar;
 }
 

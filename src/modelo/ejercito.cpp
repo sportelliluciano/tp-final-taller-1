@@ -33,7 +33,7 @@ int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
     //std::cout << "Pase los condicionales." << '\n';
     int nuevo_id = id_.nuevo_id();
     tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,posicion.x(),posicion.y()));
-    terreno->agregar_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo));
+    terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->crear_tropa(nuevo_id, id_tipo, posicion.px_x(), posicion.px_y(),
             prototipos.get_vida(id_tipo), id_propietario);
@@ -46,7 +46,7 @@ int Ejercito::crear_cosechadora(std::string id_tipo,Posicion& pos,
     Posicion posicion = terreno->obtener_posicion_libre_cercana(pos);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
-    terreno->agregar_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo));
+    terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
     for (auto it=jugadores.begin();it != jugadores.end();++it){
         (*it)->crear_tropa(nuevo_id,id_tipo,posicion.x(),
                     posicion.y(),prototipos.get_vida(id_tipo),id_propietario);//usar broadcaster
