@@ -208,6 +208,11 @@ bool AreaJuego::mouse_click_derecho(const Posicion& punto) {
             ejercito.obtener_tropa_enemiga_en(camara.traducir_a_logica(mouse));
         servidor.atacar_tropa(ids, enemigo->obtener_id());
         tostador.hacer_tostada("Atacar tropas");    
+    } else if (infraestructura.hay_edificio_enemigo_en(camara.traducir_a_logica(mouse))) {
+        Edificio& enemigo =
+            infraestructura.obtener_edificio_enemigo_en(camara.traducir_a_logica(mouse));
+        servidor.atacar_tropa(ids, enemigo.obtener_id());
+        tostador.hacer_tostada("Atacar edificios");
     } else {
         servidor.mover_tropas(ids, pos_logica.x, pos_logica.y);
         tostador.hacer_tostada("Mover tropas");
@@ -249,7 +254,8 @@ bool AreaJuego::mouse_movimiento(const Posicion& punto) {
     if (en_modo_vender) {
         seleccionar_edificio(punto);
     } else if (!unidades_seleccionadas.empty() &&
-        ejercito.hay_tropas_enemigas_en(camara.traducir_a_logica(mouse))) 
+        (ejercito.hay_tropas_enemigas_en(camara.traducir_a_logica(mouse))  ||
+         infraestructura.hay_edificio_enemigo_en(camara.traducir_a_logica(mouse))))
     {
         if (sprite_mouse == nullptr)
             sprite_mouse = &mouse_atacar;

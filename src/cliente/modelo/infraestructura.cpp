@@ -133,6 +133,22 @@ Edificio& Infraestructura::obtener(int id_edificio) {
     return edificios_construidos.at(id_edificio);
 }
 
+bool Infraestructura::hay_edificio_enemigo_en(const Posicion& punto) const {
+    Edificio* edificio = terreno.obtener_edificio_en(punto);
+    if (edificio) {
+        return edificio->obtener_propietario() != id_jugador_actual;
+    }
+    return false;
+}
+
+Edificio& Infraestructura::obtener_edificio_enemigo_en(const Posicion& punto) {
+    Edificio* edificio = terreno.obtener_edificio_en(punto);
+    if (edificio && edificio->obtener_propietario() != id_jugador_actual)
+        return *edificio;
+    
+    throw std::runtime_error("No hay un edificio enemigo en el punto");
+}
+
 Edificio* Infraestructura::obtener_centro_construccion() {
     for (auto& it : edificios_construidos) {
         if (it.second.obtener_clase() == "centro_construccion") {
@@ -203,7 +219,9 @@ void Infraestructura::crear_edificio(int id, int id_jugador,
     construcciones_iniciadas.erase(clase);
     Edificio nuevo = edificios.at(clase);
 
-    int x = posicion.at(0), y = posicion.at(1);
+    // El servidor tiene celdas de 8x8
+    int x = (posicion.at(0) * 8) / 32, y = (posicion.at(1) * 8) / 32;
+
 
     nuevo.inicializar(id, x, y, id_jugador, false);
     edificios_construidos.emplace(id, nuevo);
@@ -215,7 +233,7 @@ void Infraestructura::agregar_edificio(int id, int id_jugador,
 {
     Edificio nuevo = edificios.at(clase);
 
-    int x = posicion.at(0), y = posicion.at(1);
+    int x = (posicion.at(0) * 8) / 32, y = (posicion.at(1) * 8) / 32;
 
     nuevo.inicializar(id, x, y, id_jugador, true, vida);
     edificios_construidos.emplace(id, nuevo);

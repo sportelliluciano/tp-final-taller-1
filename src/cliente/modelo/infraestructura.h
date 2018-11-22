@@ -36,6 +36,10 @@ public:
 
     Edificio& obtener(int id_edificio);
 
+    bool hay_edificio_enemigo_en(const Posicion& punto) const;
+
+    Edificio& obtener_edificio_enemigo_en(const Posicion& punto);
+
     /**
      * \brief Obtiene el centro de construcción del jugador actual.
      */
