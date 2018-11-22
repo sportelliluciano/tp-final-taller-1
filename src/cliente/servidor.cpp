@@ -206,7 +206,7 @@ void Servidor::ubicar_edificio(const std::string& clase, int celda_x,
     enviar_evento({
         {"id", EVS_UBICAR_EDIFICIO},
         {"clase", clase},
-        {"celda", {celda_x, celda_y}}
+        {"celda", {celda_x * 32 / 8, celda_y * 32 / 8}}
     });
 }
 
@@ -246,7 +246,7 @@ void Servidor::indicar_especia_cosechadora(const std::vector<int>& ids,
     enviar_evento({
         {"id", EVS_COSECHADORA_INDICAR_ESPECIA},
         {"ids_tropa", ids},
-        {"celda", {celda_x, celda_y}}
+        {"celda", {celda_x * 32 / 8, celda_y * 32 / 8}}
     });
 }
 
