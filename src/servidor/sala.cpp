@@ -88,11 +88,9 @@ void Sala::configurar_recepcion_eventos() {
         IJugador *jugador = &it->second;
         modelo->crear_jugador(&it->second);
         
-        cliente.al_recibir_datos(
-            [this, jugador] (const nlohmann::json& data) {
-                actualizar_modelo(jugador, data);
-            }
-        );
+        cliente.al_recibir_datos([this, jugador] (const nlohmann::json& data) {
+            actualizar_modelo(jugador, data);
+        });
     }
 }
 
@@ -138,10 +136,10 @@ void Sala::jugar() {
         modelo->iniciar_partida();
         
         while (!terminar && !modelo->partida_terminada()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(TICK_MS));
             lock_modelo.lock();
             modelo->actualizar(TICK_MS);
             lock_modelo.unlock();
+            std::this_thread::sleep_for(std::chrono::milliseconds(TICK_MS));
         }
     } catch(const std::exception& e) {
         std::cerr << "Explotó la partida en la sala " << nombre << std::endl;
