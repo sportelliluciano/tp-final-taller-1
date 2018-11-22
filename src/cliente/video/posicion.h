@@ -5,13 +5,11 @@ namespace cliente {
 
 class Posicion {
 public:
-    Posicion() : x(0), y(0) { }
+    Posicion();
     
-    Posicion(int x_, int y_) : x(x_), y(y_) { }
+    Posicion(int x_, int y_);
 
-    bool operator==(const Posicion& otro) const {
-        return (x == otro.x) && (y == otro.y);
-    }
+    bool operator==(const Posicion& otro) const;
 
     int x;
     int y;
