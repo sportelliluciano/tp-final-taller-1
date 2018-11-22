@@ -147,10 +147,12 @@ void Lobby::limpiar_salas() {
     for (auto it = salas.begin(); it != salas.end(); ) {
         Sala& sala = it->second;
 
-        if (sala.cantidad_jugadores_conectados() == 0)
+        if (sala.cantidad_jugadores_conectados() == 0) {
+            sala.terminar_partida();
             it = salas.erase(it);
-        else
+        } else {
             ++it;
+        }
     }
 }
 
