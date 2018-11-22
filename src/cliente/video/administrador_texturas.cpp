@@ -10,8 +10,6 @@
 namespace cliente {
 
 AdministradorTexturas::AdministradorTexturas(SDL_Renderer *renderer_) {
-    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
-        throw ErrorSDL("IMG_Init", IMG_GetError());
     renderer = renderer_;
     fuente = TTF_OpenFont("./assets/fuente.ttf", 16);
     if (!fuente)
@@ -77,6 +75,14 @@ Textura& AdministradorTexturas::crear_textura(const std::string& id, int w,
     return texturas_creadas.find(id)->second;
 }
 
+Textura& AdministradorTexturas::obtener_o_crear_textura(
+    const std::string& nombre, int w, int h) 
+{
+    if (contiene_textura(nombre))
+        return obtener_textura(nombre);
+    return crear_textura(nombre, w, h);
+}
+
 Textura& AdministradorTexturas::crear_texto(const std::string& texto) {
     if (texturas_creadas.find("texto-" + texto) != texturas_creadas.end())
         return texturas_creadas.find("texto-" + texto)->second;
@@ -95,6 +101,32 @@ Textura& AdministradorTexturas::crear_texto(const std::string& texto) {
     return texturas_creadas.find("texto-" + texto)->second;
 }
 
+Textura& AdministradorTexturas::crear_texto(const std::string& texto,
+    const Rectangulo& caja, int color) 
+{
+    if (texturas_creadas.find("ctexto-" + texto) != texturas_creadas.end())
+        return texturas_creadas.find("ctexto-" + texto)->second;
+
+    SDL_Color c = {255, 255, 255, 0};
+
+    if (color == 1)
+        c = {170, 20, 20, 0};
+
+    SDL_Surface *sf = TTF_RenderUTF8_Blended_Wrapped(fuente, texto.c_str(), 
+        c, caja.ancho());
+    if (!sf)
+        throw ErrorSDL("TTF_RenderUTF8_Blended_Wrapped", TTF_GetError());
+    
+    SDL_Texture *textura = SDL_CreateTextureFromSurface(renderer, sf);
+    SDL_FreeSurface(sf);
+
+    if (!textura)
+        throw ErrorSDL("SDL_CreateTextureFromSurface");
+    
+    texturas_creadas.emplace("ctexto-" + texto, Textura(renderer, textura));
+    return texturas_creadas.find("ctexto-" + texto)->second;
+}
+
 Textura AdministradorTexturas::crear_texto_nc(const std::string& texto) {
     SDL_Surface *sf = TTF_RenderUTF8_Blended(fuente, texto.c_str(), {255, 255, 255, 0});
     if (!sf)
@@ -111,7 +143,6 @@ Textura AdministradorTexturas::crear_texto_nc(const std::string& texto) {
 
 AdministradorTexturas::~AdministradorTexturas() {
     TTF_CloseFont(fuente);
-    IMG_Quit();
 }
 
 } // namespace cliente

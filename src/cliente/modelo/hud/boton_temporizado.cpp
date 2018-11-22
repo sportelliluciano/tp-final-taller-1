@@ -79,6 +79,22 @@ void BotonTemporizado::renderizar(Ventana& ventana, const Posicion& punto) {
             .crear_texto(s.str())
             .renderizar(punto.x + 5, punto.y + ALTO_BOTON - 20);
     }
+    if (mostrar_tooltip) {
+        ventana.cambiar_plano(true);
+        tooltip.renderizar(ventana, punto.x, punto.y);
+        ventana.cambiar_plano(false);
+    }
 }
+
+bool BotonTemporizado::mouse_entra(const Posicion& pos) {
+    mostrar_tooltip = true;
+    return false;
+}
+
+bool BotonTemporizado::mouse_sale(const Posicion& pos) {
+    mostrar_tooltip = false;
+    return false;
+}
+
 
 } // namespace cliente

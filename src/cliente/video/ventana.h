@@ -124,6 +124,14 @@ public:
     void mostrar_mouse();
 
     /**
+     * \brief Cambia el renderizado al plano frontal o al plano trasero.
+     *
+     * Si frontal es true, los renderizados siguientes se realizarán sobre
+     * el plano frontal; caso contrario se realizarán sobre el plano trasero.
+     */
+    void cambiar_plano(bool frontal);
+
+    /**
      * \brief Destructor.
      */
     ~Ventana();
@@ -184,6 +192,8 @@ private:
     bool mouse_arrastre_iniciado = false, mouse_down = false;
     int mouse_inicio_arrastre_x, mouse_inicio_arrastre_y;
     
+    bool en_plano_frontal = false;
+    SDL_Texture* plano_frontal = nullptr;
 };
 
 } // namespace cliente

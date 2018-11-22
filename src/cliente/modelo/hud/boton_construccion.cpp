@@ -17,7 +17,11 @@ BotonConstruccion::BotonConstruccion(Infraestructura& infraestructura_,
   clase(clase_),
   servidor(servidor_),
   tostador(tostador_)
-{ }
+{ 
+    tooltip.set_titulo(clase_);
+    tooltip.set_cuerpo("Este es un botón de construcción; acá iría el tipo de edificio");
+    tooltip.set_pie("Costo: $ 1.500");
+}
 
 void BotonConstruccion::renderizar(Ventana& ventana, const Posicion& punto) {
     if (infraestructura.esta_construyendo(clase)) {

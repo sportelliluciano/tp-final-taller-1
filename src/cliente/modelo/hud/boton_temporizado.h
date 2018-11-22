@@ -2,6 +2,7 @@
 #define _BOTON_TEMPORIZADO_H_
 
 #include "cliente/video/widgets/widget.h"
+#include "cliente/modelo/hud/tooltip.h"
 
 namespace cliente {
 
@@ -49,7 +50,14 @@ public:
      */
     void reiniciar();
 
+    bool mouse_entra(const Posicion& pos) override;
+    bool mouse_sale(const Posicion& pos) override;
+
+protected:
+    Tooltip tooltip;
+
 private:
+    bool mostrar_tooltip = false;
     int cola = 0;
     int segundos_restantes = 0;
     bool con_filtro_gris = false;

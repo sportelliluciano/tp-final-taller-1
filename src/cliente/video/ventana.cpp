@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
 #include "cliente/video/administrador_texturas.h"
 #include "cliente/video/camara.h"
@@ -26,10 +27,18 @@ Ventana::Ventana() : Ventana(ANCHO_VENTANA_DEFECTO, ALTO_VENTANA_DEFECTO) { }
 
 Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) != 0)
-        throw ErrorSDL("SDL_Init");
+        throw ErrorSDL("SDL_InitSubSystem");
     
-    if (TTF_Init() != 0)
+    if (TTF_Init() != 0) {
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
         throw ErrorSDL("TTF_Init", TTF_GetError());
+    }
+    
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+        TTF_Quit();
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
+        throw ErrorSDL("IMG_Init", IMG_GetError());
+    }
     
     if (pantalla_completa) {
         ventana = SDL_CreateWindow("Dune Remake", 
@@ -89,6 +98,10 @@ Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
     ticks_ultimo_cuadro = 0;
     ticks_ultimo_segundo = veces_renderizado = fps_ = 0;
     
+    plano_frontal = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
+        SDL_TEXTUREACCESS_TARGET, ancho_px, alto_px);
+    SDL_SetTextureBlendMode(plano_frontal, SDL_BLENDMODE_BLEND);
+
     log_depuracion("VSync: %s", vsync ? "SI":"NO");
     log_depuracion("Tamaño de ventana: %dx%d", ancho_px, alto_px);
 }
@@ -242,7 +255,8 @@ void Ventana::actualizar() {
             SDL_Delay(1);
         }
     }
-
+    cambiar_plano(false);
+    SDL_RenderCopy(renderer, plano_frontal, NULL, NULL);
     SDL_RenderPresent(renderer);
     ticks_ultimo_cuadro = SDL_GetTicks();
     veces_renderizado++;
@@ -251,6 +265,11 @@ void Ventana::actualizar() {
     //  limpiar el backbuffer utilizando SDL_RenderClear.
     if (SDL_RenderClear(renderer) != 0)
         throw ErrorSDL("SDL_RenderClear");
+    
+    cambiar_plano(true);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+    cambiar_plano(false);
 }
 
 AdministradorTexturas& Ventana::obtener_administrador_texturas() {
@@ -332,10 +351,21 @@ void Ventana::mostrar_mouse() {
     SDL_ShowCursor(SDL_ENABLE);
 }
 
+void Ventana::cambiar_plano(bool frontal) {
+    if (frontal)
+        SDL_SetRenderTarget(renderer, plano_frontal);
+    else
+        SDL_SetRenderTarget(renderer, NULL);
+
+    en_plano_frontal = frontal;
+}
+
 Ventana::~Ventana() {
     delete admin_texturas;
+    SDL_DestroyTexture(plano_frontal);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(ventana);
+    IMG_Quit();
     TTF_Quit();
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

@@ -49,15 +49,15 @@ bool ClienteJuego::ejecutar_juego() {
     Ventana ventana(partida.ancho_ventana(), partida.alto_ventana(),
         partida.pantalla_completa(), partida.vsync());
     
+    Servidor *servidor = partida.servidor();
+    partida.servidor(nullptr);
+
     PantallaCarga pantalla_carga;
 
     pantalla_carga.renderizar(ventana);
     ventana.actualizar();
 
     // TODO: configurar sonido
-    
-    Servidor *servidor = partida.servidor();
-    partida.servidor(nullptr);
 
     nlohmann::json mapa = servidor->recibir_json();
     nlohmann::json edificios = servidor->recibir_json();

@@ -55,6 +55,8 @@ public:
      * obtener_textura pasándole como parámetro el nombre de la misma.
      */
     Textura& crear_textura(const std::string& nombre, int w, int h);
+    Textura& obtener_o_crear_textura(const std::string& nombre, int w, int h);
+    
 
     /**
      * \brief Crea una nueva textura con el texto indicado y la almacena
@@ -66,6 +68,9 @@ public:
      * \brief Crea una nueva textura con el texto indicado sin almacenarla.
      */
     Textura crear_texto_nc(const std::string& texto);
+
+    Textura& crear_texto(const std::string& texto,
+        const Rectangulo& caja, int color);
 
     /**
      * \brief Destructor.
