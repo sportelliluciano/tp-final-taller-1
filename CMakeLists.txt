@@ -8,10 +8,6 @@ option(CLIENTE_USAR_ASAN "Compilar el cliente con address sanitizer" OFF)
 # Modo DEBUG
 set (CMAKE_CXX_FLAGS_DEBUG "-ggdb -O0 -fno-inline")
 
-if(CLIENTE_USAR_ASAN)
- set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
-endif(CLIENTE_USAR_ASAN)
-
 # Estándar C++11
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)

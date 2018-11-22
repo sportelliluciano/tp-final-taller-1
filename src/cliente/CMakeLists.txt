@@ -6,6 +6,10 @@ file(GLOB eventos_cliente_src eventos/*.cpp)
 list(APPEND libcliente_srcs ${eventos_cliente_src})
 list(REMOVE_ITEM libcliente_srcs "main.cpp")
 
+if(CLIENTE_USAR_ASAN)
+ set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
+endif(CLIENTE_USAR_ASAN)
+
 add_subdirectory(video)
 add_subdirectory(sonido)
 add_subdirectory(modelo)
