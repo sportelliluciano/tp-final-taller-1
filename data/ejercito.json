@@ -2,6 +2,8 @@
     {
         "id":"-",
         "nombre":"-",
+        "descripcion": "-",
+        "metadata": { },
         "casa":"-",
         "requerimiento":[],
         "id_arma":"-",
@@ -17,8 +19,14 @@
     },
     {
         "id":"infanteria ligera",
-        "nombre":"infanteria ligera",
-        "casa":["atreides","Hatkonnen","ordos"],
+        "nombre":"Infantería ligera",
+        "descripcion": "Unidad básica, fuerte cuando se la usa en grupo.",
+        "metadata": {
+            "Vida": "50",
+            "Rango": "3 casillas",
+            "Velocidad": "16 km/h"
+        },
+        "casa":["atreides","harkonnen","ordos"],
         "requerimiento":["cuartel"],
         "id_arma":"arma rifle de asalto",
         "rango":3,
@@ -32,9 +40,15 @@
     },
     {
         "id":"infanteria pesada",
-        "nombre":"infanteria pesada",
-        "casa":["atreides","Hatkonnen","ordos"],
-        "requerimiento":[],
+        "nombre":"Infantería pesada",
+        "descripcion": "Efectivas contra unidades blindadas, no así contra la infantería.",
+        "metadata": {
+            "Vida": "80",
+            "Rango": "3 casillas",
+            "Velocidad": "12 km/h"
+        },
+        "casa":["atreides","harkonnen","ordos"],
+        "requerimiento":["cuartel"],
         "id_arma":"arma lanza misiles",
         "rango":3,
         "velocidad":12,
@@ -47,7 +61,13 @@
     },
     {
         "id":"fremen",
-        "nombre":"fremen",
+        "nombre":"Fremen",
+        "descripcion": "Guerreros nativos del planeta Arrakis que saben como moverse en el desierto.",
+        "metadata": {
+            "Vida": "50",
+            "Rango": "3 casillas",
+            "Velocidad": "20 km/h"
+        },
         "casa":["atreides"],
         "requerimiento":["cuartel","palacio"],
         "id_arma":"arma rifle de asalto + lanza misiles",
@@ -62,7 +82,13 @@
     },
     {
         "id":"sardaukar",
-        "nombre":"sardaukar",
+        "nombre":"Sardaukar",
+        "descripcion": "Unidades de élite concedidas por el mismo Emperador.",
+        "metadata": {
+            "Vida": "80",
+            "Rango": "3 casillas",
+            "Velocidad": "12 km/h"
+        },
         "casa":["harkonnen"],
         "requerimiento":["cuartel","palacio"],
         "id_arma":"arma rifle de asalto + lanza misiles",
@@ -77,9 +103,15 @@
     },
     {
         "id":"trike",
-        "nombre":"trike",
+        "nombre":"Trike",
+        "descripcion": "Vehículo rápido armado con ametralladoras.",
+        "metadata": {
+            "Vida": "80",
+            "Rango": "4 casillas",
+            "Velocidad": "64 km/h"
+        },
         "casa":["harkonnen","atreides"],
-        "requerimiento":["fabrica ligera"],
+        "requerimiento":["fabrica_ligera"],
         "id_arma":"arma rifle de asalto",
         "rango":4,
         "velocidad":64,
@@ -92,9 +124,15 @@
     },
     {
         "id":"raider",
-        "nombre":"raider",
+        "nombre":"Raider",
+        "descripcion": "Vehículo muy rápido armado con ametralladoras.",
+        "metadata": {
+            "Vida": "80",
+            "Rango": "4 casillas",
+            "Velocidad": "84 km/h"
+        },
         "casa":["ordos"],
-        "requerimiento":["fabrica ligera"],
+        "requerimiento":["fabrica_ligera"],
         "id_arma":"arma cañon 22mm",
         "rango":4,
         "velocidad":84,
@@ -107,9 +145,15 @@
     },
     {
         "id":"tanque",
-        "nombre":"tanque",
-        "casa":["atreides","Hatkonnen","ordos"],
-        "requerimiento":["fabrica pesada"],
+        "nombre":"Tanque",
+        "descripcion": "Versátiles, son la unidad de combate por excelencia.",
+        "metadata": {
+            "Vida": "30",
+            "Rango": "4 casillas",
+            "Velocidad": "40 km/h"
+        },
+        "casa":["atreides","harkonnen","ordos"],
+        "requerimiento":["fabrica_pesada"],
         "id_arma":"arma cañon",
         "rango":4,
         "velocidad":40,
@@ -123,9 +167,15 @@
     },
     {
         "id":"tanque sonico",
-        "nombre":"tanque sonico",
+        "nombre":"Tanque sónico",
+        "descripcion": "Dispara ondas de sonidos que dañan a todo aquel que se encuentre en su paso, inclusive a unidades aliadas",
+        "metadata": {
+            "Vida": "300",
+            "Rango": "4 casillas",
+            "Velocidad": "12 km/h"
+        },
         "casa":["atreides"],
-        "requerimiento":["fabrica pesada","palacio"],
+        "requerimiento":["fabrica_pesada","palacio"],
         "id_arma":"arma ondas de sonido",
         "rango":4,
         "velocidad":12,
@@ -138,9 +188,15 @@
     },
     {
         "id":"desviador",
-        "nombre":"desviador",
+        "nombre":"Desviador",
+        "descripcion": "Este tanque dispara un misil que al explotar esparce una nube tóxica. La unidad impactada, confundida, pasa al control del jugador.",
+        "metadata": {
+            "Vida": "300",
+            "Rango": "5 casillas",
+            "Velocidad": "12 km/h"
+        },
         "casa":["ordos"],
-        "requerimiento":["fabrica pesada","palacio"],
+        "requerimiento":["fabrica_pesada","palacio"],
         "id_arma":"arma lanza misiles",
         "rango":5,
         "velocidad":12,
@@ -153,9 +209,15 @@
     },
     {
         "id":"devastador",
-        "nombre":"devastador",
+        "nombre":"Devastador",
+        "descripcion": "Tanque altamente blindado. Al ser destruido este explota dañando todo aquel que este cerca.",
+        "metadata": {
+            "Vida": "400",
+            "Rango": "4 casillas",
+            "Velocidad": "12 km/h"
+        },
         "casa":["harkonnen"],
-        "requerimiento":["fabrica pesada","palacio"],
+        "requerimiento":["fabrica_pesada","palacio"],
         "id_arma":"arma cañon de plasma",
         "rango":4,
         "velocidad":12,
@@ -168,9 +230,15 @@
     },
     {
         "id":"cosechadora",
-        "nombre":"cosechadora",
-        "casa":["atreides","Hatkonnen","ordos"],
-        "requerimiento":["fabrica pesada"],
+        "nombre":"Cosechadora",
+        "descripcion": "Es la única unidad que puede recolectar la especia encontrada en las arenas de Arrakis y llevarla a las refinerías.",
+        "metadata": {
+            "Vida": "600",
+            "Velocidad": "12 km/h",
+            "Cant. especia": "200 u."
+        },
+        "casa":["atreides","harkonnen","ordos"],
+        "requerimiento":["fabrica_pesada"],
         "id_arma":"-",
         "rango":0,
         "velocidad":12,
