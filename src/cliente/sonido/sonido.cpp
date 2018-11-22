@@ -88,7 +88,7 @@ void Sonido::apagar() {
     for (auto it=sonidos.begin(); it != sonidos.end(); ++it) {
         Mix_FreeChunk(it->second);
     }
-
+    Mix_CloseAudio();
     Mix_Quit();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
