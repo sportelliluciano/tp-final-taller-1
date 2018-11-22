@@ -68,10 +68,11 @@ void Cliente::iniciar_async() {
         try {
             while (conexion.esta_conectada()) {
                 nlohmann::json data = conexion.recibir_json();
-                m_cb_al_recibir_datos.lock();
-                if (cb_al_recibir_datos)
-                    cb_al_recibir_datos(data);
-                m_cb_al_recibir_datos.unlock();
+                {
+                    Lock l(m_cb_al_recibir_datos);
+                    if (cb_al_recibir_datos)
+                        cb_al_recibir_datos(data);
+                }
             }
         } catch(const std::exception& e) {
             error_receptor = e.what();
