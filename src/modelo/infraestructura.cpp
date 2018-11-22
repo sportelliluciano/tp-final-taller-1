@@ -13,15 +13,15 @@
 
 namespace modelo {
 
-Infraestructura::Infraestructura(Broadcaster& broadcaster) 
-: comunicacion_jugadores(broadcaster) 
+Infraestructura::Infraestructura(Broadcaster& broadcaster,Id& id) 
+: comunicacion_jugadores(broadcaster),id_(id) 
 {
 
 }
 
-void Infraestructura::inicializar(Terreno* mapa,const nlohmann::json& edificios){
+void Infraestructura::inicializar(Terreno* mapa,const nlohmann::json& edificios_){
     terreno = mapa;
-    prototipos.inicializar(edificios);
+    prototipos.inicializar(edificios_);
 }
 
 void Infraestructura::actualizar_edificios(int dt_ms) {

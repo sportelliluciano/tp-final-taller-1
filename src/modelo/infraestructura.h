@@ -21,10 +21,10 @@ class Infraestructura{
     Terreno* terreno;
     std::unordered_map<int,Edificio> edificios;
     InfraestructuraCreador prototipos;
-    Id id_;
+    Id& id_;
 
     public:
-    Infraestructura(Broadcaster& broadcaster);
+    Infraestructura(Broadcaster& broadcaster,Id& id);
     void inicializar(Terreno* mapa,const nlohmann::json& edificios);
     int crear(const std::string& id_tipo,int x,int y, int id_propietario);
     unsigned int reciclar(int id);

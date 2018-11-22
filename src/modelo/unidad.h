@@ -6,6 +6,7 @@
 // TODO: Arreglar esto
 namespace modelo { class Unidad; }
 
+#include "modelo/atacable.h"
 #include "modelo/arma.h"
 #include "modelo/edificio.h"
 #include "modelo/unidad_base.h"
@@ -14,14 +15,14 @@ namespace modelo { class Unidad; }
 
 namespace modelo {
 
-class Unidad {
+class Unidad: public Atacable {
 private:
     int id;
     int vida;
     //UnidadBase& unidad_base;
     int tiempo_para_atacar = 0;
     bool atacando = false;
-    Unidad* victima = nullptr;
+    Atacable* victima = nullptr;
 
 protected:
     UnidadBase& unidad_base;
@@ -34,8 +35,8 @@ public:
     Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
     ~Unidad();
     int recibir_dano(unsigned int dano);
-    int atacar(Unidad* victima);
-    void atacar(Edificio& edificio);
+    int atacar(Atacable* victima);
+    //void atacar(Edificio& edificio);
     int get_id();
     unsigned int get_vida();
     std::pair<int,int>& get_dimensiones();
@@ -48,7 +49,7 @@ public:
      */
     virtual bool actualizar_posicion(int dt,Terreno* terreno);
     virtual int actualizar_ataque(int dt,Terreno* terreno);
-    void configurar_ataque(Unidad* victima);
+    void configurar_ataque(Atacable* victima);
     std::string& get_clase() const;
     bool esta_atacando();
     void parar_ataque();

@@ -19,18 +19,18 @@ ArmaBase::ArmaBase(const nlohmann::json& data_arma){
 }
 ArmaBase::~ArmaBase(){
 }
-int ArmaBase::atacar_a(Unidad* victima){
+int ArmaBase::atacar_a(Atacable* victima){
     return victima->recibir_dano(dano);
     //if (bonificaciones.count(victima.get_id())){
         //victima.recibir_dano(bonificaciones[victima.get_id()]);
     //}
 }
-void ArmaBase::atacar_a(Edificio* victima){
-    victima->recibir_dano(dano);
+//void ArmaBase::atacar_a(Edificio* victima){
+ //   victima->recibir_dano(dano);
     //if (bonificaciones.count(victima.get_id())){
         //victima.recibir_dano(bonificaciones[victima.get_id()]);
     //}
-}
+//}
 unsigned int ArmaBase::obtener_frecuencia(){
     return frecuencia;
 }

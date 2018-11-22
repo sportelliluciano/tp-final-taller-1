@@ -9,7 +9,7 @@
 namespace modelo {
 
 Juego::Juego() 
-: inf(comunicacion_jugadores), ejercito(comunicacion_jugadores) 
+: inf(comunicacion_jugadores,id), ejercito(comunicacion_jugadores,id) 
 { }
 
 void Juego::inicializar(const nlohmann::json& mapa, 
@@ -139,18 +139,12 @@ void Juego::mover_tropas(IJugador* jugador, const std::unordered_set<int>& ids,
 void Juego::atacar_tropa(IJugador* jugador, 
         const std::unordered_set<int>& ids_atacantes, int id_atacado)
 {
-    std::string casa;
-    for (auto it=jugadores.begin();it != jugadores.end();++it){
-        if ((it->second).pertenece(id_atacado)){
-            casa = (it->second).get_casa();
-            break;
+    Jugador& atacante = jugadores.at(jugador->obtener_id());
+    for (auto it = ids_atacantes.begin();it != ids_atacantes.end();++it){
+        if (atacante.pertenece(id_atacado) && atacante.pertenece(*it)){
+            continue;
         }
-    }        
-    for (int id_ : ids_atacantes) {
-        for (auto it=jugadores.begin();it != jugadores.end();++it){
-            //if ((it->second).pertenece(id_) && (it->second).get_casa()==casa)return;
-        }
-        ejercito.atacar(id_atacado,id_);
+        ejercito.atacar(id_atacado,*it);
     }
 }
 

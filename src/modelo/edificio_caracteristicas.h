@@ -9,13 +9,13 @@ class EdificioCaracteristicas{
     private:
     int id;
     Posicion posicion;
-    unsigned int puntos_de_estructura;
+    int puntos_de_estructura;
 
     public:
     EdificioCaracteristicas();
     EdificioCaracteristicas(int id,int x,int y,unsigned int puntos_de_estructura);
     ~EdificioCaracteristicas();
-    bool reducir_ptos_est(int dano);
+    int reducir_ptos_est(int dano);
     int get_id();
     int get_vida();
     Posicion& get_posicion();

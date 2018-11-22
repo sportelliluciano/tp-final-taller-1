@@ -14,10 +14,9 @@ EdificioCaracteristicas::EdificioCaracteristicas(int id_,int x_,int y_,
 EdificioCaracteristicas::~EdificioCaracteristicas(){
 
 }
-bool EdificioCaracteristicas::reducir_ptos_est(int dano){
+int EdificioCaracteristicas::reducir_ptos_est(int dano){
     puntos_de_estructura -= dano;
-    if (puntos_de_estructura > 0) return true;
-    return false; 
+    return puntos_de_estructura; 
 }
 int EdificioCaracteristicas::get_id(){
     return id;

@@ -27,8 +27,8 @@ public:
     //UnidadBase();
     UnidadBase(const nlohmann::json& data_unidad,Arma& arma_);
     ~UnidadBase();
-    int atacar_a(Unidad* victima);
-    void atacar_a(Edificio* edificio);
+    int atacar_a(Atacable* victima);
+    //void atacar_a(Edificio* edificio);
     unsigned int get_rango() const;
     unsigned int get_velocidad() const;
     unsigned int get_tiempo() const;

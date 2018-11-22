@@ -21,10 +21,8 @@ Edificio::~Edificio(){
 Edificio Edificio::clonar(int id,int x,int y){
     return Edificio(info_base,id,x,y);    
 }
-void Edificio::recibir_dano(unsigned int dano){
-    if(!caracteristicas.reducir_ptos_est(dano)){
-    //destruiredificio
-    }
+int Edificio::recibir_dano(unsigned int dano){
+    return caracteristicas.reducir_ptos_est(dano);
 }
 int Edificio::get_id(){
     return caracteristicas.get_id();    

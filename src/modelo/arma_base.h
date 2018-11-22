@@ -9,6 +9,7 @@ namespace modelo { class ArmaBase; }
 
 #include "modelo/unidad.h"
 #include "modelo/edificio.h"
+#include "modelo/atacable.h"
 
 namespace modelo {
 
@@ -23,8 +24,8 @@ public:
     ArmaBase();
     ArmaBase(const nlohmann::json& data_arma);
     ~ArmaBase();
-    int atacar_a(Unidad* victima);
-    void atacar_a(Edificio* victima);
+    int atacar_a(Atacable* victima);
+    //void atacar_a(Edificio* victima);
     unsigned int obtener_frecuencia();
 };
 

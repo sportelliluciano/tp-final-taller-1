@@ -14,8 +14,8 @@
 
 namespace modelo {
     
-Ejercito::Ejercito(Broadcaster& broadcaster) 
-: comunicacion_jugadores(broadcaster) 
+Ejercito::Ejercito(Broadcaster& broadcaster,Id& id) 
+: comunicacion_jugadores(broadcaster),id_(id) 
 { }
 
 void Ejercito::inicializar(Terreno* terreno_,const nlohmann::json& ejercito_){
@@ -49,7 +49,7 @@ int Ejercito::crear_cosechadora(std::string id_tipo,Posicion& pos,
     terreno->agregar_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo));
     for (auto it=jugadores.begin();it != jugadores.end();++it){
         (*it)->crear_tropa(nuevo_id,id_tipo,posicion.x(),
-                    posicion.y(),prototipos.get_vida(id_tipo),id_propietario);
+                    posicion.y(),prototipos.get_vida(id_tipo),id_propietario);//usar broadcaster
         if((*it)->obtener_id()==id_propietario){
             cosechadoras.emplace(nuevo_id,prototipos.clonar(
                 id_tipo,nuevo_id,posicion.x(),posicion.y(),terreno,(*it)));   
@@ -80,7 +80,7 @@ void Ejercito::mover(int id, int x, int y, IJugador*) {
     
     tropas.at(id).configurar_camino(a_estrella);
     
-    tropas_en_movimiento.push_back(id);
+    tropas_en_movimiento.insert(id);
     
     std::vector<std::pair<int,int>> v;
     
@@ -98,7 +98,7 @@ void Ejercito::mover_cosechadora(int id,int x,int y,IJugador* jugador){
     std::vector<Posicion> a_estrella = terreno->buscar_camino_minimo(cosechadoras.at(id).get_posicion(), 
                                                            Posicion(x,y));
     cosechadoras.at(id).configurar_camino(a_estrella);
-    tropas_en_movimiento.push_back(id);
+    tropas_en_movimiento.insert(id);
     std::vector<std::pair<int,int>> v;
     for (auto it = a_estrella.begin(); it!= a_estrella.end();++it){
         v.emplace_back(std::pair<int,int>((*it).x(),(*it).y()));
@@ -113,15 +113,17 @@ void Ejercito::atacar(int id_victima,int id_atacante){
     }else {
         //tropas.at(id_atacante).atacar(tropas.at(id_victima));
         tropas.at(id_atacante).configurar_ataque(&tropas.at(id_victima));
-        tropas_atacando.push_back(id_atacante);
+        tropas_atacando.insert(id_atacante);
     }
 }
-void Ejercito::atacar(Edificio& edificio,int id_atacante){
+void Ejercito::atacar(Atacable* edificio,int id_atacante){
     // acercarme hasta cumplir con el rango 
     if (cosechadoras.count(id_atacante)!=0){
-        cosechadoras.at(id_atacante).atacar(edificio);
-    }else{
-        tropas.at(id_atacante).atacar(edificio);
+        return;//no pueden atacar
+    }else {
+        tropas.at(id_atacante).configurar_ataque(edificio);
+        tropas_atacando.insert(id_atacante);
+        //tropas.at(id_atacante).atacar(edificio);
     }
 }
 
@@ -137,8 +139,26 @@ unsigned int Ejercito::get_costo(std::string id_tipo) {
     return prototipos.get_costo(id_tipo);
 }
 
+void Ejercito::matar_tropa(int id_victima,int id_atacante){
+    tropas_muertas.insert(id_victima);
+    tropas.at(id_atacante).parar_ataque();
+    if (tropas_en_movimiento.count(id_victima)!=0){
+        tropas_en_movimiento.erase(id_victima);
+    }        
+    if (tropas.count(id_victima != 0)){
+        tropas.erase(id_victima);
+    } else if (cosechadoras.count(id_victima)!=0){
+        cosechadoras.erase(id_victima);
+    } else{
+        return;
+    }
+    comunicacion_jugadores.broadcast([&] (IJugador *j) {
+               j->destruir_tropa(id_victima);
+            });
+}
+
 void Ejercito::actualizar_tropas(int dt) {
-    for (std::vector<int>::iterator it = tropas_en_movimiento.begin();
+    for (auto it = tropas_en_movimiento.begin();
             it != tropas_en_movimiento.end();)
     {
         Unidad& unidad = tropas.at(*it);
@@ -169,54 +189,48 @@ void Ejercito::actualizar_tropas(int dt) {
             });
         }
         ++it;
-    }
+    } 
     //********************************ataque************************
-    for (std::vector<int>::iterator it = tropas_atacando.begin();
+    tropas_muertas.clear();
+    for (auto it = tropas_atacando.begin();
             it != tropas_atacando.end();)
     {
         bool borrado = false;
         Unidad& unidad = tropas.at(*it);//ojo:se podria morir, verficar que este en el un_map
-        if (!unidad.esta_atacando()){
+        if (!unidad.esta_atacando() || tropas_muertas.count(*it)!= 0){
             it = tropas_atacando.erase(it);
             continue;
-        }
-
-        int vida_nueva_victima = unidad.actualizar_ataque(dt,terreno);
+        }// el verificar la muerte aca hace que el ciclo de elimnado de muertos
+        //de tropa_atacando sea mas rapido
         int id_victima = unidad.id_victima();
-        // comunicacion_jugadores.broadcast([&] (IJugador* j) {
-        //     j->atacar_tropa(id_victima, tropas.at(id_victima).get_vida());
-        // });
+        if (tropas_muertas.count(id_victima)){
+            ++it;
+            continue;
+        }
+        //falta ver el tema del rango
+        int vida_nueva_victima = unidad.actualizar_ataque(dt,terreno);
         if (vida_nueva_victima <= 0){
-            // //falta ver el tema del rango
-            // for (std::vector<int>::iterator it2 = tropas_atacando.begin();
-            //     it2 != tropas_atacando.end();)
-            // {
-            //     Unidad& atacante = tropas.at(*it2);
-            //     if(atacante.id_victima() == id_victima){
-            //         atacante.parar_ataque();
-            //     }
-            //     if(*it == id_victima){
-            //         it = tropas_atacando.erase(it);//esto rompe???
-            //     } else {
-            //         ++it;
-            //     }
-            // }
-            //comunicacion_jugadores.broadcast()//destruir_tropa(id_victima)
+            matar_tropa(id_victima,*it);//lo saca del modelo
             it = tropas_atacando.erase(it);
             borrado = true;
-            comunicacion_jugadores.broadcast([&] (IJugador *j) {
-               j->destruir_tropa(id_victima);
-            });
-            //eliminar tropa muerta del modelo y comunicar
-            //tropas.erase(id_victima);
             //como le aviso a jugador(clase Jugador)??
         }
         comunicacion_jugadores.broadcast([&] (IJugador *j) {
                j->atacar_tropa(id_victima,vida_nueva_victima);
         });
-        //comunicacion_jugadores.broadcast()//atacar_tropa(id_victima,vida_nueva_victima)
         if (!borrado)
             ++it;
+    }
+    //saco a los muertos restantes del set
+    //aquellos que atacaron y despues murieron
+    for (auto it = tropas_atacando.begin();
+            it != tropas_atacando.end();)
+    {
+        if (tropas_muertas.count(*it)!= 0){
+            it = tropas_muertas.erase(it);
+            continue;
+        }
+        ++it;
     }
 }
 unsigned int Ejercito::get_tiempo(std::string id_tipo){

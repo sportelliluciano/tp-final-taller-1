@@ -4,10 +4,11 @@
 //namespace modelo { class Edificio; }
 #include "modelo/edificio_base.h"
 #include "modelo/edificio_caracteristicas.h"
+#include "modelo/atacable.h"
 
 namespace modelo {
 
-class Edificio{
+class Edificio :public Atacable{
     private:
     EdificioCaracteristicas caracteristicas;
     EdificioBase& info_base;
@@ -18,7 +19,7 @@ class Edificio{
     ~Edificio();
     Edificio& operator=(const Edificio& other);
     Edificio clonar(int id,int x,int y);
-    void recibir_dano(unsigned int dano);
+    int recibir_dano(unsigned int dano);
     int get_id();
     int get_vida();//temporal
     unsigned int get_costo();

@@ -5,6 +5,7 @@
 
 #include "libs/json.hpp"
 #include "modelo/arma.h"
+#include "modelo/atacable.h"
 
 #define CASA "casa"
 #define RANGO "rango"
@@ -34,12 +35,12 @@ UnidadBase::UnidadBase(const nlohmann::json& data_unidad,Arma& arma_):
 UnidadBase::~UnidadBase() { 
 
 }
-int UnidadBase::atacar_a(Unidad* victima){
+int UnidadBase::atacar_a(Atacable* victima){
     return arma.atacar_a(victima);
-}
+}/*
 void UnidadBase::atacar_a(Edificio* victima){
     arma.atacar_a(victima);
-}
+}*/
 unsigned int UnidadBase::get_rango() const {
     return rango;
 }

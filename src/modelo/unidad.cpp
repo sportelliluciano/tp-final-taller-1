@@ -32,12 +32,8 @@ int Unidad::recibir_dano(unsigned int dano){
     return vida;
 }
 
-int Unidad::atacar(Unidad* victima_){
+int Unidad::atacar(Atacable* victima_){
     return unidad_base.atacar_a(victima_);
-}
-
-void Unidad::atacar(Edificio& edificio){
-    unidad_base.atacar_a(&edificio);
 }
 
 int Unidad::get_id(){
@@ -135,7 +131,7 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
     return resincronizar;
 }
 
-void Unidad::configurar_ataque(Unidad* victima_){
+void Unidad::configurar_ataque(Atacable* victima_){
     victima = victima_;
     atacando = true;
     tiempo_para_atacar = 0;

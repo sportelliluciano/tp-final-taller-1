@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <unordered_set>
 
 #include "modelo/terreno.h"
 #include "modelo/unidad.h"
@@ -22,13 +23,14 @@ class Ejercito{
     std::unordered_map<int,Unidad> tropas;
     EjercitoCreador prototipos;
     Terreno* terreno;
-    Id id_;
-    std::vector<int> tropas_en_movimiento;
-    std::vector<int> tropas_atacando;
+    Id& id_;
+    std::unordered_set<int> tropas_en_movimiento;
+    std::unordered_set<int> tropas_atacando;
+    std::unordered_set<int> tropas_muertas;
     std::unordered_map<int,Cosechadora> cosechadoras;
 
     public:
-    Ejercito(Broadcaster& broadcaster);
+    Ejercito(Broadcaster& broadcaster,Id& id);
     void inicializar(Terreno* terreno,const nlohmann::json& ejercito_);
     ~Ejercito();
     int crear(const std::string& id_tipo, int id_propietario);
@@ -38,10 +40,11 @@ class Ejercito{
     void mover(int id,int x,int y,IJugador* jugador);
     void mover_cosechadora(int id,int x,int y,IJugador* jugador);
     void atacar(int id_victima,int id_atacante);
-    void atacar(Edificio& edificio,int id_atacante);
+    void atacar(Atacable* edificio,int id_atacante);
     Unidad& get(int id);
     unsigned int get_costo(std::string id_tipo);
     unsigned int get_tiempo(std::string id_tipo);
+    void matar_tropa(int id_victima,int id_atacante);
     void actualizar_tropas(int dt);
 };
 }
