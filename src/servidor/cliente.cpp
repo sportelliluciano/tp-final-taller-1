@@ -89,8 +89,10 @@ void Cliente::detener_async() {
     detencion_solicitada = true;
     conexion.cerrar(true);
     cola_salida.push({}); // Desbloquear la cola
-    hilo_emisor.join();
-    hilo_receptor.join();
+    if (hilo_emisor.joinable())
+        hilo_emisor.join();
+    if (hilo_receptor.joinable())
+        hilo_receptor.join();
 }
 
 void Cliente::enviar(const nlohmann::json& data) {
