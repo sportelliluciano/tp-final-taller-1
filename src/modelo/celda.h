@@ -36,12 +36,12 @@ public:
     int x() const;
     int y() const;
 
-    bool tiene_edificio();
+    bool tiene_edificio() const;
     void agregar_edificio();
     void eliminar_edificio();
-    bool es_caminable()const;
+    bool es_caminable() const;
     bool es_construible();
-    bool hay_tropa();
+    bool hay_tropa() const;
     void agregar_tropa();
     void eliminar_tropa();
 

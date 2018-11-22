@@ -10,12 +10,13 @@
 #include "modelo/a_estrella.h"
 #include "modelo/celda.h"
 
-#define RANGO 5
+// El tamaño de una celda [enunciado / dato de cliente] es de 32x32.
+#define RANGO 5 * 4
 
 namespace modelo {
-Terreno::Terreno(){
 
-}
+Terreno::Terreno() { }
+
 void Terreno::inicializar(const nlohmann::json& mapa) {
     alto = ancho = 0;
     const std::vector<std::vector<int>>& tipos = 
@@ -40,8 +41,8 @@ void Terreno::inicializar(const nlohmann::json& mapa) {
     }
 }
 
-Celda& Terreno::obtener_celda(int x, int y) {
-    return terreno[x][y];
+inline Celda& Terreno::obtener_celda(int x, int y) {
+    return terreno.at(y).at(x);
 }
 
 int Terreno::obtener_ancho() const {
@@ -76,16 +77,16 @@ std::vector<int> Terreno::obtener_vecinos(int nodo) const {
     // TODO: limpiar esto
 
     // Celdas que siempre son caminables (a menos que sean obstáculo)
-    bool arriba = ((y - 1) > 0) && terreno[x][y - 1].es_caminable(), 
-         abajo  = ((y + 1) < alto) && terreno[x][y + 1].es_caminable(), 
-         izquierda = ((x - 1) > 0) && terreno[x - 1][y].es_caminable(), 
-         derecha = ((x + 1) < ancho) && terreno[x + 1][y].es_caminable();
+    bool arriba = ((y - 1) > 0) && terreno[y-1][x].es_caminable(), 
+         abajo  = ((y + 1) < alto) && terreno[y+1][x].es_caminable(), 
+         izquierda = ((x - 1) > 0) && terreno[y][x-1].es_caminable(), 
+         derecha = ((x + 1) < ancho) && terreno[y][x+1].es_caminable();
     // Celdas que son caminables sólo si las aledañas son caminables
     //  (y no son obstáculos)
-    bool arriba_izq = (arriba && izquierda) && terreno[x-1][y-1].es_caminable(),
-         arriba_der = (arriba && derecha) && terreno[x+1][y-1].es_caminable(),
-         abajo_izq = (abajo && izquierda) && terreno[x-1][y+1].es_caminable(),
-         abajo_der = (abajo && derecha) && terreno[x+1][y+1].es_caminable();
+    bool arriba_izq = (arriba && izquierda) && terreno[y-1][x-1].es_caminable(),
+         arriba_der = (arriba && derecha) && terreno[y-1][x+1].es_caminable(),
+         abajo_izq = (abajo && izquierda) && terreno[y+1][x-1].es_caminable(),
+         abajo_der = (abajo && derecha) && terreno[y+1][x+1].es_caminable();
 
     if (arriba)
         vecinos.push_back(hash_posicion(x, y - 1));
@@ -160,68 +161,68 @@ bool Terreno::rango_valido_edificio(int x_, int y_,std::pair<int,int>& dim){
     for (int j = inicio_y; j < fin_y; j++){
         for (int i = inicio_x; i < inicio_x; i++){
             if( j >= y_ && j< y_+dim_y && i >= x_ && i< x_+dim_x){
-                if(terreno[j][i].tiene_edificio() ||
-                   terreno[j][i].hay_tropa() ||
-                   !terreno[j][i].es_construible()){
+                if(!terreno[j][i].es_construible()) {
                    return false;    
                 }
                 continue;
             }
-            if(terreno[j][i].tiene_edificio()){
-                   rango_valido = true;
+            if(terreno[j][i].tiene_edificio()) {
+                rango_valido = true;
             }
         }
     }
     return rango_valido;
 }
-bool Terreno::rango_valido_tropa(int x_, int y_,std::pair<int,int>& dim){
+
+bool Terreno::rango_valido_tropa(int x_, int y_,std::pair<int,int>& dim) {
     int dim_x = dim.first;
     int dim_y = dim.second;
-    for (int j = y_; j < y_ + dim_y; j++){
-        for (int i = x_; i < x_ + dim_x; i++){
-            if(terreno[j][i].tiene_edificio() ||
-               terreno[j][i].hay_tropa() ||
-               !terreno[j][i].es_caminable()){
-                   return false;
-        }       }
+    for (int y = y_; y < y_ + dim_y; y++){
+        for (int x = x_; x < x_ + dim_x; x++) {
+            Celda& celda = terreno.at(y).at(x);
+            if (!celda.es_caminable()) {
+                return false;
+            }
+        }
     }
     return true;
 }
-bool Terreno::tiene_edificio(int x_, int y_){
-    return terreno[x_][y_].tiene_edificio();
+
+bool Terreno::tiene_edificio(int x_, int y_) {
+    return terreno.at(x_).at(y_).tiene_edificio();
 }
 
 void Terreno::agregar_edificio(int x_, int y_,std::pair<int,int>& dim){
-    int dim_x = dim.first*4;
-    int dim_y = dim.second*4;
-    for (int j = y_; j < y_ + dim_y; j++){
-        for (int i = x_; i < x_ + dim_x; i++){
+    int dim_x = dim.first * 4;
+    int dim_y = dim.second * 4;
+    for (int j = y_; j < y_ + dim_y; j++) {
+        for (int i = x_; i < x_ + dim_x; i++) {
             terreno[j][i].agregar_edificio();
         }
     }
 }
 
-void Terreno::eliminar_edificio(Posicion& pos,std::pair<int,int>& dim){
+void Terreno::eliminar_edificio(Posicion& pos,std::pair<int,int>& dim) {
     int x_ = pos.x();
     int y_ = pos.y();
-    int dim_x = dim.first;
-    int dim_y = dim.second;
-    for (int j = y_; j < y_ + dim_y; j++){
-        for (int i = x_; i < x_ + dim_x; i++){
+    int dim_x = dim.first * 4;
+    int dim_y = dim.second * 4;
+    for (int j = y_; j < y_ + dim_y; j++) {
+        for (int i = x_; i < x_ + dim_x; i++) {
             terreno[j][i].eliminar_edificio();
         }
     }
 }
 
-bool Terreno::es_caminable(int x_, int y_){
-    return terreno[x_][y_].es_caminable();
+bool Terreno::es_caminable(int x_, int y_) {
+    return obtener_celda(x_, y_).es_caminable();
 }
 
-bool Terreno::hay_tropa(int x_, int y_){
-    return terreno[x_][y_].hay_tropa();
+bool Terreno::hay_tropa(int x_, int y_) {
+    return obtener_celda(x_, y_).hay_tropa();
 }
 
-void Terreno::agregar_tropa(int x_, int y_,std::pair<int,int>& dim){
+void Terreno::agregar_tropa(int x_, int y_,std::pair<int,int>& dim) {
     int dim_x = dim.first;
     int dim_y = dim.second;
     for (int j = y_; j < y_ + dim_y; j++){
@@ -231,7 +232,7 @@ void Terreno::agregar_tropa(int x_, int y_,std::pair<int,int>& dim){
     }
 }
 
-void Terreno::eliminar_tropa(Posicion& pos,std::pair<int,int>& dim){
+void Terreno::eliminar_tropa(Posicion& pos,std::pair<int,int>& dim) {
     int x_ = pos.x();
     int y_ = pos.y();
     int dim_x = dim.first;
@@ -242,26 +243,31 @@ void Terreno::eliminar_tropa(Posicion& pos,std::pair<int,int>& dim){
         }
     }
 }
-Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i){
+
+Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
     for (int j = posicion_i.y(); j <alto; j++){
         for (int i = posicion_i.x(); i < ancho; i++){
-            if(terreno[j][i].tiene_edificio() ||
-                terreno[j][i].hay_tropa() ||
-                !terreno[j][i].es_caminable())continue;
+            if(!terreno[j][i].es_caminable())
+                continue;
             return Posicion(terreno[j][i].x(),terreno[j][i].y());
         }
     }
+    // TODO: esto sólo camina hacia adelante, estando sobre el final 
+    // del terreno puede fallar
     throw std::runtime_error("wut");
 }
 
-void Terreno::agregar_refineria(int x_, int y_,int id_jugador){
+void Terreno::agregar_refineria(int x_, int y_,int id_jugador) {
     refinerias.emplace(id_jugador,Posicion(x_,y_));
 }
-std::vector<Posicion> Terreno::obtener_refinerias(int id_jugador){
+
+std::vector<Posicion> Terreno::obtener_refinerias(int id_jugador) {
     std::vector<Posicion> pos;
-    for (auto it=refinerias.begin();it!=refinerias.end();++it){
+    for (auto it=refinerias.begin(); it != refinerias.end(); ++it) {
         if ((it->first)==id_jugador) pos.push_back(it->second);
     }
+
     return pos;
 }
+
 } // namespace modelo

@@ -20,30 +20,37 @@ int Celda::y() const {
     return posicion_y;
 }
 
-bool Celda::tiene_edificio(){
+bool Celda::tiene_edificio() const {
     return edificio;
 }
-void Celda::agregar_edificio(){
+
+void Celda::agregar_edificio() {
     edificio = true;
 }
-void Celda::eliminar_edificio(){
+
+void Celda::eliminar_edificio() {
     edificio = false;
 }
-bool Celda::es_caminable() const{
-    return (tipo_celda == CELDA_ROCA ||
-            tipo_celda == CELDA_ARENA ||
-            tipo_celda == CELDA_DUNA );
+
+bool Celda::es_caminable() const {
+    return (tipo_celda == CELDA_ROCA || tipo_celda == CELDA_ARENA ||
+            tipo_celda == CELDA_DUNA) &&
+           (!hay_tropa() && !tiene_edificio());
 }
-bool Celda::es_construible(){
-    return tipo_celda == CELDA_ROCA;
+
+bool Celda::es_construible() {
+    return (tipo_celda == CELDA_ROCA) && (!hay_tropa() && !tiene_edificio());
 }
-bool Celda::hay_tropa(){
+
+bool Celda::hay_tropa() const {
     return tropa;
 }
-void Celda::agregar_tropa(){
+
+void Celda::agregar_tropa() {
     tropa = true;
 }
-void Celda::eliminar_tropa(){
+
+void Celda::eliminar_tropa() {
     tropa = false;
 }
 
