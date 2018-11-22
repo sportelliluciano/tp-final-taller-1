@@ -228,11 +228,10 @@ void Tropa::caminar_hacia(int x_dest, int y_dest) {
 
 void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
     camino_actual = camino;
-    paso_actual = 1;
+    paso_actual = 0;
     
     // Iniciar la caminata.
-    sync_camino(camino_actual[0].first, 
-        camino_actual[0].second);
+    sync_camino(x_actual, y_actual);
 }
 
 void Tropa::sync_camino(int x, int y) {

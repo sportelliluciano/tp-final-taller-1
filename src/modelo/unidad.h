@@ -41,9 +41,8 @@ public:
     unsigned int get_vida();
     std::pair<int,int>& get_dimensiones();
     Posicion& get_posicion();
-    bool llego_a(Posicion& posicion_);
-    void configurar_camino(std::vector<Posicion> nuevo_camino);
-    bool en_movimiento();
+    void configurar_camino(const std::vector<Posicion>& nuevo_camino);
+    bool en_movimiento() const;
     /**
      * Devuelve true si hay que sincronizar con los jugadores
      */

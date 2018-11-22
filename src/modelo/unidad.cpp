@@ -9,6 +9,9 @@
 #include "modelo/unidad_base.h"
 #include "modelo/posicion.h"
 
+// Esta constante se determinó de forma empírica.
+#define CONSTANTE_VELOCIDAD ((0.4f / 15) / 16)
+
 namespace modelo {
 
 Unidad::Unidad(int id_, int x, int y, UnidadBase& unidad_base_):
@@ -55,22 +58,14 @@ unsigned int Unidad::x(){
 unsigned int Unidad::y(){
     return posicion.y();
 }*/
-void Unidad::configurar_camino(std::vector<Posicion> nuevo_camino){
+void Unidad::configurar_camino(const std::vector<Posicion>& nuevo_camino) {
     camino = nuevo_camino;
-    paso_actual = 1;
+    paso_actual = 0;
     esta_en_camino = true;
 }
 
-bool Unidad::en_movimiento(){
+bool Unidad::en_movimiento() const {
     return esta_en_camino;
-}
-
-bool Unidad::llego_a(Posicion& posicion_) {
-    int x_destino = posicion_.px_x();
-    int y_destino = posicion_.px_y();
-    int x_actual = posicion.px_x();
-    int y_actual = posicion.px_y();
-    return (x_destino == x_actual) && (y_destino == y_actual);
 }
 
 bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
@@ -78,9 +73,7 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
         return false;
     
     bool resincronizar = false;
-    if (llego_a(camino[paso_actual])) {
-        terreno->eliminar_tropa(posicion,unidad_base.get_dimensiones());
-        terreno->agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
+    if (posicion == camino[paso_actual]) {
         resincronizar = true;
         paso_actual++;
 
@@ -110,8 +103,8 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
     float veloc_x = vx / sqrt(vx*vx + vy*vy),
           veloc_y = vy / sqrt(vx*vx + vy*vy);
     
-    veloc_x *= ((0.4 / 15) / 16) * unidad_base.get_velocidad();
-    veloc_y *= ((0.4 / 15) / 16) * unidad_base.get_velocidad();
+    veloc_x *= CONSTANTE_VELOCIDAD * unidad_base.get_velocidad();
+    veloc_y *= CONSTANTE_VELOCIDAD * unidad_base.get_velocidad();
 
     float dx = veloc_x * dt,
           dy = veloc_y * dt;
@@ -128,6 +121,8 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
 
     posicion.actualizar_px_x(fx_actual);
     posicion.actualizar_px_y(fy_actual);
+    terreno->eliminar_tropa(posicion,unidad_base.get_dimensiones());
+    terreno->agregar_tropa(posicion.x(),posicion.y(),unidad_base.get_dimensiones());
     return resincronizar;
 }
 

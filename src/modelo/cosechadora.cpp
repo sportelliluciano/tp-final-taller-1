@@ -23,7 +23,9 @@ IJugador* Cosechadora::obtener_jugador(){
 
 void Cosechadora::actualizar_posicion(int dt,Terreno terreno,
                     std::vector<IJugador*>& jugadores) {
-    if (llego_a(camino[paso_actual])) {
+    // NOTA: En el mock era necesario llego_a porque no habia clase posición
+    // acá el operador ==  de Posicion se encarga de todo
+    if (camino[paso_actual] == posicion) {
         //if (paso_actual > 0){
             for (auto it=jugadores.begin();it != jugadores.end();++it){
             (*it)-> sincronizar_tropa(0,
