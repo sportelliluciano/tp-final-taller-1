@@ -125,6 +125,14 @@ void Infraestructura::actualizar(int t_ms) {
     last_ms = t_ms;
 }
 
+bool Infraestructura::existe(int id_edificio) const {
+    return edificios_construidos.count(id_edificio) != 0;
+}
+
+Edificio& Infraestructura::obtener(int id_edificio) {
+    return edificios_construidos.at(id_edificio);
+}
+
 Edificio* Infraestructura::obtener_centro_construccion() {
     for (auto& it : edificios_construidos) {
         if (it.second.obtener_clase() == "centro_construccion") {

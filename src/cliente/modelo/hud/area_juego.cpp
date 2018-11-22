@@ -103,39 +103,46 @@ bool AreaJuego::seleccionar_edificio(const Posicion& punto) {
     
     deseleccionar_edificio();
     
-    if (nuevo_seleccionado)
+    if (nuevo_seleccionado) {
         nuevo_seleccionado->marcar();
-    
-    edificio_seleccionado = nuevo_seleccionado;
+        edificio_seleccionado = nuevo_seleccionado->obtener_id();
+        hay_edificio_seleccionado = true;
+        return true;
+    }
 
-    return edificio_seleccionado != nullptr;
+    return false;
 }
 
 void AreaJuego::deseleccionar_edificio() {
-    if (edificio_seleccionado)
-        edificio_seleccionado->desmarcar();
-    edificio_seleccionado = nullptr;
+    if (!hay_edificio_seleccionado)
+        return;
+    
+    if (infraestructura.existe(edificio_seleccionado)) {
+        infraestructura.obtener(edificio_seleccionado).desmarcar();
+    }
+    
+    hay_edificio_seleccionado = false;
 }
 
 bool AreaJuego::seleccionar_tropas(int x0, int y0, int x1, int y1) {
     std::unordered_set<Tropa*> nueva_seleccion =
         ejercito.obtener_tropas_propias_en(
-                Rectangulo(
-                    camara.traducir_a_logica(Posicion(x0, y0)), 
-                    camara.traducir_a_logica(Posicion(x1, y1))
-                )
-            );
+            Rectangulo(
+                camara.traducir_a_logica(Posicion(x0, y0)), 
+                camara.traducir_a_logica(Posicion(x1, y1))
+            )
+        );
     
     if (!ctrl_presionado) {
         deseleccionar_tropas();
         for (Tropa* tropa : nueva_seleccion) {
             tropa->marcar();
+            unidades_seleccionadas.insert(tropa->obtener_id());
         }
-        unidades_seleccionadas = nueva_seleccion;
     } else {
         for (Tropa* tropa : nueva_seleccion) {
             tropa->marcar();
-            unidades_seleccionadas.insert(tropa);
+            unidades_seleccionadas.insert(tropa->obtener_id());
         }   
     }
     
@@ -143,8 +150,9 @@ bool AreaJuego::seleccionar_tropas(int x0, int y0, int x1, int y1) {
 }
 
 void AreaJuego::deseleccionar_tropas() {
-    for (Tropa* tropa : unidades_seleccionadas) {
-        tropa->desmarcar();
+    for (int id_tropa : unidades_seleccionadas) {
+        if (ejercito.existe(id_tropa))
+            ejercito.obtener(id_tropa).desmarcar();
     }
     unidades_seleccionadas.clear();
 }
@@ -168,10 +176,11 @@ bool AreaJuego::mouse_click_izquierdo(const Posicion& punto) {
         }
 
         if (ctrl_presionado) {
+            Edificio& edificio = infraestructura.obtener(edificio_seleccionado);
             tostador.hacer_tostada("Edificio vendido: " + 
-                edificio_seleccionado->obtener_clase());
-            servidor.vender_edificio(edificio_seleccionado->obtener_id());
-            edificio_seleccionado = nullptr;
+                edificio.obtener_clase());
+            servidor.vender_edificio(edificio.obtener_id());
+            deseleccionar_edificio();
         } else {
             tostador.hacer_tostada(" ** Mantené apretado CTRL al hacer clic para"
                 " vender el edificio ** ");
@@ -189,8 +198,9 @@ bool AreaJuego::mouse_click_derecho(const Posicion& punto) {
     Posicion pos_logica = camara.traducir_a_logica(punto);
     
     std::vector<int> ids;
-    for (Tropa* tropa : unidades_seleccionadas) {
-        ids.push_back(tropa->obtener_id());
+    for (int id_tropa : unidades_seleccionadas) {
+        if (ejercito.existe(id_tropa))
+            ids.push_back(id_tropa);
     }
 
     if (ejercito.hay_tropas_enemigas_en(camara.traducir_a_logica(mouse))) {

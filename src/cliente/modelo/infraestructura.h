@@ -32,6 +32,10 @@ public:
     
     /******* Métodos para actualizar el HUD *******/
 
+    bool existe(int id_edificio) const;
+
+    Edificio& obtener(int id_edificio);
+
     /**
      * \brief Obtiene el centro de construcción del jugador actual.
      */

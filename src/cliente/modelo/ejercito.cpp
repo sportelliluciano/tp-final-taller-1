@@ -142,6 +142,14 @@ std::unordered_set<Tropa*> Ejercito::obtener_tropas_propias_en(
     return tropas_propias;
 }
 
+bool Ejercito::existe(int id_tropa) const {
+    return tropas.count(id_tropa) != 0;
+}
+
+Tropa& Ejercito::obtener(int id_tropa) {
+    return tropas.at(id_tropa);
+}
+
 void Ejercito::entrenar(const std::string& clase, int tiempo_ms) {
     entrenamiento_actual[clase] = tiempo_ms;
 }

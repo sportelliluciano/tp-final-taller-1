@@ -121,13 +121,15 @@ private:
     SpriteAnimado mouse_vender;
     SpriteAnimado mouse_mover_tropa;
 
-    Edificio* edificio_seleccionado = nullptr;
-    std::unordered_set<Tropa*> unidades_seleccionadas;
+    int edificio_seleccionado;
+    bool hay_edificio_seleccionado = false;
+    std::unordered_set<int> unidades_seleccionadas;
 
     bool seleccionar_edificio(const Posicion& punto);
     void deseleccionar_edificio();
     bool seleccionar_tropas(int x0, int y0, int x1, int y1);
     void deseleccionar_tropas();
+    void seleccionar(const Rectangulo& area);
     void centrar_camara();
 
     const Edificio* edificio_a_ubicar = nullptr;

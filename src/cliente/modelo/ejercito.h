@@ -56,6 +56,10 @@ public:
      */
     std::vector<const Tropa*> obtener_tropas_base() const;
 
+    bool existe(int id_tropa) const;
+
+    Tropa& obtener(int id_tropa);
+
     void set_tropa_disparando(int id_tropa, bool disparando);
 
     /**
