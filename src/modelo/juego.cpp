@@ -6,6 +6,12 @@
 #include "modelo/ejercito.h"
 #include "modelo/terreno.h"
 
+// Refactor this?
+#define DINERO_INICIAL         1000
+#define DINERO_MAXIMO_INICIAL  1000
+#define ENERGIA_INICIAL        1000
+#define ENERGIA_MAXIMA_INICIAL 1000
+
 namespace modelo {
 
 Juego::Juego() 
@@ -29,8 +35,11 @@ void Juego::crear_jugador(IJugador* jugador) {
 }
 
 void Juego::iniciar_partida() {
-    //bla bla
     empezo = true;
+    comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        j->actualizar_dinero(DINERO_INICIAL, DINERO_MAXIMO_INICIAL);
+        j->actualizar_energia(ENERGIA_INICIAL, ENERGIA_MAXIMA_INICIAL);
+    });
 }
 
 void Juego::actualizar(int dt_ms) {
