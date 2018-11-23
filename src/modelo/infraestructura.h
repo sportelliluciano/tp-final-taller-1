@@ -36,7 +36,7 @@ class Infraestructura{
     unsigned int get_energia(int id);
     unsigned int get_tiempo(int id);
     Posicion& get_posicion(const std::string& clase);
-
+    bool pertenece(int id);
     void actualizar_edificios(int dt_ms);
 
 };

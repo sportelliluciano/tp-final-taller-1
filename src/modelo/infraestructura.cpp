@@ -55,6 +55,9 @@ unsigned int Infraestructura::reciclar(int id){
 void Infraestructura::destruir(int id){
     terreno->eliminar_edificio(edificios.at(id).get_posicion(),edificios.at(id).get_dimensiones());
     edificios.erase (id);
+    comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        j->eliminar_edificio(id);
+    });
 }
 
 Edificio& Infraestructura::get(int id){
@@ -86,5 +89,7 @@ Posicion& Infraestructura::get_posicion(const std::string& clase) {
         if (it-> second.get_tipo()==clase)return it->second.get_posicion();
     }
 }
-
+bool Infraestructura::pertenece(int id){
+    return edificios.count(id)!= 0;
+}
 }

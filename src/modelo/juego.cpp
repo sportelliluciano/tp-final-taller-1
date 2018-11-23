@@ -53,6 +53,22 @@ void Juego::actualizar(int dt_ms) {
     // Procesar eventos que sí hay que broadcastear
     inf.actualizar_edificios(dt_ms);
     ejercito.actualizar_tropas(dt_ms);
+    // actualizo las bajas en el modelo
+    std::unordered_set<int>& bajas = ejercito.notificar_bajas(); 
+    for (auto it = bajas.begin(); it != bajas.end(); ++it) {
+        for (auto it2=jugadores.begin();it2!=jugadores.end();++it2){
+            Jugador& jugador = it2->second;
+            if (jugador.pertenece(*it)){
+                if (inf.pertenece(*it)){
+                    inf.destruir(*it);
+                    unsigned int consumo = inf.get_energia(*it);
+                    jugador.eliminar_elemento(*it,consumo);
+                } else {
+                    jugador.eliminar_elemento(*it,0);
+                }
+            }    
+        }
+    }
 }
 
 bool Juego::partida_terminada() const {
@@ -102,15 +118,14 @@ void Juego::ubicar_edificio(IJugador* conexion_jugador, int celda_x,
 
 void Juego::vender_edificio(IJugador* jugador, int id_edificio) {
     unsigned int consumo = inf.get_energia(id_edificio);
-    bool esta_bien = false;
     for (auto it = jugadores.begin();it!= jugadores.end();++it){
         if ((it->second).pertenece(id_edificio)){
             (it->second).eliminar_elemento(id_edificio,consumo);
             unsigned int energia_retorno = inf.reciclar(id_edificio);
             (it->second).aumentar_energia(energia_retorno);
-            esta_bien = true;
+            return;
         }
-        ((it->second).get_jugador())->eliminar_edificio(id_edificio);
+        //((it->second).get_jugador())->eliminar_edificio(id_edificio);
     }
 }
 
@@ -153,7 +168,11 @@ void Juego::atacar_tropa(IJugador* jugador,
         if (atacante.pertenece(id_atacado) && atacante.pertenece(*it)){
             continue;
         }
-        ejercito.atacar(id_atacado,*it);
+        if (inf.pertenece(id_atacado)) {
+            ejercito.atacar(&(inf.get(id_atacado)),*it);
+        } else{  
+            ejercito.atacar(id_atacado,*it);
+        }
     }
 }
 

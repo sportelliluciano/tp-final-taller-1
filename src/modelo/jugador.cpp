@@ -84,11 +84,13 @@ void Jugador::agregar_elemento(int id,unsigned int energia_,const std::string& c
     if (construcciones_esperando_ubicacion.count(clase)!=0)
         construcciones_esperando_ubicacion.erase(clase);
     consumo += energia_;
+    //comunicar cambio de energia;
 }
 
 void Jugador::eliminar_elemento(int id,unsigned int energia_consumida){
     consumo -= energia_consumida;
     inventario.erase(id);
+    //comunicar cambio de energia;
 }
 
 bool Jugador::pertenece(int id){
@@ -151,8 +153,14 @@ void Jugador::actualizar_entrenamientos(int dt, Ejercito& ejercito) {
             // Tropa entrenada
             comunicacion_jugador->sincronizar_entrenamiento(it->first, 0);
             const std::string& id_tipo = it->first;
-            int nuevo_id = ejercito.crear(id_tipo, 
-                comunicacion_jugador->obtener_id());
+            int nuevo_id;
+            if (id_tipo == "cosechadora"){
+                nuevo_id = ejercito.crear_cosechadora(id_tipo, 
+                comunicacion_jugador->obtener_id());    
+            } else{
+                nuevo_id = ejercito.crear(id_tipo, 
+                    comunicacion_jugador->obtener_id());
+            } 
             agregar_elemento(nuevo_id, 0, id_tipo);
             it = tropas.erase(it);
         } else {

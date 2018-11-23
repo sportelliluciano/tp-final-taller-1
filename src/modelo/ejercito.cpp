@@ -41,24 +41,24 @@ int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
     return nuevo_id;
 }
 
-int Ejercito::crear_cosechadora(std::string id_tipo,Posicion& pos,
-        std::vector<IJugador*>& jugadores,int id_propietario){
+int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
+    Posicion pos(43,56);
     Posicion posicion = terreno->obtener_posicion_libre_cercana(pos);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
+    std::cout << "el Id de cosechadora es  "<< nuevo_id<<std::endl;
     terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
-    for (auto it=jugadores.begin();it != jugadores.end();++it){
-        (*it)->crear_tropa(nuevo_id,id_tipo,posicion.x(),
-                    posicion.y(),prototipos.get_vida(id_tipo),id_propietario);//usar broadcaster
-        if((*it)->obtener_id()==id_propietario){
-            cosechadoras.emplace(nuevo_id,prototipos.clonar(
-                id_tipo,nuevo_id,posicion.x(),posicion.y(),terreno,(*it)));   
-            //Posicion especia = terreno->obtener_especia_cercana(posicion);
-            Posicion especia(43,67);
-            mover(nuevo_id,especia.x(),especia.y(),(*it));   
-        }
-
-    }
+    cosechadoras.emplace(nuevo_id,prototipos.clonar(
+            id_tipo,nuevo_id,posicion.x(),posicion.y(),terreno));
+    std::cout << "salio al clonar "<<std::endl;            
+    //Posicion especia = terreno->obtener_especia_cercana(posicion);
+    Posicion especia(43,67);
+    //mover_cosechadora(nuevo_id,especia.x(),especia.y());   
+    
+    comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        j->crear_tropa(nuevo_id, id_tipo, posicion.px_x(), posicion.px_y(),
+            prototipos.get_vida(id_tipo), id_propietario);
+    });
     return nuevo_id;
 }
 void Ejercito::destruir(int id){
@@ -94,7 +94,7 @@ void Ejercito::mover(int id, int x, int y, IJugador*) {
     });
 }
 
-void Ejercito::mover_cosechadora(int id,int x,int y,IJugador* jugador){
+void Ejercito::mover_cosechadora(int id,int x,int y){
     std::vector<Posicion> a_estrella = terreno->buscar_camino_minimo(cosechadoras.at(id).get_posicion(), 
                                                            Posicion(x,y));
     cosechadoras.at(id).configurar_camino(a_estrella);
@@ -103,27 +103,27 @@ void Ejercito::mover_cosechadora(int id,int x,int y,IJugador* jugador){
     for (auto it = a_estrella.begin(); it!= a_estrella.end();++it){
         v.emplace_back(std::pair<int,int>((*it).x(),(*it).y()));
     }
-    jugador->mover_tropa(id,v);
+    comunicacion_jugadores.broadcast([&] (IJugador *j) {
+        j->mover_tropa(id,v);
+    });
 }
 void Ejercito::atacar(int id_victima,int id_atacante){
     //ver si hay que seguirlo o no
-    if (cosechadoras.count(id_atacante)!=0){
-        //aca hay un bug
-        cosechadoras.at(id_atacante).configurar_ataque(&tropas.at(id_victima));
-    }else {
-        //tropas.at(id_atacante).atacar(tropas.at(id_victima));
+    if (tropas.count(id_atacante)!=0 && tropas.count(id_victima)!=0 ){
         tropas.at(id_atacante).configurar_ataque(&tropas.at(id_victima));
         tropas_atacando.insert(id_atacante);
     }
+    if (tropas.count(id_atacante)!=0 && cosechadoras.count(id_victima)!=0 ){
+        tropas.at(id_atacante).configurar_ataque(&cosechadoras.at(id_victima));
+        tropas_atacando.insert(id_atacante);
+    }
+
 }
 void Ejercito::atacar(Atacable* edificio,int id_atacante){
     // acercarme hasta cumplir con el rango 
-    if (cosechadoras.count(id_atacante)!=0){
-        return;//no pueden atacar
-    }else {
+    if (tropas.count(id_atacante)!=0) {
         tropas.at(id_atacante).configurar_ataque(edificio);
         tropas_atacando.insert(id_atacante);
-        //tropas.at(id_atacante).atacar(edificio);
     }
 }
 
@@ -145,29 +145,66 @@ void Ejercito::matar_tropa(int id_victima,int id_atacante){
     if (tropas_en_movimiento.count(id_victima)!=0){
         tropas_en_movimiento.erase(id_victima);
     }        
-    if (tropas.count(id_victima != 0)){
-        tropas.erase(id_victima);
-    } else if (cosechadoras.count(id_victima)!=0){
-        cosechadoras.erase(id_victima);
-    } else{
-        return;
-    }
+    std::cout << "se comunico la baja" << std::endl;
     comunicacion_jugadores.broadcast([&] (IJugador *j) {
                j->destruir_tropa(id_victima);
             });
+}
+void Ejercito::eliminar_tropas(){
+    for (auto it = tropas_muertas.begin();
+            it != tropas_muertas.end();++it)
+    {
+        if (tropas.count(*it != 0)){
+            tropas.erase(*it);
+        } else if (cosechadoras.count(*it)!=0){
+            cosechadoras.erase(*it);
+        } else{
+            std::cout << "no se comunico la baja" << std::endl;
+            return;//es un edificio
+        }
+    }
+}
+
+std::unordered_set<int>& Ejercito::notificar_bajas(){
+    return tropas_muertas;
 }
 
 void Ejercito::actualizar_tropas(int dt) {
     for (auto it = tropas_en_movimiento.begin();
             it != tropas_en_movimiento.end();)
     {
-        Unidad& unidad = tropas.at(*it);
-        if (!unidad.en_movimiento()){
-            it = tropas_en_movimiento.erase(it);
-            continue;
-        }
+        
         /*
+        si es una cosechadora
+            si no llego a destino
+                actualizar posicion
+            si llego(cuando llego pongo descando en true)
+                si estas operando
+                    pasar tiempo
+                si no esta operando (ya opero)
+                    si esta en camino a la especia(cuadno llego a la epecia lo pongo en false)
+                        nueva posicion = posicion especia
+                    sino
+                        nueva psocion = posicion refineria
+                    mover a neuva posciom      
+
         if (cosechadoras.count(*it)!=0){
+            Cosechadora& cosechadora = cosechadoras.at(*it);
+            if (cosechadora.en_movimiento()){
+                cosechadora.actualziar_posicion();
+                continue;
+            }
+            if (cosechadora.operando()){
+                cosechadora.operar(dt);
+            } else {
+                if (cosechadora.camino_a_especia()){
+                    Posicion posicion(53,66); //especia
+                } else {
+                    Posicion posicion(153,166);//refineria
+                }
+                mover_cosechadora(cosechadora.get_id(),posicion.x(),posicion.y(),        );
+            }
+            
             if (cosechadoras.at(*it)).camino_a_especia()){
                 Posicion pos = terreno.obtener_refineria_cercana();
                 mover_cosechadora(*it,pos.x(),pos.y(),cosechadoras.at(*it)).obtener_jugador());
@@ -179,6 +216,11 @@ void Ejercito::actualizar_tropas(int dt) {
             continue;        
         }
         */
+        Unidad& unidad = tropas.at(*it);
+        if (!unidad.en_movimiento()){
+            it = tropas_en_movimiento.erase(it);
+            continue;
+        }
         
         if (unidad.actualizar_posicion(dt,terreno)) {
             comunicacion_jugadores.broadcast([this, &unidad] (IJugador *j) {
@@ -196,31 +238,44 @@ void Ejercito::actualizar_tropas(int dt) {
             it != tropas_atacando.end();)
     {
         bool borrado = false;
-        Unidad& unidad = tropas.at(*it);//ojo:se podria morir, verficar que este en el un_map
-        if (!unidad.esta_atacando() || tropas_muertas.count(*it)!= 0){
+        if (tropas_muertas.count(*it)!= 0) {
             it = tropas_atacando.erase(it);
             continue;
-        }// el verificar la muerte aca hace que el ciclo de elimnado de muertos
-        //de tropa_atacando sea mas rapido
+        }
+        // el verificar la muerte aca hace que el ciclo de elimnado de muertos
+        //de tropa_atacando sea mas rapido 
+        Unidad& unidad = tropas.at(*it);
+        if (!unidad.esta_atacando()) {
+            it = tropas_atacando.erase(it);
+            continue;
+        }
+        std::cout << "Entramos en ataque" << std::endl;
         int id_victima = unidad.id_victima();
-        if (tropas_muertas.count(id_victima)){
-            ++it;
+        std::cout << "Id victima:  "<<id_victima <<std::endl;
+        std::cout << "Numero de cosechadoras:  "<<cosechadoras.count(id_victima) <<std::endl;
+        if (tropas_muertas.count(id_victima) != 0 || (tropas.count(id_victima) == 0 && cosechadoras.count(id_victima) == 0)){
+            tropas.at(*it).parar_ataque();
+            it = tropas_atacando.erase(it);
             continue;
         }
         //falta ver el tema del rango
+        std::cout << "Quiero atacar a :  "<<id_victima <<std::endl;
         int vida_nueva_victima = unidad.actualizar_ataque(dt,terreno);
+        std::cout << "atacamos" << std::endl;
         if (vida_nueva_victima <= 0){
             matar_tropa(id_victima,*it);//lo saca del modelo
             it = tropas_atacando.erase(it);
             borrado = true;
             //como le aviso a jugador(clase Jugador)??
+        }else{
+            comunicacion_jugadores.broadcast([&] (IJugador *j) {
+                   j->atacar_tropa(id_victima,vida_nueva_victima);
+            });//sirve para edificios??
         }
-        comunicacion_jugadores.broadcast([&] (IJugador *j) {
-               j->atacar_tropa(id_victima,vida_nueva_victima);
-        });
         if (!borrado)
             ++it;
     }
+    eliminar_tropas();
     //saco a los muertos restantes del set
     //aquellos que atacaron y despues murieron
     for (auto it = tropas_atacando.begin();

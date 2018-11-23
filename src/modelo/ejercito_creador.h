@@ -23,7 +23,7 @@ class EjercitoCreador{
     void inicializar(Terreno* terreno_,const nlohmann::json& ejercito);
     ~EjercitoCreador();
     Unidad clonar(std::string id_tipo,int id,int x,int y);
-    Cosechadora clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_,IJugador* jugador);
+    Cosechadora clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_);
     unsigned int get_costo(std::string id_tipo);
     unsigned int get_vida(std::string id_tipo);
     unsigned int get_tiempo(std::string id_tipo);

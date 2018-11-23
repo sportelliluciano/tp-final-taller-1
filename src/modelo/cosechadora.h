@@ -9,24 +9,28 @@
 #include "modelo/unidad_base.h"
 #include "conexion/i_jugador.h"
 
+#define ESPERA 5000 
+
 namespace modelo {
 
 class Cosechadora:public Unidad {
     private:
-    Terreno& terreno_;
-    bool descargando=false;
-    int tiempo_descarga = 5000;
+    Terreno* terreno_;
+    bool operando_ = false; // cargando o descargando especia
+    int tiempo_descarga = ESPERA;
     bool camino_especia = true;
-    IJugador* jugador;
+    bool llegue = false;
+    //IJugador* jugador;
 
     public:
     Cosechadora(int id,int pos_x,int pos_y, UnidadBase& unidad_base,
-        Terreno& terreno,IJugador* jugador);
+        Terreno* terreno);
     ~Cosechadora();
-    void actualizar_posicion(int dt,Terreno terreno,
-                std::vector<IJugador*>& jugadores);
+    bool actualizar_posicion(int dt,Terreno* terreno);
     bool camino_a_especia();
-    IJugador* obtener_jugador();
+    bool operando();
+    void operar(int ds);
+    //IJugador* obtener_jugador();
 };
 }
 #endif

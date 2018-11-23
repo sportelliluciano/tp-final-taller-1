@@ -30,10 +30,11 @@ void EjercitoCreador::inicializar(Terreno* terreno_,const nlohmann::json& ejerci
 }
 EjercitoCreador::~EjercitoCreador(){}
 Unidad EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y){
+    std::cout << "entreo al clonar "<<std::endl;
     return Unidad(id,x,y,prototipos_base.at(id_tipo));
 }
-Cosechadora EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_,IJugador* jugador){
-    return Cosechadora(id,x,y,prototipos_base.at(id_tipo),*terreno_,jugador);
+Cosechadora EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_){
+    return Cosechadora(id,x,y,prototipos_base.at(id_tipo),terreno_);
 }
 unsigned int EjercitoCreador::get_costo(std::string id_tipo){
     return prototipos_base.at(id_tipo).get_costo();

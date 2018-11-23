@@ -23,6 +23,7 @@ private:
     int tiempo_para_atacar = 0;
     bool atacando = false;
     Atacable* victima = nullptr;
+    int id_victima_ =-1;
 
 protected:
     UnidadBase& unidad_base;

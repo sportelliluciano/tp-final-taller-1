@@ -131,12 +131,13 @@ void Unidad::configurar_ataque(Atacable* victima_){
     victima = victima_;
     atacando = true;
     tiempo_para_atacar = 0;
+    id_victima_ = victima->get_id();
 }
 
 //NOTA: aca se puede chequear el rango
 int Unidad::actualizar_ataque(int dt, Terreno* terreno) {
     tiempo_para_atacar+=dt;
-    if (!victima) return false;
+    if (!victima) return 0;//esta muerta
     if (tiempo_para_atacar >= 1000/(unidad_base.obtener_frecuencia())){
         tiempo_para_atacar = 0;
             //murio la victima
@@ -156,9 +157,10 @@ void Unidad::parar_ataque(){
     atacando = false;
     victima = nullptr;
     tiempo_para_atacar=0;
+    id_victima_ = -1;
 }
 int Unidad::id_victima(){
-    return victima -> get_id();
+    return id_victima_ ;
 }
 }  // namespace modelo
 

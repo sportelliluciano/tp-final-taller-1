@@ -34,18 +34,19 @@ class Ejercito{
     void inicializar(Terreno* terreno,const nlohmann::json& ejercito_);
     ~Ejercito();
     int crear(const std::string& id_tipo, int id_propietario);
-    int crear_cosechadora(std::string id_tipo,Posicion& pos,
-        std::vector<IJugador*>& jugadores,int id_propietario);    
+    int crear_cosechadora(const std::string& id_tipo,int id_propietario);    
     void destruir(int id);
     void mover(int id,int x,int y,IJugador* jugador);
-    void mover_cosechadora(int id,int x,int y,IJugador* jugador);
+    void mover_cosechadora(int id,int x,int y);
     void atacar(int id_victima,int id_atacante);
     void atacar(Atacable* edificio,int id_atacante);
     Unidad& get(int id);
     unsigned int get_costo(std::string id_tipo);
     unsigned int get_tiempo(std::string id_tipo);
     void matar_tropa(int id_victima,int id_atacante);
+    std::unordered_set<int>& notificar_bajas();
     void actualizar_tropas(int dt);
+    void eliminar_tropas();
 };
 }
 #endif
