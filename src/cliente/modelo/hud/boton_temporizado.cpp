@@ -58,7 +58,7 @@ void BotonTemporizado::renderizar(Ventana& ventana, const Posicion& punto) {
             ventana
                 .obtener_administrador_texturas()
                 .crear_textura("filtro-verde", ANCHO_BOTON, ALTO_BOTON)
-                .limpiar(0, 255, 0, 128);
+                .limpiar(0, 127, 0, 128);
         }
         ventana
             .obtener_administrador_texturas()
