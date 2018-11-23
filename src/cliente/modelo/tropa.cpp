@@ -28,6 +28,11 @@ Tropa::Tropa(const nlohmann::json& data) {
     costo = data.at("costo");
     tiempo_entrenamiento = data.at("tiempo de entrenamiento");
     vida = vida_maxima = data.at("vida");
+    
+    posicion_sprite = nueva_pos_sprite = 0;
+    fx_actual = x_destino = x_actual = 0;
+    fy_actual = y_destino = y_actual = 0;
+    id_tropa = -1;
 
     for (auto& it : data.at("metadata").get<std::unordered_map<std::string, std::string>>()) {
         metadata.push_back({it.first, it.second});
@@ -59,13 +64,6 @@ Tropa::Tropa(const nlohmann::json& data) {
             sprites_disparando[i].configurar_repeticion(true);
         }
     }
-
-    posicion_sprite = nueva_pos_sprite = 0;
-
-    fx_actual = x_destino = x_actual = 0;
-    fy_actual = y_destino = y_actual = 0;
-    id_tropa = -1;   
-    vida = 50;
 }
 
 void Tropa::inicializar(int id, const Posicion& posicion, int vida_, 
@@ -74,7 +72,8 @@ void Tropa::inicializar(int id, const Posicion& posicion, int vida_,
     fx_actual = x_destino = x_actual = posicion.x;
     fy_actual = y_destino = y_actual = posicion.y;
     id_tropa = id;
-    vida = vida_;
+    if (vida != -1)
+        vida = vida_;
     id_propietario = id_propietario_;
 }
 
