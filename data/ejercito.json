@@ -239,7 +239,7 @@
         },
         "casa":["atreides","harkonnen","ordos"],
         "requerimiento":["fabrica_pesada"],
-        "id_arma":"-",
+        "id_arma":"arma rifle de asalto",
         "rango":0,
         "velocidad":12,
         "tiempo de entrenamiento":3,
