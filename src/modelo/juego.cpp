@@ -1,7 +1,9 @@
+#include "modelo/juego.h"
+
 #include <string>
 #include <iostream>
+#include <vector>
 
-#include "modelo/juego.h"
 #include "modelo/infraestructura.h"
 #include "modelo/ejercito.h"
 #include "modelo/terreno.h"
@@ -21,6 +23,10 @@ Juego::Juego()
 void Juego::inicializar(const nlohmann::json& mapa, 
         const nlohmann::json& edificios, const nlohmann::json& ejercito_)
 {
+    for (const nlohmann::json& data : mapa.at("jugadores")) {
+        posiciones_centros.push_back(data);
+    }
+
     terreno.inicializar(mapa);
     inf.inicializar(&terreno,edificios);
     ejercito.inicializar(&terreno,ejercito_);
@@ -40,6 +46,18 @@ void Juego::iniciar_partida() {
         j->actualizar_dinero(DINERO_INICIAL, DINERO_MAXIMO_INICIAL);
         j->actualizar_energia(ENERGIA_INICIAL, ENERGIA_MAXIMA_INICIAL);
     });
+    
+    int i = 0;
+    for (auto it = jugadores.begin(); it != jugadores.end(); ++it) {
+        int id_jugador = it->first;
+        Jugador& jugador = it->second;
+        int x = posiciones_centros[i][0],
+            y = posiciones_centros[i][1];
+        int nuevo_id = inf.crear_centro_construccion(x, y, id_jugador);
+        // TODO: deshardcodear ese centro_construcciones
+        jugador.agregar_elemento(nuevo_id, 0, "centro_construcciones");
+        i++;
+    }
 }
 
 void Juego::actualizar(int dt_ms) {

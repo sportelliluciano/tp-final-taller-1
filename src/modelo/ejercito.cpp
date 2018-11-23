@@ -262,14 +262,19 @@ void Ejercito::actualizar_tropas(int dt) {
         std::cout << "Quiero atacar a :  "<<id_victima <<std::endl;
         int vida_nueva_victima = unidad.actualizar_ataque(dt,terreno);
         std::cout << "atacamos" << std::endl;
-        if (vida_nueva_victima <= 0){
+        if (vida_nueva_victima <= 0) {
             matar_tropa(id_victima,*it);//lo saca del modelo
             it = tropas_atacando.erase(it);
             borrado = true;
             //como le aviso a jugador(clase Jugador)??
-        }else{
+        } else {
             comunicacion_jugadores.broadcast([&] (IJugador *j) {
-                   j->atacar_tropa(id_victima,vida_nueva_victima);
+                if (cosechadoras.count(id_victima) != 0)
+                    j->atacar_tropa(id_victima,vida_nueva_victima);
+                else if (tropas.count(id_victima) != 0)
+                    j->atacar_tropa(id_victima,vida_nueva_victima);
+                else
+                    j->atacar_edificio(id_victima, vida_nueva_victima);
             });//sirve para edificios??
         }
         if (!borrado)

@@ -28,6 +28,8 @@ class Juego : public IModelo {
     Ejercito ejercito;
     std::unordered_map<int,Jugador> jugadores;
     Id id;
+    // Posiciones de los centros de construcción
+    std::vector<std::vector<int>> posiciones_centros;
     bool empezo = false;
     void actualizar_construcciones(int dt);
     void actualizar_tropas(int dt);

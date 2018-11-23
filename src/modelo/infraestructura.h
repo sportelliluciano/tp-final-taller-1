@@ -27,6 +27,10 @@ class Infraestructura{
     Infraestructura(Broadcaster& broadcaster,Id& id);
     void inicializar(Terreno* mapa,const nlohmann::json& edificios);
     int crear(const std::string& id_tipo,int x,int y, int id_propietario);
+    /**
+     * \brief Crea el centro de construcción para un jugador.
+     */
+    int crear_centro_construccion(int x, int y, int id_propietario);
     unsigned int reciclar(int id);
     void destruir(int id);
     Edificio& get(int id);
