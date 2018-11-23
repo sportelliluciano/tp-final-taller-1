@@ -7,9 +7,13 @@ namespace cliente {
 
 class BarraVida {
 public:
-    BarraVida() = default;
+    BarraVida();
 
-    void renderizar(Ventana& ventana, int x, int y, int vida);
+    void set_ancho(int nuevo_ancho);
+    void renderizar(Ventana& ventana, int x, int y, int vida, int maximo);
+
+private:
+    int ancho;
 };
 
 } // namespace cliente

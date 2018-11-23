@@ -27,6 +27,7 @@ Tropa::Tropa(const nlohmann::json& data) {
     descripcion = data.at("descripcion");
     costo = data.at("costo");
     tiempo_entrenamiento = data.at("tiempo de entrenamiento");
+    vida = vida_maxima = data.at("vida");
 
     for (auto& it : data.at("metadata").get<std::unordered_map<std::string, std::string>>()) {
         metadata.push_back({it.first, it.second});
@@ -100,10 +101,11 @@ void Tropa::renderizar(Ventana& ventana, int x, int y) {
     }
 
     sprite_tropa.renderizar(ventana, x, y);
+    barra_vida.set_ancho(sprite_tropa.obtener_ancho(ventana));
     barra_vida.renderizar(ventana, 
-        x - sprite_tropa.obtener_ancho(ventana) / 2, 
+        x, 
         y - sprite_tropa.obtener_alto(ventana) / 2,
-        vida);
+        vida, vida_maxima);
 }
 
 static int calcular_posicion_sprite(float veloc_x, float veloc_y, 

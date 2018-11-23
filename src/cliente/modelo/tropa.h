@@ -155,7 +155,7 @@ private:
 
     std::vector<std::pair<int, int>> camino_actual;
     size_t paso_actual = 0;
-    int vida = 100;
+    int vida = 100, vida_maxima;
 
     bool esta_marcada = false;
 

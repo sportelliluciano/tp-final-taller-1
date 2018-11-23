@@ -16,6 +16,8 @@
 #define SPRITE_DESTRUCCION_INICIO 3686
 #define SPRITE_DESTRUCCION_FIN 3700
 
+#define ANCHO_BARRA_VIDA 80
+
 namespace cliente {
 
 Edificio::Edificio(const nlohmann::json& data_edificio) {
@@ -42,7 +44,7 @@ Edificio::Edificio(const nlohmann::json& data_edificio) {
     nombre = data_edificio.at("nombre");
     ancho = data_edificio.at("dimensiones").at(0);
     alto = data_edificio.at("dimensiones").at(1);
-    vida = data_edificio.at("puntos_estructura");
+    vida = vida_maxima = data_edificio.at("puntos_estructura");
     nombre = data_edificio.at("nombre");
     descripcion = data_edificio.at("descripcion");
     costo = data_edificio.at("costo");
@@ -75,6 +77,9 @@ void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
                 .cargar_imagen("./assets/nuevos/seleccion-edificio.png")
                 .renderizar(x_px + sprite.obtener_ancho(ventana) / 2, y_px);
         }
+        barra_vida.set_ancho(ANCHO_BARRA_VIDA);
+        barra_vida.renderizar(ventana, x_px, y_px - (t.obtener_alto() / 2), 
+            vida, vida_maxima);
     }
     
 }

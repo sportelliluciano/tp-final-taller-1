@@ -7,6 +7,7 @@
 
 #include "libs/json.hpp"
 
+#include "cliente/modelo/hud/barra_vida.h"
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/modelo/sprite_compuesto.h"
 #include "cliente/video/ventana.h"
@@ -125,7 +126,8 @@ public:
 private:  
     int ancho, alto;
     
-    int vida;
+    int vida, vida_maxima;
+    BarraVida barra_vida;
 
     int id_edificio = -1;
     int id_jugador = 0;
