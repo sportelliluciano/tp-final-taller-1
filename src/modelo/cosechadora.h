@@ -9,7 +9,7 @@
 #include "modelo/unidad_base.h"
 #include "conexion/i_jugador.h"
 
-#define ESPERA 5000 
+#define ESPERA 10000 
 
 namespace modelo {
 

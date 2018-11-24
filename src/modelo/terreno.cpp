@@ -1,17 +1,20 @@
 #include "modelo/terreno.h"
 
 #include <cmath>
-#include <iostream>
-#include <fstream>
+#include <list>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+#include <unordered_set>
 
 #include "modelo/a_estrella.h"
 #include "modelo/celda.h"
 
-// El tamaño de una celda [enunciado / dato de cliente] es de 32x32.
-#define RANGO 5 * 4
+// El tamaño de una celda [enunciado / dato de cliente] es de 32x32,
+//  pero el tamaño de una celda del modelo es de 8x8 para poder ubicar 
+//  una tropa por celda.
+#define FACTOR_DIMENSION 4
+#define RANGO 5 * FACTOR_DIMENSION
 
 namespace modelo {
 
@@ -22,27 +25,24 @@ void Terreno::inicializar(const nlohmann::json& mapa) {
     const std::vector<std::vector<int>>& tipos = 
         mapa.at("tipo").get<std::vector<std::vector<int>>>();
 
-    alto = tipos.size();
+    alto = tipos.size() * FACTOR_DIMENSION;
 
     if (alto == 0) {
         throw std::runtime_error("Terreno inválido");
     }
 
-    ancho = tipos.at(0).size();
+    ancho = tipos.at(0).size() * FACTOR_DIMENSION;
 
-    for (int y=0;y<alto;y++) {
+    for (int y=0; y < alto; y++) {
         std::vector<Celda> fila_actual;
-        for (int x=0;x<ancho;x++) {
+        for (int x=0; x < ancho; x++) {
+            int x_tipo = x / FACTOR_DIMENSION;
+            int y_tipo = y / FACTOR_DIMENSION;
             fila_actual.push_back(
-                Celda((tipo_celda_t)tipos[y][x], x, y)
-            );
+                Celda((tipo_celda_t)tipos[y_tipo][x_tipo], x, y));
         }
         terreno.push_back(fila_actual);
     }
-}
-
-inline Celda& Terreno::obtener_celda(int x, int y) {
-    return terreno.at(y).at(x);
 }
 
 int Terreno::obtener_ancho() const {
@@ -146,21 +146,21 @@ std::vector<Posicion>
     return resultado;
 }
 
-bool Terreno::rango_valido_edificio(int x_, int y_,std::pair<int,int>& dim){
+bool Terreno::puede_construir_edificio(int x, int y, std::pair<int,int>& dim) {
     int dim_x = dim.first;
     int dim_y = dim.second;
-    int inicio_x = x_-RANGO;
+    int inicio_x = x-RANGO;
     if (inicio_x < 0) inicio_x = 0; 
-    int inicio_y = y_-RANGO;
+    int inicio_y = y-RANGO;
     if (inicio_y < 0) inicio_y = 0;
-    int fin_x = x_+dim_x+RANGO;
+    int fin_x = x+dim_x+RANGO;
     if (fin_x > ancho) fin_x = ancho;
-    int fin_y = y_+dim_y+RANGO;
+    int fin_y = y+dim_y+RANGO;
     if (fin_y > alto) fin_y = alto;
     bool rango_valido = false;
     for (int j = inicio_y; j < fin_y; j++){
         for (int i = inicio_x; i < inicio_x; i++){
-            if( j >= y_ && j< y_+dim_y && i >= x_ && i< x_+dim_x){
+            if( j >= y && j< y+dim_y && i >= x && i< x+dim_x){
                 if(!terreno[j][i].es_construible()) {
                    return false;    
                 }
@@ -193,8 +193,8 @@ bool Terreno::tiene_edificio(int x_, int y_) {
 }
 
 void Terreno::agregar_edificio(int x_, int y_,std::pair<int,int>& dim){
-    int dim_x = dim.first * 4;
-    int dim_y = dim.second * 4;
+    int dim_x = dim.first * FACTOR_DIMENSION;
+    int dim_y = dim.second * FACTOR_DIMENSION;
     for (int j = y_; j < y_ + dim_y; j++) {
         for (int i = x_; i < x_ + dim_x; i++) {
             terreno[j][i].agregar_edificio();
@@ -205,8 +205,8 @@ void Terreno::agregar_edificio(int x_, int y_,std::pair<int,int>& dim){
 void Terreno::eliminar_edificio(Posicion& pos,std::pair<int,int>& dim) {
     int x_ = pos.x();
     int y_ = pos.y();
-    int dim_x = dim.first * 4;
-    int dim_y = dim.second * 4;
+    int dim_x = dim.first * FACTOR_DIMENSION;
+    int dim_y = dim.second * FACTOR_DIMENSION;
     for (int j = y_; j < y_ + dim_y; j++) {
         for (int i = x_; i < x_ + dim_x; i++) {
             terreno[j][i].eliminar_edificio();
@@ -214,12 +214,12 @@ void Terreno::eliminar_edificio(Posicion& pos,std::pair<int,int>& dim) {
     }
 }
 
-bool Terreno::es_caminable(int x_, int y_) {
-    return obtener_celda(x_, y_).es_caminable();
+bool Terreno::es_caminable(int x, int y) {
+    return terreno[y][x].es_caminable();
 }
 
-bool Terreno::hay_tropa(int x_, int y_) {
-    return obtener_celda(x_, y_).hay_tropa();
+bool Terreno::hay_tropa(int x, int y) {
+    return terreno[y][x].hay_tropa();
 }
 
 void Terreno::agregar_tropa(const Posicion& posicion, std::pair<int,int>& dim) {
@@ -243,26 +243,38 @@ void Terreno::eliminar_tropa(const Posicion& pos, std::pair<int,int>& dim) {
 }
 
 Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
-    for (int j = posicion_i.y(); j <alto; j++){
-        for (int i = posicion_i.x(); i < ancho; i++){
-            if(!terreno[j][i].es_caminable())
+    std::list<int> cola;
+    std::unordered_set<int> visitados;
+    cola.push_back(hash_posicion(posicion_i.x(), posicion_i.y()));
+    while (!cola.empty()) {
+        int nodo = cola.front();
+        visitados.insert(nodo);
+        cola.pop_front();
+        
+        int x, y;
+        revertir_hash(nodo, x, y);
+        if (terreno[y][x].es_caminable())
+            return Posicion(terreno[y][x].x(), terreno[y][x].y());
+        
+        for (int vecino : obtener_vecinos(nodo)) {
+            if (visitados.find(vecino) != visitados.end())
                 continue;
-            return Posicion(terreno[j][i].x(),terreno[j][i].y());
+            cola.push_back(vecino);
         }
     }
-    // TODO: esto sólo camina hacia adelante, estando sobre el final 
-    // del terreno puede fallar
-    throw std::runtime_error("wut");
+
+    throw std::runtime_error("No hay más posiciones libres en el tablero.");
 }
 
-void Terreno::agregar_refineria(int x_, int y_,int id_jugador) {
-    refinerias.emplace(id_jugador,Posicion(x_,y_));
+void Terreno::agregar_refineria(int x, int y,int id_jugador) {
+    refinerias.emplace(id_jugador,Posicion(x,y));
 }
 
 std::vector<Posicion> Terreno::obtener_refinerias(int id_jugador) {
     std::vector<Posicion> pos;
     for (auto it=refinerias.begin(); it != refinerias.end(); ++it) {
-        if ((it->first)==id_jugador) pos.push_back(it->second);
+        if (it->first == id_jugador) 
+            pos.push_back(it->second);
     }
 
     return pos;

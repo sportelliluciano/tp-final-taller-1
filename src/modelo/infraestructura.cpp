@@ -11,6 +11,8 @@
 
 #define FACTOR 0.3 //porcentaje de recuperacion al reciclar
 
+#define TIPO_CENTRO_CONSTRUCCION "centro_construccion"
+
 namespace modelo {
 
 Infraestructura::Infraestructura(Broadcaster& broadcaster,Id& id) 
@@ -28,10 +30,30 @@ void Infraestructura::actualizar_edificios(int dt_ms) {
 
 }
 
+int Infraestructura::crear_centro_construccion(int x, int y, int id_propietario)
+{
+    int nuevo_id = id_.nuevo_id();                                           
+    edificios.emplace(nuevo_id, 
+        prototipos.clonar(TIPO_CENTRO_CONSTRUCCION, nuevo_id, x, y));
+    
+    terreno->agregar_edificio(x, y,
+        prototipos.get_dimensiones(TIPO_CENTRO_CONSTRUCCION));
+    
+    comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        j->crear_edificio(
+            nuevo_id,
+            TIPO_CENTRO_CONSTRUCCION,
+            x, y,
+            id_propietario
+        );
+    });
+    return nuevo_id;   
+}
+
 int Infraestructura::crear(const std::string& id_tipo, int x, int y, 
     int id_propietario) 
 {
-    //if (!terreno->rango_valido_edificio(x,y,prototipos.get_dimensiones(id_tipo)))return 0;//raise error;
+    //if (!terreno->puede_construir_edificio(x,y,prototipos.get_dimensiones(id_tipo)))return 0;//raise error;
     int nuevo_id = id_.nuevo_id();                                           
     edificios.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,x,y));
     terreno->agregar_edificio(x,y,prototipos.get_dimensiones(id_tipo));

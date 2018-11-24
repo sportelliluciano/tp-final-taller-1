@@ -30,18 +30,13 @@ class Terreno : public Grafo {
 public:
     /**
      * \brief Constructor.
-     * 
      */
     Terreno();
-    void inicializar(const nlohmann::json& mapa);
 
     /**
-     * \brief Devuelve una referencia a la celda en la posición (x, y).
-     * 
-     * Permite obtener una referencia constante a la celda en la posición 
-     * (x, y). Si no existe dicha celda lanzará excepción (TODO).
+     * \brief Inicializa el terreno a partir de un mapa en formato JSON.
      */
-    Celda& obtener_celda(int x, int y);
+    void inicializar(const nlohmann::json& mapa);
 
     /**
      * \brief Devuelve el ancho del terreno.
@@ -66,18 +61,64 @@ public:
     std::vector<Posicion> buscar_camino_minimo(const Posicion& inicio, 
         const Posicion& fin) const;
     
-    bool rango_valido_edificio(int x_, int y_,std::pair<int,int>& dim);
-    bool rango_valido_tropa(int x_, int y_,std::pair<int,int>& dim);
-    bool tiene_edificio(int x_, int y_);
-    void agregar_edificio(int x_, int y_,std::pair<int,int>& dim);
-    void eliminar_edificio(Posicion& pos,std::pair<int,int>& dim);
-    bool es_caminable(int x_, int y_);
-    bool hay_tropa(int x_, int y_);
+
+    /**
+     * \brief Determina si se puede construir un edificio en la posición
+     *        indicada.
+     * 
+     * Un edificio se puede construir si:
+     * - Las celdas donde se va a construir son de roca
+     * - Las celdas donde se va a construir están libres
+     * - Hay un edificio del jugador a 5 casillas o menos
+     * 
+     * Si alguna de las condiciones no se cumple entonces el edificio no se 
+     * podrá construir.
+     */
+    bool puede_construir_edificio(int x, int y, std::pair<int,int>& dim);
+
+    
+    bool rango_valido_tropa(int x, int y, std::pair<int,int>& dim);
+    
+    /**
+     * \brief Marca la celda en la posición (x, y) indicando que hay un
+     *        edificio en la misma.
+     */
+    void agregar_edificio(int x, int y, std::pair<int,int>& dim);
+
+    /**
+     * \brief Elimina la marca la celda en la posición (x, y) indicando que 
+     *        hay un edificio en la misma.
+     */
+    void eliminar_edificio(Posicion& pos, std::pair<int,int>& dim);
+    
+    /**
+     * \brief Marca la celda en la posición pasada por parámetro indicando que
+     *        hay una tropa en la misma.
+     */
     void agregar_tropa(const Posicion& posicion, std::pair<int,int>& dim);
+
+    /**
+     * \brief Elimina la marca de la celda en la posición pasada por parámetro 
+     *        indicando que hay una tropa en la misma.
+     */
     void eliminar_tropa(const Posicion& posicion, std::pair<int,int>& dim);
-    Posicion obtener_posicion_libre_cercana(Posicion& posicion_i);
+
+    /**
+     * \brief Obtiene la primer posición libre más cercana a posicion_inicial
+     */
+    Posicion obtener_posicion_libre_cercana(Posicion& posicion_inicial);
+
+    /**
+     * \brief Agrega un indicador de refinería en la posición (x, y) para el
+     *        jugador con id = id_jugador.
+     */
     void agregar_refineria(int x_, int y_,int id_jugador);
+
+    /**
+     * \brief Obtiene las posiciones de las refinerías del jugador.
+     */
     std::vector<Posicion> obtener_refinerias(int id_jugador);
+
 private:
     /**
      * \brief Representación del terreno como un arreglo de celdas.
@@ -102,6 +143,21 @@ private:
      * \brief Revierte un hash a una posición discreta.
      */
     void revertir_hash(int hash, int& x, int& y) const;
+
+    /**
+     * \brief Devuelve true si se puede caminar por la celda (x, y).
+     */
+    bool es_caminable(int x, int y);
+
+    /**
+     * \brief Devuelve true si hay un edificio en la celda (x, y).
+     */
+    bool tiene_edificio(int x, int y);
+
+    /**
+     * \brief Devuelve true si hay una tropa en la celda (x, y).
+     */
+    bool hay_tropa(int x, int y);
 };
 
 } // namespace modelo
