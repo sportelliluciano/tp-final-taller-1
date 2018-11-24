@@ -53,12 +53,12 @@ int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
     std::cout << "salio al clonar "<<std::endl;            
     //Posicion especia = terreno->obtener_especia_cercana(posicion);
     Posicion especia(43,67);
-    mover_cosechadora(nuevo_id,especia.x(),especia.y());   
     
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->crear_tropa(nuevo_id, id_tipo, posicion.px_x(), posicion.px_y(),
             prototipos.get_vida(id_tipo), id_propietario);
     });
+    mover_cosechadora(nuevo_id,especia.x(),especia.y());   
     return nuevo_id;
 }
 void Ejercito::destruir(int id){
@@ -103,9 +103,11 @@ void Ejercito::mover_cosechadora(int id,int x,int y){
     for (auto it = a_estrella.begin(); it!= a_estrella.end();++it){
         v.emplace_back(std::pair<int,int>((*it).px_x(),(*it).px_y()));
     }
+    std::cout << "entro a mover cosechadora" << std::endl;
     comunicacion_jugadores.broadcast([&] (IJugador *j) {
         j->mover_tropa(id,v);
     });
+    std::cout << "salgo de mover cosechadora" << std::endl;
 }
 void Ejercito::atacar(int id_victima,int id_atacante){
     //ver si hay que seguirlo o no
@@ -191,20 +193,22 @@ void Ejercito::actualizar_tropas(int dt) {
         if (cosechadoras.count(*it)!=0){
             Cosechadora& cosechadora = cosechadoras.at(*it);
             if (cosechadora.operando()){
-                std::cout << "operando"  << std::endl;
+                //std::cout << "operando"  << std::endl;
                 cosechadora.operar(dt);
             } else if (!cosechadora.en_movimiento()){
                 std::cout << "cambio de camino"  << std::endl;
                 Posicion posicion;
                 if (cosechadora.camino_a_especia()){
+                    std::cout << "a especia"  << std::endl;
                     posicion = Posicion(43,67); //especia
                 } else {
                     std::cout << "a refineria"  << std::endl;
                     posicion = Posicion(36,36);//refineria
                 }
-                mover_cosechadora(*it,posicion.px_x(),posicion.px_y());
+                std::cout << "x: "<<posicion.px_x() <<" y: "<< posicion.px_y() << std::endl;
+                mover_cosechadora(*it,posicion.x(),posicion.y());
             } else{
-                std::cout << "actualizo"  << std::endl;
+                //std::cout << "actualizo"  << std::endl;
                 if (cosechadora.actualizar_posicion(dt,terreno)) {
                     comunicacion_jugadores.broadcast([this, &cosechadora] (IJugador *j) {
                         j->sincronizar_tropa(cosechadora.get_id(), 
