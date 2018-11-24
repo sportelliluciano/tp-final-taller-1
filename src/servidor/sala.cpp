@@ -80,6 +80,9 @@ void Sala::notificar_desconexion(Cliente& cliente) {
     } 
     jugadores.erase(clientes.at(&cliente).obtener_id());
     clientes.erase(&cliente);
+
+    if (jugadores.size() == 0)
+        terminar = true;
 }
 
 void Sala::configurar_recepcion_eventos() {
@@ -179,80 +182,84 @@ void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {
     
     evento_servidor_t id = evento.at("id").get<evento_servidor_t>();
 
-    switch(id) {
-        case EVS_INICIAR_CONSTRUCCION:
-            modelo->iniciar_construccion_edificio(
-                jugador, 
-                evento.at("clase")
-            );
-            break;
-        
-        case EVS_CANCELAR_CONSTRUCCION:
-            modelo->cancelar_construccion_edificio(
-                jugador, 
-                evento.at("clase")
-            );
-            break;
-        
-        case EVS_UBICAR_EDIFICIO: 
-            modelo->ubicar_edificio(
-                jugador, 
-                evento.at("celda").get<std::vector<int>>().at(0),
-                evento.at("celda").get<std::vector<int>>().at(1),
-                evento.at("clase")
-            );
-            break;
-        
-        case EVS_VENDER_EDIFICIO:
-            modelo->vender_edificio(
-                jugador,
-                evento.at("id_edificio")
-            );
-            break;
+    try {
+        switch(id) {
+            case EVS_INICIAR_CONSTRUCCION:
+                modelo->iniciar_construccion_edificio(
+                    jugador, 
+                    evento.at("clase")
+                );
+                break;
+            
+            case EVS_CANCELAR_CONSTRUCCION:
+                modelo->cancelar_construccion_edificio(
+                    jugador, 
+                    evento.at("clase")
+                );
+                break;
+            
+            case EVS_UBICAR_EDIFICIO: 
+                modelo->ubicar_edificio(
+                    jugador, 
+                    evento.at("celda").get<std::vector<int>>().at(0),
+                    evento.at("celda").get<std::vector<int>>().at(1),
+                    evento.at("clase")
+                );
+                break;
+            
+            case EVS_VENDER_EDIFICIO:
+                modelo->vender_edificio(
+                    jugador,
+                    evento.at("id_edificio")
+                );
+                break;
 
-        case EVS_INICIAR_ENTRENAMIENTO:
-            modelo->iniciar_entrenamiento_tropa(
-                jugador, 
-                evento.at("clase")
-            );
-            break;
-        
-        case EVS_CANCELAR_ENTRENAMIENTO:
-            modelo->cancelar_entrenamiento_tropa(
-                jugador, 
-                evento.at("clase")
-            );
-            break;
-        
-        case EVS_MOVER_TROPAS: 
-            modelo->mover_tropas(
-                jugador,
-                evento.at("ids_tropa").get<std::unordered_set<int>>(),
-                evento.at("posicion").get<std::vector<int>>().at(0),
-                evento.at("posicion").get<std::vector<int>>().at(1)
-            );
-            break;
+            case EVS_INICIAR_ENTRENAMIENTO:
+                modelo->iniciar_entrenamiento_tropa(
+                    jugador, 
+                    evento.at("clase")
+                );
+                break;
+            
+            case EVS_CANCELAR_ENTRENAMIENTO:
+                modelo->cancelar_entrenamiento_tropa(
+                    jugador, 
+                    evento.at("clase")
+                );
+                break;
+            
+            case EVS_MOVER_TROPAS: 
+                modelo->mover_tropas(
+                    jugador,
+                    evento.at("ids_tropa").get<std::unordered_set<int>>(),
+                    evento.at("posicion").get<std::vector<int>>().at(0),
+                    evento.at("posicion").get<std::vector<int>>().at(1)
+                );
+                break;
 
-        case EVS_ATACAR_TROPA:
-            modelo->atacar_tropa(
-                jugador,
-                evento.at("ids_tropa").get<std::unordered_set<int>>(),
-                evento.at("id_atacado")
-            );
-            break;
-        
-        case EVS_COSECHADORA_INDICAR_ESPECIA:
-            modelo->indicar_especia_cosechadora(
-                jugador,
-                evento.at("ids_tropa").get<std::unordered_set<int>>(),
-                evento.at("celda").get<std::vector<int>>().at(0),
-                evento.at("celda").get<std::vector<int>>().at(1)
-            );
-            break;
-        
-        default:
-            throw std::runtime_error("actualizar_modelo: Evento desconocido");
-    }
+            case EVS_ATACAR_TROPA:
+                modelo->atacar_tropa(
+                    jugador,
+                    evento.at("ids_tropa").get<std::unordered_set<int>>(),
+                    evento.at("id_atacado")
+                );
+                break;
+            
+            case EVS_COSECHADORA_INDICAR_ESPECIA:
+                modelo->indicar_especia_cosechadora(
+                    jugador,
+                    evento.at("ids_tropa").get<std::unordered_set<int>>(),
+                    evento.at("celda").get<std::vector<int>>().at(0),
+                    evento.at("celda").get<std::vector<int>>().at(1)
+                );
+                break;
+            
+            default:
+                throw std::runtime_error("actualizar_modelo: Evento desconocido");
+        }
+    } catch(const std::exception& e) {
+        std::cout << "Explosión controlada: " << e.what() << std::endl;
+    } // Dejar que otras excepciones asciendan
 }
 
 } // namespace servidor

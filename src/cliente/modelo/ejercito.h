@@ -107,7 +107,7 @@ public:
      * \brief Crea una nueva tropa sobre el mapa.
      */
     void crear_tropa(int id, const std::string& clase, 
-        const std::vector<int>& posicion, int id_jugador);
+        const std::vector<int>& posicion, int id_jugador, int vida);
     
     /**
      * \brief Inicia el movimiento de una tropa siguiendo el camino indicado.

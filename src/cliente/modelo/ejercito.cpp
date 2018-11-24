@@ -187,14 +187,14 @@ void Ejercito::actualizar_cola_entrenamiento(const std::string& clase,
 }
 
 void Ejercito::crear_tropa(int id, const std::string& clase, 
-    const std::vector<int>& posicion, int id_jugador) 
+    const std::vector<int>& posicion, int id_jugador, int vida) 
 {
     Tropa nueva_tropa = tropas_base.at(clase);
     tropas.emplace(id, nueva_tropa);
     tropas.at(id).inicializar(
         id, 
         Posicion(posicion.at(0), posicion.at(1)),
-        100,
+        vida,
         id_jugador
     );
     terreno.agregar_tropa(tropas.at(id));

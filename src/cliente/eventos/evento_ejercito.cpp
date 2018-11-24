@@ -29,7 +29,7 @@ void EventoEjercito::actualizar(Juego& juego) {
             break;
         case EVC_CREAR_TROPA:              // (id, clase, posicion_inicial, id_jugador)
             ejercito.crear_tropa(data.at("id_tropa"), data.at("clase"), 
-                data.at("posicion"), data.at("id_jugador"));
+                data.at("posicion"), data.at("id_jugador"), data.at("vida"));
             break;
         case EVC_MOVER_TROPA:              // (id, camino)
             ejercito.mover_tropa(data.at("id_tropa"), data.at("camino"));
