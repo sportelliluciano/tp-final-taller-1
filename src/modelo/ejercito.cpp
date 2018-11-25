@@ -28,7 +28,7 @@ Ejercito::~Ejercito(){
 
 int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
     Posicion pos(43,56);
-    Posicion posicion = terreno->obtener_posicion_libre_cercana(pos);
+    Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     //std::cout << "Pase los condicionales." << '\n';
     int nuevo_id = id_.nuevo_id();
@@ -43,7 +43,7 @@ int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
 
 int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
     Posicion pos(43,56);
-    Posicion posicion = terreno->obtener_posicion_libre_cercana(pos);
+    Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
     std::cout << "el Id de cosechadora es  "<< nuevo_id<<std::endl;
@@ -74,9 +74,11 @@ void Ejercito::destruir(int id){
 }
 
 void Ejercito::mover(int id, int x, int y) {
+    Posicion destino = terreno->obtener_posicion_caminable_cercana(
+        Posicion(x, y));
+    
     std::vector<Posicion> a_estrella = 
-        terreno->buscar_camino_minimo(tropas.at(id).get_posicion(), 
-            Posicion(x,y));
+        terreno->buscar_camino_minimo(tropas.at(id).get_posicion(), destino);
     
     tropas.at(id).configurar_camino(a_estrella);
     

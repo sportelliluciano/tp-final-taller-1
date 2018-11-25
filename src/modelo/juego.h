@@ -49,11 +49,13 @@ public:
     
     bool partida_terminada() const override;
     
-    void jugador_desconectado(IJugador* jugador);//no implementada
+    void jugador_desconectado(IJugador* jugador);
 
     virtual ~Juego();
 
     /**** Métodos que son llamados desde los clientes. *****/
+    void jugador_listo(IJugador* jugador);
+
     void iniciar_construccion_edificio(IJugador* jugador,
         const std::string& clase);
 

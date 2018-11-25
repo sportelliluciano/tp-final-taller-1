@@ -268,9 +268,16 @@ Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
 }
 #endif
 
-Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
-    for (int j = posicion_i.y(); j <alto; j++){
-        for (int i = posicion_i.x(); i < ancho; i++){
+Posicion Terreno::obtener_posicion_caminable_cercana(
+    const Posicion& posicion_inicial) 
+{
+    int x, y;
+    x = posicion_inicial.x();
+    y = posicion_inicial.y();
+    if (terreno[y][x].es_caminable())
+        return posicion_inicial;
+    for (int j = y; j <alto; j++){
+        for (int i = x; i < ancho; i++){
             if(!terreno[j][i].es_caminable())
                 continue;
             return Posicion(terreno[j][i].x(),terreno[j][i].y());

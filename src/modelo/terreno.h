@@ -104,9 +104,13 @@ public:
     void eliminar_tropa(const Posicion& posicion, std::pair<int,int>& dim);
 
     /**
-     * \brief Obtiene la primer posición libre más cercana a posicion_inicial
+     * \brief Obtiene la primer posición que se puede caminar más cercana a 
+     *        posicion_inicial.
+     * 
+     * Si la posicion inicial es caminable se devolverá la misma posición.
      */
-    Posicion obtener_posicion_libre_cercana(Posicion& posicion_inicial);
+    Posicion obtener_posicion_caminable_cercana(
+        const Posicion& posicion_inicial);
 
     /**
      * \brief Agrega un indicador de refinería en la posición (x, y) para el

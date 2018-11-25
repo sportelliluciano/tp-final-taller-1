@@ -104,6 +104,10 @@ Juego::~Juego() { }
 
 /**** Mensajes desde los jugadores ****/
 
+void Juego::jugador_listo(IJugador*) {
+
+}
+
 void Juego::iniciar_construccion_edificio(IJugador* jugador,
     const std::string& clase)
 {

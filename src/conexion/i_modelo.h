@@ -83,6 +83,21 @@ public:
     /*************************************************************************/
 
     /**
+     * \brief El jugador ya recibió y procesó los datos de inicialización.
+     * 
+     * Este evento es enviado por el cliente cuando el mismo ya recibió todos
+     * los datos de inicialización [todo lo que se envíe hasta recibir un
+     * evento esperar_ack] y está listo para realizar el primer renderizado
+     * de la ventana de juego.
+     * 
+     * El proceso de inicialización es el siguiente:
+     * << inicializar(mapa, ejercito, infraestructura)
+     * >> jugador_listo
+     * << iniciar_juego
+     */
+    virtual void jugador_listo(IJugador* jugador) = 0;
+
+    /**
      * \brief Iniciar la construcción de un edificio.
      * 
      * El jugador solicitó el inicio de la construcción de un edificio
