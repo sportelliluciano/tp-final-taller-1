@@ -169,7 +169,7 @@ void Juego::mover_tropas(IJugador* jugador, const std::unordered_set<int>& ids,
     unsigned int celda_x = x / 8;
     unsigned int celda_y = y / 8;
     for (int id_ : ids) {
-        ejercito.mover(id_, celda_x + n, celda_y, jugador);
+        ejercito.mover(id_, celda_x + n, celda_y);
         n++;
         if (n == cant) {
             celda_y++;

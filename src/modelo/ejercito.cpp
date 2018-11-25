@@ -53,12 +53,12 @@ int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
     std::cout << "salio al clonar "<<std::endl;            
     //Posicion especia = terreno->obtener_especia_cercana(posicion);
     Posicion especia(43,67);
-    //mover_cosechadora(nuevo_id,especia.x(),especia.y());   
     
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->crear_tropa(nuevo_id, id_tipo, posicion.px_x(), posicion.px_y(),
             prototipos.get_vida(id_tipo), id_propietario);
     });
+    mover_cosechadora(nuevo_id,especia.x(),especia.y());   
     return nuevo_id;
 }
 void Ejercito::destruir(int id){
@@ -73,7 +73,7 @@ void Ejercito::destruir(int id){
     //crear y mandar el evento
 }
 
-void Ejercito::mover(int id, int x, int y, IJugador*) {
+void Ejercito::mover(int id, int x, int y) {
     std::vector<Posicion> a_estrella = 
         terreno->buscar_camino_minimo(tropas.at(id).get_posicion(), 
             Posicion(x,y));
@@ -101,11 +101,13 @@ void Ejercito::mover_cosechadora(int id,int x,int y){
     tropas_en_movimiento.insert(id);
     std::vector<std::pair<int,int>> v;
     for (auto it = a_estrella.begin(); it!= a_estrella.end();++it){
-        v.emplace_back(std::pair<int,int>((*it).x(),(*it).y()));
+        v.emplace_back(std::pair<int,int>((*it).px_x(),(*it).px_y()));
     }
+    std::cout << "entro a mover cosechadora" << std::endl;
     comunicacion_jugadores.broadcast([&] (IJugador *j) {
         j->mover_tropa(id,v);
     });
+    std::cout << "salgo de mover cosechadora" << std::endl;
 }
 void Ejercito::atacar(int id_victima,int id_atacante){
     //ver si hay que seguirlo o no
@@ -187,35 +189,46 @@ void Ejercito::actualizar_tropas(int dt) {
                     sino
                         nueva psocion = posicion refineria
                     mover a neuva posciom      
-
+        */
         if (cosechadoras.count(*it)!=0){
             Cosechadora& cosechadora = cosechadoras.at(*it);
-            if (cosechadora.en_movimiento()){
-                cosechadora.actualziar_posicion();
-                continue;
-            }
             if (cosechadora.operando()){
+                //std::cout << "operando"  << std::endl;
                 cosechadora.operar(dt);
-            } else {
+            } else if (!cosechadora.en_movimiento()){
+                std::cout << "cambio de camino"  << std::endl;
+                Posicion posicion;
                 if (cosechadora.camino_a_especia()){
-                    Posicion posicion(53,66); //especia
+                    std::cout << "a especia"  << std::endl;
+                    posicion = Posicion(43,67); //especia
                 } else {
-                    Posicion posicion(153,166);//refineria
+                    std::cout << "a refineria"  << std::endl;
+                    posicion = Posicion(36,36);//refineria
                 }
-                mover_cosechadora(cosechadora.get_id(),posicion.x(),posicion.y(),        );
-            }
-            
-            if (cosechadoras.at(*it)).camino_a_especia()){
-                Posicion pos = terreno.obtener_refineria_cercana();
-                mover_cosechadora(*it,pos.x(),pos.y(),cosechadoras.at(*it)).obtener_jugador());
+                std::cout << "x: "<<posicion.px_x() <<" y: "<< posicion.px_y() << std::endl;
+                mover_cosechadora(*it,posicion.x(),posicion.y());
             } else{
-                Posicion pos = terreno.obtener_especia_cercana();
-                mover_cosechadora(*it,pos.x(),pos.y(),cosechadoras.at(*it)).obtener_jugador());
+                //std::cout << "actualizo"  << std::endl;
+                if (cosechadora.actualizar_posicion(dt,terreno)) {
+                    comunicacion_jugadores.broadcast([this, &cosechadora] (IJugador *j) {
+                        j->sincronizar_tropa(cosechadora.get_id(), 
+                            cosechadora.get_posicion().px_x(),
+                            cosechadora.get_posicion().px_y()
+                        );
+                    });
+                }        
             }
-            cosechadoras.at(*it).actualizar_posicion(dt,terreno,jugadores);
-            continue;        
+            ++it;
+            continue;
         }
-        */
+        
+       /*
+       Unidad* unidad; 
+        if (cosechadoras.count(*it)!=0){
+            unidad = &cosechadoras.at(*it);
+        } else {
+            unidad = &tropas.at(*it);
+        }*/
         Unidad& unidad = tropas.at(*it);
         if (!unidad.en_movimiento()){
             it = tropas_en_movimiento.erase(it);

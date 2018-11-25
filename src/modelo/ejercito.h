@@ -36,7 +36,7 @@ class Ejercito{
     int crear(const std::string& id_tipo, int id_propietario);
     int crear_cosechadora(const std::string& id_tipo,int id_propietario);    
     void destruir(int id);
-    void mover(int id,int x,int y,IJugador* jugador);
+    void mover(int id,int x,int y);
     void mover_cosechadora(int id,int x,int y);
     void atacar(int id_victima,int id_atacante);
     void atacar(Atacable* edificio,int id_atacante);

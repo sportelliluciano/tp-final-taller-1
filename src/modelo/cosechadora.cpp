@@ -21,8 +21,8 @@ void Cosechadora::operar(int ds){
     tiempo_descarga -= ds;
     if (tiempo_descarga <= 0){
         operando_ = false;
+        tiempo_descarga = ESPERA;
     }
-    tiempo_descarga = ESPERA;
 }
 bool Cosechadora::operando(){
     return operando_;
