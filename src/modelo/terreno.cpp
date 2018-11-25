@@ -242,6 +242,7 @@ void Terreno::eliminar_tropa(const Posicion& pos, std::pair<int,int>& dim) {
     }
 }
 
+#if 0
 Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
     std::list<int> cola;
     std::unordered_set<int> visitados;
@@ -264,6 +265,20 @@ Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
     }
 
     throw std::runtime_error("No hay más posiciones libres en el tablero.");
+}
+#endif
+
+Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
+    for (int j = posicion_i.y(); j <alto; j++){
+        for (int i = posicion_i.x(); i < ancho; i++){
+            if(!terreno[j][i].es_caminable())
+                continue;
+            return Posicion(terreno[j][i].x(),terreno[j][i].y());
+        }
+    }
+    // TODO: esto sólo camina hacia adelante, estando sobre el final 
+    // del terreno puede fallar
+    throw std::runtime_error("wut");
 }
 
 void Terreno::agregar_refineria(int x, int y,int id_jugador) {
