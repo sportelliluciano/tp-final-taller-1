@@ -1,5 +1,7 @@
 # Trabajo práctico final de Taller 1: Dune 2000
 
+Link al informe: https://es.overleaf.com/read/vjspvynrnrct
+
 ### Para compilar el cliente
 #### Bibliotecas requeridas:
 - `libsdl2-dev`
