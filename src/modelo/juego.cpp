@@ -80,7 +80,6 @@ void Juego::actualizar(int dt_ms) {
                 if (inf.pertenece(*it)){
                     unsigned int consumo = inf.get_energia(*it);
                     inf.destruir(*it);
-                    //ejercito.matar_edificio();
                     jugador.eliminar_elemento(*it,consumo);
                 } else {
                     jugador.eliminar_elemento(*it,0);

@@ -154,6 +154,7 @@ void Ejercito::matar_tropa(int id_victima,int id_atacante){
     if (tropas.count(id_victima)==0 && cosechadoras.count(id_victima)==0){
         //es edificio
         matar_edificio(id_victima);
+        return;
     }
     std::cout << "se comunico la baja" << std::endl;
     comunicacion_jugadores.broadcast([&] (IJugador *j) {
@@ -266,10 +267,10 @@ void Ejercito::actualizar_tropas(int dt) {
         int id_victima = unidad.id_victima();
         //std::cout << "Id victima:  "<<id_victima <<std::endl;
         //std::cout << "Numero de cosechadoras:  "<<cosechadoras.count(id_victima) <<std::endl;
-        if (tropas_muertas.count(id_victima) != 0 ||
+        if (tropas_muertas.count(id_victima) != 0/* ||
                 (tropas.count(id_victima) == 0 &&
                 cosechadoras.count(id_victima) == 0 &&
-                edificios_atacados.count(id_victima) == 0)
+                edificios_atacados.count(id_victima) == 0)*/
             ){
             tropas.at(*it).parar_ataque();
             it = tropas_atacando.erase(it);
@@ -291,23 +292,28 @@ void Ejercito::actualizar_tropas(int dt) {
                     j->atacar_tropa(id_victima,vida_nueva_victima);
                 else
                     j->atacar_edificio(id_victima, vida_nueva_victima);
-            });//sirve para edificios??
+            });
         }
         if (!borrado)
             ++it;
     }
-    eliminar_tropas();
     //saco a los muertos restantes del set
-    //aquellos que atacaron y despues murieron
     for (auto it = tropas_atacando.begin();
             it != tropas_atacando.end();)
     {
         if (tropas_muertas.count(*it)!= 0){
-            it = tropas_muertas.erase(it);
+            //aquellos que atacaron y despues murieron
+            it = tropas_atacando.erase(it);
+            continue;
+        } else if (tropas_muertas.count(tropas.at(*it).id_victima())!=0){
+            //aquellos que atacaron y no mataron a su victima pero despues alguien mas la mato
+            tropas.at(*it).parar_ataque();
+            it = tropas_atacando.erase(it);
             continue;
         }
         ++it;
     }
+    eliminar_tropas();
 }
 unsigned int Ejercito::get_tiempo(std::string id_tipo){
     return prototipos.get_tiempo(id_tipo);
