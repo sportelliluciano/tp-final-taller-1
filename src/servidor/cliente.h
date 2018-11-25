@@ -84,7 +84,7 @@ public:
 private:
     conexion::Conexion conexion;
     std::thread hilo_emisor, hilo_receptor;
-    ColaProtegida cola_salida;
+    ColaProtegida<nlohmann::json> cola_salida;
 
     std::mutex m_cb_al_recibir_datos;
     std::function<void(const nlohmann::json&)> cb_al_recibir_datos = nullptr;

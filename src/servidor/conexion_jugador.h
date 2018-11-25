@@ -33,20 +33,11 @@ public:
     virtual const std::string& obtener_nombre() const;
 
     /**
-     * \brief Envia el mapa al cliente.
+     * \brief Envia los datos de inicialización al cliente
      */
-    virtual void enviar_mapa(const nlohmann::json& mapa);
-    
-    /**
-     * \brief Envia los datos sobre la infraestructura al cliente.
-     */
-    virtual void enviar_infraestructura(
-        const nlohmann::json& infraestructura);
-    
-    /**
-     * \brief Envia los datos sobre el ejército al cliente.
-     */    
-    virtual void enviar_ejercito(const nlohmann::json& ejercito);
+    virtual void inicializar(const nlohmann::json& mapa,
+        const nlohmann::json& infraestructura,
+        const nlohmann::json& ejercito);
 
     /**
      * \brief Indica al jugador que el juego está iniciando y le comunica
@@ -212,19 +203,6 @@ public:
      * id_tropa: ID de la tropa a ser destruida
      */
     void destruir_tropa(int id_tropa);
-
-    /**** Disparos. ****/
-    
-    /**
-     * TODO:
-     * 
-     * Estos eventos todavía no están definidos.
-     */
-    void lanzar_misil();
-    void onda_sonido();
-    void lanzar_plasma();
-    void sincronizar_disparo();
-
     
     /**
      * \brief Indica al jugador que la cosechadora empezó a descargar especia.
@@ -238,7 +216,7 @@ public:
      * \brief Indica al jugador que la posición indicada en el terreno ya no
      * tiene más especia.
      */
-    void eliminar_especia();
+    void eliminar_especia(int celda_x, int celda_y);
 
     /**** Eventos generales. ****/
     

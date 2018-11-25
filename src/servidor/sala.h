@@ -7,10 +7,13 @@
 #include <mutex>
 #include <thread>
 
+#include "libs/json.hpp"
+
 #include "conexion/conexion.h"
 #include "conexion/i_modelo.h"
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
+#include "servidor/cola_protegida.h"
 
 namespace servidor {
 
@@ -99,6 +102,8 @@ private:
     size_t capacidad = 0;
 
     nlohmann::json mapa, edificios, ejercito;
+
+    ColaProtegida<std::pair<IJugador*, nlohmann::json>> cola_eventos;
 
     void actualizar_modelo(IJugador* jugador, const nlohmann::json& evento);
     

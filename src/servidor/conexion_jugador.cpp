@@ -49,23 +49,10 @@ ConexionJugador::~ConexionJugador() {
 
 /***** Implementaciones de mensajes *****/
 
-void ConexionJugador::enviar_mapa(const nlohmann::json& mapa) {
-    notificar({
-        {"id", EVC_INICIALIZAR_MAPA},
-        {"mapa", mapa}
-    });
-}
-
-void ConexionJugador::enviar_infraestructura(
-    const nlohmann::json& infraestructura) 
+void ConexionJugador::inicializar(const nlohmann::json& mapa, 
+    const nlohmann::json& infraestructura,
+    const nlohmann::json& ejercito) 
 {
-    notificar({
-        {"id", EVC_INICIALIZAR_INFRAESTRUCTURA},
-        {"infraestructura", infraestructura}
-    });
-}
-
-void ConexionJugador::enviar_ejercito(const nlohmann::json& ejercito) {
     notificar({
         {"id", EVC_INICIALIZAR_EJERCITO},
         {"ejercito", ejercito}
@@ -273,23 +260,7 @@ void ConexionJugador::actualizar_energia(int nueva_energia, int nuevo_maximo) {
 
 /***** Eventos no implementados *****/
 
-void ConexionJugador::lanzar_misil() {
-    SIN_IMPLEMENTAR("lanzar_misil");
-}
-
-void ConexionJugador::onda_sonido() {
-    SIN_IMPLEMENTAR("onda_sonido");
-}
-
-void ConexionJugador::lanzar_plasma() {
-    SIN_IMPLEMENTAR("lanzar_plasma");
-}
-
-void ConexionJugador::sincronizar_disparo() {
-    SIN_IMPLEMENTAR("sincronizar_disparo");
-}
-
-void ConexionJugador::eliminar_especia() {
+void ConexionJugador::eliminar_especia(int, int) {
     SIN_IMPLEMENTAR("eliminar_especia");
 }
 

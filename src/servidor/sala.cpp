@@ -9,6 +9,7 @@
 #include <thread>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "conexion/eventos_servidor.h"
 #include "conexion/lock.h"
@@ -17,6 +18,9 @@
 #include "servidor/conexion_jugador.h"
 #include "servidor/mock_modelo.h"
 #include "modelo/juego.h"
+
+// Dejar un 20% del tiempo de actualización como márgen.
+#define DELAY_EV ((TICK_MS * 20) / 100)
 
 namespace servidor {
 
@@ -92,7 +96,7 @@ void Sala::configurar_recepcion_eventos() {
         modelo->crear_jugador(&it->second);
         
         cliente.al_recibir_datos([this, jugador] (const nlohmann::json& data) {
-            actualizar_modelo(jugador, data);
+            cola_eventos.push({jugador, data});
         });
     }
 }
@@ -127,7 +131,22 @@ void Sala::iniciar_partida(Cliente& cliente) {
     }
 }
 
+static int64_t medir_tiempo_ms(std::function<void(void)> funcion) {
+    using namespace std::chrono;
+    auto t1 = steady_clock::now();
+    funcion();
+    auto t2 = steady_clock::now();
+    return duration_cast<milliseconds>(t2 - t1).count();
+}
+
+static int64_t timestamp() {
+    using namespace std::chrono;
+    static auto base = steady_clock::now();
+    return duration_cast<milliseconds>(steady_clock::now() - base).count();
+}
+
 void Sala::jugar() {
+    using namespace std::chrono;
     try {
         if (partida_iniciada)
             throw std::runtime_error("La partida ya fue iniciada");
@@ -137,12 +156,69 @@ void Sala::jugar() {
         configurar_recepcion_eventos();
         
         modelo->iniciar_partida();
-        
+        auto base = steady_clock::now();
+        auto un_seg = base + seconds(1);
+        double promedio_eventos = 0;
+        double promedio_actualizaciones = 0;
+        double promedio_iteracion = 0;
+        int cantidad_promedio = 0;
         while (!terminar && !modelo->partida_terminada()) {
-            lock_modelo.lock();
-            modelo->actualizar(TICK_MS);
-            lock_modelo.unlock();
-            std::this_thread::sleep_for(std::chrono::milliseconds(TICK_MS));
+            promedio_iteracion += medir_tiempo_ms([&] () {
+                auto timeout = base + milliseconds(TICK_MS);
+                auto ms_eventos = medir_tiempo_ms([&] () {
+                    auto timeout_eventos = base + milliseconds(TICK_MS - DELAY_EV);
+                    while (steady_clock::now() < timeout_eventos) {
+                        std::pair<IJugador*, nlohmann::json> evento;
+                        // Esto no es RAII por una buena razón que no entra en un
+                        //  comentario de una línea (ni de dos).
+                        if (cola_eventos.pull(timeout_eventos, evento))
+                            actualizar_modelo(evento.first, evento.second);
+                    }
+                });
+
+                if (ms_eventos > TICK_MS) {
+                    std::cout << "[" << timestamp() << "ms] "
+                            << "[ADVERTENCIA]: El procesamiento de eventos tardó "
+                            << ms_eventos << "ms (TICK_MS=" << TICK_MS << "ms)"
+                            << std::endl;
+                }
+
+                auto ms_actualizacion = medir_tiempo_ms([&] () {
+                    std::this_thread::sleep_until(timeout);
+                    modelo->actualizar(TICK_MS);
+                });
+                
+                if (ms_actualizacion > TICK_MS) {
+                    std::cout << "[" << timestamp() << "ms] "
+                            << "[ADVERTENCIA]: El modelo tardó " 
+                            << ms_actualizacion << "ms en actualizarse"
+                            << " (TICK_MS=" << TICK_MS << "ms)"
+                            << std::endl;
+                }
+                promedio_actualizaciones += ms_actualizacion;
+                promedio_eventos += ms_eventos;
+                cantidad_promedio++;
+
+                if (steady_clock::now() > un_seg) {
+                    promedio_actualizaciones /= cantidad_promedio;
+                    promedio_eventos /= cantidad_promedio;
+                    promedio_iteracion /= cantidad_promedio;
+                    std::cout << "[" << timestamp() << "ms] "
+                            << "avg(actualizacion): " 
+                            << promedio_actualizaciones << "ms" << std::endl;
+                    std::cout << "[" << timestamp() << "ms] "
+                            << "avg(eventos): " << promedio_eventos << "ms"
+                            << std::endl;
+                    std::cout << "[" << timestamp() << "ms] "
+                            << "avg(iter): " << promedio_iteracion << "ms"
+                            << std::endl;
+                    promedio_iteracion = promedio_actualizaciones = promedio_eventos = 0;
+                    cantidad_promedio = 0;
+                    un_seg = steady_clock::now() + seconds(1);
+                }
+
+                base = timeout;
+            });
         }
     } catch(const std::exception& e) {
         std::cerr << "Explotó la partida en la sala " << nombre << std::endl;
@@ -185,73 +261,109 @@ void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {
     try {
         switch(id) {
             case EVS_INICIAR_CONSTRUCCION:
-                modelo->iniciar_construccion_edificio(
-                    jugador, 
-                    evento.at("clase")
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(iniciar_construccion_edificio) = " << 
+                medir_tiempo_ms([&] () {
+                    modelo->iniciar_construccion_edificio(
+                        jugador, 
+                        evento.at("clase")
+                    );
+                }) << "ms" << std::endl;
                 break;
             
             case EVS_CANCELAR_CONSTRUCCION:
-                modelo->cancelar_construccion_edificio(
-                    jugador, 
-                    evento.at("clase")
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(cancelar_construccion_edificio) = " << 
+                medir_tiempo_ms([&] () {
+                    modelo->cancelar_construccion_edificio(
+                        jugador, 
+                        evento.at("clase")
+                    );
+                }) << "ms" << std::endl;
                 break;
             
             case EVS_UBICAR_EDIFICIO: 
-                modelo->ubicar_edificio(
-                    jugador, 
-                    evento.at("celda").get<std::vector<int>>().at(0),
-                    evento.at("celda").get<std::vector<int>>().at(1),
-                    evento.at("clase")
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(ubicar_edificio) = " << 
+                medir_tiempo_ms([&] () {
+                    modelo->ubicar_edificio(
+                        jugador, 
+                        evento.at("celda").get<std::vector<int>>().at(0),
+                        evento.at("celda").get<std::vector<int>>().at(1),
+                        evento.at("clase")
+                    );
+                }) << "ms" << std::endl;
                 break;
             
             case EVS_VENDER_EDIFICIO:
-                modelo->vender_edificio(
-                    jugador,
-                    evento.at("id_edificio")
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(vender_edificio) = " << 
+                medir_tiempo_ms([&] () {
+                    modelo->vender_edificio(
+                        jugador,
+                        evento.at("id_edificio")
+                    );
+                }) << "ms" << std::endl;
                 break;
 
             case EVS_INICIAR_ENTRENAMIENTO:
-                modelo->iniciar_entrenamiento_tropa(
-                    jugador, 
-                    evento.at("clase")
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(iniciar_entrenamiento_tropa) = " << 
+                medir_tiempo_ms([&] () {
+                    modelo->iniciar_entrenamiento_tropa(
+                        jugador, 
+                        evento.at("clase")
+                    );
+                }) << "ms" << std::endl;
                 break;
             
             case EVS_CANCELAR_ENTRENAMIENTO:
-                modelo->cancelar_entrenamiento_tropa(
-                    jugador, 
-                    evento.at("clase")
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(cancelar_entrenamiento_tropa) = " << 
+                medir_tiempo_ms([&] () {
+                    modelo->cancelar_entrenamiento_tropa(
+                        jugador, 
+                        evento.at("clase")
+                    );
+                }) << "ms" << std::endl;
                 break;
             
             case EVS_MOVER_TROPAS: 
-                modelo->mover_tropas(
-                    jugador,
-                    evento.at("ids_tropa").get<std::unordered_set<int>>(),
-                    evento.at("posicion").get<std::vector<int>>().at(0),
-                    evento.at("posicion").get<std::vector<int>>().at(1)
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(mover_tropas) = " << 
+                medir_tiempo_ms([&] () {
+                    modelo->mover_tropas(
+                        jugador,
+                        evento.at("ids_tropa").get<std::unordered_set<int>>(),
+                        evento.at("posicion").get<std::vector<int>>().at(0),
+                        evento.at("posicion").get<std::vector<int>>().at(1)
+                    );
+                }) << "ms" << std::endl;
                 break;
 
             case EVS_ATACAR_TROPA:
-                modelo->atacar_tropa(
-                    jugador,
-                    evento.at("ids_tropa").get<std::unordered_set<int>>(),
-                    evento.at("id_atacado")
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(atacar_tropa) = " << 
+                medir_tiempo_ms([&]() {
+                    modelo->atacar_tropa(
+                        jugador,
+                        evento.at("ids_tropa").get<std::unordered_set<int>>(),
+                        evento.at("id_atacado")
+                    );
+                }) << "ms" << std::endl;
                 break;
             
             case EVS_COSECHADORA_INDICAR_ESPECIA:
-                modelo->indicar_especia_cosechadora(
-                    jugador,
-                    evento.at("ids_tropa").get<std::unordered_set<int>>(),
-                    evento.at("celda").get<std::vector<int>>().at(0),
-                    evento.at("celda").get<std::vector<int>>().at(1)
-                );
+                std::cout << "[" << timestamp() << "ms] "
+                    << "t(indicar_especia_cosechadora) = " << 
+                medir_tiempo_ms([&]() {
+                    modelo->indicar_especia_cosechadora(
+                        jugador,
+                        evento.at("ids_tropa").get<std::unordered_set<int>>(),
+                        evento.at("celda").get<std::vector<int>>().at(0),
+                        evento.at("celda").get<std::vector<int>>().at(1)
+                    );
+                }) << "ms" << std::endl;
                 break;
             
             default:
