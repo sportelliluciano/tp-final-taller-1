@@ -78,8 +78,9 @@ void Juego::actualizar(int dt_ms) {
             Jugador& jugador = it2->second;
             if (jugador.pertenece(*it)){
                 if (inf.pertenece(*it)){
-                    inf.destruir(*it);
                     unsigned int consumo = inf.get_energia(*it);
+                    inf.destruir(*it);
+                    //ejercito.matar_edificio();
                     jugador.eliminar_elemento(*it,consumo);
                 } else {
                     jugador.eliminar_elemento(*it,0);
@@ -187,6 +188,7 @@ void Juego::atacar_tropa(IJugador* jugador,
             continue;
         }
         if (inf.pertenece(id_atacado)) {
+            std::cout << "ataco un edificio" << std::endl;
             ejercito.atacar(&(inf.get(id_atacado)),*it);
         } else{  
             ejercito.atacar(id_atacado,*it);

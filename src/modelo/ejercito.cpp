@@ -127,6 +127,10 @@ void Ejercito::atacar(Atacable* edificio,int id_atacante){
         tropas.at(id_atacante).configurar_ataque(edificio);
         tropas_atacando.insert(id_atacante);
     }
+    edificios_atacados.insert(edificio->get_id());
+}
+void Ejercito::matar_edificio(int id_edficio_victima){
+    edificios_atacados.erase(id_edficio_victima);
 }
 
 Unidad& Ejercito::get(int id) {
@@ -146,7 +150,11 @@ void Ejercito::matar_tropa(int id_victima,int id_atacante){
     tropas.at(id_atacante).parar_ataque();
     if (tropas_en_movimiento.count(id_victima)!=0){
         tropas_en_movimiento.erase(id_victima);
-    }        
+    }
+    if (tropas.count(id_victima)==0 && cosechadoras.count(id_victima)==0){
+        //es edificio
+        matar_edificio(id_victima);
+    }
     std::cout << "se comunico la baja" << std::endl;
     comunicacion_jugadores.broadcast([&] (IJugador *j) {
                j->destruir_tropa(id_victima);
@@ -221,14 +229,6 @@ void Ejercito::actualizar_tropas(int dt) {
             ++it;
             continue;
         }
-        
-       /*
-       Unidad* unidad; 
-        if (cosechadoras.count(*it)!=0){
-            unidad = &cosechadoras.at(*it);
-        } else {
-            unidad = &tropas.at(*it);
-        }*/
         Unidad& unidad = tropas.at(*it);
         if (!unidad.en_movimiento()){
             it = tropas_en_movimiento.erase(it);
@@ -262,24 +262,27 @@ void Ejercito::actualizar_tropas(int dt) {
             it = tropas_atacando.erase(it);
             continue;
         }
-        std::cout << "Entramos en ataque" << std::endl;
+        //std::cout << "Entramos en ataque" << std::endl;
         int id_victima = unidad.id_victima();
-        std::cout << "Id victima:  "<<id_victima <<std::endl;
-        std::cout << "Numero de cosechadoras:  "<<cosechadoras.count(id_victima) <<std::endl;
-        if (tropas_muertas.count(id_victima) != 0 || (tropas.count(id_victima) == 0 && cosechadoras.count(id_victima) == 0)){
+        //std::cout << "Id victima:  "<<id_victima <<std::endl;
+        //std::cout << "Numero de cosechadoras:  "<<cosechadoras.count(id_victima) <<std::endl;
+        if (tropas_muertas.count(id_victima) != 0 ||
+                (tropas.count(id_victima) == 0 &&
+                cosechadoras.count(id_victima) == 0 &&
+                edificios_atacados.count(id_victima) == 0)
+            ){
             tropas.at(*it).parar_ataque();
             it = tropas_atacando.erase(it);
             continue;
         }
         //falta ver el tema del rango
-        std::cout << "Quiero atacar a :  "<<id_victima <<std::endl;
+        //std::cout << "Quiero atacar a :  "<<id_victima <<std::endl;
         int vida_nueva_victima = unidad.actualizar_ataque(dt,terreno);
-        std::cout << "atacamos" << std::endl;
+        //std::cout << "atacamos" << std::endl;
         if (vida_nueva_victima <= 0) {
             matar_tropa(id_victima,*it);//lo saca del modelo
             it = tropas_atacando.erase(it);
             borrado = true;
-            //como le aviso a jugador(clase Jugador)??
         } else {
             comunicacion_jugadores.broadcast([&] (IJugador *j) {
                 if (cosechadoras.count(id_victima) != 0)

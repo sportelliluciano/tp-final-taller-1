@@ -28,6 +28,7 @@ class Ejercito{
     std::unordered_set<int> tropas_atacando;
     std::unordered_set<int> tropas_muertas;
     std::unordered_map<int,Cosechadora> cosechadoras;
+    std::unordered_set<int> edificios_atacados;
 
     public:
     Ejercito(Broadcaster& broadcaster,Id& id);
@@ -40,6 +41,7 @@ class Ejercito{
     void mover_cosechadora(int id,int x,int y);
     void atacar(int id_victima,int id_atacante);
     void atacar(Atacable* edificio,int id_atacante);
+    void matar_edificio(int id_edficio_victima);
     Unidad& get(int id);
     unsigned int get_costo(std::string id_tipo);
     unsigned int get_tiempo(std::string id_tipo);
