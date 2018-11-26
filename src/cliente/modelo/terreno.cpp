@@ -324,8 +324,6 @@ void Terreno::mover_tropa(Tropa& tropa, int x_ant, int y_ant) {
 
     terreno[celda_y][celda_x].eliminar_tropa(tropa);
     terreno[nuevo_celda_y][nuevo_celda_x].agregar_tropa(tropa);
-    log_advertencia("Cambio de celdas: (%d,%d) => (%d,%d)", celda_x, celda_y,
-        nuevo_celda_x, nuevo_celda_y);
 }
 
 void Terreno::eliminar_tropa(const Tropa& tropa) {
