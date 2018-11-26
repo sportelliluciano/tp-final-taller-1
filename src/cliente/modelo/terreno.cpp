@@ -72,8 +72,8 @@ Terreno::Terreno(const nlohmann::json& mapa) {
     const std::vector<std::vector<int>>& tipos = 
         mapa.at("tipo").get<std::vector<std::vector<int>>>();
     
-    const std::vector<std::vector<int>>& sprites = 
-        mapa.at("sprite").get<std::vector<std::vector<int>>>();
+    //const std::vector<std::vector<int>>& sprites = 
+    //    mapa.at("sprite").get<std::vector<std::vector<int>>>();
 
     alto = tipos.size();
 
@@ -87,7 +87,7 @@ Terreno::Terreno(const nlohmann::json& mapa) {
         std::vector<Celda> fila_actual;
         for (int x=0;x<ancho;x++) {
             fila_actual.push_back(
-                Celda((tipo_celda_t)tipos[y][x], sprites, x, y)
+                Celda((tipo_celda_t)tipos[y][x]) //, sprites, x, y)
             );
         }
         terreno.push_back(fila_actual);
