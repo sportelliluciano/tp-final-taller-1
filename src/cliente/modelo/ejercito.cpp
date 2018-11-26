@@ -64,17 +64,30 @@ void Ejercito::renderizar(Ventana& ventana, Camara& camara) {
 }
 
 void Ejercito::actualizar(int t_ms) {
+    // Actualizar movimientos y ataques
     for (auto& par: tropas) {
         Tropa& tropa = par.second;
-        if (!tropa.esta_moviendo())
-            continue;
-        int x_ant = tropa.obtener_x(), y_ant = tropa.obtener_y();
-        tropa.actualizar(t_ms - last_ms);
-        terreno.mover_tropa(tropa, x_ant, y_ant);
+        if (tropa.esta_moviendo()) {
+            int x_ant = tropa.obtener_x(), y_ant = tropa.obtener_y();
+            tropa.actualizar_movimiento(t_ms - last_ms);
+            terreno.mover_tropa(tropa, x_ant, y_ant);
+        } else if (tropa.esta_disparando()) {
+            int id_atacado = tropa.obtener_atacado();
+            if ((tropas.count(id_atacado) == 0) && 
+                (!infraestructura.existe(id_atacado))) {
+                tropa.detener_ataque();
+            } else if (tropas.count(id_atacado) != 0) {
+                Tropa& atacado = tropas.at(id_atacado);
+                tropa.actualizar_posicion_victima(
+                    atacado.obtener_x(), atacado.obtener_y());
+            }
+            tropa.actualizar_ataque(t_ms - last_ms);
+        }
     }
 
     int dt_ee = (int)((t_ms - last_ms) * velocidad_ee);
     
+    // Actualizar entrenamientos
     for (auto it = entrenamiento_actual.begin(); 
         it != entrenamiento_actual.end(); ++it) 
     {
@@ -219,8 +232,23 @@ void Ejercito::sincronizar_tropa(int id, const std::vector<int>& posicion) {
     terreno.mover_tropa(tropas.at(id), x_ant, y_ant);
 }
 
-void Ejercito::atacar_tropa(int id, int nueva_vida) {
-    tropas.at(id).set_vida(nueva_vida);
+void Ejercito::atacar(int id_atacante, int id_victima, int nueva_vida) {
+    Tropa& atacante = tropas.at(id_atacante);
+    int x_destino, y_destino;
+    if (tropas.count(id_victima) != 0) {
+        Tropa& atacado = tropas.at(id_victima);
+        atacado.set_vida(nueva_vida);
+        x_destino = atacado.obtener_x();
+        y_destino = atacado.obtener_y();
+    } else {
+        Edificio& atacado = infraestructura.obtener(id_victima);
+        infraestructura.atacar(id_victima, nueva_vida);
+        Posicion pos_atacado = terreno.obtener_posicion(&atacado);
+        x_destino = pos_atacado.x;
+        y_destino = pos_atacado.y;
+    }
+
+    atacante.atacar(id_victima, x_destino, y_destino);
 }
 
 void Ejercito::destruir_tropa(int id) {

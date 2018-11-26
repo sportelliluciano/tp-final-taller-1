@@ -154,9 +154,9 @@ public:
 
     /**
      * \brief El jugador quiere atacar con las tropas dadas por el ID a la
-     *        tropa con id=id_atacado.
+     *        tropa o edificio con id=id_atacado.
      */
-    virtual void atacar_tropa(IJugador* jugador, 
+    virtual void atacar(IJugador* jugador, 
         const std::unordered_set<int>& ids_atacantes, int id_atacado) = 0;
 
     /**

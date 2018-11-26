@@ -100,14 +100,6 @@ void ConexionJugador::actualizar_cola_cc(const std::string& clase, int cantidad)
     });
 }
 
-void ConexionJugador::atacar_edificio(int id_edificio, int nueva_vida) {
-    notificar({
-        {"id", EVC_ATACAR_EDIFICIO},
-        {"id_edificio", id_edificio},
-        {"nueva_vida", nueva_vida}
-    });
-}
-
 void ConexionJugador::crear_edificio(int id_edificio, const std::string& clase, 
     int celda_x, int celda_y, int id_propietario)
 {
@@ -213,10 +205,11 @@ void ConexionJugador::sincronizar_tropa(int id_tropa, int pos_x, int pos_y) {
     });
 }
 
-void ConexionJugador::atacar_tropa(int id_tropa, int nueva_vida) {
+void ConexionJugador::atacar(int id_atacante, int id_victima, int nueva_vida) {
     notificar({
-        {"id", EVC_ATACAR_TROPA},
-        {"id_tropa", id_tropa},
+        {"id", EVC_ATACAR},
+        {"id_atacante", id_atacante},
+        {"id_victima", id_victima},
         {"nueva_vida", nueva_vida}
     });
 }

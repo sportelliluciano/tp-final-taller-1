@@ -182,7 +182,7 @@ void Juego::mover_tropas(IJugador* jugador, const std::unordered_set<int>& ids,
     }
 }
 
-void Juego::atacar_tropa(IJugador* jugador, 
+void Juego::atacar(IJugador* jugador, 
         const std::unordered_set<int>& ids_atacantes, int id_atacado)
 {
     Jugador& atacante = jugadores.at(jugador->obtener_id());

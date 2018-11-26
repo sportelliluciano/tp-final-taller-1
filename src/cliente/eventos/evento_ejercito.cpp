@@ -37,8 +37,9 @@ void EventoEjercito::actualizar(Juego& juego) {
         case EVC_SINCRONIZAR_TROPA:        // (id, posición actual)
             ejercito.sincronizar_tropa(data.at("id_tropa"), data.at("posicion"));
             break;
-        case EVC_ATACAR_TROPA:             // (id, nueva_vida)
-            ejercito.atacar_tropa(data.at("id_tropa"), data.at("nueva_vida"));
+        case EVC_ATACAR:             // (id_atacante, id_victima, nueva_vida)
+            ejercito.atacar(data.at("id_atacante"), data.at("id_victima"), 
+                data.at("nueva_vida"));
             break;
         case EVC_DESTRUIR_TROPA:           // (id)
             ejercito.destruir_tropa(data.at("id_tropa"));

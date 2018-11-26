@@ -343,9 +343,9 @@ void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {
 
             case EVS_ATACAR_TROPA:
                 std::cout << "[" << timestamp() << "ms] "
-                    << "t(atacar_tropa) = " << 
+                    << "t(atacar) = " << 
                 medir_tiempo_ms([&]() {
-                    modelo->atacar_tropa(
+                    modelo->atacar(
                         jugador,
                         evento.at("ids_tropa").get<std::unordered_set<int>>(),
                         evento.at("id_atacado")

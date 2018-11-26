@@ -234,14 +234,13 @@ static int calcular_posicion_sprite(int vx, int vy, bool es_vehiculo) {
     return pos_sprite;
 }
 
+void Tropa::actualizar_ataque(int dt_ms) {
+    actualizar_posicion_victima(x_atacado, y_atacado);
+    if (disparo)
+        disparo->actualizar(dt_ms);
+}
 
-void Tropa::actualizar(int dt_ms) {
-    //if (disparo)
-    //    disparo->actualizar(dt_ms);
-    
-    if (!esta_moviendo())
-        return;
-
+void Tropa::actualizar_movimiento(int dt_ms) {
     int vx = 0, vy = 0;
 
     if (x_destino != x_actual)
@@ -325,14 +324,38 @@ int Tropa::obtener_propietario() const {
     return id_propietario;
 }
 
-// void Tropa::atacar(Posicion& destino) {
-//     b_esta_disparando = true;
-//     orientacion_sprite = calcular_posicion_sprite(
-//         destino.x - x_actual, destino.y - y_actual,
-//         es_vehiculo
-//     );
-//     disparo->iniciar_disparo(Posicion(x_actual, y_actual), destino);
-// }
+void Tropa::atacar(int id_victima, int x_victima, int y_victima) {
+    b_esta_disparando = true;
+    id_atacado = id_victima;
+    if (disparo)
+        disparo->iniciar(x_actual, y_actual, x_victima, y_victima);
+    
+    actualizar_posicion_victima(x_victima, y_victima);
+}
+
+void Tropa::actualizar_posicion_victima(int x, int y) {
+    if ((x == x_atacado) && (y == y_atacado))
+        return;
+    x_atacado = x;
+    y_atacado = y;
+    orientacion_sprite = calcular_posicion_sprite(x - x_actual, 
+        y - y_actual, es_vehiculo);
+    if (disparo)
+        disparo->actualizar_destino(x, y);
+}
+
+int Tropa::obtener_atacado() const {
+    return id_atacado;
+}
+
+void Tropa::detener_ataque() {
+    if (b_esta_disparando) {
+        b_esta_disparando = false;
+        id_atacado = -1;
+        if (disparo)
+            disparo->detener();
+    }
+}
 
 bool Tropa::esta_disparando() const {
     return b_esta_disparando;
@@ -341,9 +364,11 @@ bool Tropa::esta_disparando() const {
 void Tropa::caminar_hacia(int x_dest, int y_dest) {
     x_destino = x_dest;
     y_destino = y_dest;
+    detener_ataque();
 }
 
 void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
+    detener_ataque();
     camino_actual = camino;
     paso_actual = 0;
     
@@ -361,8 +386,8 @@ void Tropa::sync_camino(int x, int y) {
     
     /******* TODO: Eliminar esto ******/
     log_depuracion("(%d, %d) <> (%d, %d)", x_actual, y_actual, x, y);
-    fx_actual = /*x_actual =*/ x;
-    fy_actual = /*y_actual =*/ y;
+    fx_actual = x_actual = x;
+    fy_actual = y_actual = y;
 
     if (paso_actual < camino_actual.size()) {
         caminar_hacia(camino_actual[paso_actual].first, 

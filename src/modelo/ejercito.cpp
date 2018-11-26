@@ -288,12 +288,7 @@ void Ejercito::actualizar_tropas(int dt) {
             borrado = true;
         } else {
             comunicacion_jugadores.broadcast([&] (IJugador *j) {
-                if (cosechadoras.count(id_victima) != 0)
-                    j->atacar_tropa(id_victima,vida_nueva_victima);
-                else if (tropas.count(id_victima) != 0)
-                    j->atacar_tropa(id_victima,vida_nueva_victima);
-                else
-                    j->atacar_edificio(id_victima, vida_nueva_victima);
+                j->atacar(unidad.get_id(), id_victima, vida_nueva_victima);
             });
         }
         if (!borrado)
