@@ -125,9 +125,9 @@ public:
     void sincronizar_tropa(int id, const std::vector<int>& posicion);
     
     /**
-     * \brief Ataca a la tropa indicada.
+     * \brief Ataca a la tropa o edificio indicado.
      */
-    void atacar_tropa(int id, int nueva_vida);
+    void atacar(int id_atacante, int id_victima, int nueva_vida);
     
     /**
      * \brief Elimina la tropa indicada del tablero.

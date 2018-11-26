@@ -28,7 +28,7 @@ Ejercito::~Ejercito(){
 
 int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
     Posicion pos(43,56);
-    Posicion posicion = terreno->obtener_posicion_libre_cercana(pos);
+    Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
     tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,posicion.x(),posicion.y()));
@@ -42,7 +42,7 @@ int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
 
 int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
     Posicion pos(43,56);
-    Posicion posicion = terreno->obtener_posicion_libre_cercana(pos);
+    Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
     terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
@@ -60,9 +60,11 @@ int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
 }
 
 void Ejercito::mover(int id, int x, int y) {
+    Posicion destino = terreno->obtener_posicion_caminable_cercana(
+        Posicion(x, y));
+    
     std::vector<Posicion> a_estrella = 
-        terreno->buscar_camino_minimo(tropas.at(id).get_posicion(), 
-            Posicion(x,y));
+        terreno->buscar_camino_minimo(tropas.at(id).get_posicion(), destino);
     
     tropas.at(id).configurar_camino(a_estrella);
     
@@ -280,12 +282,7 @@ void Ejercito::actualizar_ataques(int dt){
             borrado = true;
         } else {
             comunicacion_jugadores.broadcast([&] (IJugador *j) {
-                if (cosechadoras.count(id_victima) != 0)
-                    j->atacar_tropa(id_victima,vida_nueva_victima);
-                else if (tropas.count(id_victima) != 0)
-                    j->atacar_tropa(id_victima,vida_nueva_victima);
-                else
-                    j->atacar_edificio(id_victima, vida_nueva_victima);
+                j->atacar(unidad.get_id(), id_victima, vida_nueva_victima);
             });
         }
         if (!borrado)

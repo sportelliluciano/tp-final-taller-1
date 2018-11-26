@@ -1,10 +1,11 @@
 #ifndef _COLA_PROTEGIDA_H_
 #define _COLA_PROTEGIDA_H_
 
+#include <chrono>
 #include <list>
 #include <mutex>
 
-#include "libs/json.hpp"
+#include "conexion/lock.h"
 
 namespace servidor {
 
@@ -15,20 +16,31 @@ namespace servidor {
  * push-pull.
  * Esto significa que intentar obtener un elemento de una cola vacía bloqueará
  * hasta que se agregue un nuevo elemento.
+ * 
+ * El tipo T debe ser copiable.
  */
+template <class T>
 class ColaProtegida {
 public:
     /**
      * \brief Crea una nueva cola vacía.
      */
-    ColaProtegida();
+    ColaProtegida() {
+        m_hay_datos.lock();
+    }
 
     /**
      * \brief Agrega un nuevo elemento a la cola.
      * 
      * Este método es thread-safe.
      */
-    void push(const nlohmann::json& data);
+    void push(const T& data) {
+        Lock l(m_cola);
+        bool cola_estaba_vacia = cola.empty();
+        cola.push_back(data);
+        if (cola_estaba_vacia)
+            m_hay_datos.unlock();
+    }
 
     /**
      * \brief Obtiene un elemento de la cola.
@@ -39,18 +51,63 @@ public:
      *
      * Este método es thread-safe.
      */
-    nlohmann::json pull(bool bloquear = true);
+    T pull(bool bloquear = true) {
+        if (!bloquear && cola.empty())
+            throw std::runtime_error("La cola está vacía");
+        
+        m_hay_datos.lock();
+
+        Lock l(m_cola);
+        T data = cola.front();
+        cola.pop_front();
+        
+        if (!cola.empty())
+            m_hay_datos.unlock();
+        
+        return data;
+    }
+
+    /**
+     * \brief Intenta obtener un elemento de la cola
+     * 
+     * Si la cola tiene elementos, devuelve el primero. Si la cola no tiene 
+     * elementos la función bloquea hasta que se inserte un elemento o hasta
+     * que se llegue al punto en el tiempo especificado.
+     * 
+     * De llegar al momento del tiempo sin elementos devolverá un elemento
+     * nuevo vacío.
+     *
+     * La función devuelve true si se puedo obtener un dato, o false en caso
+     * contrario. El dato se devuelve por la interfaz.
+     * Este método es thread-safe.
+     */
+    bool pull(std::chrono::steady_clock::time_point timeout, T& dato) {
+        if (!m_hay_datos.try_lock_until(timeout))
+            return false;
+
+        Lock l(m_cola);
+        dato = cola.front();
+        cola.pop_front();
+        
+        if (!cola.empty())
+            m_hay_datos.unlock();
+        
+        return true;
+    }
 
     /**
      * \brief Devuelve true si la cola está vacía.
      * 
      * Este método es thread-safe.
      */
-    bool esta_vacia() const;
+    bool esta_vacia() const {
+        return cola.empty();
+    }
 
 private:
-    std::mutex m_cola, m_hay_datos;
-    std::list<nlohmann::json> cola;
+    std::mutex m_cola;
+    std::timed_mutex m_hay_datos;
+    std::list<T> cola;
 };
 
 } // namespace servidor

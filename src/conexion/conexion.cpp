@@ -11,6 +11,9 @@
 #include "conexion/error_conexion.h"
 #include "conexion/socket_conexion.h"
 
+// Descomentar esta línea para ver los paquetes de red enviados
+// #define DEPURACION_RED 1
+
 /**
  * La conexión sólo permite enviar paquetes de un tamaño máximo de 2MB.
  * Este valor debería ser más que suficiente para todos los propósitos de
@@ -81,13 +84,14 @@ nlohmann::json Conexion::recibir_json() {
     } catch (const std::exception& e) {
         throw ErrorConexion("Se recibió un paquete inválido");
     }
-
-    if (tamanio > 200) {
+#ifdef DEPURACION_RED
+    if (tamanio > 1000) {
         std::cout << "\x1b[32m>> \x1b[0m {JSON de " << tamanio << " bytes}" 
                   << std::endl;
     } else {
         std::cout << "\x1b[32m>> \x1b[0m" << resultado.dump() << std::endl;
     }
+#endif
     return resultado;
 }
 
@@ -109,14 +113,14 @@ void Conexion::enviar_json(const nlohmann::json& json_data) {
     if (conexion.enviar_bytes(data_utf8, tamanio) != tamanio) {
         throw ErrorConexion("Se cerró la conexión en medio del envío");
     }
-    
-    if (tamanio > 200) {
+#ifdef DEPURACION_RED    
+    if (tamanio > 1000) {
         std::cout << "\x1b[31m<< \x1b[0m {JSON de " << tamanio << " bytes}"
                   << std::endl;
     } else {
         std::cout << "\x1b[31m<< \x1b[0m" << json_data.dump() << std::endl;
     }
-    
+#endif
 }
 
 bool Conexion::esta_conectada() const {

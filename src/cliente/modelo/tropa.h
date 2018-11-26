@@ -8,8 +8,11 @@
 
 #include "libs/json.hpp"
 
+#include "cliente/modelo/disparo.h"
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/modelo/hud/barra_vida.h"
+#include "cliente/video/camara.h"
+#include "cliente/video/posicion.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {
@@ -21,25 +24,22 @@ public:
     /**
      * \brief Renderiza la tropa.
      */
-    void renderizar(Ventana& ventana, int x_px, int y_px);
+    void renderizar(Ventana& ventana, Camara& camara);
 
     /**
-     * \brief Actualiza el estado de la tropa actual, moviéndola si es 
-     *        necesario.
+     * \brief Actualiza el estado de la tropa actual, si es necesario.
      */
-    void actualizar(int t_ms);
-    
-    /**
-     * \brief Devuelve la coordenada x de la posición de la tropa en 
-     *        píxeles globales.
-     */
-    int obtener_x() const;
+    void actualizar_movimiento(int t_ms);
 
     /**
-     * \brief Devuelve la coordenada y de la posición de la tropa en 
-     *        píxeles globales.
+     * \brief Actualiza los ataques de la tropa, si es necesario.
      */
-    int obtener_y() const;
+    void actualizar_ataque(int t_ms);
+
+    /**
+     * \brief Devuelve la posición de la tropa en coordenadas lógicas.
+     */
+    const Posicion& obtener_posicion() const;
 
     /**
      * \brief Devuelve true si la tropa se está moviendo.
@@ -90,10 +90,34 @@ public:
      * \brief Setea la vida de la tropa.
      */
     void set_vida(int nueva_vida);
-    
-    
 
-    void set_esta_disparando(bool disparando);
+    /**
+     * \brief Muestra la animación de ataque en dirección a la posición.
+     * 
+     * La posición de destino no se modificará pero se utilizará para seguir
+     * el objetivo en caso de ser necesaria por lo cual debe permanecer válida
+     * luego de haberse llamado el método.
+     */
+    void atacar(int id_victima, int x_victima, int y_victima);
+
+    /**
+     * \brief Actualiza la posición de la víctima siendo atacada.
+     */
+    void actualizar_posicion_victima(const Posicion& pos_victima);
+
+    /**
+     * \brief Devuelve el ID de víctima atacada.
+     * 
+     * Devuelve -1 si no está atacando.
+     */
+    int obtener_atacado() const;
+
+    /**
+     * \brief Detiene el ataque mostrando la animación de estar parado.
+     * 
+     * El ataque puede detenerse también iniciando un camino.
+     */
+    void detener_ataque();
 
     /**
      * \brief Agrega una marca de selección a la tropa.
@@ -137,18 +161,37 @@ public:
      */
     bool casa_puede_entrenar(const std::string& casa) const;
 
+    /**
+     * \brief Devuelve el nombre de la tropa.
+     */
     const std::string& obtener_nombre() const;
+
+    /**
+     * \brief Devuelve la descripción de la tropa.
+     */
     const std::string& obtener_descripcion() const;
+
+    /**
+     * \brief Devuelve datos **extra** sobre la tropa, para mostrar en su
+     *        mensaje descriptivo
+     */
     const std::vector<std::pair<std::string, std::string>>& 
         obtener_metadata() const;
     
+    /**
+     * \brief Devuelve el costo para el entrenamiento de la tropa.
+     */
     int obtener_costo() const;
+
+    /**
+     * \brief Devuelve el tiempo, en minutos, requerido para entrenar la tropa.
+     */
     float obtener_tiempo_entrenamiento() const;
 
 private:
-    int x_actual, y_actual;
+    Posicion pos_actual;
+    Posicion pos_destino;
     float fx_actual, fy_actual;
-    int x_destino, y_destino;
 
     int id_tropa = -1;
     int id_propietario = 0;
@@ -165,17 +208,34 @@ private:
     SpriteAnimado sprites_caminando[N_SPRITES];
     SpriteAnimado sprites_parado[N_SPRITES];
     SpriteAnimado sprites_disparando[N_SPRITES];
-    SpriteAnimado sprites_vehiculo[N_SPRITES*4];
-    int posicion_sprite = 0; // Hacia donde está mirando la tropa
+    SpriteAnimado sprites_falleciendo[N_SPRITES];
 
+    static const int N_SPRITES_VEHICULO = 32;
+    SpriteAnimado sprites_vehiculo[N_SPRITES_VEHICULO];
+    SpriteAnimado sprite_disparo;
+    SpriteAnimado sprite_descarga;
+
+    Disparo* disparo = nullptr;
+    
+    /**
+     * \brief Orientación de la tropa según hacia donde mire la tropa.
+     */
+    int orientacion_sprite = 0;
+    int nueva_orientacion_sprite = 0;
+
+    /**
+     * \brief Sprite para el boton de entrenamiento
+     */
     int sprite_boton;
 
+    /**
+     * \brief Si esta variable es true entonces la tropa está disparando
+     */
     bool b_esta_disparando = false;
 
-    SpriteAnimado& obtener_sprite();
 
     bool es_vehiculo = false;
-    int nueva_pos_sprite = 0;
+    
     int velocidad = 0;
 
     int last_ms = 0;
@@ -187,6 +247,12 @@ private:
     std::vector<std::pair<std::string, std::string>> metadata;
     int costo;
     float tiempo_entrenamiento;
+
+    int id_atacado = -1, x_atacado, y_atacado;
+
+    void cargar_sprites_tropa(int sprite_base);
+    void cargar_sprites_vehiculo(int sprite_base);
+    SpriteAnimado& obtener_sprite();
 };
 
 } // namespace cliente

@@ -33,21 +33,16 @@ public:
     virtual const std::string& obtener_nombre() const = 0;
     
     /**
-     * \brief Envia el mapa al cliente.
+     * \brief Envia los parámetros de inicialización al cliente.
+     * mapa: Mapa de juego.
+     * infraestructura: Información sobre los edificios.
+     * ejercito: Información sobre las tropas.
      */
-    virtual void enviar_mapa(const nlohmann::json& mapa) = 0;
+    virtual void inicializar(
+        const nlohmann::json& mapa, 
+        const nlohmann::json& infraestructura,
+        const nlohmann::json& ejercito) = 0;
     
-    /**
-     * \brief Envia los datos sobre la infraestructura al cliente.
-     */
-    virtual void enviar_infraestructura(
-        const nlohmann::json& infraestructura) = 0;
-    
-    /**
-     * \brief Envia los datos sobre el ejército al cliente.
-     */    
-    virtual void enviar_ejercito(const nlohmann::json& ejercito) = 0;
-
     /**
      * \brief Indica al jugador que inicie la construcción de un edificio
      *        de la clase indicada.
@@ -82,15 +77,6 @@ public:
      * cantidad: Cantidad de edificios encolados.
      */
     virtual void actualizar_cola_cc(const std::string& clase, int cantidad) = 0;
-
-    /**
-     * \brief Realiza daño a un edificio. No es necesario que el edificio 
-     *        atacado pertenezca al jugador.
-     * 
-     * id_edificio: ID del edificio atacado
-     * nueva_vida: Vida del edificio después del ataque.
-     */
-    virtual void atacar_edificio(int id_edificio, int nueva_vida) = 0;
 
     /**
      * \brief Crea un nuevo edificio mostrando la animación de su construcción.
@@ -160,7 +146,7 @@ public:
      * 
      * id_tropa: ID único de la tropa creada.
      * clase: Clase de la tropa
-     * pos_x, pos_y: Posición de la tropa en (TODO).
+     * pos_x, pos_y: Posición de la tropa en píxeles.
      * vida: Vida actual de la tropa
      * id_propietario: ID del jugador dueño de la tropa
      */
@@ -195,10 +181,12 @@ public:
     /**
      * \brief Realiza daño sobre la tropa indicada.
      * 
-     * id_tropa: ID de la tropa a dañar
-     * nueva_vida: Vida de la tropa luego de aplicar el daño
+     * id_atacante: ID de la tropa que está atacando
+     * id_victima: ID de la tropa o edificio a dañar
+     * nueva_vida: Vida de la víctima luego de aplicar el daño
      */
-    virtual void atacar_tropa(int id_tropa, int nueva_vida) = 0;
+    virtual void atacar(int id_atacante, int id_victima, 
+        int nueva_vida) = 0;
 
     /**
      * \brief Elimina una tropa del juego
@@ -208,16 +196,6 @@ public:
     virtual void destruir_tropa(int id_tropa) = 0;
 
     /**** Disparos. ****/
-    
-    /**
-     * TODO:
-     * 
-     * Estos eventos todavía no están definidos.
-     */
-    virtual void lanzar_misil() = 0;
-    virtual void onda_sonido() = 0;
-    virtual void lanzar_plasma() = 0;
-    virtual void sincronizar_disparo() = 0;
 
     
     /**
@@ -232,7 +210,7 @@ public:
      * \brief Indica al jugador que la posición indicada en el terreno ya no
      * tiene más especia.
      */
-    virtual void eliminar_especia() = 0;
+    virtual void eliminar_especia(int celda_x, int celda_y) = 0;
 
     /**** Eventos generales. ****/
     
@@ -261,11 +239,6 @@ public:
     /**
      * \brief Eventos misceláneos.
      */
-
-    /**
-     * \brief Indica al jugador que el juego está iniciando y su ID de jugador.
-     */
-    virtual void juego_iniciando() = 0;
 
     /**
      * \brief Indica al jugador que se agregó un nuevo jugador.

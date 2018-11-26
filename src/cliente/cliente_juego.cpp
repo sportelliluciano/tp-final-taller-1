@@ -75,7 +75,7 @@ bool ClienteJuego::ejecutar_juego() {
         // Mostrar los cambios
         ventana.actualizar();
         // Procesar eventos
-        ventana.procesar_eventos(); // Cerrar ventana
+        ventana.procesar_eventos();
         controlador.procesar_entrada(); // Servidor / Mouse / teclado
         
         // Actualizar el modelo del juego por último para salir
