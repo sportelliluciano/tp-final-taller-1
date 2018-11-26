@@ -90,7 +90,7 @@ void Ejercito::actualizar(int t_ms) {
 }
 
 void Ejercito::set_tropa_disparando(int id_tropa, bool disparando) {
-    tropas.at(id_tropa).set_esta_disparando(disparando);
+    
 }
 
 const Tropa& Ejercito::obtener_tropa_base(const std::string& clase) const {

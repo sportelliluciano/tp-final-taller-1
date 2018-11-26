@@ -137,12 +137,31 @@ public:
      */
     bool casa_puede_entrenar(const std::string& casa) const;
 
+    /**
+     * \brief Devuelve el nombre de la tropa.
+     */
     const std::string& obtener_nombre() const;
+
+    /**
+     * \brief Devuelve la descripción de la tropa.
+     */
     const std::string& obtener_descripcion() const;
+
+    /**
+     * \brief Devuelve datos **extra** sobre la tropa, para mostrar en su
+     *        mensaje descriptivo
+     */
     const std::vector<std::pair<std::string, std::string>>& 
         obtener_metadata() const;
     
+    /**
+     * \brief Devuelve el costo para el entrenamiento de la tropa.
+     */
     int obtener_costo() const;
+
+    /**
+     * \brief Devuelve el tiempo, en minutos, requerido para entrenar la tropa.
+     */
     float obtener_tiempo_entrenamiento() const;
 
 private:
@@ -165,17 +184,34 @@ private:
     SpriteAnimado sprites_caminando[N_SPRITES];
     SpriteAnimado sprites_parado[N_SPRITES];
     SpriteAnimado sprites_disparando[N_SPRITES];
-    SpriteAnimado sprites_vehiculo[N_SPRITES*4];
-    int posicion_sprite = 0; // Hacia donde está mirando la tropa
+    SpriteAnimado sprites_falleciendo[N_SPRITES];
 
+    static const int N_SPRITES_VEHICULO = 32;
+    SpriteAnimado sprites_vehiculo[N_SPRITES_VEHICULO];
+    SpriteAnimado sprite_disparo;
+    SpriteAnimado sprite_descarga;
+
+    //Disparo* disparo = nullptr;
+    
+    /**
+     * \brief Orientación de la tropa según hacia donde mire la tropa.
+     */
+    int orientacion_sprite = 0;
+    int nueva_orientacion_sprite = 0;
+
+    /**
+     * \brief Sprite para el boton de entrenamiento
+     */
     int sprite_boton;
 
+    /**
+     * \brief Si esta variable es true entonces la tropa está disparando
+     */
     bool b_esta_disparando = false;
 
-    SpriteAnimado& obtener_sprite();
 
     bool es_vehiculo = false;
-    int nueva_pos_sprite = 0;
+    
     int velocidad = 0;
 
     int last_ms = 0;
@@ -187,6 +223,10 @@ private:
     std::vector<std::pair<std::string, std::string>> metadata;
     int costo;
     float tiempo_entrenamiento;
+
+    void cargar_sprites_tropa(int sprite_base);
+    void cargar_sprites_vehiculo(int sprite_base);
+    SpriteAnimado& obtener_sprite();
 };
 
 } // namespace cliente
