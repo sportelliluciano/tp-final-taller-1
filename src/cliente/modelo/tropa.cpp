@@ -160,7 +160,7 @@ void Tropa::renderizar(Ventana& ventana, int x, int y) {
             .obtener_administrador_texturas()
             .cargar_imagen("./assets/nuevos/unidad-seleccionada.png");
         
-        marca.renderizar(x - marca.obtener_ancho() / 2, y - marca.obtener_alto() / 2);
+        marca.renderizar(x - marca.obtener_ancho() / 2, y);
     }
 
     sprite_tropa.renderizar(ventana, x, y);
