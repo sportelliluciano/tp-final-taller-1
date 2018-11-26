@@ -12,7 +12,7 @@
 #include "conexion/socket_conexion.h"
 
 // Descomentar esta línea para ver los paquetes de red enviados
-// #define DEPURACION_RED 1
+#define DEPURACION_RED 1
 
 /**
  * La conexión sólo permite enviar paquetes de un tamaño máximo de 2MB.
