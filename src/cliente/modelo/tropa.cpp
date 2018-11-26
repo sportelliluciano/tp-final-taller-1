@@ -82,8 +82,8 @@ Tropa::Tropa(const nlohmann::json& data) {
     vida = vida_maxima = data.at(JSON_CLAVE_VIDA_MAXIMA);
     
     orientacion_sprite = nueva_orientacion_sprite = 0;
-    fx_actual = x_destino = x_actual = 0;
-    fy_actual = y_destino = y_actual = 0;
+    fx_actual = pos_destino.x = pos_actual.x = 0;
+    fy_actual = pos_destino.y = pos_actual.y = 0;
     id_tropa = -1;
 
     std::unordered_map<std::string, std::string> meta = 
@@ -133,8 +133,8 @@ void Tropa::cargar_sprites_tropa(int sprite_base) {
 void Tropa::inicializar(int id, const Posicion& posicion, int vida_, 
     int id_propietario_)
 {
-    fx_actual = x_destino = x_actual = posicion.x;
-    fy_actual = y_destino = y_actual = posicion.y;
+    fx_actual = pos_destino.x = pos_actual.x = posicion.x;
+    fy_actual = pos_destino.y = pos_actual.y = posicion.y;
     id_tropa = id;
     if (vida != -1)
         vida = vida_;
@@ -152,7 +152,8 @@ SpriteAnimado& Tropa::obtener_sprite() {
     return sprites_parado[orientacion_sprite];
 }
 
-void Tropa::renderizar(Ventana& ventana, int x, int y) {
+void Tropa::renderizar(Ventana& ventana, Camara& camara) {
+    Posicion visual = camara.traducir_a_visual(pos_actual);
     SpriteAnimado& sprite_tropa = obtener_sprite();
     
     if (esta_marcada) {
@@ -160,15 +161,21 @@ void Tropa::renderizar(Ventana& ventana, int x, int y) {
             .obtener_administrador_texturas()
             .cargar_imagen("./assets/nuevos/unidad-seleccionada.png");
         
-        marca.renderizar(x - marca.obtener_ancho() / 2, y);
+        marca.renderizar(visual.x - marca.obtener_ancho() / 2, 
+            visual.y);
+        if (paso_actual < camino_actual.size()) {
+            int trasladar_x = camara.obtener_vista().x(),
+                trasladar_y = camara.obtener_vista().y();
+            ventana.dibujar_poligonal(camino_actual, trasladar_x, trasladar_y);
+        }
     }
 
-    sprite_tropa.renderizar(ventana, x, y);
+    sprite_tropa.renderizar(ventana, visual.x, visual.y);
     
     barra_vida.set_ancho(sprite_tropa.obtener_ancho(ventana));
     barra_vida.renderizar(ventana, 
-        x, 
-        y - sprite_tropa.obtener_alto(ventana) / 2,
+        visual.x, 
+        visual.y - sprite_tropa.obtener_alto(ventana) / 2,
         vida, vida_maxima);
 }
 
@@ -235,7 +242,7 @@ static int calcular_posicion_sprite(int vx, int vy, bool es_vehiculo) {
 }
 
 void Tropa::actualizar_ataque(int dt_ms) {
-    actualizar_posicion_victima(x_atacado, y_atacado);
+    actualizar_posicion_victima(Posicion(x_atacado, y_atacado));
     if (disparo)
         disparo->actualizar(dt_ms);
 }
@@ -243,10 +250,10 @@ void Tropa::actualizar_ataque(int dt_ms) {
 void Tropa::actualizar_movimiento(int dt_ms) {
     int vx = 0, vy = 0;
 
-    if (x_destino != x_actual)
-        vx = x_destino - x_actual;
-    if (y_destino != y_actual)
-        vy = y_destino - y_actual;
+    if (pos_destino.x != pos_actual.x)
+        vx = pos_destino.x - pos_actual.x;
+    if (pos_destino.y != pos_actual.y)
+        vy = pos_destino.y - pos_actual.y;
 
     if ((vx == 0) && (vy == 0))
         return;
@@ -261,18 +268,18 @@ void Tropa::actualizar_movimiento(int dt_ms) {
     float dx = veloc_x * dt_ms,
           dy = veloc_y * dt_ms;
 
-    if (abs(dx) < abs(x_destino - fx_actual))
+    if (abs(dx) < abs(pos_destino.x - fx_actual))
         fx_actual += dx;
     else
-        fx_actual = x_destino;
+        fx_actual = pos_destino.x;
         
-    if (abs(dy) < abs(y_destino - fy_actual))
+    if (abs(dy) < abs(pos_destino.y - fy_actual))
         fy_actual += dy;
     else
-        fy_actual = y_destino;
+        fy_actual = pos_destino.y;
 
-    x_actual = round(fx_actual);
-    y_actual = round(fy_actual);
+    pos_actual.x = round(fx_actual);
+    pos_actual.y = round(fy_actual);
 
     if (orientacion_sprite == nueva_orientacion_sprite)
         return;
@@ -308,16 +315,12 @@ int Tropa::obtener_sprite_boton() const {
     return sprite_boton;
 }
 
-int Tropa::obtener_x() const {
-    return x_actual;
-}
-
-int Tropa::obtener_y() const {
-    return y_actual;
+const Posicion& Tropa::obtener_posicion() const {
+    return pos_actual;
 }
 
 bool Tropa::esta_moviendo() const {
-    return (x_destino != x_actual) || (y_destino != y_actual);
+    return !(pos_destino == pos_actual);
 }
 
 int Tropa::obtener_propietario() const {
@@ -328,18 +331,19 @@ void Tropa::atacar(int id_victima, int x_victima, int y_victima) {
     b_esta_disparando = true;
     id_atacado = id_victima;
     if (disparo)
-        disparo->iniciar(x_actual, y_actual, x_victima, y_victima);
+        disparo->iniciar(pos_actual.x, pos_actual.y, x_victima, y_victima);
     
-    actualizar_posicion_victima(x_victima, y_victima);
+    actualizar_posicion_victima(Posicion(x_victima, y_victima));
 }
 
-void Tropa::actualizar_posicion_victima(int x, int y) {
+void Tropa::actualizar_posicion_victima(const Posicion& pos_victima) {
+    int x = pos_victima.x, y = pos_victima.y;
     if ((x == x_atacado) && (y == y_atacado))
         return;
     x_atacado = x;
     y_atacado = y;
-    orientacion_sprite = calcular_posicion_sprite(x - x_actual, 
-        y - y_actual, es_vehiculo);
+    orientacion_sprite = calcular_posicion_sprite(x - pos_actual.x, 
+        y - pos_actual.y, es_vehiculo);
     if (disparo)
         disparo->actualizar_destino(x, y);
 }
@@ -362,8 +366,8 @@ bool Tropa::esta_disparando() const {
 }
 
 void Tropa::caminar_hacia(int x_dest, int y_dest) {
-    x_destino = x_dest;
-    y_destino = y_dest;
+    pos_destino.x = x_dest;
+    pos_destino.y = y_dest;
     detener_ataque();
 }
 
@@ -373,21 +377,21 @@ void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
     paso_actual = 0;
     
     // Iniciar la caminata.
-    sync_camino(x_actual, y_actual);
+    sync_camino(pos_actual.x, pos_actual.y);
 }
 
 void Tropa::sync_camino(int x, int y) {
     /*** Chequear posiciones -- dbg ***/
-    float mse = ((x_actual - x) * (x_actual - x)) + (y_actual - y) * (y_actual - y);
+    float mse = ((pos_actual.x - x) * (pos_actual.x - x)) + (pos_actual.y - y) * (pos_actual.y - y);
     if (mse > THRESHOLD_SYNC_CAMINO) {
         log_advertencia("El MSE entre posiciones es >%d [%.2f]", mse,
             THRESHOLD_SYNC_CAMINO);
     }
     
     /******* TODO: Eliminar esto ******/
-    log_depuracion("(%d, %d) <> (%d, %d)", x_actual, y_actual, x, y);
-    fx_actual = x_actual = x;
-    fy_actual = y_actual = y;
+    log_depuracion("(%d, %d) <> (%d, %d)", pos_actual.x, pos_actual.y, x, y);
+    fx_actual = pos_actual.x = x;
+    fy_actual = pos_actual.y = y;
 
     if (paso_actual < camino_actual.size()) {
         caminar_hacia(camino_actual[paso_actual].first, 

@@ -46,9 +46,9 @@ void Ejercito::renderizar(Ventana& ventana, Camara& camara) {
         Sprite(1).renderizar(ventana, grilla.x, grilla.y);
         /*** Fin pintar celda ***/
 #endif
-        Posicion visual = camara.traducir_a_visual(terreno.obtener_posicion(tropa));
-        tropa->renderizar(ventana, visual.x, visual.y);
+        tropa->renderizar(ventana, camara);
 
+        Posicion visual = camara.traducir_a_visual(tropa->obtener_posicion());
         if (tropa->obtener_propietario() != id_jugador_actual) {
             // Agregar marca para identificar el jugador
             ventana.dibujar_rectangulo(visual.x, visual.y, visual.x+1, 
@@ -68,9 +68,9 @@ void Ejercito::actualizar(int t_ms) {
     for (auto& par: tropas) {
         Tropa& tropa = par.second;
         if (tropa.esta_moviendo()) {
-            int x_ant = tropa.obtener_x(), y_ant = tropa.obtener_y();
+            Posicion anterior = tropa.obtener_posicion();
             tropa.actualizar_movimiento(t_ms - last_ms);
-            terreno.mover_tropa(tropa, x_ant, y_ant);
+            terreno.mover_tropa(tropa, anterior);
         } else if (tropa.esta_disparando()) {
             int id_atacado = tropa.obtener_atacado();
             if ((tropas.count(id_atacado) == 0) && 
@@ -78,8 +78,7 @@ void Ejercito::actualizar(int t_ms) {
                 tropa.detener_ataque();
             } else if (tropas.count(id_atacado) != 0) {
                 Tropa& atacado = tropas.at(id_atacado);
-                tropa.actualizar_posicion_victima(
-                    atacado.obtener_x(), atacado.obtener_y());
+                tropa.actualizar_posicion_victima(atacado.obtener_posicion());
             }
             tropa.actualizar_ataque(t_ms - last_ms);
         }
@@ -219,17 +218,15 @@ void Ejercito::mover_tropa(int id, const std::vector<int>& camino) {
     for (size_t i=0; i<camino.size(); i+=2) {
         pasos.push_back({camino[i], camino[i+1]});
     }
-    int x_ant = tropas.at(id).obtener_x(), 
-        y_ant = tropas.at(id).obtener_y();
+    Posicion anterior = tropas.at(id).obtener_posicion();
     tropas.at(id).seguir_camino(pasos);
-    terreno.mover_tropa(tropas.at(id), x_ant, y_ant);
+    terreno.mover_tropa(tropas.at(id), anterior);
 }
 
 void Ejercito::sincronizar_tropa(int id, const std::vector<int>& posicion) {
-    int x_ant = tropas.at(id).obtener_x(), 
-        y_ant = tropas.at(id).obtener_y();
+    Posicion anterior = tropas.at(id).obtener_posicion();
     tropas.at(id).sync_camino(posicion.at(0), posicion.at(1));
-    terreno.mover_tropa(tropas.at(id), x_ant, y_ant);
+    terreno.mover_tropa(tropas.at(id), anterior);
 }
 
 void Ejercito::atacar(int id_atacante, int id_victima, int nueva_vida) {
@@ -238,8 +235,8 @@ void Ejercito::atacar(int id_atacante, int id_victima, int nueva_vida) {
     if (tropas.count(id_victima) != 0) {
         Tropa& atacado = tropas.at(id_victima);
         atacado.set_vida(nueva_vida);
-        x_destino = atacado.obtener_x();
-        y_destino = atacado.obtener_y();
+        x_destino = atacado.obtener_posicion().x;
+        y_destino = atacado.obtener_posicion().y;
     } else {
         Edificio& atacado = infraestructura.obtener(id_victima);
         infraestructura.atacar(id_victima, nueva_vida);

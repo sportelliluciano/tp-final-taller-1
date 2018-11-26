@@ -11,6 +11,7 @@
 #include "cliente/modelo/disparo.h"
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/modelo/hud/barra_vida.h"
+#include "cliente/video/camara.h"
 #include "cliente/video/posicion.h"
 #include "cliente/video/ventana.h"
 
@@ -23,7 +24,7 @@ public:
     /**
      * \brief Renderiza la tropa.
      */
-    void renderizar(Ventana& ventana, int x_px, int y_px);
+    void renderizar(Ventana& ventana, Camara& camara);
 
     /**
      * \brief Actualiza el estado de la tropa actual, si es necesario.
@@ -36,16 +37,9 @@ public:
     void actualizar_ataque(int t_ms);
 
     /**
-     * \brief Devuelve la coordenada x de la posición de la tropa en 
-     *        píxeles globales.
+     * \brief Devuelve la posición de la tropa en coordenadas lógicas.
      */
-    int obtener_x() const;
-
-    /**
-     * \brief Devuelve la coordenada y de la posición de la tropa en 
-     *        píxeles globales.
-     */
-    int obtener_y() const;
+    const Posicion& obtener_posicion() const;
 
     /**
      * \brief Devuelve true si la tropa se está moviendo.
@@ -109,7 +103,7 @@ public:
     /**
      * \brief Actualiza la posición de la víctima siendo atacada.
      */
-    void actualizar_posicion_victima(int x, int y);
+    void actualizar_posicion_victima(const Posicion& pos_victima);
 
     /**
      * \brief Devuelve el ID de víctima atacada.
@@ -195,9 +189,9 @@ public:
     float obtener_tiempo_entrenamiento() const;
 
 private:
-    int x_actual, y_actual;
+    Posicion pos_actual;
+    Posicion pos_destino;
     float fx_actual, fy_actual;
-    int x_destino, y_destino;
 
     int id_tropa = -1;
     int id_propietario = 0;

@@ -4,6 +4,9 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
+#include <vector>
+#include <utility>
+
 #include "cliente/video/administrador_texturas.h"
 #include "cliente/video/camara.h"
 #include "cliente/video/error_sdl.h"
@@ -322,6 +325,24 @@ void Ventana::dibujar_grilla(int x_offset, int y_offset) {
                 x_offset, j * 32 + y_offset, 
                 ancho() + x_offset, j * 32 + y_offset);
         }
+    }
+    /************************************/
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+}
+
+void Ventana::dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
+    int trasladar_x, int trasladar_y) 
+{
+    Uint8 r, g, b, a;
+    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+    SDL_SetRenderDrawColor(renderer, 0x22, 0x22, 0x22, 255);
+    /******** GRILLA DEPURACION *********/
+    for (size_t i=0;i<linea.size();i++) {
+        if (i+1 >= linea.size())
+            break;
+        SDL_RenderDrawLine(renderer, 
+            linea[i].first - trasladar_x, linea[i].second - trasladar_y, 
+            linea[i+1].first - trasladar_x, linea[i+1].second - trasladar_y);
     }
     /************************************/
     SDL_SetRenderDrawColor(renderer, r, g, b, a);
