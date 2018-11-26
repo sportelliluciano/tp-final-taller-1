@@ -8,12 +8,15 @@
 #include "modelo/ejercito.h"
 #include "modelo/terreno.h"
 
-// Refactor this?
+// Refactor this? mati:no
 #define DINERO_INICIAL         1000
 #define DINERO_MAXIMO_INICIAL  1000
 #define ENERGIA_INICIAL        1000
 #define ENERGIA_MAXIMA_INICIAL 1000
-
+//falta el tema de eliminar la refineria
+//falta cuando no hay refinerias
+//falta la especia
+//
 namespace modelo {
 
 Juego::Juego() 
@@ -79,8 +82,9 @@ void Juego::actualizar(int dt_ms) {
             if (jugador.pertenece(*it)){
                 if (inf.pertenece(*it)){
                     unsigned int consumo = inf.get_energia(*it);
-                    inf.destruir(*it);
+                    inf.destruir(*it, (jugador.get_jugador())->obtener_id());
                     jugador.eliminar_elemento(*it,consumo);
+
                 } else {
                     jugador.eliminar_elemento(*it,0);
                 }
@@ -129,8 +133,10 @@ void Juego::ubicar_edificio(IJugador* conexion_jugador, int celda_x,
         std::cout << "------------------Dentro del modelo------------------" <<'\n';
         std::cout << "No se ubico el edificio" << std::endl;
     } else {
-        if (clase=="refineria")
+        if (clase=="refineria"){
+            std::cout << "Se creo una refineria" << std::endl;
             terreno.agregar_refineria(celda_x,celda_y,conexion_jugador->obtener_id());
+        }
     }
 }
 
@@ -139,11 +145,10 @@ void Juego::vender_edificio(IJugador* jugador, int id_edificio) {
     for (auto it = jugadores.begin();it!= jugadores.end();++it){
         if ((it->second).pertenece(id_edificio)){
             (it->second).eliminar_elemento(id_edificio,consumo);
-            unsigned int energia_retorno = inf.reciclar(id_edificio);
+            unsigned int energia_retorno = inf.reciclar(id_edificio,jugador->obtener_id());
             (it->second).aumentar_energia(energia_retorno);
             return;
         }
-        //((it->second).get_jugador())->eliminar_edificio(id_edificio);
     }
 }
 
@@ -187,7 +192,6 @@ void Juego::atacar_tropa(IJugador* jugador,
             continue;
         }
         if (inf.pertenece(id_atacado)) {
-            std::cout << "ataco un edificio" << std::endl;
             ejercito.atacar(&(inf.get(id_atacado)),*it);
         } else{  
             ejercito.atacar(id_atacado,*it);

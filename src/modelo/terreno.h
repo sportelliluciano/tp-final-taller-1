@@ -114,10 +114,17 @@ public:
      */
     void agregar_refineria(int x_, int y_,int id_jugador);
 
+    void eliminar_refineria(const Posicion& posicion,int id_jugador);
+
     /**
      * \brief Obtiene las posiciones de las refinerías del jugador.
      */
-    std::vector<Posicion> obtener_refinerias(int id_jugador);
+    
+    Posicion& obtener_refinerias_cercana(const Posicion& pos,int id_jugador);
+
+    bool es_especia(const Posicion& posicion);
+    
+    Posicion obtener_especia_cercana(Posicion& posicion_i);
 
 private:
     /**
@@ -127,7 +134,7 @@ private:
      */
     std::vector<std::vector<Celda>> terreno;
 
-    std::unordered_map<int,Posicion> refinerias;
+    std::unordered_map<int,std::vector<Posicion>> refinerias;
 
     /**
      * \brief Dimensiones del terreno, en celdas.

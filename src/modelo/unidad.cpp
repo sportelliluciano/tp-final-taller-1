@@ -24,11 +24,7 @@ Unidad::Unidad(int id_, int x, int y, UnidadBase& unidad_base_):
 }
 Unidad::~Unidad() {
 
-}/*
-void Unidad::mover(int x, int y){
-    posicion.actualizar(x,y);
 }
-*/
 //false = muerto ,true= vivo
 int Unidad::recibir_dano(unsigned int dano){
     vida -= dano;
@@ -51,13 +47,6 @@ std::pair<int,int>& Unidad::get_dimensiones() {
 Posicion& Unidad::get_posicion(){
     return posicion;
 }
-/*
-unsigned int Unidad::x(){
-    return posicion.x();
-}
-unsigned int Unidad::y(){
-    return posicion.y();
-}*/
 void Unidad::configurar_camino(const std::vector<Posicion>& nuevo_camino) {
     camino = nuevo_camino;
     paso_actual = 0;
@@ -140,9 +129,6 @@ int Unidad::actualizar_ataque(int dt, Terreno* terreno) {
     if (!victima) return 0;//esta muerta
     if (tiempo_para_atacar >= 1000/(unidad_base.obtener_frecuencia())){
         tiempo_para_atacar = 0;
-            //murio la victima
-            //victima=nullptr;
-            //atacando=false;
     }
     return (atacar(victima));
 }
