@@ -48,8 +48,10 @@ int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
     terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
     cosechadoras.emplace(nuevo_id,prototipos.clonar(
             id_tipo,nuevo_id,posicion.x(),posicion.y(),terreno,id_propietario));
-    //Posicion especia = terreno->obtener_especia_cercana(posicion);
-    Posicion especia(43,67);
+    
+    Posicion especia = terreno->obtener_especia_cercana(posicion);
+    especia = terreno->obtener_posicion_caminable_cercana(especia);
+    especia = Posicion(especia.x(),especia.y());
     
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->crear_tropa(nuevo_id, id_tipo, posicion.px_x(), posicion.px_y(),
@@ -179,7 +181,7 @@ void Ejercito::actualizar_cosechadoras(int dt,Cosechadora& cosechadora){
     if (cosechadora.operando()){
             cosechadora.operar(dt);
     } else if (!cosechadora.en_movimiento()){
-         //try por si no hay posicion (no hay refinerias o no hay mas especia)
+        try{ //por si no hay posicion (no hay refinerias o no hay mas especia)
         Posicion posicion;
         if (cosechadora.camino_a_especia()){
             std::cout << "voy a la especia"<< std::endl;
@@ -192,11 +194,13 @@ void Ejercito::actualizar_cosechadoras(int dt,Cosechadora& cosechadora){
                                             cosechadora.get_posicion(),
                                             cosechadora.obtener_id_jugador());
         }
-        //catch
-            //return
-        posicion = terreno->obtener_posicion_caminable_cercana(posicion);    
+        posicion = terreno->obtener_posicion_caminable_cercana(posicion); 
         mover_cosechadora(cosechadora.get_id(),posicion.x(),posicion.y());
         std::cout << "en camino"<< std::endl;
+        }catch(std::runtime_error& e)
+        {
+            return;
+        }
     } else{
         if (cosechadora.actualizar_posicion(dt,terreno)) {
             comunicacion_jugadores.broadcast([this, &cosechadora] (IJugador *j) {

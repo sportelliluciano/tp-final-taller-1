@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <string>
 
+#include <iostream>
+
 #include "modelo/edificio.h"
 #include "modelo/infraestructura_creador.h"
 #include "modelo/terreno.h"
@@ -77,8 +79,10 @@ unsigned int Infraestructura::reciclar(int id,int id_jugador){
 void Infraestructura::destruir(int id,int id_jugador){
     Edificio& edificio = edificios.at(id);
     terreno->eliminar_edificio(edificio.get_posicion(),edificio.get_dimensiones());
-    if (edificio.get_tipo()=="refineria")
+    if (edificio.get_tipo()=="refineria"){
+        std::cout<< "entre al destruir de infraestructura"<<std::endl;
         terreno->eliminar_refineria(edificio.get_posicion(),id_jugador);
+    }
     edificios.erase (id);
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->eliminar_edificio(id);

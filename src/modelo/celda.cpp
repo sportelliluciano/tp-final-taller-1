@@ -34,7 +34,7 @@ void Celda::eliminar_edificio() {
 
 bool Celda::es_caminable() const {
     return (tipo_celda == CELDA_ROCA || tipo_celda == CELDA_ARENA ||
-            tipo_celda == CELDA_DUNA) &&
+            tipo_celda == CELDA_DUNA || tipo_celda == CELDA_ESPECIA) &&
            (!hay_tropa() && !tiene_edificio());
 }
 
