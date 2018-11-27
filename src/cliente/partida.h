@@ -1,6 +1,8 @@
 #ifndef _PARTIDA_H_
 #define _PARTIDA_H_
 
+#include <string>
+
 #include "cliente/servidor.h"
 
 namespace cliente {
@@ -69,6 +71,24 @@ public:
     bool sonido() const;
 
     /**
+     * \brief Configura el nombre de la sala donde se va a jugar.
+     * 
+     * 
+     * Llamarlo sin parámetros obtiene el valor actual de la configuración.
+     */
+    void nombre_sala(const std::string& nombre);
+    const std::string& nombre_sala() const;
+
+    /**
+     * \brief Configura el nombre del mapa a jugar.
+     * 
+     * 
+     * Llamarlo sin parámetros obtiene el valor actual de la configuración.
+     */
+    void mapa(const std::string& nombre_mapa);
+    const std::string& mapa() const;
+
+    /**
      * \brief Configura el servidor a usar durante la partida.
      * 
      * Llamarlo sin parámetros obtiene el servidor configurado actualmente.
@@ -102,6 +122,8 @@ private:
          _sonido = true,
          _esta_lista = false;
     
+    std::string _nombre_sala, _mapa;
+
     int _ancho_ventana = 1024, _alto_ventana = 600;
 
     Servidor* _servidor = nullptr;
