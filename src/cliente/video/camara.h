@@ -14,8 +14,10 @@ public:
     Camara();
     /**
      * \brief Crea una cámara de tamaño ancho x alto.
+     * 
+     * max_x y max_y definen el máximo desplazamiento de la cámara.
      */
-    Camara(int ancho_, int alto_);
+    Camara(int ancho_, int alto_, int max_x_, int max_y_);
 
     /**
      * \brief Mueve la cámara a la posición absoluta (x, y).
@@ -59,6 +61,11 @@ private:
      * \brief Posición actual de la cámara.
      */
     int cam_x, cam_y;
+
+    /**
+     * \brief Máximo desplazamiento de la cámara.
+     */
+    int max_x, max_y;
 };
 
 } // namespace cliente

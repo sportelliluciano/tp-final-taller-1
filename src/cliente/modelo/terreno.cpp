@@ -377,6 +377,14 @@ void Terreno::eliminar_edificio(const Edificio& edificio) {
     }
 }
 
+int Terreno::obtener_ancho_px() const {
+    return ancho * ANCHO_CELDA;
+}
+
+int Terreno::obtener_alto_px() const {
+    return alto * ALTO_CELDA;
+}
+
 Terreno::~Terreno() {
 
 }

@@ -11,6 +11,8 @@
 
 #define VELOCIDAD_CAMARA 4
 
+#define DESPL_EXTRA_CAMARA 16
+
 namespace cliente {
 
 AreaJuego::AreaJuego(Juego& juego_, Servidor& servidor_, Tostador& tostador_) 
@@ -36,7 +38,9 @@ int AreaJuego::obtener_ancho() const {
 void AreaJuego::set_tamanio(int ancho_, int alto_) {
     ancho = ancho_;
     alto = alto_;
-    camara = Camara(ancho, alto);
+    camara = Camara(ancho, alto, 
+        juego.obtener_terreno().obtener_ancho_px() + DESPL_EXTRA_CAMARA - ancho,
+        juego.obtener_terreno().obtener_alto_px() + DESPL_EXTRA_CAMARA - alto);
 }
 
 void AreaJuego::renderizar(Ventana& ventana, const Posicion& punto) {
