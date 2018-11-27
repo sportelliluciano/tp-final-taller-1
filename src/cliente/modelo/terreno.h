@@ -119,6 +119,16 @@ public:
     void eliminar_edificio(const Edificio& edificio);
 
     /**
+     * \brief Devuelve el ancho del terreno, en píxeles.
+     */
+    int obtener_ancho_px() const;
+
+    /**
+     * \brief Devuelve el alto del terreno, en píxeles.
+     */
+    int obtener_alto_px() const;
+
+    /**
      * \brief Destructor.
      */
     ~Terreno();

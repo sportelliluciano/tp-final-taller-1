@@ -3,22 +3,28 @@
 #include "cliente/video/posicion.h"
 #include "cliente/video/rectangulo.h"
 
+#define MIN_CAMARA_X -16
+#define MIN_CAMARA_Y -16
+
+#define min(x, y) ( ((x) < (y)) ? (x) : (y) )
+#define max(x, y) ( ((x) > (y)) ? (x) : (y) )
+
 namespace cliente {
 
-Camara::Camara() : ancho(0), alto(0), cam_x(0), cam_y(0) { }
+Camara::Camara() : ancho(0), alto(0), cam_x(0), cam_y(0), max_x(0), max_y(0) { }
 
-Camara::Camara(int ancho_, int alto_) 
-    : ancho(ancho_), alto(alto_), cam_x(0), cam_y(0)
+Camara::Camara(int ancho_, int alto_, int max_x_, int max_y_) 
+    : ancho(ancho_), alto(alto_), cam_x(0), cam_y(0), 
+      max_x(max_x_), max_y(max_y_)
 { }
 
 void Camara::mover_camara(const Posicion& posicion_nueva) {
-    cam_x = posicion_nueva.x;
-    cam_y = posicion_nueva.y;
+    cam_x = min(max(posicion_nueva.x, MIN_CAMARA_X), max_x);
+    cam_y = min(max(posicion_nueva.y, MIN_CAMARA_Y), max_y);
 }
 
 void Camara::desplazar_camara(const Posicion& delta) {
-    cam_x += delta.x;
-    cam_y += delta.y;
+    mover_camara(Posicion(cam_x + delta.x, cam_y + delta.y));
 }
 
 Posicion Camara::traducir_a_visual(const Posicion& posicion_logica) {
