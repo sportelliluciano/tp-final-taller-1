@@ -5,13 +5,17 @@
 namespace modelo {
 
 Cosechadora::Cosechadora(int id_,int pos_x,int pos_y, UnidadBase& unidad_base_
-    ,Terreno* terreno):
+    ,Terreno* terreno,int id_propietario_):
     Unidad(id_, pos_x, pos_y, unidad_base_),
-    terreno_(terreno){    
+    terreno_(terreno),
+    id_propietario(id_propietario_){    
     
 }
 Cosechadora::~Cosechadora(){
 
+}
+int Cosechadora::obtener_id_jugador(){
+    return id_propietario;
 }
 
 bool Cosechadora::camino_a_especia(){

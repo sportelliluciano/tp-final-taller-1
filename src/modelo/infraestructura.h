@@ -31,8 +31,8 @@ class Infraestructura{
      * \brief Crea el centro de construcción para un jugador.
      */
     int crear_centro_construccion(int x, int y, int id_propietario);
-    unsigned int reciclar(int id);
-    void destruir(int id);
+    unsigned int reciclar(int id,int id_jugador);
+    void destruir(int id,int id_jugador);
     Edificio& get(int id);
     unsigned int get_costo(std::string id_tipo);
     unsigned int get_energia(std::string id_tipo);

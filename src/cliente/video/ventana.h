@@ -3,10 +3,17 @@
 
 #include <SDL2/SDL.h>
 
+#include <vector>
+#include <utility>
+
 #include "cliente/video/administrador_texturas.h"
 #include "cliente/video/camara.h"
 #include "cliente/video/i_notificable.h"
 #include "cliente/video/teclas.h"
+
+// Descomentar la siguiente línea para habilitar la depuración del
+// dibujado
+//#define DEPURACION_DIBUJO 1
 
 namespace cliente {
 
@@ -97,6 +104,12 @@ public:
      * TODO: Eliminar esto
      */
     void dibujar_grilla(int x_offset, int y_offset);
+
+    /**
+     * \brief Dibuja una poligonal a partir de sus vértices.
+     */
+    void dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
+        int trasladar_x, int trasladar_y);
 
     /**
      * \brief Setea el viewport de la ventana al rectángulo indicado.

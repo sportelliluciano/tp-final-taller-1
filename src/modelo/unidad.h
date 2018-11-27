@@ -19,7 +19,6 @@ class Unidad: public Atacable {
 private:
     int id;
     int vida;
-    //UnidadBase& unidad_base;
     int tiempo_para_atacar = 0;
     bool atacando = false;
     Atacable* victima = nullptr;
@@ -35,13 +34,12 @@ protected:
 public:
     Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
     ~Unidad();
-    int recibir_dano(unsigned int dano);
+
+    void configurar_ataque(Atacable* victima);
     int atacar(Atacable* victima);
-    //void atacar(Edificio& edificio);
-    int get_id();
-    unsigned int get_vida();
-    std::pair<int,int>& get_dimensiones();
-    Posicion& get_posicion();
+    int recibir_dano(unsigned int dano);
+    void parar_ataque();
+
     virtual void configurar_camino(const std::vector<Posicion>& nuevo_camino);
     virtual bool en_movimiento() const;
     /**
@@ -49,11 +47,14 @@ public:
      */
     virtual bool actualizar_posicion(int dt,Terreno* terreno);
     virtual int actualizar_ataque(int dt,Terreno* terreno);
-    void configurar_ataque(Atacable* victima);
+    
     std::string& get_clase() const;
     bool esta_atacando();
-    void parar_ataque();
     int id_victima();
+    int get_id();
+    unsigned int get_vida();
+    std::pair<int,int>& get_dimensiones();
+    Posicion& get_posicion();    
 };
 
 } // namespace modelo

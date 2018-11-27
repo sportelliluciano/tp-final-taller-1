@@ -67,15 +67,18 @@ int Infraestructura::crear(const std::string& id_tipo, int x, int y,
     });
     return nuevo_id;
 }
-unsigned int Infraestructura::reciclar(int id){
+unsigned int Infraestructura::reciclar(int id,int id_jugador){
     //revisar
     unsigned int energia_retorno = (edificios.at(id).get_costo())*FACTOR;
-    destruir(id);
+    destruir(id,id_jugador);
     return energia_retorno;
 }
 
-void Infraestructura::destruir(int id){
-    terreno->eliminar_edificio(edificios.at(id).get_posicion(),edificios.at(id).get_dimensiones());
+void Infraestructura::destruir(int id,int id_jugador){
+    Edificio& edificio = edificios.at(id);
+    terreno->eliminar_edificio(edificio.get_posicion(),edificio.get_dimensiones());
+    if (edificio.get_tipo()=="refineria")
+        terreno->eliminar_refineria(edificio.get_posicion(),id_jugador);
     edificios.erase (id);
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->eliminar_edificio(id);

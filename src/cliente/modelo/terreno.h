@@ -91,7 +91,7 @@ public:
      * La posición (x_ant, y_ant) está dada en píxeles globales.
      * Esta operación es O(1)
      */
-    void mover_tropa(Tropa& tropa, int x_ant, int y_ant);
+    void mover_tropa(Tropa& tropa, const Posicion& anterior);
 
     /**
      * \brief Elimina una tropa del terreno.

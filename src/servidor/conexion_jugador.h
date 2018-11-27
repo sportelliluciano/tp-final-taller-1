@@ -81,15 +81,6 @@ public:
     void actualizar_cola_cc(const std::string& clase, int cantidad);
 
     /**
-     * \brief Realiza daño a un edificio. No es necesario que el edificio 
-     *        atacado pertenezca al jugador.
-     * 
-     * id_edificio: ID del edificio atacado
-     * nueva_vida: Vida del edificio después del ataque.
-     */
-    void atacar_edificio(int id_edificio, int nueva_vida);
-
-    /**
      * \brief Crea un nuevo edificio mostrando la animación de su construcción.
      * 
      * id_edificio: ID del nuevo edificio
@@ -192,10 +183,11 @@ public:
     /**
      * \brief Realiza daño sobre la tropa indicada.
      * 
-     * id_tropa: ID de la tropa a dañar
-     * nueva_vida: Vida de la tropa luego de aplicar el daño
+     * id_atacante: ID de la tropa que está atacando
+     * id_victima: ID de la tropa o edificio a dañar
+     * nueva_vida: Vida de la víctima luego de aplicar el daño
      */
-    void atacar_tropa(int id_tropa, int nueva_vida);
+    void atacar(int id_atacante, int id_victima, int nueva_vida);
 
     /**
      * \brief Elimina una tropa del juego

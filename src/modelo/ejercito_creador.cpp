@@ -33,8 +33,8 @@ Unidad EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y){
     std::cout << "entreo al clonar "<<std::endl;
     return Unidad(id,x,y,prototipos_base.at(id_tipo));
 }
-Cosechadora EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_){
-    return Cosechadora(id,x,y,prototipos_base.at(id_tipo),terreno_);
+Cosechadora EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_,int id_propietario){
+    return Cosechadora(id,x,y,prototipos_base.at(id_tipo),terreno_,id_propietario);
 }
 unsigned int EjercitoCreador::get_costo(std::string id_tipo){
     return prototipos_base.at(id_tipo).get_costo();

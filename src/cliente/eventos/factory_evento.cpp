@@ -2,7 +2,6 @@
 
 #include "conexion/error_conexion.h"
 #include "conexion/eventos_cliente.h"
-#include "cliente/eventos/evento_disparo.h"
 #include "cliente/eventos/evento_ejercito.h"
 #include "cliente/eventos/evento_entorno.h"
 #include "cliente/eventos/evento_infraestructura.h"
@@ -22,7 +21,6 @@ Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
         case EVC_SINCRONIZAR_CONSTRUCCION:
         case EVC_SET_VELOCIDAD_CC:
         case EVC_ACTUALIZAR_COLA_CC:
-        case EVC_ATACAR_EDIFICIO:
         case EVC_CREAR_EDIFICIO:
         case EVC_AGREGAR_EDIFICIO:
         case EVC_ELIMINAR_EDIFICIO:
@@ -34,7 +32,7 @@ Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
         case EVC_CREAR_TROPA:
         case EVC_MOVER_TROPA:
         case EVC_SINCRONIZAR_TROPA:
-        case EVC_ATACAR_TROPA:
+        case EVC_ATACAR:
         case EVC_DESTRUIR_TROPA:
             return new EventoEjercito(serializado);
         case EVC_ACTUALIZAR_DINERO:
@@ -44,12 +42,6 @@ Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
         case EVC_ELIMINAR_ESPECIA:
         case EVC_COSECHADORA_DESCARGAR:
             return new EventoEntorno(serializado);
-        case EVC_LANZAR_MISIL:
-        case EVC_ONDA_SONIDO:
-        case EVC_LANZAR_PLASMA:
-        case EVC_SINCRONIZAR_DISPARO:
-            return new EventoDisparo(serializado);
-        
         default:
             break;
     }

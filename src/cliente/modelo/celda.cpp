@@ -135,8 +135,12 @@ void Celda::renderizar(Ventana& ventana, int x, int y, Textura& destino) {
                 } else if (tipo_celda == CELDA_ROCA) {
                     tile_id = ids_roca[roca];
                     roca = (roca + 1) % ids_roca.size();
-                } else {
-                    tile_id = ids_arena[arena];
+                } else if (tipo_celda == CELDA_ESPECIA) {
+                    tile_id = 799;
+                } else if (tipo_celda == CELDA_PRECIPICIO) {
+                    tile_id = 1;
+                } else if (tipo_celda == CELDA_DUNA) {
+                    tile_id = 663;
                 }
 
                 int fila_mosaico = tile_id / COLS_MOSAICO;

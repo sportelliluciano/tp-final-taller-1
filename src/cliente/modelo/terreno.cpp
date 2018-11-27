@@ -72,8 +72,8 @@ Terreno::Terreno(const nlohmann::json& mapa) {
     const std::vector<std::vector<int>>& tipos = 
         mapa.at("tipo").get<std::vector<std::vector<int>>>();
     
-    const std::vector<std::vector<int>>& sprites = 
-        mapa.at("sprite").get<std::vector<std::vector<int>>>();
+    //const std::vector<std::vector<int>>& sprites = 
+    //    mapa.at("sprite").get<std::vector<std::vector<int>>>();
 
     alto = tipos.size();
 
@@ -87,7 +87,7 @@ Terreno::Terreno(const nlohmann::json& mapa) {
         std::vector<Celda> fila_actual;
         for (int x=0;x<ancho;x++) {
             fila_actual.push_back(
-                Celda((tipo_celda_t)tipos[y][x], sprites, x, y)
+                Celda((tipo_celda_t)tipos[y][x]) //, sprites, x, y)
             );
         }
         terreno.push_back(fila_actual);
@@ -183,7 +183,7 @@ Posicion Terreno::obtener_posicion(const Edificio* edificio) {
 }
 
 Posicion Terreno::obtener_posicion(const Tropa* tropa) {
-    return Posicion(tropa->obtener_x(), tropa->obtener_y());
+    return tropa->obtener_posicion();
 }
 
 void Terreno::para_cada_celda_en(const Rectangulo& area, 
@@ -248,7 +248,7 @@ std::unordered_set<Tropa*> Terreno::obtener_tropas_en(const Rectangulo& area) {
                 }
             } else {
                 for (Tropa* tropa : terreno[y][x].obtener_tropas()) {
-                    Posicion pos_tropa(tropa->obtener_x(), tropa->obtener_y());
+                    Posicion pos_tropa = tropa->obtener_posicion();
                     if (area.contiene_punto(pos_tropa))
                         tropas.insert(tropa);
                 }
@@ -292,8 +292,8 @@ Edificio* Terreno::obtener_edificio_en(const Posicion& pos) {
 }
 
 void Terreno::agregar_tropa(Tropa& tropa) {
-    int celda_x = tropa.obtener_x() / ANCHO_CELDA;
-    int celda_y = tropa.obtener_y() / ALTO_CELDA;
+    int celda_x = tropa.obtener_posicion().x / ANCHO_CELDA;
+    int celda_y = tropa.obtener_posicion().y / ALTO_CELDA;
 
     if ((celda_x >= ancho) || (celda_y >= alto) || 
         (celda_x < 0) || (celda_y < 0))
@@ -304,12 +304,12 @@ void Terreno::agregar_tropa(Tropa& tropa) {
     terreno[celda_y][celda_x].agregar_tropa(tropa);
 }
 
-void Terreno::mover_tropa(Tropa& tropa, int x_ant, int y_ant) {
-    int nuevo_celda_x = tropa.obtener_x() / ANCHO_CELDA;
-    int nuevo_celda_y = tropa.obtener_y() / ALTO_CELDA;
+void Terreno::mover_tropa(Tropa& tropa, const Posicion& anterior) {
+    int nuevo_celda_x = tropa.obtener_posicion().x / ANCHO_CELDA;
+    int nuevo_celda_y = tropa.obtener_posicion().y / ALTO_CELDA;
 
-    int celda_x = x_ant / ANCHO_CELDA;
-    int celda_y = y_ant / ALTO_CELDA;
+    int celda_x = anterior.x / ANCHO_CELDA;
+    int celda_y = anterior.y / ALTO_CELDA;
 
     if ((nuevo_celda_x == celda_x) && (nuevo_celda_y == celda_y))
         return;
@@ -324,13 +324,11 @@ void Terreno::mover_tropa(Tropa& tropa, int x_ant, int y_ant) {
 
     terreno[celda_y][celda_x].eliminar_tropa(tropa);
     terreno[nuevo_celda_y][nuevo_celda_x].agregar_tropa(tropa);
-    log_advertencia("Cambio de celdas: (%d,%d) => (%d,%d)", celda_x, celda_y,
-        nuevo_celda_x, nuevo_celda_y);
 }
 
 void Terreno::eliminar_tropa(const Tropa& tropa) {
-    int celda_x = tropa.obtener_x() / ANCHO_CELDA;
-    int celda_y = tropa.obtener_y() / ALTO_CELDA;
+    int celda_x = tropa.obtener_posicion().x / ANCHO_CELDA;
+    int celda_y = tropa.obtener_posicion().y / ALTO_CELDA;
 
     if ((celda_x >= ancho) || (celda_y >= alto) || 
         (celda_x < 0) || (celda_y < 0))

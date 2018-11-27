@@ -76,7 +76,7 @@ public:
     void mover_tropas(IJugador* jugador, const std::unordered_set<int>& ids,
         int x, int y);
 
-    void atacar_tropa(IJugador* jugador, 
+    void atacar(IJugador* jugador, 
         const std::unordered_set<int>& ids_atacantes, int id_atacado); //le falta
     
     void indicar_especia_cosechadora(IJugador* jugador,

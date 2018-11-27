@@ -53,6 +53,22 @@ bool Partida::sonido() const {
     return _sonido;
 }
 
+void Partida::nombre_sala(const std::string& nombre) {
+    _nombre_sala = nombre;
+}
+
+const std::string& Partida::nombre_sala() const {
+    return _nombre_sala;
+}
+
+void Partida::mapa(const std::string& nombre_mapa) {
+    _mapa = nombre_mapa;
+}
+
+const std::string& Partida::mapa() const {
+    return _mapa;
+}
+
 void Partida::servidor(Servidor* nuevo_servidor) {
     _servidor = nuevo_servidor;
 }

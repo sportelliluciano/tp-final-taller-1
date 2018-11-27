@@ -20,17 +20,17 @@ class Cosechadora:public Unidad {
     int tiempo_descarga = ESPERA;
     bool camino_especia = true;
     bool llegue = false;
-    //IJugador* jugador;
+    int id_propietario;
 
     public:
     Cosechadora(int id,int pos_x,int pos_y, UnidadBase& unidad_base,
-        Terreno* terreno);
+        Terreno* terreno,int id_propietario);
     ~Cosechadora();
     bool actualizar_posicion(int dt,Terreno* terreno);
     bool camino_a_especia();
     bool operando();
     void operar(int ds);
-    //IJugador* obtener_jugador();
+    int obtener_id_jugador();
 };
 }
 #endif

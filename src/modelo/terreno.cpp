@@ -1,11 +1,15 @@
 #include "modelo/terreno.h"
 
+#include <iostream>
+
 #include <cmath>
 #include <list>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
 #include <unordered_set>
+#include <limits>
+#include <queue>
 
 #include "modelo/a_estrella.h"
 #include "modelo/celda.h"
@@ -241,9 +245,26 @@ void Terreno::eliminar_tropa(const Posicion& pos, std::pair<int,int>& dim) {
         }
     }
 }
-
-#if 0
-Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
+Posicion Terreno::obtener_especia_cercana(Posicion& posicion_i) {
+    Posicion celda; 
+    float distancia_minima = std::numeric_limits<float>::infinity();
+     for (int j = 0; j < alto; j++){
+        for (int i = 0; i < ancho; i++){
+            Celda& celda_actual = terreno[j][i]; 
+            if(celda_actual.tipo()==4) {
+                Posicion pos_actual(celda_actual.x(),celda_actual.y());
+                float distancia = posicion_i.distancia_a(pos_actual);
+                if (distancia < distancia_minima){
+                    distancia_minima = distancia;
+                    celda =  pos_actual;
+                }
+            }
+        }
+    }
+    return celda;
+}
+/*
+Posicion Terreno::obtener_especia_cercana(Posicion& posicion_i) {
     std::list<int> cola;
     std::unordered_set<int> visitados;
     cola.push_back(hash_posicion(posicion_i.x(), posicion_i.y()));
@@ -254,7 +275,7 @@ Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
         
         int x, y;
         revertir_hash(nodo, x, y);
-        if (terreno[y][x].es_caminable())
+        if (terreno[y][x].tipo()==4)
             return Posicion(terreno[y][x].x(), terreno[y][x].y());
         
         for (int vecino : obtener_vecinos(nodo)) {
@@ -266,18 +287,47 @@ Posicion Terreno::obtener_posicion_libre_cercana(Posicion& posicion_i) {
 
     throw std::runtime_error("No hay más posiciones libres en el tablero.");
 }
-#endif
+*/
 
+bool tiene(std::vector<Posicion>& visitados, Posicion& vecino_pos){
+    for (auto it = visitados.begin(); it != visitados.end();++it){
+        if (*it == vecino_pos)
+            return true;
+    }
+    return false;
+}
+/*
+Posicion Terreno::obtener_especia_cercana(Posicion& posicion_i) {
+    std::queue<Posicion> cola;
+    std::vector<Posicion> visitados;
+    cola.emplace(posicion_i);
+    std::cout << "entre al obtener_especia"<<std::endl;
+    while (!cola.empty()) {
+        Posicion posicion = cola.front(); 
+        cola.pop();
+        visitados.push_back(posicion);
+        if (es_especia(posicion)){
+            std::cout << "sali bien"<<std::endl;
+            return posicion;
+        }
+        int nodo = hash_posicion(posicion.x(),posicion.y());    
+        for (int vecino : obtener_vecinos(nodo)) {
+            int x,y;
+            revertir_hash(vecino,x,y);
+            Posicion vecino_pos(x,y);
+            if (tiene(visitados,vecino_pos))
+                continue;
+            cola.push(vecino_pos);
+        }
+    }
+
+    throw std::runtime_error("No hay más posiciones libres en el tablero.");
+}
+*/
 Posicion Terreno::obtener_posicion_caminable_cercana(
-    const Posicion& posicion_inicial) 
-{
-    int x, y;
-    x = posicion_inicial.x();
-    y = posicion_inicial.y();
-    if (terreno[y][x].es_caminable())
-        return posicion_inicial;
-    for (int j = y; j <alto; j++){
-        for (int i = x; i < ancho; i++){
+        const Posicion& posicion_inicial) {
+    for (int j = posicion_inicial.y(); j <alto; j++){
+        for (int i = posicion_inicial.x(); i < ancho; i++){
             if(!terreno[j][i].es_caminable())
                 continue;
             return Posicion(terreno[j][i].x(),terreno[j][i].y());
@@ -289,17 +339,42 @@ Posicion Terreno::obtener_posicion_caminable_cercana(
 }
 
 void Terreno::agregar_refineria(int x, int y,int id_jugador) {
-    refinerias.emplace(id_jugador,Posicion(x,y));
+    refinerias.emplace(id_jugador,std::vector<Posicion>());
+    refinerias.at(id_jugador).emplace_back(Posicion(x,y));
+}
+void Terreno::eliminar_refineria(const Posicion& posicion,int id_jugador) {
+    std::vector<Posicion>& refinerias_ = refinerias.at(id_jugador);
+    for (auto refineria = refinerias_.begin();refineria!=refinerias_.end();){
+        if ((*refineria) == posicion){
+            refinerias_.erase(refineria);
+            return;
+        }
+        ++refineria;
+    }
+}
+//futura mejora: usar un heap
+Posicion& Terreno::obtener_refinerias_cercana(const Posicion& pos,int id_jugador) {
+    std::vector<Posicion>& refinerias_ = refinerias.at(id_jugador);
+    if (refinerias_.empty())
+        throw std::runtime_error("no hay refinerias");
+    float distancia_minima = std::numeric_limits<float>::infinity();
+    Posicion& min_pos = refinerias_.front();
+    for (auto refineria = refinerias_.begin();refineria!=refinerias_.end();++refineria){
+        float distancia = pos.distancia_a(*refineria);
+        if (distancia < distancia_minima){
+            min_pos = *refineria;
+            distancia_minima = distancia;
+        }
+    }
+    return min_pos;
 }
 
-std::vector<Posicion> Terreno::obtener_refinerias(int id_jugador) {
-    std::vector<Posicion> pos;
-    for (auto it=refinerias.begin(); it != refinerias.end(); ++it) {
-        if (it->first == id_jugador) 
-            pos.push_back(it->second);
-    }
-
-    return pos;
+bool Terreno::es_especia(const Posicion& posicion){
+   int j = posicion.y();
+    int i = posicion.x();
+    if (terreno[j][i].tipo() == 4)//especia
+        return true;
+    return false;
 }
 
 } // namespace modelo

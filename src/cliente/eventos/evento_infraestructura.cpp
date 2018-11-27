@@ -32,10 +32,6 @@ void EventoInfraestructura::actualizar(Juego& juego) {
         case EVC_SET_VELOCIDAD_CC:
             infraestructura.set_velocidad_construccion(data.at("velocidad"));
             break;
-        case EVC_ATACAR_EDIFICIO:        // (id, nueva_vida)
-            infraestructura.atacar(data.at("id_edificio"), 
-                data.at("nueva_vida"));
-            break;
         case EVC_CREAR_EDIFICIO:        // (id, posicion, id_jugador)
             infraestructura.crear_edificio(data.at("id_edificio"), 
                 data.at("id_jugador"), data.at("clase"), data.at("posicion"));

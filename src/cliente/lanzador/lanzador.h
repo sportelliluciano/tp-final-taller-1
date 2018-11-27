@@ -1,13 +1,16 @@
 #ifndef _LANZADOR_H_
 #define _LANZADOR_H_
 
+#include <memory>
+
 #include <QWidget>
 #include <QStringList>
 
 #include "cliente/cliente_juego.h"
 #include "cliente/servidor.h"
+#include "cliente/lanzador/estado_lanzador.h"
 
-namespace Ui { class Lanzador; }
+#include "cliente/lanzador/ui_lanzador.fwd.h"
 
 class Lanzador : public QWidget {
     Q_OBJECT
@@ -17,8 +20,8 @@ public:
     virtual ~Lanzador();
 
 private:
-    cliente::Partida& partida;
     Ui::Lanzador *ui;
+    cliente::Partida& partida;
     cliente::Servidor* servidor;
 
     /**
@@ -40,17 +43,13 @@ private:
     void list_salas_item_clicked();
 
     /**
-     * \brief Se ejecutan cuando el usuario ingresa o sale de una sala.
+     * \brief Cambia el estado actual del lanzador si es necesario.
      * 
-     * Estos son eventos "falsos" ya que están generado desde el código.
-     * Los mismos se utilizan para actualizar la interfaz gráfica acorde a la
-     * situación.
+     * Pasar como estado un puntero nulo cerrará el lanzador.
      */
-    void al_ingresar_sala();
-    void al_dejar_sala();
+    void cambiar_estado(EstadoLanzador* nuevo_estado);
 
-    bool esta_en_sala = false;
-    std::string nombre_sala;
+    EstadoLanzador* estado;
 };
 
 
