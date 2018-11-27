@@ -99,6 +99,6 @@ El informe entregado corresponde más al informe general, faltaría uno con una 
 
 * Falta la vista del minimapa. darle un fondo al area de botones
 
-* Limitar el desplazamiento de la cámara para que no se desplace infinitamente.
+* [Corregido] ~~Limitar el desplazamiento de la cámara para que no se desplace infinitamente.~~
 
 * No pude probar los sonidos pedidos por el enunciado
