@@ -182,17 +182,21 @@ void Ejercito::actualizar_cosechadoras(int dt,Cosechadora& cosechadora){
          //try por si no hay posicion (no hay refinerias o no hay mas especia)
         Posicion posicion;
         if (cosechadora.camino_a_especia()){
+            std::cout << "voy a la especia"<< std::endl;
             posicion = terreno->obtener_especia_cercana(cosechadora.get_posicion());
+            std::cout << "En posicion: "<<posicion.x() <<" - "<< posicion.y() <<std::endl;
+            posicion = Posicion(posicion.x(),posicion.y());
             //posicion = Posicion(43,67); //especia
         } else {
             posicion = terreno->obtener_refinerias_cercana(
                                             cosechadora.get_posicion(),
                                             cosechadora.obtener_id_jugador());
-            posicion = terreno->obtener_posicion_libre_cercana(posicion);
         }
         //catch
             //return
+        posicion = terreno->obtener_posicion_caminable_cercana(posicion);    
         mover_cosechadora(cosechadora.get_id(),posicion.x(),posicion.y());
+        std::cout << "en camino"<< std::endl;
     } else{
         if (cosechadora.actualizar_posicion(dt,terreno)) {
             comunicacion_jugadores.broadcast([this, &cosechadora] (IJugador *j) {
