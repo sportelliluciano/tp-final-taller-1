@@ -15,6 +15,8 @@
         "sprite_boton": -1,
         "sprite_base": 206,
         "sprite_techo": -1,
+        "sprite_disparo": -1,
+        "sprite_descarga": -1,
         "tipo": "unidad"
     },
     {
@@ -226,6 +228,7 @@
         "vida":400,
         "sprite_boton": 4289,
         "sprite_base": 2083,
+        "sprite_disparo": 3496,
         "tipo": "vehiculo"
     },
     {
@@ -247,6 +250,7 @@
         "vida":600,
         "sprite_boton": 4280,
         "sprite_base": 1699,
+        "sprite_descarga": 3623,
         "tipo": "vehiculo"
     }
 ]
