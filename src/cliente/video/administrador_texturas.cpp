@@ -4,8 +4,8 @@
 #include <SDL2/SDL_image.h>
 
 #include "cliente/video/error_sdl.h"
-#include "cliente/video/log.h"
 #include "cliente/video/textura.h"
+#include "comun/log.h"
 
 namespace cliente {
 

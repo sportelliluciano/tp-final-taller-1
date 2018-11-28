@@ -22,7 +22,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunreachable-code -Wformat=2")
 # Todos los #include son relativos a src
 include_directories(src)
 
-add_subdirectory(src/conexion)
+add_subdirectory(src/comun)
 add_subdirectory(src/cliente)
 add_subdirectory(src/modelo)
 add_subdirectory(src/servidor)

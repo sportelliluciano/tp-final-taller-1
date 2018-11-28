@@ -1,15 +1,15 @@
 #ifndef _CONEXION_JUGADOR_H_
 #define _CONEXION_JUGADOR_H_
 
-#include "conexion/conexion.h"
-#include "conexion/eventos_cliente.h"
-#include "conexion/i_jugador.h"
-#include "conexion/i_modelo.h"
+#include "comun/conexion.h"
+#include "comun/eventos_cliente.h"
+#include "comun/i_jugador.h"
+#include "comun/i_modelo.h"
 #include "servidor/cliente.h"
 
 namespace servidor {
 
-using namespace conexion;
+
 
 class ConexionJugador : public IJugador {
 public:

@@ -3,7 +3,7 @@
 
 #include <unordered_set>
 
-#include "conexion/i_jugador.h"
+#include "comun/i_jugador.h"
 
 namespace modelo {
 

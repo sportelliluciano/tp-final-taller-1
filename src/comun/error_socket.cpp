@@ -1,4 +1,4 @@
-#include "conexion/error_socket.h"
+#include "comun/error_socket.h"
 
 #include <cerrno>
 #include <cstring>
@@ -6,8 +6,6 @@
 #include <sstream>
 #include <string>
 #include <exception>
-
-namespace conexion {
 
 ErrorSocket::ErrorSocket(const std::string& funcion) {
     errno_guardado = errno;
@@ -29,5 +27,3 @@ const char* ErrorSocket::what() const throw() {
 int ErrorSocket::error_code() const {
     return errno_guardado;
 }
-
-} // namespace conexion

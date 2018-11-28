@@ -94,9 +94,7 @@ public:
     /**
      * \brief Muestra la animación de ataque en dirección a la posición.
      * 
-     * La posición de destino no se modificará pero se utilizará para seguir
-     * el objetivo en caso de ser necesaria por lo cual debe permanecer válida
-     * luego de haberse llamado el método.
+     * La posición de destino se utiliza para que los misiles sigan al objetivo.
      */
     void atacar(int id_victima, int x_victima, int y_victima);
 

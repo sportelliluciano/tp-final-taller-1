@@ -2,7 +2,7 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/eventos_cliente.h"
+#include "comun/eventos_cliente.h"
 #include "cliente/modelo/juego.h"
 
 namespace cliente {
@@ -13,7 +13,6 @@ EventoInfraestructura::EventoInfraestructura(const nlohmann::json& serializado)
 }
 
 void EventoInfraestructura::actualizar(Juego& juego) {
-    using namespace conexion;
     Infraestructura& infraestructura = juego.obtener_infraestructura();
     evento_cliente_t id_evento = (evento_cliente_t)data.at("id").get<int>();
     switch(id_evento) {

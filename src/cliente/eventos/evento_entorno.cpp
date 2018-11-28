@@ -2,7 +2,7 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/eventos_cliente.h"
+#include "comun/eventos_cliente.h"
 #include "cliente/modelo/juego.h"
 
 namespace cliente {
@@ -12,7 +12,6 @@ EventoEntorno::EventoEntorno(const nlohmann::json& serializado) {
 }
 
 void EventoEntorno::actualizar(Juego& juego) {
-    using namespace conexion;
     evento_cliente_t id_evento = (evento_cliente_t)data.at("id").get<int>();
     switch(id_evento) {
         case EVC_MOSTRAR_GUSANO:           // (posicion)

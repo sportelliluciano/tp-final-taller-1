@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace conexion {
+
 
 /**
  * Representa un error de protocolo.
@@ -18,7 +18,7 @@ public:
     ErrorConexion(const std::string& mensaje);
 };
 
-} // namespace conexion
+
 
 #endif // _ERROR_CONEXION_H_
 

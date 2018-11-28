@@ -1,4 +1,4 @@
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 #include <cstdio>
 #include <cstdarg>
@@ -9,8 +9,6 @@
 #define COLOR_VERDE     "\x1b[32m"
 #define COLOR_AMARILLO  "\x1b[33m"
 #define COLOR_RESET     "\x1b[0m"
-
-namespace cliente {
 
 /**
  * Función ayudante para recortar la ruta al archivo.
@@ -31,8 +29,9 @@ static inline const char *basename(const char *archivo) {
  * restaurar el color por defecto.
  */
 static void escribir(const char *color, const char *archivo, int linea, 
-    const char *funcion, const char *fmt, va_list args) 
+    const char *funcion, const char *fmt, va_list args, std::mutex& m_log) 
 {
+    std::lock_guard<std::mutex> lock(m_log);
     printf("%s[%s:%d > %s] %s", color, basename(archivo), linea, funcion,
         COLOR_RESET);
     vprintf(fmt, args);
@@ -51,7 +50,7 @@ void Log::dbg(const char* archivo, int linea, const char* funcion,
 {
     va_list args;
     va_start(args, fmt);
-    escribir(COLOR_VERDE, archivo, linea, funcion, fmt, args);
+    escribir(COLOR_VERDE, archivo, linea, funcion, fmt, args, m_log);
     va_end(args);
 }
 
@@ -60,7 +59,7 @@ void Log::warn(const char* archivo, int linea, const char* funcion,
 {
     va_list args;
     va_start(args, fmt);
-    escribir(COLOR_AMARILLO, archivo, linea, funcion, fmt, args);
+    escribir(COLOR_AMARILLO, archivo, linea, funcion, fmt, args, m_log);
     va_end(args);
 }
 
@@ -70,8 +69,6 @@ void Log::err(const char* archivo, int linea, const char* funcion,
 {
     va_list args;
     va_start(args, fmt);
-    escribir(COLOR_ROJO, archivo, linea, funcion, fmt, args);
+    escribir(COLOR_ROJO, archivo, linea, funcion, fmt, args, m_log);
     va_end(args);
 }
-
-} // namespace cliente

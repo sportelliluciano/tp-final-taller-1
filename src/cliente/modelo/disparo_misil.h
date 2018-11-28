@@ -11,36 +11,53 @@ namespace cliente {
 
 class DisparoMisil : public Disparo {
 public:
-
     DisparoMisil();
+
     /**
-     * \brief Inicia el disparo desde la posición inicial hasta la final, 
-     *        siguiendo al objetivo mediante interpolación lineal.
-     * 
-     * La posición de destino no se modificará, pero se utilizará en los
-     * subsiguientes llamados a actualizar para seguir al objetivo de ser
-     * necesario.
+     * \brief Inicia el disparo desde la posición inicial.
      */
-    void disparar(const Posicion& desde, Posicion& hasta);
+    virtual void iniciar(int x_origen, int y_origen, int x_destino, 
+        int y_destino) override;
+
+    /**
+     * \brief Actualiza el destino de los disparos. 
+     * 
+     * Escencialmente este método hace que el disparo siga al objetivo.
+     */
+    virtual void actualizar_destino(int x_destino, int y_destino) override;
+
+    /**
+     * \brief Detiene los disparos.
+     * 
+     * Este método espera a que el disparo en curso colisione con el objetivo
+     * y luego detiene los disparos.
+     */
+    virtual void detener() override;
 
     /**
      * \brief Actualiza la posición del disparo.
      */
-    void actualizar(int dt_ms);
+    virtual void actualizar(int dt_ms) override;
 
     /**
      * \brief Renderiza el disparo en la ventana.
      */
-    void renderizar(Ventana& ventana, Camara& camara);
+    virtual void renderizar(Ventana& ventana, Camara& camara) override;
+
+    void actualizar_movimiento(int dt_ms);
 
 private:
-    const static int N_SPRITES_MISIL = 5;
+    const static int N_SPRITES_MISIL = 32;
     SpriteAnimado misil[N_SPRITES_MISIL];
+    SpriteAnimado explosion;
 
-    bool esta_siendo_disparado = false;
+    bool esta_explotando = false, esta_activo = false, 
+        esta_viajando = false;
 
-    Posicion posicion_actual;
-    const Posicion* destino;
+    Posicion origen;
+    Posicion pos_actual;
+    float fx_actual, fy_actual;
+    Posicion pos_victima;
 };
 
 } // namespace cliente

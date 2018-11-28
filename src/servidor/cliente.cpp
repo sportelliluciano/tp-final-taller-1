@@ -7,14 +7,14 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/conexion.h"
-#include "conexion/lock.h"
-#include "conexion/socket_conexion.h"
+#include "comun/conexion.h"
+#include "comun/lock.h"
+#include "comun/socket_conexion.h"
 #include "servidor/cola_protegida.h"
 
 namespace servidor {
 
-Cliente::Cliente(conexion::SocketConexion socket_conexion) 
+Cliente::Cliente(SocketConexion socket_conexion) 
 : conexion(socket_conexion)
 { }
 

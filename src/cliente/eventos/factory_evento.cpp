@@ -1,7 +1,7 @@
 #include "cliente/eventos/factory_evento.h"
 
-#include "conexion/error_conexion.h"
-#include "conexion/eventos_cliente.h"
+#include "comun/error_conexion.h"
+#include "comun/eventos_cliente.h"
 #include "cliente/eventos/evento_ejercito.h"
 #include "cliente/eventos/evento_entorno.h"
 #include "cliente/eventos/evento_infraestructura.h"
@@ -10,7 +10,6 @@
 namespace cliente {
 
 Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
-    using namespace conexion;
     if (serializado.find("id") == serializado.end())
         throw ErrorConexion("El JSON no contiene ID");
     

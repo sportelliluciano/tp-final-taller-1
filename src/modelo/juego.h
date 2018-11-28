@@ -14,8 +14,8 @@
 #include "modelo/infraestructura.h"
 #include "modelo/ejercito.h"
 #include "modelo/terreno.h"
-#include "conexion/i_jugador.h"
-#include "conexion/i_modelo.h"
+#include "comun/i_jugador.h"
+#include "comun/i_modelo.h"
 #include "modelo/broadcaster.h"
 
 namespace modelo {

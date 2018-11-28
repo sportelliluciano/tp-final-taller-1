@@ -11,7 +11,7 @@
 #include "cliente/video/camara.h"
 #include "cliente/video/error_sdl.h"
 #include "cliente/video/i_notificable.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 #define ANCHO_VENTANA_DEFECTO 800
 #define ALTO_VENTANA_DEFECTO  600

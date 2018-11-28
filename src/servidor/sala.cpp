@@ -11,12 +11,11 @@
 #include <unordered_set>
 #include <utility>
 
-#include "conexion/eventos_servidor.h"
-#include "conexion/lock.h"
-#include "conexion/i_modelo.h"
+#include "comun/eventos_servidor.h"
+#include "comun/lock.h"
+#include "comun/i_modelo.h"
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
-#include "servidor/mock_modelo.h"
 #include "modelo/juego.h"
 
 // Dejar un 20% del tiempo de actualización como márgen.
@@ -265,9 +264,7 @@ int Sala::cantidad_jugadores_conectados() {
 Sala::~Sala() { }
 
 // TODO: Chequear excepciones // refactorizar esto
-void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {
-    using namespace conexion;
-    
+void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {    
     Lock l(lock_modelo);
     
     evento_servidor_t id = evento.at("id").get<evento_servidor_t>();

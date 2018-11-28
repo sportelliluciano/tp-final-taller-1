@@ -4,8 +4,6 @@
 #include <string>
 #include <exception>
 
-namespace conexion {
-
 /**
  * Representa un error en un llamado a una función de sockets del 
  * sistema operativo.
@@ -51,7 +49,5 @@ private:
     std::string mensaje_ex;
     int errno_guardado;
 };
-
-} // namespace conexion
 
 #endif // _ERROR_SOCKET_H_

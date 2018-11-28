@@ -8,16 +8,16 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/lock.h"
+#include "comun/lock.h"
 #include "cliente/eventos/evento.h"
 #include "cliente/eventos/factory_evento.h"
 #include "cliente/eventos/evento_terminar.h"
-#include "conexion/eventos_servidor.h"
-#include "cliente/video/log.h"
+#include "comun/eventos_servidor.h"
+#include "comun/log.h"
 
 namespace cliente {
 
-using namespace conexion;
+
 
 Servidor::Servidor(const std::string& ip_servidor, 
     const std::string& puerto) 

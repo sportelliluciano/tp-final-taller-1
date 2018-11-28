@@ -6,11 +6,11 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/error_socket.h"
-#include "conexion/error_conexion.h"
-#include "conexion/socket_conexion.h"
+#include "comun/error_socket.h"
+#include "comun/error_conexion.h"
+#include "comun/socket_conexion.h"
 
-namespace conexion {
+
 
 /**
  * Clase Conexión.
@@ -113,6 +113,6 @@ private:
     Conexion& operator=(const Conexion& otro) = delete;
 };
 
-} // namespace conexion
+
 
 #endif // _CONEXION_H_ 

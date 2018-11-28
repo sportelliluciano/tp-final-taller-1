@@ -1,4 +1,4 @@
-#include "conexion/conexion.h"
+#include "comun/conexion.h"
 
 #include <cstdlib>
 
@@ -7,9 +7,9 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/error_socket.h"
-#include "conexion/error_conexion.h"
-#include "conexion/socket_conexion.h"
+#include "comun/error_socket.h"
+#include "comun/error_conexion.h"
+#include "comun/socket_conexion.h"
 
 // Descomentar esta línea para ver los paquetes de red enviados
 //#define DEPURACION_RED 1
@@ -25,7 +25,7 @@
  */
 #define TAMANIO_MAXIMO_PAQUETE (2048 * 1024)
 
-namespace conexion {
+
 
 Conexion::Conexion(SocketConexion& socket) 
     : conexion(std::move(socket)),
@@ -134,4 +134,4 @@ void Conexion::cerrar(bool ignorar_errores) {
 
 Conexion::~Conexion() { }
 
-} // namespace conexion
+

@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "cliente/modelo/sprite.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 #include "cliente/video/ventana.h"
 
 namespace cliente {

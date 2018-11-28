@@ -1,7 +1,7 @@
 #include "cliente/video/textura.h"
 
 #include "cliente/video/error_sdl.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 namespace cliente {
 

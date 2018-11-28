@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "conexion/conexion.h"
-#include "conexion/eventos_cliente.h"
-#include "conexion/i_jugador.h"
-#include "conexion/i_modelo.h"
+#include "comun/conexion.h"
+#include "comun/eventos_cliente.h"
+#include "comun/i_jugador.h"
+#include "comun/i_modelo.h"
 #include "servidor/cliente.h"
 
 #define SIN_IMPLEMENTAR(evento) { \

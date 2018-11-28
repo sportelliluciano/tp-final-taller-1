@@ -11,7 +11,7 @@
 #include "modelo/arma_creador.h"
 #include "modelo/edificio.h"
 #include "modelo/id.h"
-#include "conexion/i_jugador.h"
+#include "comun/i_jugador.h"
 #include "modelo/cosechadora.h"
 #include "modelo/broadcaster.h"
 

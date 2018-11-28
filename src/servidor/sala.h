@@ -9,8 +9,8 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/conexion.h"
-#include "conexion/i_modelo.h"
+#include "comun/conexion.h"
+#include "comun/i_modelo.h"
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
 #include "servidor/cola_protegida.h"

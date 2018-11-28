@@ -9,7 +9,7 @@
 #include "modelo/infraestructura_creador.h"
 #include "modelo/terreno.h"
 #include "modelo/id.h"
-#include "conexion/i_jugador.h"
+#include "comun/i_jugador.h"
 
 #include "modelo/broadcaster.h"
 

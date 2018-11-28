@@ -5,8 +5,9 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include "cliente/modelo/disparo_misil.h"
 #include "cliente/modelo/hud/barra_vida.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 #include "cliente/video/ventana.h"
 
 #define THRESHOLD_SYNC_CAMINO 10
@@ -171,6 +172,8 @@ void Tropa::renderizar(Ventana& ventana, Camara& camara) {
     }
 
     sprite_tropa.renderizar(ventana, visual.x, visual.y);
+    if (disparo)
+        disparo->renderizar(ventana, camara);
     
     barra_vida.set_ancho(sprite_tropa.obtener_ancho(ventana));
     barra_vida.renderizar(ventana, 
@@ -417,8 +420,7 @@ const std::vector<std::string>& Tropa::obtener_requerimientos() const {
 }
 
 bool Tropa::casa_puede_entrenar(const std::string& casa) const {
-    //return casas_habilitadas.count(casa) != 0;
-    return true;
+    return casas_habilitadas.count(casa) != 0;
 }
 
 const std::string& Tropa::obtener_nombre() const {

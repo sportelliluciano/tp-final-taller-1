@@ -2,7 +2,7 @@
 
 #include <unordered_set>
 
-#include "conexion/lock.h"
+#include "comun/lock.h"
 #include "servidor/cliente.h"
 
 namespace servidor {

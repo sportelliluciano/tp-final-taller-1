@@ -1,6 +1,8 @@
 #ifndef _LOGGING_H_
 #define _LOGGING_H_
 
+#include <mutex>
+
 #define log_depuracion(fmt, ...) \
     Log::obtener_instancia().\
         dbg(__FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__)
@@ -12,8 +14,6 @@
 #define log_error(fmt, ...) \
     Log::obtener_instancia().\
         err(__FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__)
-
-namespace cliente {
 
 /**
  * \brief Permite registrar acciones
@@ -42,8 +42,7 @@ public:
     
 private:
     Log();
+    std::mutex m_log;
 };
-
-} // namespace cliente
 
 #endif // _LOGGING_H_

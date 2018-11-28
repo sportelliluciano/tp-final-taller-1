@@ -1,4 +1,4 @@
-#include "conexion/socket_conexion.h"
+#include "comun/socket_conexion.h"
 
 #include <cerrno>
 #include <cstdlib>
@@ -12,9 +12,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "conexion/error_socket.h"
+#include "comun/error_socket.h"
 
-namespace conexion {
+
 
 SocketConexion::SocketConexion(int fd) 
 : socket_conexion(fd), esta_conectado_rd(true), esta_conectado_wr(true) 
@@ -198,4 +198,4 @@ SocketConexion::~SocketConexion() {
     }
 }
 
-} // namespace conexion
+

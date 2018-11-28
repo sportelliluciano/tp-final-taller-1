@@ -6,8 +6,8 @@
 #include <set>
 #include <unordered_set>
 
-#include "conexion/i_modelo.h"
-#include "conexion/i_jugador.h"
+#include "comun/i_modelo.h"
+#include "comun/i_jugador.h"
 #include "modelo/infraestructura.h"
 #include "modelo/ejercito.h"
 

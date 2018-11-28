@@ -13,7 +13,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "conexion/error_socket.h"
+#include "comun/error_socket.h"
 
 /* File descriptor para un socket inválido */
 #define SOCKET_INVALIDO -1
@@ -21,7 +21,7 @@
 /* Código de retorno de error de funciones de sockets. */
 #define SOCKET_ERROR -1
 
-namespace conexion {
+
 
 /**
  * Encapsulamiento RAII para un socket de conexión.
@@ -166,6 +166,6 @@ private:
     SocketConexion& operator=(const SocketConexion& otro) = delete;
 };
 
-} // namespace conexion
+
 
 #endif // _SOCKET_CONEXION_H_

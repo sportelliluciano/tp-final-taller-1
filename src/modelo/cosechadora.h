@@ -7,7 +7,7 @@
 #include "modelo/terreno.h"
 #include "modelo/unidad.h"
 #include "modelo/unidad_base.h"
-#include "conexion/i_jugador.h"
+#include "comun/i_jugador.h"
 
 #define ESPERA 10000 
 

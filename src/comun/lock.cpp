@@ -1,4 +1,4 @@
-#include "conexion/lock.h"
+#include "comun/lock.h"
 
 #include <mutex>
 

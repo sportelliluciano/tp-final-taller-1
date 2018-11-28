@@ -2,7 +2,7 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/eventos_cliente.h"
+#include "comun/eventos_cliente.h"
 #include "cliente/modelo/juego.h"
 
 namespace cliente {
@@ -12,7 +12,6 @@ EventoEjercito::EventoEjercito(const nlohmann::json& serializado) {
 }
 
 void EventoEjercito::actualizar(Juego& juego) {
-    using namespace conexion;
     Ejercito& ejercito = juego.obtener_ejercito();
     evento_cliente_t id_evento = (evento_cliente_t)data.at("id").get<int>();
     switch(id_evento) {

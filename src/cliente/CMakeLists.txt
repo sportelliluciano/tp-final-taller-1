@@ -17,4 +17,10 @@ add_subdirectory(lanzador)
 
 # Generar una libería estática con todo el cliente EXCEPTO el main
 add_library(libcliente ${libcliente_srcs})
-target_link_libraries(libcliente lanzadorcliente conexion clientevideo clientemodelo clientesonido)
+target_link_libraries(libcliente 
+    comun
+    clientevideo
+    clientesonido
+    clientemodelo
+    lanzadorcliente
+)

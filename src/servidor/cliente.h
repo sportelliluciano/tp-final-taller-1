@@ -7,8 +7,8 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/conexion.h"
-#include "conexion/socket_conexion.h"
+#include "comun/conexion.h"
+#include "comun/socket_conexion.h"
 #include "servidor/cola_protegida.h"
 
 namespace servidor {
@@ -22,7 +22,7 @@ public:
     /**
      * \brief Crea un nuevo cliente a partir del socket indicado.
      */
-    Cliente(conexion::SocketConexion socket_conexion);
+    Cliente(SocketConexion socket_conexion);
 
     /**
      * \brief Constructor por movimiento
@@ -82,7 +82,7 @@ public:
     const std::string& obtener_error() const;
 
 private:
-    conexion::Conexion conexion;
+    Conexion conexion;
     std::thread hilo_emisor, hilo_receptor;
     ColaProtegida<nlohmann::json> cola_salida;
 

@@ -4,7 +4,7 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "cliente/video/error_sdl.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 namespace cliente {
 

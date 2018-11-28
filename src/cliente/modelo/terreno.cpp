@@ -10,7 +10,7 @@
 #include "cliente/modelo/celda.h"
 #include "cliente/video/camara.h"
 #include "cliente/video/ventana.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 #define ANCHO_CELDA 32
 #define ALTO_CELDA 32

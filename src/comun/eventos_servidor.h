@@ -1,7 +1,7 @@
 #ifndef _EVENTOS_SERVIDOR_H_
 #define _EVENTOS_SERVIDOR_H_
 
-namespace conexion {
+
 
 /**
  * \brief IDs de los eventos enviados desde el cliente hacia el servidor.
@@ -21,6 +21,6 @@ typedef enum {
     EVS_COSECHADORA_INDICAR_ESPECIA, // (id, celda)
 } evento_servidor_t;
 
-} // namespace conexion
+
 
 #endif // _EVENTOS_SERVIDOR_H_

@@ -1,7 +1,7 @@
 #ifndef _EVENTOS_CLIENTE_H_
 #define _EVENTOS_CLIENTE_H_
 
-namespace conexion {
+
 
 /**
  * \brief IDs de los eventos enviados desde el cliente hacia el servidor.
@@ -46,6 +46,6 @@ typedef enum {
     EVC_JUEGO_TERMINADO           // (id_ganador)
 } evento_cliente_t;
 
-} // namespace conexion
+
 
 #endif // _EVENTOS_CLIENTE_H_

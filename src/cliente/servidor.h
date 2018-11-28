@@ -7,7 +7,7 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/conexion.h"
+#include "comun/conexion.h"
 #include "cliente/eventos/evento.h"
 
 namespace cliente {
@@ -173,7 +173,7 @@ private:
     std::mutex cola_eventos_mutex;
     std::list<Evento*> cola_eventos;
     
-    conexion::Conexion conn;
+    Conexion conn;
 
     /**
      * \brief Ciclo de recepción de datos del servidor.

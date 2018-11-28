@@ -5,7 +5,7 @@
 #include <list>
 #include <mutex>
 
-#include "conexion/lock.h"
+#include "comun/lock.h"
 
 namespace servidor {
 

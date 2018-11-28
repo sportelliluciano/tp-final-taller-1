@@ -1,13 +1,11 @@
 #include "cliente/modelo/controlador.h"
 
-#include <iostream>
-
 #include "cliente/modelo/hud.h"
 #include "cliente/modelo/juego.h"
 #include "cliente/eventos/evento.h"
 #include "cliente/servidor.h"
 #include "cliente/video/ventana.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 namespace cliente {
 
