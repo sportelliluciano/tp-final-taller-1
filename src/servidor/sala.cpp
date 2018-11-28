@@ -12,22 +12,28 @@
 #include <utility>
 
 #include "comun/eventos_servidor.h"
-#include "comun/lock.h"
 #include "comun/i_modelo.h"
+#include "comun/lock.h"
+#include "comun/log.h"
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
 #include "modelo/juego.h"
 
-// Dejar un 20% del tiempo de actualización como márgen.
+// Descomentar esta línea para activar los mensajes de depuración de tiempos
+//#define DEPURAR_TIEMPOS 1
+
+#define TICK_MS 20
+
+// Dejar un 20% del tiempo de actualización como margen.
 #define DELAY_EV ((TICK_MS * 20) / 100)
 
-#define DEPURAR_TIEMPO_EVENTO(ev, expr) {\
-    std::cout << "[" << timestamp() << "ms] "\
-        << "t(" ev ") = " << \
-     medir_tiempo_ms([&] () {\
-        expr \
-     }) << "ms" << std::endl;\
-}
+#if DEPURAR_TIEMPOS
+ #define DEPURAR_TIEMPO_EVENTO(ev, expr) \
+    log_tiempo(ev, medir_tiempo_ms([&] () { expr }))
+#else
+ #define DEPURAR_TIEMPO_EVENTO(ev, expr) { expr }
+#endif
+
 
 namespace servidor {
 
@@ -146,12 +152,6 @@ static int64_t medir_tiempo_ms(std::function<void(void)> funcion) {
     return duration_cast<milliseconds>(t2 - t1).count();
 }
 
-static int64_t timestamp() {
-    using namespace std::chrono;
-    static auto base = steady_clock::now();
-    return duration_cast<milliseconds>(steady_clock::now() - base).count();
-}
-
 void Sala::jugar() {
     using namespace std::chrono;
     try {
@@ -175,37 +175,36 @@ void Sala::jugar() {
 #if DEPURAR_TIEMPOS
             promedio_iteracion += medir_tiempo_ms([&] () {
 #endif
-                auto timeout = base + milliseconds(TICK_MS);
-                auto ms_eventos = medir_tiempo_ms([&] () {
-                    auto timeout_eventos = base + milliseconds(TICK_MS - DELAY_EV);
-                    while (steady_clock::now() < timeout_eventos) {
-                        std::pair<IJugador*, nlohmann::json> evento;
-                        // Esto no es RAII por una buena razón que no entra en un
-                        //  comentario de una línea (ni de dos).
-                        if (cola_eventos.pull(timeout_eventos, evento))
-                            actualizar_modelo(evento.first, evento.second);
-                    }
-                });
+            auto timeout = base + milliseconds(TICK_MS);
+            auto ms_eventos = medir_tiempo_ms([&] () {
+                auto timeout_eventos = base + milliseconds(TICK_MS - DELAY_EV);
+                while (steady_clock::now() < timeout_eventos) {
+                    std::pair<IJugador*, nlohmann::json> evento;
+                    // Esto no es RAII por una buena razón que no entra en un
+                    //  comentario de una línea (ni de dos).
+                    if (cola_eventos.pull(timeout_eventos, evento))
+                        actualizar_modelo(evento.first, evento.second);
+                }
+            });
+
+            if (ms_eventos > TICK_MS) {
+                log_advertencia("El procesamiento de eventos tardó %lu ms"
+                    " (TICK_MS=%lu ms)", ms_eventos, TICK_MS);
+            }
+
+            auto ms_actualizacion = medir_tiempo_ms([&] () {
+                std::this_thread::sleep_until(timeout);
+                modelo->actualizar(TICK_MS);
+            });                
+            
+            if (ms_actualizacion > TICK_MS) {
+                log_advertencia("El modelo tardó %lu ms en actualizarse"
+                    " (TICK_MS=%lu ms)", ms_eventos, TICK_MS);
+            }
+
+            base = timeout;
+
 #if DEPURAR_TIEMPOS
-                if (ms_eventos > TICK_MS) {
-                    std::cout << "[" << timestamp() << "ms] "
-                            << "[ADVERTENCIA]: El procesamiento de eventos tardó "
-                            << ms_eventos << "ms (TICK_MS=" << TICK_MS << "ms)"
-                            << std::endl;
-                }
-#endif
-                auto ms_actualizacion = medir_tiempo_ms([&] () {
-                    std::this_thread::sleep_until(timeout);
-                    modelo->actualizar(TICK_MS);
-                });
-#if DEPURAR_TIEMPOS                
-                if (ms_actualizacion > TICK_MS) {
-                    std::cout << "[" << timestamp() << "ms] "
-                            << "[ADVERTENCIA]: El modelo tardó " 
-                            << ms_actualizacion << "ms en actualizarse"
-                            << " (TICK_MS=" << TICK_MS << "ms)"
-                            << std::endl;
-                }
                 promedio_actualizaciones += ms_actualizacion;
                 promedio_eventos += ms_eventos;
                 cantidad_promedio++;
@@ -214,31 +213,22 @@ void Sala::jugar() {
                     promedio_actualizaciones /= cantidad_promedio;
                     promedio_eventos /= cantidad_promedio;
                     promedio_iteracion /= cantidad_promedio;
-                    std::cout << "[" << timestamp() << "ms] "
-                            << "avg(actualizacion): " 
-                            << promedio_actualizaciones << "ms" << std::endl;
-                    std::cout << "[" << timestamp() << "ms] "
-                            << "avg(eventos): " << promedio_eventos << "ms"
-                            << std::endl;
-                    std::cout << "[" << timestamp() << "ms] "
-                            << "avg(iter): " << promedio_iteracion << "ms"
-                            << std::endl;
-                    promedio_iteracion = promedio_actualizaciones = promedio_eventos = 0;
+                    log_tiempo("actualizacion", promedio_actualizaciones);
+                    log_tiempo("eventos", promedio_eventos);
+                    log_tiempo("iter", promedio_iteracion);
+                    promedio_iteracion = promedio_actualizaciones 
+                        = promedio_eventos = 0;
                     cantidad_promedio = 0;
                     un_seg = steady_clock::now() + seconds(1);
                 }
-#endif
-                base = timeout;
-#if DEPURAR_TIEMPOS
             });
 #endif
         }
     } catch(const std::exception& e) {
-        std::cerr << "Explotó la partida en la sala " << nombre << std::endl;
-        std::cerr << "--> " << e.what() << std::endl;
+        log_error("Explotó la partida en la sala %s\n --> %s", nombre, 
+            e.what());
     } catch(...) {
-        std::cerr << "Explotó la partida en la sala " << nombre 
-                  << " con un error desconocido." << std::endl;
+        log_error("Explotó la partida en la sala %s con un error desconocido.");
     }
 }
 

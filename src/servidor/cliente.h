@@ -94,6 +94,9 @@ private:
     std::string error_emisor, error_receptor;
 
     bool async_iniciado = false;
+
+    void main_hilo_emisor();
+    void main_hilo_receptor();
 };
 
 } // namespace servidor

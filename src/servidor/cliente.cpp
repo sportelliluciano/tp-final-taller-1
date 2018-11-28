@@ -1,6 +1,5 @@
 #include "servidor/cliente.h"
 
-#include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -9,6 +8,7 @@
 
 #include "comun/conexion.h"
 #include "comun/lock.h"
+#include "comun/log.h"
 #include "comun/socket_conexion.h"
 #include "servidor/cola_protegida.h"
 
@@ -42,48 +42,50 @@ Cliente::Cliente(Cliente&& otro)
     async_iniciado = false;
 }
 
+void Cliente::main_hilo_emisor() { 
+    try {
+        while (conexion.esta_conectada()) {
+            conexion.enviar_json(cola_salida.pull());
+        }
+    } catch(const std::exception& e) {
+        error_emisor = e.what();
+        hubo_error_emisor = true;
+        conexion.cerrar(true);
+        if (!detencion_solicitada)
+            log_advertencia("Hilo cliente (E) explotó\n --> %s", e.what());
+    }
+
+    log_depuracion("Hilo cliente (E) terminado");
+}
+
+void Cliente::main_hilo_receptor() { 
+    try {
+        while (conexion.esta_conectada()) {
+            nlohmann::json data = conexion.recibir_json();
+            {
+                Lock l(m_cb_al_recibir_datos);
+                if (cb_al_recibir_datos)
+                    cb_al_recibir_datos(data);
+            }
+        }
+    } catch(const std::exception& e) {
+        error_receptor = e.what();
+        hubo_error_receptor = true;
+        conexion.cerrar(true);
+        if (!detencion_solicitada)
+            log_advertencia("Hilo cliente (R) explotó\n --> %s", e.what());
+    }
+
+    log_depuracion("Hilo cliente (R) terminado");
+}
+
 void Cliente::iniciar_async() {
     if (async_iniciado)
         throw std::runtime_error("Este cliente ya fue iniciado");
     
     async_iniciado = true;
-
-    hilo_emisor = std::thread([this]() {
-        try {
-            while (conexion.esta_conectada()) {
-                conexion.enviar_json(cola_salida.pull());
-            }
-        } catch(const std::exception& e) {
-            error_emisor = e.what();
-            hubo_error_emisor = true;
-            conexion.cerrar(true);
-            std::cout << "Hilo cliente (E) explotó" << std::endl;
-            std::cout << " --> " << e.what() << std::endl;
-        }
-
-        std::cout << "Hilo cliente (E) died" << std::endl;
-    });
-
-    hilo_receptor = std::thread([this]() {
-        try {
-            while (conexion.esta_conectada()) {
-                nlohmann::json data = conexion.recibir_json();
-                {
-                    Lock l(m_cb_al_recibir_datos);
-                    if (cb_al_recibir_datos)
-                        cb_al_recibir_datos(data);
-                }
-            }
-        } catch(const std::exception& e) {
-            error_receptor = e.what();
-            hubo_error_receptor = true;
-            conexion.cerrar(true);
-            std::cout << "Hilo cliente (R) explotó" << std::endl;
-            std::cout << " --> " << e.what() << std::endl;
-        }
-
-        std::cout << "Hilo cliente (R) died" << std::endl;
-    });
+    hilo_emisor = std::thread(&Cliente::main_hilo_emisor, this);
+    hilo_receptor = std::thread(&Cliente::main_hilo_receptor, this);
 }
 
 void Cliente::detener_async() {

@@ -97,7 +97,6 @@ private:
     bool partida_iniciada = false;
 
     bool terminar;
-    const int TICK_MS = 20;
 
     size_t capacidad = 0;
 

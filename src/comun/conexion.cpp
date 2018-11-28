@@ -9,10 +9,11 @@
 
 #include "comun/error_socket.h"
 #include "comun/error_conexion.h"
+#include "comun/log.h"
 #include "comun/socket_conexion.h"
 
 // Descomentar esta línea para ver los paquetes de red enviados
-//#define DEPURACION_RED 1
+#define DEPURACION_RED 1
 
 /**
  * La conexión sólo permite enviar paquetes de un tamaño máximo de 2MB.
@@ -24,8 +25,6 @@
  * 
  */
 #define TAMANIO_MAXIMO_PAQUETE (2048 * 1024)
-
-
 
 Conexion::Conexion(SocketConexion& socket) 
     : conexion(std::move(socket)),
@@ -86,10 +85,9 @@ nlohmann::json Conexion::recibir_json() {
     }
 #ifdef DEPURACION_RED
     if (tamanio > 1000) {
-        std::cout << "\x1b[32m>> \x1b[0m {JSON de " << tamanio << " bytes}" 
-                  << std::endl;
+        log_red(LOG_RED_SALIENTE, "{JSON de %d bytes}", tamanio); 
     } else {
-        std::cout << "\x1b[32m>> \x1b[0m" << resultado.dump() << std::endl;
+        log_red(LOG_RED_SALIENTE, resultado.dump().c_str(), 0);
     }
 #endif
     return resultado;
@@ -113,12 +111,11 @@ void Conexion::enviar_json(const nlohmann::json& json_data) {
     if (conexion.enviar_bytes(data_utf8, tamanio) != tamanio) {
         throw ErrorConexion("Se cerró la conexión en medio del envío");
     }
-#ifdef DEPURACION_RED    
+#ifdef DEPURACION_RED
     if (tamanio > 1000) {
-        std::cout << "\x1b[31m<< \x1b[0m {JSON de " << tamanio << " bytes}"
-                  << std::endl;
+        log_red(LOG_RED_ENTRANTE, "{JSON de %d bytes}", tamanio); 
     } else {
-        std::cout << "\x1b[31m<< \x1b[0m" << json_data.dump() << std::endl;
+        log_red(LOG_RED_ENTRANTE, json_data.dump().c_str(), 0);
     }
 #endif
 }
