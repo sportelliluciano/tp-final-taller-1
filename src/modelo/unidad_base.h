@@ -20,12 +20,12 @@ private:
     unsigned int tiempo_de_entrenamiento;
     unsigned int costo;
     unsigned int vida;
-    Arma& arma;
+    std::vector<Arma*> armas;
     std::pair <int,int> dimensiones = std::pair <int,int> (1,1);
 
 public:
     //UnidadBase();
-    UnidadBase(const nlohmann::json& data_unidad,Arma& arma_);
+    UnidadBase(const nlohmann::json& data_unidad, const std::vector<Arma*>& armas_);
     ~UnidadBase();
     int atacar_a(Atacable* victima);
     //void atacar_a(Edificio* edificio);

@@ -7,7 +7,7 @@
 #include "modelo/edificio.h"
 
 #define ID "id"
-#define DANO "dano"
+#define DANO "daño"
 #define FREQ "frecuencia"
 
 namespace modelo {

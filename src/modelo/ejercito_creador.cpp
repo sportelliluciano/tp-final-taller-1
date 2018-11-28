@@ -16,16 +16,27 @@ EjercitoCreador::EjercitoCreador(){
 void EjercitoCreador::inicializar(Terreno* terreno_,const nlohmann::json& ejercito){
     terreno = terreno_;
     using nlohmann::json;
+    armamento.inicializar(ejercito.at("armas"));
 
-    auto it = ejercito.begin();
+    const json& unidades = ejercito.at("unidades");
+
+    auto it = unidades.begin();
     const json& valores_por_defecto = *it;
     ++it;
-    for(; it != ejercito.end(); ++it) {
+    for(; it != unidades.end(); ++it) {
         // Mergear valores por defecto con el elemento actual
         json elem = valores_por_defecto;
         elem.update(*it);
-        if(!armamento.tiene(elem["id_arma"]))continue;
-        prototipos_base.emplace(elem["id"], UnidadBase(elem,armamento.get(elem["id_arma"])));
+        std::vector<Arma*> armas_unidad;
+        for (const std::string& id_arma : elem.at("id_arma")) {
+            if(!armamento.tiene(id_arma)) {
+                std::cout << "Arma no encontrada: " << id_arma << std::endl;
+                continue;
+            }
+            armas_unidad.push_back(&armamento.get(id_arma));
+        }
+        
+        prototipos_base.emplace(elem["id"], UnidadBase(elem,armas_unidad));
     }
 }
 EjercitoCreador::~EjercitoCreador(){}

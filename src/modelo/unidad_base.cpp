@@ -19,8 +19,8 @@
 
 namespace modelo {
 
-UnidadBase::UnidadBase(const nlohmann::json& data_unidad,Arma& arma_):
-                            arma(arma_)
+UnidadBase::UnidadBase(const nlohmann::json& data_unidad, const std::vector<Arma*>& armas_):
+                            armas(armas_)
                             //,dimensiones(std::pair<int,int>(data_unidad[ANCHO],
                             //                               data_unidad[ALTO])) 
                                                         {
@@ -35,8 +35,10 @@ UnidadBase::UnidadBase(const nlohmann::json& data_unidad,Arma& arma_):
 UnidadBase::~UnidadBase() { 
 
 }
-int UnidadBase::atacar_a(Atacable* victima){
-    return arma.atacar_a(victima);
+int UnidadBase::atacar_a(Atacable* victima) {
+    if (armas.size() > 0)
+        return armas.at(0)->atacar_a(victima);
+    return 0;
 }/*
 void UnidadBase::atacar_a(Edificio* victima){
     arma.atacar_a(victima);
@@ -63,6 +65,8 @@ std::string& UnidadBase::get_clase() {
     return clase;
 }
 unsigned int UnidadBase::obtener_frecuencia(){
-    return arma.obtener_frecuencia();
+    if (armas.size() > 0)
+        return armas.at(0)->obtener_frecuencia();
+    return 1;
 }
 } // namespace modelo

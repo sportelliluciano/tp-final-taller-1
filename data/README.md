@@ -1,9 +1,15 @@
 ### Data
 
-En esta carpeta la idea es poner todo lo que sean datos del juego. Esto incluye
-imágenes, archivos de datos, sonidos y demás.
+En esta carpeta se encuentran los distintos archivos de datos del juego.
 
-`edificios.json`: Este archivo contiene la información que está en el enunciado
-sobre los distintos edificios. La primer entidad del archivo tiene como id 
-"defecto" y contiene los valores por defecto para todas las entidades. A partir
-de acá, si una entidad no tiene indicado un valor, se tomará el valor por defecto.
+#### servidor
+Configuraciones y datos del servidor.
+
+#### assets-nuevos
+Imágenes agregadas, sonidos, fuentes extra del cliente (no sprites).
+
+#### rc-cliente
+Recursos del lanzador del cliente.
+
+#### renombrar-imagenes.py
+Herramienta para renombrar los sprites.

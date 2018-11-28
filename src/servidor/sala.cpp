@@ -35,13 +35,13 @@ Sala::Sala(const std::string& nombre_, size_t capacidad_maxima)
 : modelo(new modelo::Juego()), nombre(nombre_)
 {
     capacidad = capacidad_maxima;
-    std::ifstream f_mapa("../data/mapa2.json");
+    std::ifstream f_mapa("../data/servidor/mapas/mapa2.json");
     f_mapa >> mapa;
     
-    std::ifstream f_edificios("../data/edificios.json");
+    std::ifstream f_edificios("../data/servidor/edificios.json");
     f_edificios >> edificios;
 
-    std::ifstream f_ejercito("../data/ejercito.json");
+    std::ifstream f_ejercito("../data/servidor/ejercito.json");
     f_ejercito >> ejercito;
 
     modelo->inicializar(mapa, edificios, ejercito);
@@ -114,7 +114,7 @@ void Sala::iniciar_partida(Cliente& cliente) {
     
     cliente.enviar(mapa);
     cliente.enviar(edificios);
-    cliente.enviar(ejercito);
+    cliente.enviar(ejercito.at("unidades"));
 
     clientes.at(&cliente).set_estado(true);
 
