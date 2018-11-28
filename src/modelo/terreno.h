@@ -124,7 +124,7 @@ public:
      * \brief Obtiene las posiciones de las refinerías del jugador.
      */
     
-    Posicion& obtener_refinerias_cercana(const Posicion& pos,int id_jugador);
+    Posicion obtener_refinerias_cercana(const Posicion& pos,int id_jugador);
 
     bool es_especia(const Posicion& posicion);
     

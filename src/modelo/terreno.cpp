@@ -110,7 +110,7 @@ std::vector<int> Terreno::obtener_vecinos(int nodo) const {
     if (abajo_der)
         vecinos.push_back(hash_posicion(x + 1, y + 1));
 
-    return vecinos;
+    return std::move(vecinos);
 }
 
 std::vector<Posicion> 
@@ -343,24 +343,28 @@ Posicion Terreno::obtener_posicion_caminable_cercana(
 }
 
 void Terreno::agregar_refineria(int x, int y,int id_jugador) {
+    std::cout << "Creada refineria para " << id_jugador << "en (" << x 
+              << ";" << y << ")" << std::endl;
     if (refinerias.count(id_jugador)==0){
-        refinerias.emplace(id_jugador,std::vector<Posicion>());
+        refinerias[id_jugador] = std::vector<Posicion>();
     }
-    refinerias.at(id_jugador).emplace_back(Posicion(x,y));
+    refinerias.at(id_jugador).push_back(Posicion(x,y));
 }
 void Terreno::eliminar_refineria(const Posicion& posicion,int id_jugador) {
-    std::vector<Posicion>& refinerias_ = refinerias.at(id_jugador);
-    for (auto refineria = refinerias_.begin();refineria!=refinerias_.end();++refineria){
-        if ((*refineria) == posicion){
-            std::cout << "se borro la refineria" << std::endl;
-            refinerias_.erase(refineria);
-            std::cout << "hay "<<refinerias_.size() <<" refinerias" << std::endl;
+    std::cout << "Eliminada refineria para " << id_jugador << "en ("
+              << posicion.x() << ";" << posicion.y() << ")" << std::endl;
+    std::vector<Posicion>& refinerias_jugador = refinerias.at(id_jugador);
+    for (auto it = refinerias_jugador.begin(); it != refinerias_jugador.end(); ++it) {
+        Posicion& pos_refineria = *it;
+        if (pos_refineria == posicion) {
+            refinerias_jugador.erase(it);
             return;
         }
     }
 }
+
 //futura mejora: usar un heap
-Posicion& Terreno::obtener_refinerias_cercana(const Posicion& pos,int id_jugador) {
+Posicion Terreno::obtener_refinerias_cercana(const Posicion& pos,int id_jugador) {
     if (refinerias.count(id_jugador)==0)
         throw std::runtime_error("no hay refinerias");
     std::vector<Posicion>& refinerias_ = refinerias.at(id_jugador);
@@ -368,7 +372,7 @@ Posicion& Terreno::obtener_refinerias_cercana(const Posicion& pos,int id_jugador
         throw std::runtime_error("no hay refinerias");
     std::cout << "al buscar refnerias hay  "<<refinerias_.size() <<" refinerias" << std::endl;    
     float distancia_minima = std::numeric_limits<float>::infinity();
-    Posicion& min_pos = refinerias_.front();
+    Posicion min_pos = refinerias_.front();
     for (auto refineria = refinerias_.begin();refineria!=refinerias_.end();++refineria){
         float distancia = pos.distancia_a(*refineria);
         if (distancia < distancia_minima){

@@ -114,12 +114,12 @@ int Ejercito::obtener_sprite_clase(const std::string& clase) const {
 }
 
 bool Ejercito::esta_habilitada(const std::string& clase) const {
-    // for (const std::string& requerimiento : 
-    //     tropas_base.at(clase).obtener_requerimientos()) 
-    // {
-    //     if (!infraestructura.jugador_actual_tiene(requerimiento))
-    //         return false;
-    // }
+    for (const std::string& requerimiento : 
+        tropas_base.at(clase).obtener_requerimientos()) 
+    {
+        if (!infraestructura.jugador_actual_tiene(requerimiento))
+            return false;
+    }
     return true;
 }
 
