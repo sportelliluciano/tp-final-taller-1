@@ -44,8 +44,11 @@ Unidad EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y){
     std::cout << "entreo al clonar "<<std::endl;
     return Unidad(id,x,y,prototipos_base.at(id_tipo));
 }
-Cosechadora EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y,Terreno* terreno_,int id_propietario){
-    return Cosechadora(id,x,y,prototipos_base.at(id_tipo),terreno_,id_propietario);
+Cosechadora EjercitoCreador::clonar(std::string id_tipo,int id,int x,int y,
+                                    Terreno* terreno_,int id_propietario,
+                                    Jugador* comunicacion_jugador){
+    return Cosechadora(id,x,y,prototipos_base.at(id_tipo),terreno_,
+                                id_propietario,comunicacion_jugador);
 }
 unsigned int EjercitoCreador::get_costo(std::string id_tipo){
     return prototipos_base.at(id_tipo).get_costo();
@@ -58,6 +61,10 @@ std::pair<int,int>& EjercitoCreador::get_dimensiones(std::string id_tipo){
 }
 unsigned int EjercitoCreador::get_tiempo(std::string id_tipo){
     return prototipos_base.at(id_tipo).get_tiempo();
-
+}
+void EjercitoCreador::get_tiempos_de_entrenamiento(std::unordered_map<std::string,int>& tiempos){
+    for (auto it=prototipos_base.begin();it!=prototipos_base.end();++it){
+        tiempos.insert(std::pair<std::string,int>(it->first,(int)(it->second).get_tiempo()));
+    }
 }
 }

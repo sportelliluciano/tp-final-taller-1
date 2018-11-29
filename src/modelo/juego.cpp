@@ -9,8 +9,8 @@
 #include "modelo/terreno.h"
 
 // Refactor this? mati:no
-#define DINERO_INICIAL         1000
-#define DINERO_MAXIMO_INICIAL  1000
+#define DINERO_INICIAL         10000
+#define DINERO_MAXIMO_INICIAL  10000
 #define ENERGIA_INICIAL        1000
 #define ENERGIA_MAXIMA_INICIAL 1000
 //falta el tema de eliminar la refineria
@@ -68,7 +68,18 @@ void Juego::actualizar(int dt_ms) {
     for (auto it=jugadores.begin(); it != jugadores.end(); ++it) {
         Jugador& jugador = it->second;
         jugador.actualizar_construcciones(dt_ms, inf);
-        jugador.actualizar_entrenamientos(dt_ms, ejercito);
+        jugador.actualizar_entrenamientos(dt_ms, tropas_a_construir,ejercito.get_tiempos_entrenamiento());
+        for (auto it2=tropas_a_construir.begin();it2!=tropas_a_construir.end();++it2){
+            int nuevo_id;
+            if (*it2 == "cosechadora"){
+                nuevo_id = ejercito.crear_cosechadora(*it2,
+                jugador.get_jugador()->obtener_id(),&jugador);
+            } else{
+                nuevo_id = ejercito.crear(*it2, 
+                    jugador.get_jugador()->obtener_id());
+            } 
+            jugador.agregar_elemento(nuevo_id, 0, *it2);
+        }
     }
 
     // Procesar eventos que sí hay que broadcastear
@@ -129,8 +140,6 @@ void Juego::cancelar_construccion_edificio(IJugador* jugador,
 void Juego::ubicar_edificio(IJugador* conexion_jugador, int celda_x, 
     int celda_y, const std::string& clase)
 {
-    unsigned int consumo = inf.get_energia(clase);
-    int id_edificio;
     Jugador& jugador = jugadores.at(conexion_jugador->obtener_id());
 
     if (!jugador.ubicar_edificio(clase, celda_x, celda_y, inf)) {
@@ -149,8 +158,8 @@ void Juego::vender_edificio(IJugador* jugador, int id_edificio) {
     for (auto it = jugadores.begin();it!= jugadores.end();++it){
         if ((it->second).pertenece(id_edificio)){
             (it->second).eliminar_elemento(id_edificio,consumo);
-            unsigned int energia_retorno = inf.reciclar(id_edificio,jugador->obtener_id());
-            (it->second).aumentar_energia(energia_retorno);
+            unsigned int plata_retorno = inf.reciclar(id_edificio,jugador->obtener_id());
+            (it->second).aumentar_plata(plata_retorno);
             return;
         }
     }

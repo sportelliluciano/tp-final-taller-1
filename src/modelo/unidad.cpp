@@ -32,6 +32,8 @@ int Unidad::recibir_dano(unsigned int dano){
 }
 
 int Unidad::atacar(Atacable* victima_){
+    if (posicion.distancia_a(victima_->get_posicion())>unidad_base.get_rango())
+        throw std::runtime_error("Fuera de rango");
     return unidad_base.atacar_a(victima_);
 }
 
@@ -116,11 +118,14 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
     return resincronizar;
 }
 
-void Unidad::configurar_ataque(Atacable* victima_){
+bool Unidad::configurar_ataque(Atacable* victima_){
+    if (posicion.distancia_a(victima_->get_posicion())>unidad_base.get_rango())
+        return false;
     victima = victima_;
     atacando = true;
     tiempo_para_atacar = 0;
     id_victima_ = victima->get_id();
+    return true;
 }
 
 //NOTA: aca se puede chequear el rango

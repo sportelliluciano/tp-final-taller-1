@@ -54,7 +54,7 @@
             "P. estructura": "500",
             "Energía generada": "500"
         },
-        "energia": 0,
+        "energia": 500,
         "costo": 800,
         "dimensiones": [3, 3],
         "puntos_estructura": 500,

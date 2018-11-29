@@ -13,12 +13,6 @@ Jugador::Jugador(std::string casa_,IJugador* comunicacion_jugador_)
 { }
 Jugador::~Jugador(){
 }
-void Jugador::aumentar_consumo(unsigned int consumo_){
-    consumo += consumo_;
-}
-void Jugador::reducir_consumo(unsigned int consumo_){
-    consumo -= consumo_;
-}
 void Jugador::aumentar_energia(unsigned int energia_){
     energia += energia_;
     comunicacion_jugador->actualizar_energia(energia,energia_max);
@@ -26,6 +20,14 @@ void Jugador::aumentar_energia(unsigned int energia_){
 void Jugador::reducir_energia(unsigned int energia_){
     energia -= energia_;
     comunicacion_jugador->actualizar_energia(energia,energia_max);
+}
+void Jugador::aumentar_plata(unsigned int ganancia){
+    plata += ganancia;
+    comunicacion_jugador->actualizar_dinero(plata,energia_max);//cambiar energia max
+}
+void Jugador::reducir_plata(unsigned int costo){
+    plata -= costo;
+    comunicacion_jugador->actualizar_dinero(plata,energia_max);//cambiar energia max
 }
 std::string Jugador::get_casa(){
     return casa;
@@ -40,7 +42,7 @@ bool Jugador::empezar_construccion(const std::string& clase,unsigned int costo){
         construcciones_en_cola[clase]++;
         
     comunicacion_jugador->actualizar_cola_cc(clase, construcciones_en_cola[clase]);
-    reducir_energia(costo);
+    reducir_plata(costo);
     return true;
 }
 bool Jugador::cancelar_construccion(const std::string& clase, unsigned int costo){
@@ -49,7 +51,7 @@ bool Jugador::cancelar_construccion(const std::string& clase, unsigned int costo
         comunicacion_jugador->actualizar_cola_cc(clase, construcciones_en_cola[clase]);
         if (construcciones_en_cola[clase] <= 0)
             construcciones_en_cola.erase(clase);
-        aumentar_energia(costo);
+        aumentar_plata(costo);
         return true;
     }
     return false;
@@ -63,7 +65,7 @@ bool Jugador::empezar_entrenamiento(const std::string& clase,unsigned int costo)
         tropas_en_cola[clase]++;
         
     comunicacion_jugador->actualizar_cola_ee(clase, tropas_en_cola[clase]);
-    reducir_energia(costo);
+    reducir_plata(costo);
     return true;
 }
 bool Jugador::cancelar_entrenamiento(const std::string& clase, unsigned int costo){
@@ -72,7 +74,7 @@ bool Jugador::cancelar_entrenamiento(const std::string& clase, unsigned int cost
         comunicacion_jugador->actualizar_cola_ee(clase, tropas_en_cola[clase]);
         if (tropas_en_cola[clase] <= 0)
             tropas_en_cola.erase(clase);
-        aumentar_energia(costo);
+        aumentar_plata(costo);
         return true;
     }
     return false;
@@ -83,14 +85,12 @@ void Jugador::agregar_elemento(int id,unsigned int energia_,const std::string& c
     //si es un edificio
     if (construcciones_esperando_ubicacion.count(clase)!=0)
         construcciones_esperando_ubicacion.erase(clase);
-    consumo += energia_;
-    //comunicar cambio de energia;
+    reducir_energia(energia_);//check
 }
 
 void Jugador::eliminar_elemento(int id,unsigned int energia_consumida){
-    consumo -= energia_consumida;
     inventario.erase(id);
-    //comunicar cambio de energia;
+    aumentar_energia(energia_consumida);
 }
 
 bool Jugador::pertenece(int id){
@@ -110,7 +110,13 @@ bool Jugador::ubicar_edificio(const std::string& clase, int celda_x,
     
     int id_edificio = inf.crear(clase, celda_x, celda_y, 
         comunicacion_jugador->obtener_id());
-    agregar_elemento(id_edificio, consumo, clase);
+    unsigned int energia_ = inf.get_energia(clase);
+    if (clase == "trampas_aire"){
+        agregar_elemento(id_edificio, 0, clase);
+        aumentar_energia(energia_);
+    } else{
+        agregar_elemento(id_edificio, energia_, clase);
+    }
     return true;
 }
 
@@ -147,21 +153,25 @@ void Jugador::actualizar_construcciones(int dt,Infraestructura& inf) {
     }
 }
 
-void Jugador::actualizar_entrenamientos(int dt, Ejercito& ejercito) {
+void Jugador::actualizar_entrenamientos(int dt,std::vector<std::string>& nuevas_tropas,
+                                    std::unordered_map<std::string,int>& tiempos_de_entrenamiento) {
+    nuevas_tropas.clear();
     for (auto it=tropas.begin(); it != tropas.end();) {
         if (it->second - dt < 0) {
             // Tropa entrenada
             comunicacion_jugador->sincronizar_entrenamiento(it->first, 0);
             const std::string& id_tipo = it->first;
-            int nuevo_id;
+            nuevas_tropas.push_back(id_tipo);
+            /*int nuevo_id;
             if (id_tipo == "cosechadora"){
-                nuevo_id = ejercito.crear_cosechadora(id_tipo, 
-                comunicacion_jugador->obtener_id());    
+                nuevo_id = ejercito.crear_cosechadora(id_tipo,
+                comunicacion_jugador->obtener_id(),this);    
             } else{
                 nuevo_id = ejercito.crear(id_tipo, 
                     comunicacion_jugador->obtener_id());
             } 
             agregar_elemento(nuevo_id, 0, id_tipo);
+            */
             it = tropas.erase(it);
         } else {
             it->second -= dt;
@@ -173,8 +183,8 @@ void Jugador::actualizar_entrenamientos(int dt, Ejercito& ejercito) {
     {   //se procesa cada construccion a la vez
         if ((tropas.count(it->first) == 0)) 
         {
-            tropas[it->first] = ejercito.get_tiempo(it->first)/8;
-            comunicacion_jugador->iniciar_entrenamiento(it->first, ejercito.get_tiempo(it->first)/8);//tropa
+            tropas[it->first] = tiempos_de_entrenamiento.at(it->first)/8;
+            comunicacion_jugador->iniciar_entrenamiento(it->first, tiempos_de_entrenamiento.at(it->first)/8);//tropa
             it->second--;
             comunicacion_jugador->actualizar_cola_ee(it->first, it->second);
         }

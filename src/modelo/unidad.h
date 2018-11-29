@@ -4,7 +4,7 @@
 #include "libs/json.hpp"
 
 // TODO: Arreglar esto
-namespace modelo { class Unidad; }
+//namespace modelo { class Unidad; }
 
 #include "modelo/atacable.h"
 #include "modelo/arma.h"
@@ -35,7 +35,7 @@ public:
     Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
     ~Unidad();
 
-    void configurar_ataque(Atacable* victima);
+    bool configurar_ataque(Atacable* victima);
     int atacar(Atacable* victima);
     int recibir_dano(unsigned int dano);
     void parar_ataque();

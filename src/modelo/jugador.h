@@ -9,7 +9,7 @@
 #include "comun/i_modelo.h"
 #include "comun/i_jugador.h"
 #include "modelo/infraestructura.h"
-#include "modelo/ejercito.h"
+//#include "modelo/ejercito.h"
 
 namespace modelo {
 
@@ -18,8 +18,8 @@ class Jugador{
     std::string casa;
     std::set<int> inventario;
     int energia = 100000;
+    int plata = 10000;
     unsigned int energia_max = 10000000;
-    unsigned int consumo = 0;
     IJugador* comunicacion_jugador;
     std::unordered_map<std::string, int> construcciones;
     std::unordered_set<std::string> construcciones_esperando_ubicacion;
@@ -31,10 +31,10 @@ class Jugador{
     public:
     Jugador(std::string casa,IJugador* jugador);
     ~Jugador();
-    void aumentar_consumo(unsigned int consumo_);
-    void reducir_consumo(unsigned int consumo_);
     void aumentar_energia(unsigned int energia_);
     void reducir_energia(unsigned int energia_);
+    void aumentar_plata(unsigned int ganancia);
+    void reducir_plata(unsigned int costo);
     std::string get_casa();
     bool hay_suficiente_energia(unsigned int costo);
     bool empezar_construccion(const std::string& clase,unsigned int costo);
@@ -46,7 +46,8 @@ class Jugador{
     void eliminar_elemento(int id,unsigned int energia_consumida);
     bool pertenece(int id);
     void actualizar_construcciones(int dt, Infraestructura& infraestructura);
-    void actualizar_entrenamientos(int dt, Ejercito& ejercito);
+    void actualizar_entrenamientos(int dt,std::vector<std::string>& nuevas_tropas,
+                                    std::unordered_map<std::string,int>& tiempos_de_entrenamiento);
     IJugador* get_jugador();
 };
 }

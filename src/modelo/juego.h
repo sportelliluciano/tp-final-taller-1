@@ -33,7 +33,7 @@ class Juego : public IModelo {
     bool empezo = false;
     void actualizar_construcciones(int dt);
     void actualizar_tropas(int dt);
-
+    std::vector<std::string> tropas_a_construir;
 public:
     /**** Métodos de interacción con el servidor. ****/
     Juego();
