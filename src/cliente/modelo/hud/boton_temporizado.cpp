@@ -49,9 +49,15 @@ void BotonTemporizado::set_filtro(bool gris, bool verde) {
 void BotonTemporizado::renderizar(Ventana& ventana, const Posicion& punto) {
     Sprite(sprite_id).renderizar(ventana, punto.x, punto.y);
     if (con_filtro_gris) {
+        if (!ventana.obtener_administrador_texturas().contiene_textura("filtro-gris")) {
+            ventana
+                .obtener_administrador_texturas()
+                .crear_textura("filtro-gris", ANCHO_BOTON, ALTO_BOTON)
+                .limpiar(127, 127, 127, 128);
+        }
         ventana
             .obtener_administrador_texturas()
-            .cargar_imagen("./assets/nuevos/filtro-boton-construccion.png")
+            .obtener_textura("filtro-gris")
             .renderizar(punto.x, punto.y);
     } else if (con_filtro_verde) {
         if (!ventana.obtener_administrador_texturas().contiene_textura("filtro-verde")) {

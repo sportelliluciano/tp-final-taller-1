@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "servidor/config.h"
 #include "servidor/servidor.h"
 
 int main(int argc, char *argv[]) {

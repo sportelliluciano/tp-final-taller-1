@@ -5,6 +5,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include "cliente/config.h"
+
 #include "cliente/modelo/disparo_misil.h"
 #include "cliente/modelo/hud/barra_vida.h"
 #include "comun/log.h"
@@ -160,7 +162,7 @@ void Tropa::renderizar(Ventana& ventana, Camara& camara) {
     if (esta_marcada) {
         const Textura& marca = ventana
             .obtener_administrador_texturas()
-            .cargar_imagen("./assets/nuevos/unidad-seleccionada.png");
+            .cargar_imagen(RUTA_IMAGENES "/unidad-seleccionada.png");
         
         marca.renderizar(visual.x - marca.obtener_ancho() / 2, 
             visual.y);

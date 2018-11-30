@@ -22,10 +22,14 @@
 // Descomentar esta línea para activar los mensajes de depuración de tiempos
 //#define DEPURAR_TIEMPOS 1
 
+/**
+ * Cada cuánto se procesan eventos
+ */
 #define TICK_MS 20
 
 // Dejar un 20% del tiempo de actualización como margen.
 #define DELAY_EV ((TICK_MS * 20) / 100)
+
 
 #if DEPURAR_TIEMPOS
  #define DEPURAR_TIEMPO_EVENTO(ev, expr) \
@@ -33,7 +37,6 @@
 #else
  #define DEPURAR_TIEMPO_EVENTO(ev, expr) { expr }
 #endif
-
 
 namespace servidor {
 
@@ -194,7 +197,8 @@ void Sala::jugar() {
 
             auto ms_actualizacion = medir_tiempo_ms([&] () {
                 std::this_thread::sleep_until(timeout);
-                modelo->actualizar(TICK_MS);
+                for (int i=0;i<TICK_MS/TICK_MS;i++)
+                    modelo->actualizar(TICK_MS);
             });                
             
             if (ms_actualizacion > TICK_MS) {

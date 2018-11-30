@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "cliente/config.h"
+
 #include "cliente/cliente_juego.h"
 
 int main(int argc, char *argv[]) {

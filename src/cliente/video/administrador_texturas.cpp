@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "cliente/config.h"
 #include "cliente/video/error_sdl.h"
 #include "cliente/video/textura.h"
 #include "comun/log.h"
@@ -12,10 +13,10 @@ namespace cliente {
 AdministradorTexturas::AdministradorTexturas(SDL_Renderer *renderer_) {
     renderer = renderer_;
     // TODO: refactorizar esto / chequear errores correctamente
-    fuente_micro = TTF_OpenFont("./assets/fuente.ttf", 12);
-    fuente_chico = TTF_OpenFont("./assets/fuente.ttf", 14);
-    fuente_normal = TTF_OpenFont("./assets/fuente.ttf", 18);
-    fuente_grande = TTF_OpenFont("./assets/fuente.ttf", 30);
+    fuente_micro = TTF_OpenFont(RUTA_FUENTE, 12);
+    fuente_chico = TTF_OpenFont(RUTA_FUENTE, 14);
+    fuente_normal = TTF_OpenFont(RUTA_FUENTE, 18);
+    fuente_grande = TTF_OpenFont(RUTA_FUENTE, 30);
     if (!fuente_micro || !fuente_chico || !fuente_normal || !fuente_grande)
         throw ErrorSDL("TTF_OpenFont", TTF_GetError());
 }

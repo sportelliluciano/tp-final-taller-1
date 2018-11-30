@@ -1,6 +1,6 @@
 #include "cliente/modelo/sprite.h"
 
-#define RUTA_SPRITES_NUM "./assets/imgs/imgs/"
+#include "cliente/config.h"
 
 namespace cliente {
 
@@ -14,8 +14,11 @@ static const Textura& cargar_textura(Ventana& ventana, int id,
     if (id == -1)
         return ventana.obtener_administrador_texturas().cargar_imagen(ruta);
     
-    char nombre[300];
-    sprintf(nombre, RUTA_SPRITES_NUM "%05d.bmp", id);
+    if (id > 999999)
+        throw std::runtime_error("ID de sprite inválido");
+    
+    char nombre[sizeof(RUTA_SPRITES) + sizeof("/000000.bmp")];
+    sprintf(nombre, RUTA_SPRITES "/%05d.bmp", id);
 
     const Textura& textura = ventana
         .obtener_administrador_texturas()
@@ -61,9 +64,12 @@ void Sprite::renderizar(Ventana& ventana, int x, int y) {
         textura.renderizar(x + dx, y + dy);
         return;
     }
+
+    if (id > 999999)
+        throw std::runtime_error("ID de sprite inválido");
     
-    char nombre[300];
-    sprintf(nombre, RUTA_SPRITES_NUM "%05d.bmp", id);
+    char nombre[sizeof(RUTA_SPRITES) + sizeof("/000000.bmp")];
+    sprintf(nombre, RUTA_SPRITES "/%05d.bmp", id);
 
     const Textura& textura = ventana
         .obtener_administrador_texturas()

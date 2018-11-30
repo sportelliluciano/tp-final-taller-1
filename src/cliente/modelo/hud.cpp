@@ -1,7 +1,6 @@
 #include "cliente/modelo/hud.h"
 
-#include <iostream>
-
+#include "cliente/config.h"
 #include "cliente/modelo/hud/area_juego.h"
 #include "cliente/modelo/hud/energia.h"
 #include "cliente/modelo/hud/tostador.h"
@@ -60,33 +59,33 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
     barra_botoneras.empaquetar_al_frente(modo_entrenamiento);
     barra_botoneras.empaquetar_al_frente(modo_vender);
 
-    modo_construccion.set_imagen("./assets/nuevos/icono-construir.png");
+    modo_construccion.set_imagen(RUTA_IMAGENES "/icono-construir.png");
     modo_construccion.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
     modo_construccion.set_autopadding(true);
     modo_construccion.registrar_click([this](){ click_modo_construir(); });
     
-    modo_entrenamiento.set_imagen("./assets/nuevos/icono-entrenar.png");
+    modo_entrenamiento.set_imagen(RUTA_IMAGENES "/icono-entrenar.png");
     modo_entrenamiento.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
     modo_entrenamiento.set_autopadding(true);
     modo_entrenamiento.registrar_click([this](){ click_modo_entrenar(); });
     
-    modo_vender.set_imagen("./assets/nuevos/icono-vender.png");
+    modo_vender.set_imagen(RUTA_IMAGENES "/icono-vender.png");
     modo_vender.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
     modo_vender.set_autopadding(true);
     modo_vender.registrar_click([this](){ click_modo_vender(); });    
     
     salir.set_tamanio(42, 32);
-    salir.set_imagen("./assets/nuevos/salir.png");
+    salir.set_imagen(RUTA_IMAGENES "/salir.png");
     salir.set_padding(5, 4);
     salir.registrar_click([this] () { juego.detener(); });
 
     mutear_sonido.set_tamanio(42, 32);
-    mutear_sonido.set_imagen("./assets/nuevos/sin-sonido.png");
+    mutear_sonido.set_imagen(RUTA_IMAGENES "/sin-sonido.png");
     mutear_sonido.set_padding(5, 4);
     mutear_sonido.registrar_click([this](){ toggle_sonido(); });
     
     mutear_musica.set_tamanio(42, 32);
-    mutear_musica.set_imagen("./assets/nuevos/musica-habilitada.png");
+    mutear_musica.set_imagen(RUTA_IMAGENES "/musica-habilitada.png");
     mutear_musica.set_padding(5, 4);
     mutear_musica.registrar_click([this](){ toggle_musica(); });
 
@@ -134,10 +133,10 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
 
 void HUD::toggle_sonido() {
     if (!sonido_activo) {
-        mutear_sonido.set_imagen("./assets/nuevos/sin-sonido.png");
+        mutear_sonido.set_imagen(RUTA_IMAGENES "/sin-sonido.png");
         Sonido::obtener_instancia().set_volumen_sonidos(100);
     } else {
-        mutear_sonido.set_imagen("./assets/nuevos/con-sonido.png");
+        mutear_sonido.set_imagen(RUTA_IMAGENES "/con-sonido.png");
         Sonido::obtener_instancia().set_volumen_sonidos(0);
     }
 
@@ -146,10 +145,10 @@ void HUD::toggle_sonido() {
 
 void HUD::toggle_musica() {
     if (!musica_activa) {
-        mutear_musica.set_imagen("./assets/nuevos/musica-deshabilitada.png");
+        mutear_musica.set_imagen(RUTA_IMAGENES "/musica-deshabilitada.png");
         Sonido::obtener_instancia().iniciar_musica_fondo();
     } else {
-        mutear_musica.set_imagen("./assets/nuevos/musica-habilitada.png");
+        mutear_musica.set_imagen(RUTA_IMAGENES "/musica-habilitada.png");
         Sonido::obtener_instancia().detener_musica_fondo();
     }
 

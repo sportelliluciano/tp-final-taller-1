@@ -7,6 +7,7 @@
 
 #include "libs/json.hpp"
 
+#include "cliente/config.h"
 #include "cliente/modelo/celda.h"
 #include "cliente/video/ventana.h"
 
@@ -74,7 +75,7 @@ void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
         if (marcado) {
             ventana
                 .obtener_administrador_texturas()
-                .cargar_imagen("./assets/nuevos/seleccion-edificio.png")
+                .cargar_imagen(RUTA_IMAGENES "/seleccion-edificio.png")
                 .renderizar(x_px + sprite.obtener_ancho(ventana) / 2, y_px);
         }
         barra_vida.set_ancho(ANCHO_BARRA_VIDA);

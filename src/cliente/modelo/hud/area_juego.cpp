@@ -1,5 +1,6 @@
 #include "cliente/modelo/hud/area_juego.h"
 
+#include "cliente/config.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
 #include "cliente/video/camara.h"
@@ -23,7 +24,7 @@ AreaJuego::AreaJuego(Juego& juego_, Servidor& servidor_, Tostador& tostador_)
 { 
     mouse_vender.configurar_repeticion(true);
     mouse_mover_tropa.set_centrado(true);
-    mouse_atacar = SpriteAnimado({Sprite("./assets/nuevos/atacar.png")}, 1);
+    mouse_atacar = SpriteAnimado({Sprite(RUTA_IMAGENES "/atacar.png")}, 1);
     mouse_atacar.configurar_repeticion(true);
 }
     

@@ -4,5 +4,5 @@ cmake_minimum_required(VERSION 2.8.11)
 file(GLOB libmodelo_srcs *.cpp)
 
 # Generar una libería estática con todo el cliente EXCEPTO el main
-add_library(libmodelo ${libmodelo_srcs})
+add_library(modelo ${libmodelo_srcs})
 

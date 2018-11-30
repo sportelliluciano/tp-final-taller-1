@@ -9,58 +9,67 @@ Link al informe: https://es.overleaf.com/read/vjspvynrnrct
 - `libsdl2-mixer-dev`
 - `qt5-default`
 
-#### Compilación
-Para compilar el proyecto (cliente y servidor) se deben utilizar los siguientes 
-comandos, una vez clonado el repositorio:
-```bash
-~/tp-final-taller-1 $ mkdir build
-~/tp-final-taller-1 $ cd build
-~/tp-final-taller-1/build $ cmake ..
-~/tp-final-taller-1/build $ make
-```
-Observar que la carpeta build esta ignorada en el `.gitignore`.
+#### Utilidades requeridas
+- `python3`
+- `7z`
 
 #### Archivos requeridos
-El cliente requiere que todos los sprites del juego, las imágenes de los botones,
-los sonidos y las fuentes estén en una estructura de carpetas con la siguiente
-forma:
+Para compilar el proyecto se debe crear una carpeta (comunmente denominada 
+`build`) y se deben copiar dentro de la misma los archivos `sprites.7z` y
+`terrain.7z` provistos por la cátedra.
+Todos los archivos extra requeridos se encuentran en la carpeta `data` y serán
+copiados al lugar correspondiente por el instalador del juego.
+
+Asumiendo que se compilará dentro de la carpeta `build`, la estructura debe
+quedar de la siguiente manera:
+
+Observar que la carpeta `build` esta ignorada en el `.gitignore`.
+
 ```
 build/
-├── cliente*
-└── assets/
-    ├── imgs
-    |   └── imgs
-    |       ├── 00001.bmp
-    |       ├── 00002.bmp
-    |       ├── ...
-    |       └── 05104.bmp
-    ├── sonidos
-    |   ├── bleep.wav
-    |   └── this_sick_beat.mp3
-    ├── nuevos
-    |   ├── atacar.png
-    |   ├── con-sonido.png
-    |   ├── ...
-    |   └── unidad-seleccionada.png
-    ├── terrain
-    |   └── d2k_BLOXBASE.bmp
-    └── fuente.ttf
-```
-El contenido de las carpetas `sonidos` y `nuevos` y el archivo `fuente.ttf` 
-están en el repositorio, dentro de la carpeta `data`.
-El contenido de las carpetas imgs y terrain fue provisto por la cátedra.
-Observar que las imágenes que estan en `imgs` no tienen los mismos nombres que
-las provistas por la cátedra. Las mismas fueron renombradas utilizando un 
-script que se encuentra en `data/renombrar-imagenes.py`.
-El uso del mismo es el siguiente:
-```bash
-build/assets $ python3 renombrar_imagenes.py imgs/imgs > renombrar.sh
-build/assets $ chmod +x renombrar.sh
-build/assets $ ./renombrar.sh
+├── sprites.7z
+└── terrain.7z
 ```
 
-Observar que `imgs/imgs` es el directorio con las imágenes provistas por la 
-cátedra y que se renombran *in-place*.
+El script de instalación se ocupará de descomprimir los mismos y copiarlos en
+la ubicación adecuada.
+
+#### Compilación e instalación
+Una vez creada la carpeta `build` y copiados los archivos `terrain.7z` y
+`sprites.7z` se debe proceder de la siguiente forma para compilar el proyecto.
+```bash
+~/tp-final-taller-1 $ cd build
+~/tp-final-taller-1/build $ cmake -DCMAKE_INSTALL_PREFIX=./instalacion ..
+~/tp-final-taller-1/build $ make
+~/tp-final-taller-1/build $ make install
+```
+
+El valor de `CMAKE_INSTALL_PREFIX` permite determinar donde se instalará el
+juego. Por defecto este directorio es `/usr/local`.
+
+Se admiten las siguientes opciones de compilación:
+- `CL_USAR_ASAN`: Compilar el cliente con Address Sanitizer
+- `DEPURAR_RED`: Mostrar los mensajes de red enviados tanto el cliente como
+en el servidor.
+- `SV_DEPURAR_TIEMPOS`: Mostrar mensajes de depuración de tiempos en el servidor.
+
+Por defecto las opciones están desactivadas.
+
+Para activar alguna de las opciones, agregarlas en el comando cmake en la forma
+`-Dopcion=ON|OFF`, por ejemplo:
+
+```bash
+cmake -DSV_DEPURAR_TIEMPOS=ON -DCMAKE_INSTALL_PREFIX=./instalacion ..
+```
+
+Opcionalmente se puede agregar a la variable de entorno `PATH` la ruta
+`<CMAKE_INSTALL_PREFIX>/bin` para poder ejecutar el mismo directamente.
+
+
+#### Ejecución del juego
+El juego se compone de dos binarios, el cliente y el servidor. El cliente
+se ejecuta como `dune-remake` y el servidor como `dune-remake-servidor`.
+
 
 #### Lineamientos sobre el código:
 

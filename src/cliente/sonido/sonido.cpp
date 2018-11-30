@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
+#include "cliente/config.h"
 #include "cliente/video/error_sdl.h"
 #include "comun/log.h"
 
@@ -31,7 +32,7 @@ void Sonido::reproducir_sonido(sonido_t sonido, int volumen) {
         return;
     
     if (sonidos.find(sonido) == sonidos.end()) {
-        Mix_Chunk* nuevo_sonido = Mix_LoadWAV("./assets/sonidos/bleep.wav");
+        Mix_Chunk* nuevo_sonido = Mix_LoadWAV(RUTA_SONIDOS "/bleep.wav");
         if (!nuevo_sonido)
             throw ErrorSDL("Mix_LoadWAV", Mix_GetError());
         sonidos.emplace(sonido, nuevo_sonido);
@@ -49,7 +50,7 @@ void Sonido::reproducir_sonido(sonido_t sonido, int volumen) {
 
 void Sonido::iniciar_musica_fondo() {
     if (musica_fondo == NULL) {
-        musica_fondo = Mix_LoadMUS("./assets/sonidos/this_sick_beat.mp3");
+        musica_fondo = Mix_LoadMUS(RUTA_SONIDOS "/this_sick_beat.mp3");
         if (!musica_fondo)
             throw ErrorSDL("Mix_LoadMUS", Mix_GetError());
     }

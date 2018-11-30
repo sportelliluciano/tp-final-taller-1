@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 
+#include "cliente/config.h"
 #include "cliente/modelo/edificio.h"
 #include "cliente/modelo/tropa.h"
 
@@ -12,7 +13,7 @@
 #define COLS_MOSAICO 20
 #define FILAS_MOSAICO 40
 
-#define RUTA_MOSAICO "./assets/terrain/d2k_BLOXBASE.bmp"
+#define RUTA_MOSAICO RUTA_TERRENOS "/d2k_BLOXBASE.bmp"
 
 namespace cliente {
 
