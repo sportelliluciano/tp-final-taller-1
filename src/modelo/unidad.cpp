@@ -32,7 +32,7 @@ int Unidad::recibir_dano(unsigned int dano){
 }
 
 int Unidad::atacar(Atacable* victima_){
-    if (posicion.distancia_a(victima_->get_posicion())>unidad_base.get_rango())
+    if (posicion.distancia_celda_a(victima_->get_posicion())>unidad_base.get_rango())
         throw std::runtime_error("Fuera de rango");
     return unidad_base.atacar_a(victima_);
 }
@@ -119,7 +119,9 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
 }
 
 bool Unidad::configurar_ataque(Atacable* victima_){
-    if (posicion.distancia_a(victima_->get_posicion())>unidad_base.get_rango())
+    std::cout << "la distancia es: " << posicion.distancia_celda_a(victima_->get_posicion())<<std::endl;
+    std::cout << "y el rango es : " <<unidad_base.get_rango() <<std::endl;
+    if (posicion.distancia_celda_a(victima_->get_posicion())>unidad_base.get_rango())
         return false;
     victima = victima_;
     atacando = true;

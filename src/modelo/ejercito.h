@@ -62,6 +62,8 @@ class Ejercito{
     Unidad& get(int id);
     unsigned int get_costo(std::string id_tipo);
     unsigned int get_tiempo(std::string id_tipo);
+    std::set<std::string>& get_requisitos(const std::string& clase);
+    bool pertenece(const std::string& clase,const std::string& casa);
 };
 }
 #endif

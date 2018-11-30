@@ -145,6 +145,14 @@ Unidad& Ejercito::get(int id) {
         return tropas.at(id);
     }
 }
+std::set<std::string>& Ejercito::get_requisitos(const std::string& clase){
+    return prototipos.get_requisitos(clase);
+}
+
+bool Ejercito::pertenece(const std::string& clase,const std::string& casa){
+    std::set<std::string>& casas = prototipos.get_casas(clase);
+    return casas.count(casa)!=0;
+}
 
 unsigned int Ejercito::get_costo(std::string id_tipo) {
     return prototipos.get_costo(id_tipo);

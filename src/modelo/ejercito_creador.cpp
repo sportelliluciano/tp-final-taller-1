@@ -67,4 +67,10 @@ void EjercitoCreador::get_tiempos_de_entrenamiento(std::unordered_map<std::strin
         tiempos.insert(std::pair<std::string,int>(it->first,(int)(it->second).get_tiempo()));
     }
 }
+std::set<std::string>& EjercitoCreador::get_requisitos(const std::string& clase){
+    return prototipos_base.at(clase).get_requisitos();
+}
+std::set<std::string>& EjercitoCreador::get_casas(const std::string& clase){
+    return prototipos_base.at(clase).get_casas();
+}
 }

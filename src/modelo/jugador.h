@@ -49,6 +49,7 @@ class Jugador{
     void actualizar_entrenamientos(int dt,std::vector<std::string>& nuevas_tropas,
                                     std::unordered_map<std::string,int>& tiempos_de_entrenamiento);
     IJugador* get_jugador();
+    bool tiene(std::set<std::string>& requisitos,Infraestructura& inf);
 };
 }
 #endif

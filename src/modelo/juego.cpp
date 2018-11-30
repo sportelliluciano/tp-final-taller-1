@@ -168,6 +168,11 @@ void Juego::vender_edificio(IJugador* jugador, int id_edificio) {
 void Juego::iniciar_entrenamiento_tropa(IJugador* jugador,
     const std::string& clase)
 {
+    std::set<std::string>& requisitos = ejercito.get_requisitos(clase);
+    Jugador& jugador_ = jugadores.at(jugador->obtener_id());
+    if (!jugador_.tiene(requisitos,inf)||!ejercito.pertenece(clase,jugador->obtener_casa()))
+        return;
+        
     unsigned int costo = ejercito.get_costo(clase);
     jugadores.at(jugador->obtener_id()).empezar_entrenamiento(clase,costo);
 }

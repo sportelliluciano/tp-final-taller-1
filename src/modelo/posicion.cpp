@@ -28,6 +28,12 @@ bool Posicion::operator!=(const Posicion& otro) const {
 
 float Posicion::distancia_a(const Posicion& otro) const {
     float delta_x, delta_y;
+    delta_x = this->x() - otro.x();
+    delta_y = this->y() - otro.y();
+    return sqrt((delta_x * delta_x) + (delta_y * delta_y));
+}
+int Posicion::distancia_celda_a(const Posicion& otro) const{
+    int delta_x, delta_y;
     delta_x = x_ - otro.x_;
     delta_y = y_ - otro.y_;
     return sqrt((delta_x * delta_x) + (delta_y * delta_y));

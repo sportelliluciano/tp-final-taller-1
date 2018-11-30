@@ -32,6 +32,8 @@ class EjercitoCreador{
     unsigned int get_tiempo(std::string id_tipo);
     std::pair<int,int>& get_dimensiones(std::string id_tipo);
     void get_tiempos_de_entrenamiento(std::unordered_map<std::string,int>& tiempos);
+    std::set<std::string>& get_requisitos(const std::string& clase);
+    std::set<std::string>& get_casas(const std::string& clase);
 };
 }
 #endif

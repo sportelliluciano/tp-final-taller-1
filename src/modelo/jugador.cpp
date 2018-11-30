@@ -80,12 +80,29 @@ bool Jugador::cancelar_entrenamiento(const std::string& clase, unsigned int cost
     return false;
 }
 
+bool Jugador::tiene(std::set<std::string>& requisitos,Infraestructura& inf){
+    unsigned int cumplidos = 0;
+    for (auto it = requisitos.begin();it!=requisitos.end();++it){
+        for (auto it2 = inventario.begin();it2!=inventario.end();++it2){
+            if (inf.pertenece(*it2)){
+                if (inf.get(*it2).get_tipo() == *it ){
+                    cumplidos++;
+                    break;
+                }
+            }
+        }
+    }
+    if (requisitos.size() == cumplidos)
+        return true;
+    return false;     
+}
+
 void Jugador::agregar_elemento(int id,unsigned int energia_,const std::string& clase){
     inventario.insert(id);
     //si es un edificio
     if (construcciones_esperando_ubicacion.count(clase)!=0)
         construcciones_esperando_ubicacion.erase(clase);
-    reducir_energia(energia_);//check
+    reducir_energia(energia_);
 }
 
 void Jugador::eliminar_elemento(int id,unsigned int energia_consumida){
