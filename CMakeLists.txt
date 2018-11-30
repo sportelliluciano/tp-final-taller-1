@@ -48,7 +48,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wshadow -Wpointer-arith")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunreachable-code -Wformat=2")
 
 if(DEPURAR_RED)
- set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEPURAR_RED")
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEPURACION_RED=1")
 endif(DEPURAR_RED)
 
 # Todos los #include son relativos a src
