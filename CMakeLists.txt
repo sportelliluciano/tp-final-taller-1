@@ -78,7 +78,7 @@ install(TARGETS dune-remake dune-remake-servidor DESTINATION bin)
 # Copiar configuración inicial y mapas base del servidor
 install(FILES data/servidor/config.json
               data/servidor/edificios.json
-              data/servidor/ejercito.json
+              data/servidor/ejercitos.json
         DESTINATION ${SV_CONFIG_DIR})
 file(GLOB SV_MAPAS_BASE data/servidor/mapas/*.json)
 install(FILES ${SV_MAPAS_BASE} DESTINATION ${SV_CONFIG_DIR}/mapas)
