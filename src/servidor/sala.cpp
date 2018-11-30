@@ -1,8 +1,6 @@
 #include "servidor/sala.h"
 
 #include <chrono>
-#include <iostream>
-#include <fstream>
 #include <mutex>
 #include <stdexcept>
 #include <string>
@@ -17,7 +15,6 @@
 #include "comun/log.h"
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
-#include "modelo/juego.h"
 
 // Descomentar esta línea para activar los mensajes de depuración de tiempos
 //#define DEPURAR_TIEMPOS 1
@@ -40,21 +37,9 @@
 
 namespace servidor {
 
-Sala::Sala(const std::string& nombre_, size_t capacidad_maxima) 
-: modelo(new modelo::Juego()), nombre(nombre_)
-{
-    capacidad = capacidad_maxima;
-    std::ifstream f_mapa("../data/servidor/mapas/mapa2.json");
-    f_mapa >> mapa;
-    
-    std::ifstream f_edificios("../data/servidor/edificios.json");
-    f_edificios >> edificios;
-
-    std::ifstream f_ejercito("../data/servidor/ejercito.json");
-    f_ejercito >> ejercito;
-
-    modelo->inicializar(mapa, edificios, ejercito);
-}
+Sala::Sala(const std::string& nombre_, size_t capacidad_maxima, IModelo* juego) 
+: modelo(juego), nombre(nombre_), capacidad(capacidad_maxima)
+{ }
 
 Sala::Sala(Sala&& otro) {
     if (partida_iniciada || otro.partida_iniciada) {
@@ -69,9 +54,7 @@ Sala::Sala(Sala&& otro) {
     terminar = otro.terminar;
     capacidad = otro.capacidad;
     partida_iniciada = otro.partida_iniciada;
-    mapa = std::move(otro.mapa);
-    edificios = std::move(otro.edificios);
-    ejercito = std::move(otro.ejercito);
+    sala_abierta = otro.sala_abierta;
 }
 
 void Sala::agregar_cliente(Cliente& cliente) {
@@ -121,9 +104,7 @@ void Sala::iniciar_partida(Cliente& cliente) {
     if (partida_iniciada)
         throw std::runtime_error("Esta partida ya fue iniciada");
     
-    cliente.enviar(mapa);
-    cliente.enviar(edificios);
-    cliente.enviar(ejercito.at("unidades"));
+    sala_abierta = false;
 
     clientes.at(&cliente).set_estado(true);
 
@@ -131,18 +112,10 @@ void Sala::iniciar_partida(Cliente& cliente) {
 
     for (auto it=clientes.begin();it!=clientes.end();++it) {
         ConexionJugador& jugador = it->second;
-
         todos_listos &= jugador.esta_listo();
     }
 
     if (todos_listos) {
-        for (auto it=clientes.begin();it!=clientes.end();++it) {
-            Cliente* jugador = it->first;
-            jugador->enviar({
-                {"tipo", "juego_iniciando"},
-                {"id_jugador", it->second.obtener_id()}
-            });
-        }
         hilo_partida = std::thread(&Sala::jugar, this);
     }
 }
@@ -166,6 +139,12 @@ void Sala::jugar() {
         configurar_recepcion_eventos();
         
         modelo->iniciar_partida();
+
+        while (!terminar && !modelo->esperar_sincronizacion_inicial()) {
+            std::pair<IJugador*, nlohmann::json> evento = cola_eventos.pull();
+            actualizar_modelo(evento.first, evento.second);
+        }
+
         auto base = steady_clock::now();
 #if DEPURAR_TIEMPOS
         auto un_seg = base + seconds(1);
@@ -237,11 +216,13 @@ void Sala::jugar() {
 }
 
 bool Sala::puede_unirse() const {
+    return sala_abierta;
     return (jugadores.size() >= capacidad) || !partida_iniciada;
 }
 
 void Sala::terminar_partida() {
     terminar = true;
+    sala_abierta = false;
 
     if (hilo_partida.joinable())
         hilo_partida.join();
@@ -353,11 +334,17 @@ void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {
                 });
                 break;
             
+            case EVS_JUGADOR_LISTO:
+                DEPURAR_TIEMPO_EVENTO("jugador_listo", {
+                    modelo->jugador_listo(jugador);
+                });
+                break;
+
             default:
                 throw std::runtime_error("actualizar_modelo: Evento desconocido");
         }
     } catch(const std::exception& e) {
-        std::cout << "Explosión controlada: " << e.what() << std::endl;
+        log_advertencia("Explosión controlada: %s\n", e.what());
     } // Dejar que otras excepciones asciendan
 }
 

@@ -63,7 +63,7 @@ void Log::dbg(const char* archivo, int linea, const char* funcion, ...)
     va_list args;
     va_start(args, funcion);
     char *fmt = va_arg(args, char*);
-    escribir(COLOR_VERDE, archivo, linea, funcion, fmt, args, m_log);
+    escribir(COLOR_VERDE, archivo, linea, funcion, fmt, args, m_cout);
     va_end(args);
 }
 
@@ -71,7 +71,7 @@ void Log::warn(const char* archivo, int linea, const char* funcion, ...) {
     va_list args;
     va_start(args, funcion);
     const char* fmt = va_arg(args, const char*);
-    escribir(COLOR_AMARILLO, archivo, linea, funcion, fmt, args, m_log);
+    escribir(COLOR_AMARILLO, archivo, linea, funcion, fmt, args, m_cout);
     va_end(args);
 }
 
@@ -79,7 +79,7 @@ void Log::err(const char* archivo, int linea, const char* funcion, ...) {
     va_list args;
     va_start(args, funcion);
     const char* fmt = va_arg(args, const char*);
-    std::lock_guard<std::mutex> lock(m_log);
+    std::lock_guard<std::mutex> lock(m_cout);
     fprintf(stderr, "%s[%s:%d > %s] %s", COLOR_ROJO, basename(archivo), linea, 
         funcion, COLOR_RESET);
     vfprintf(stderr, fmt, args);
@@ -87,8 +87,24 @@ void Log::err(const char* archivo, int linea, const char* funcion, ...) {
     va_end(args);
 }
 
+void Log::cout(const char* fmt, ...) {
+    std::lock_guard<std::mutex> lock(m_cout);
+    va_list args;
+    va_start(args, fmt);
+    vprintf(fmt, args);
+    va_end(args);
+}
+
+void Log::cerr(const char* fmt, ...) {
+    std::lock_guard<std::mutex> lock(m_cerr);
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+}
+
 void Log::red(bool saliente, ...) {
-    std::lock_guard<std::mutex> lock(m_log);
+    std::lock_guard<std::mutex> lock(m_cout);
     const char *color = (saliente) ? COLOR_VERDE : COLOR_ROJO;
     const char *direccion = (saliente) ? ">>" : "<<";
     printf("%s[%lu ms] %s%s%s ", COLOR_VERDE, timestamp(), color, direccion, 
@@ -102,7 +118,7 @@ void Log::red(bool saliente, ...) {
 }
 
 void Log::tiempo(const char* evento, uint64_t tiempo) {
-    std::lock_guard<std::mutex> lock(m_log);
+    std::lock_guard<std::mutex> lock(m_cout);
     printf("%s[%lu ms]%s t(%s) = %lu ms\n", COLOR_VERDE, timestamp(), 
         COLOR_RESET, evento, tiempo);
 }

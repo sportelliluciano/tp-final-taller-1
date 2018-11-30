@@ -37,9 +37,7 @@ typedef enum {
     EVC_ACTUALIZAR_ENERGIA,       // (nueva_energia, nuevo_maximo)
 
     // Configuración / Misc
-    EVC_INICIALIZAR_MAPA,         // (mapa)
-    EVC_INICIALIZAR_INFRAESTRUCTURA, // (infra)
-    EVC_INICIALIZAR_EJERCITO,     // (ejercito)
+    EVC_INICIALIZAR,
     EVC_JUEGO_INICIANDO,          // (id)
     EVC_CREAR_JUGADOR,            // (id, nombre, casa)
     EVC_JUGADOR_LISTO,            // (id)

@@ -1,15 +1,18 @@
 #include "servidor/servidor.h"
 
-#include <iostream>
+#include "comun/log.h"
 
 namespace servidor {
 
-Servidor::Servidor(const std::string& servicio) 
-: aceptador(servicio)
+Servidor::Servidor(const ProcesadorConfiguracion& configuracion) 
+: lobby(configuracion),
+  aceptador(configuracion.servicio())
 { }
 
 void Servidor::correr() {
+    Log& logger = Log::obtener_instancia();
     try {
+        logger.cout("Esperando conexiones...\n");
         while (!terminar) {
             SocketConexion conexion_nueva = aceptador.esperar_conexion();
 
@@ -21,11 +24,12 @@ void Servidor::correr() {
         }
     } catch (const std::exception& e) {
         if (!terminar)
-            std::cerr << "Error en el servidor: " << e.what() << std::endl;
+            log_error("Error en el servidor: %s", e.what());
     } catch(...) {
-        std::cerr << "Error desconocido en el servidor" << std::endl;
+        log_error("Error desconocido en el servidor.");
     }
     aceptador.detener();
+    logger.cout("Se detuvo el servidor\n");
 }
 
 void Servidor::limpiar_clientes() {

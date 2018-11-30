@@ -34,6 +34,10 @@ Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
         case EVC_ATACAR:
         case EVC_DESTRUIR_TROPA:
             return new EventoEjercito(serializado);
+        case EVC_INICIALIZAR:
+        case EVC_CREAR_JUGADOR:
+        case EVC_JUGADOR_LISTO:
+        case EVC_JUEGO_INICIANDO:
         case EVC_ACTUALIZAR_DINERO:
         case EVC_ACTUALIZAR_ENERGIA:
             return new EventoJugador(serializado);

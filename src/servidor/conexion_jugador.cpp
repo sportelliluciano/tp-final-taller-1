@@ -49,13 +49,18 @@ ConexionJugador::~ConexionJugador() {
 
 /***** Implementaciones de mensajes *****/
 
-void ConexionJugador::inicializar(const nlohmann::json& mapa, 
+void ConexionJugador::inicializar(
+    int id,
+    const nlohmann::json& mapa, 
     const nlohmann::json& infraestructura,
     const nlohmann::json& ejercito) 
 {
     notificar({
-        {"id", EVC_INICIALIZAR_EJERCITO},
-        {"ejercito", ejercito}
+        {"id", EVC_INICIALIZAR},
+        {"id_jugador", id},
+        {"edificios", infraestructura},
+        {"ejercitos", ejercito},
+        {"mapa", mapa}
     });
 }
 

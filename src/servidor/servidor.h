@@ -3,19 +3,20 @@
 
 #include <list>
 
+#include "servidor/admin_mapas.h"
 #include "servidor/cliente.h"
 #include "servidor/lobby.h"
 #include "servidor/socket_aceptador.h"
+#include "servidor/procesador_configuracion.h"
 
 namespace servidor {
 
 class Servidor {
 public:
     /**
-     * \brief Inicializa un nuevo servidor que escuchará en el servicio 
-     *        indicado.
+     * \brief Inicializa un nuevo servidor.
      */
-    Servidor(const std::string& servicio);
+    Servidor(const ProcesadorConfiguracion& configuracion);
 
     /**
      * \brief Inicia el servidor. Este método bloqueará durante toda la 
@@ -36,9 +37,10 @@ public:
     ~Servidor();
 
 private:
-    SocketAceptador aceptador;
-    std::list<Cliente> clientes;
     Lobby lobby;
+    SocketAceptador aceptador;
+    
+    std::list<Cliente> clientes;
     bool terminar = false;
 
     /**

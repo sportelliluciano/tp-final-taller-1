@@ -19,6 +19,7 @@ typedef enum {
     EVS_ATACAR_TROPA,            // (ids, id_atacado)
 
     EVS_COSECHADORA_INDICAR_ESPECIA, // (id, celda)
+    EVS_JUGADOR_LISTO, // (-)
 } evento_servidor_t;
 
 

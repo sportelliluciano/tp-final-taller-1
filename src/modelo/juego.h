@@ -22,6 +22,7 @@ namespace modelo {
 
 class Juego : public IModelo {
     private:
+    const nlohmann::json *json_mapa, *json_edificios, *json_ejercitos;
     Broadcaster comunicacion_jugadores;
     Terreno terreno;
     Infraestructura inf;
@@ -44,6 +45,8 @@ public:
     void crear_jugador(IJugador* jugador) override;
     
     void iniciar_partida() override;
+
+    bool esperar_sincronizacion_inicial() override;
 
     void actualizar(int dt_ms);
     

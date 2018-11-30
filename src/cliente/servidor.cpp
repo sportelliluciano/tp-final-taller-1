@@ -109,25 +109,20 @@ bool Servidor::crear_sala(const std::string& nombre, const std::string& mapa) {
     return true;
 }
 
-void Servidor::avisar_jugador_listo() {
+bool Servidor::avisar_jugador_listo() {
     conn.enviar_json({
         {"tipo", "iniciar_juego"}
     });
+
+    nlohmann::json respuesta = conn.recibir_json();
+    if (respuesta.at("estado") != "OK")
+        return false;
+    
+    return true;
 }
 
-int Servidor::iniciar_juego() {
-    nlohmann::json data;
-    data = conn.recibir_json();
-    
-    const std::string& tipo = data.at("tipo");
-    if (tipo != "juego_iniciando") {
-        throw std::runtime_error("Se esperaba un comando juego_iniciando");
-    }
-
-    int id_jugador = data.at("id_jugador");
-
+void Servidor::iniciar_comunicacion_asincronica() {
     hilo_receptor = std::thread(&Servidor::recibir, this);
-    return id_jugador;
 }
 
 void Servidor::recibir() {
@@ -252,6 +247,10 @@ void Servidor::indicar_especia_cosechadora(const std::vector<int>& ids,
         {"celda", {celda_x * FACTOR_DIMENSIONALIDAD, 
             celda_y * FACTOR_DIMENSIONALIDAD}}
     });
+}
+
+void Servidor::sincronizar_inicio() {
+    enviar_evento({{"id", EVS_JUGADOR_LISTO}});
 }
 
 void Servidor::detener() {

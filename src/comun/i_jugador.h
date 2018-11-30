@@ -39,6 +39,7 @@ public:
      * ejercito: Información sobre las tropas.
      */
     virtual void inicializar(
+        int id_jugador,
         const nlohmann::json& mapa, 
         const nlohmann::json& infraestructura,
         const nlohmann::json& ejercito) = 0;
@@ -239,6 +240,14 @@ public:
     /**
      * \brief Eventos misceláneos.
      */
+
+    /**
+     * \brief Este evento es enviado una vez que todos los jugadores 
+     *        confirmaron su sincronismo inicial.
+     * 
+     * El mismo indica que el cliente ya puede comenzar a dibujar la pantalla.
+     */
+    virtual void juego_iniciando() = 0;
 
     /**
      * \brief Indica al jugador que se agregó un nuevo jugador.

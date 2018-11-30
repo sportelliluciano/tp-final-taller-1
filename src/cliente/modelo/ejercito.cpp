@@ -11,7 +11,7 @@
 
 namespace cliente {
 
-Ejercito::Ejercito(const nlohmann::json& tropas_json, Infraestructura& inf, 
+Ejercito::Ejercito(const nlohmann::json& ejercitos, Infraestructura& inf, 
     Terreno& terreno_juego, int id_jugador_actual_, const std::string& casa_) 
 : casa(casa_),
   infraestructura(inf),
@@ -19,6 +19,8 @@ Ejercito::Ejercito(const nlohmann::json& tropas_json, Infraestructura& inf,
   id_jugador_actual(id_jugador_actual_)
 {
     using nlohmann::json;
+
+    const nlohmann::json& tropas_json = ejercitos.at("unidades");
 
     auto it = tropas_json.begin();
     const json& valores_por_defecto = *it;

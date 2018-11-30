@@ -46,6 +46,20 @@ public:
     virtual void iniciar_partida() = 0;
 
     /**
+     * \brief Pregunta al modelo si se realizó la sincronización inicial.
+     * 
+     * Si el modelo devuelve true significa que la sincronización inicial 
+     * terminó y que se puede proceder a la primer actualización del juego.
+     * 
+     * Si el modelo devuelve false se volverá a llamar a este método luego de
+     * un tiempo.
+     * 
+     * Se garantiza que una vez que el método devuelve true no volverá a ser
+     * llamado.
+     */
+    virtual bool esperar_sincronizacion_inicial() = 0;
+
+    /**
      * \brief Realiza una actualización del modelo.
      * 
      * Actualiza un paso de `dt_ms` milisegundos en el modelo.

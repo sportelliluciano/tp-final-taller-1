@@ -1,5 +1,7 @@
 #include "cliente/lanzador/estado_en_sala.h"
 
+#include <QMessageBox>
+
 #include "cliente/lanzador/estado_conectado.h"
 #include "cliente/lanzador/estado_desconectado.h"
 
@@ -24,7 +26,12 @@ EstadoLanzador* EstadoEnSala::btn_conectar_click() {
 }
 
 EstadoLanzador* EstadoEnSala::btn_iniciar_juego_click() {
-    servidor->avisar_jugador_listo();
+    if (!servidor->avisar_jugador_listo()) {
+        QMessageBox msg_box;
+        msg_box.setText("No se pudo iniciar la partida");
+        msg_box.exec();
+        return this;
+    }
     partida.servidor(servidor);
     partida.musica(ui->cbMusica->isChecked());
     partida.sonido(ui->cbSFX->isChecked());

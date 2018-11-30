@@ -11,7 +11,7 @@
 #include "cliente/servidor.h"
 #include "cliente/sonido/sonido.h"
 #include "cliente/video/ventana.h"
-
+#include "comun/log.h"
 namespace cliente {
 
 ClienteJuego::ClienteJuego() { }
@@ -51,32 +51,57 @@ bool ClienteJuego::ejecutar_juego() {
     
     Servidor *servidor = partida.servidor();
     partida.servidor(nullptr);
+    // TODO: configurar sonido
+
+    servidor->iniciar_comunicacion_asincronica();
 
     PantallaCarga pantalla_carga;
 
-    pantalla_carga.renderizar(ventana);
-    ventana.actualizar();
+    Juego juego("ordos"); //partida.casa());
 
-    // TODO: configurar sonido
+    while (!juego.inicializacion_completa()) {
+        while (servidor->hay_eventos()) {
+            Evento *evento = servidor->pop_evento();
+            try {
+                evento->actualizar(juego);
+            } catch (const std::exception& e) {
+                log_error("Evento inválido: %s", e.what());
+            }
+            delete evento;
+        }
+        pantalla_carga.renderizar(ventana);
+        ventana.actualizar();
+    }
 
-    nlohmann::json mapa = servidor->recibir_json();
-    nlohmann::json edificios = servidor->recibir_json();
-    nlohmann::json ejercito = servidor->recibir_json();
-    int id_jugador_actual = servidor->iniciar_juego();
-    
-    Juego juego(id_jugador_actual, "ordos", mapa, edificios, ejercito);
-    
+    // Informar al servidor que el jugador está listo
+    servidor->sincronizar_inicio();
+
+    while (!juego.inicio_sincronizado()) {
+        while (servidor->hay_eventos()) {
+            Evento *evento = servidor->pop_evento();
+            try {
+                evento->actualizar(juego);
+            } catch (const std::exception& e) {
+                log_error("Evento inválido: %s", e.what());
+            }
+            delete evento;
+        }
+        pantalla_carga.renderizar(ventana);
+        ventana.actualizar();
+    }
+
     Controlador controlador(ventana, *servidor, juego);
-
+   
     while (!juego.esta_terminado()) {
         // Renderizar el juego
         controlador.renderizar();
-
+        
         // Mostrar los cambios
         ventana.actualizar();
+
         // Procesar eventos
-        ventana.procesar_eventos();
-        controlador.procesar_entrada(); // Servidor / Mouse / teclado
+        ventana.procesar_eventos(); // Mouse / teclado
+        controlador.procesar_entrada(); // Servidor 
         
         // Actualizar el modelo del juego por último para salir
         //  si se detecta que terminó

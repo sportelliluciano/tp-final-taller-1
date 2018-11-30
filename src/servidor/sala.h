@@ -19,7 +19,7 @@ namespace servidor {
 
 class Sala {
 public:
-    Sala(const std::string& nombre_, size_t capacidad_maxima);
+    Sala(const std::string& nombre_, size_t capacidad_maxima, IModelo* juego);
 
     /**
      * \brief Constructor por movimiento
@@ -92,6 +92,9 @@ private:
 
     std::unordered_map<int, ConexionJugador*> jugadores;
     std::unordered_map<Cliente*, ConexionJugador> clientes;
+    
+    bool sala_abierta = true;
+    
     int ultimo_id = 0;
     
     bool partida_iniciada = false;
@@ -99,8 +102,6 @@ private:
     bool terminar;
 
     size_t capacidad = 0;
-
-    nlohmann::json mapa, edificios, ejercito;
 
     ColaProtegida<std::pair<IJugador*, nlohmann::json>> cola_eventos;
 

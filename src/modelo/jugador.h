@@ -15,6 +15,7 @@ namespace modelo {
 
 class Jugador{
     private:
+    bool sincronizado = false;
     std::string casa;
     std::set<int> inventario;
     int energia = 100000;
@@ -50,6 +51,17 @@ class Jugador{
                                     std::unordered_map<std::string,int>& tiempos_de_entrenamiento);
     IJugador* get_jugador();
     bool tiene(std::set<std::string>& requisitos,Infraestructura& inf);
+
+    /**
+     * \brief Devuelve true si el jugador ya sincronizó su inicio de juego.
+     */
+    bool inicio_sincronizado() const;
+
+    /**
+     * \brief Marca o desmarca al jugador indicando que ya sincronizó su inicio
+     *        de juego.
+     */
+    void inicio_sincronizado(bool activar);
 };
 }
 #endif

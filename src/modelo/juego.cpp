@@ -9,6 +9,7 @@
 #include "modelo/terreno.h"
 
 // Refactor this? mati:no
+// ok pero deberia ser configurable desde un archivo (enunciado)
 #define DINERO_INICIAL         10000
 #define DINERO_MAXIMO_INICIAL  10000
 #define ENERGIA_INICIAL        1000
@@ -24,8 +25,11 @@ Juego::Juego()
 { }
 
 void Juego::inicializar(const nlohmann::json& mapa, 
-        const nlohmann::json& edificios, const nlohmann::json& ejercito_)
+    const nlohmann::json& edificios, const nlohmann::json& ejercito_)
 {
+    json_edificios = &edificios;
+    json_ejercitos = &ejercito_;
+    json_mapa = &mapa;
     for (const nlohmann::json& data : mapa.at("jugadores")) {
         posiciones_centros.push_back(data);
     }
@@ -46,6 +50,8 @@ void Juego::crear_jugador(IJugador* jugador) {
 void Juego::iniciar_partida() {
     empezo = true;
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        j->inicializar(j->obtener_id(), *json_mapa, *json_edificios, 
+            *json_ejercitos);
         j->actualizar_dinero(DINERO_INICIAL, DINERO_MAXIMO_INICIAL);
         j->actualizar_energia(ENERGIA_INICIAL, ENERGIA_MAXIMA_INICIAL);
     });
@@ -60,7 +66,29 @@ void Juego::iniciar_partida() {
         // TODO: deshardcodear ese centro_construcciones
         jugador.agregar_elemento(nuevo_id, 0, "centro_construcciones");
         i++;
+
+        comunicacion_jugadores.broadcast([&] (IJugador* j) {
+            IJugador *otro = jugador.get_jugador();
+            if (j != otro) {
+                j->crear_jugador(otro->obtener_id(), otro->obtener_nombre(),
+                    otro->obtener_casa());
+            }
+        });
     }
+}
+
+bool Juego::esperar_sincronizacion_inicial() {
+    for (auto it = jugadores.begin(); it != jugadores.end(); ++it) {
+        Jugador& jugador = it->second;
+        
+        if (!jugador.inicio_sincronizado())
+            return false;
+    }
+
+    comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        j->juego_iniciando();
+    });
+    return true;
 }
 
 void Juego::actualizar(int dt_ms) {
@@ -119,8 +147,13 @@ Juego::~Juego() { }
 
 /**** Mensajes desde los jugadores ****/
 
-void Juego::jugador_listo(IJugador*) {
-
+void Juego::jugador_listo(IJugador* jugador) {
+    jugadores.at(jugador->obtener_id()).inicio_sincronizado(true);
+    comunicacion_jugadores.broadcast([&] (IJugador* j) {
+        if (j != jugador) {
+            j->jugador_listo(jugador->obtener_id());
+        }
+    });
 }
 
 void Juego::iniciar_construccion_edificio(IJugador* jugador,

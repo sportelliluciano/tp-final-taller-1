@@ -35,7 +35,9 @@ public:
     /**
      * \brief Envia los datos de inicialización al cliente
      */
-    virtual void inicializar(const nlohmann::json& mapa,
+    virtual void inicializar(
+        int id,
+        const nlohmann::json& mapa,
         const nlohmann::json& infraestructura,
         const nlohmann::json& ejercito);
 

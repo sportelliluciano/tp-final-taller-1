@@ -12,34 +12,40 @@
 
 namespace cliente {
 
-Juego::Juego(int id_jugador_actual_, 
-        const std::string& casa_,
-        const nlohmann::json& mapa,
-        const nlohmann::json& edificios,
-        const nlohmann::json& ejercito)
-: terreno(mapa), 
-  gusano(terreno), 
-  infraestructura(id_jugador_actual_, terreno, edificios), 
-  ejercito(ejercito, infraestructura, terreno, id_jugador_actual_, casa_), 
-  esta_jugando(true), 
-  id_jugador_actual(id_jugador_actual_),
+Juego::Juego(const std::string& casa_)
+: esta_jugando(true), 
   casa(casa_)
 { }
+
+void Juego::inicializar(int id_jugador, const nlohmann::json& edificios, 
+    const nlohmann::json& ejercitos, const nlohmann::json& mapa)
+{
+    terreno = new Terreno(mapa);
+    infraestructura = new Infraestructura(id_jugador, *terreno, edificios);
+    ejercito = new Ejercito(ejercitos, *infraestructura, *terreno, id_jugador, 
+        casa);
+    gusano = new GusanoArena(*terreno);
+    inicializado = true;
+}
+
+void Juego::sincronizar_inicio() {
+    sincronizado = true;
+}
 
 bool Juego::esta_terminado() const {
     return !esta_jugando;
 }
 
 void Juego::renderizar(Ventana& ventana, Camara& camara) {
-    terreno.renderizar(ventana, camara);
-    gusano.renderizar(ventana, camara);
-    infraestructura.renderizar(ventana, camara);
-    ejercito.renderizar(ventana, camara);
+    terreno->renderizar(ventana, camara);
+    gusano->renderizar(ventana, camara);
+    infraestructura->renderizar(ventana, camara);
+    ejercito->renderizar(ventana, camara);
 }
 
 void Juego::actualizar(int t_ms) {
-    infraestructura.actualizar(t_ms);
-    ejercito.actualizar(t_ms);
+    infraestructura->actualizar(t_ms);
+    ejercito->actualizar(t_ms);
 }
 
 void Juego::detener() {
@@ -59,22 +65,22 @@ const std::string& Juego::obtener_casa_jugador() const {
 }
 
 Posicion Juego::obtener_centro() {
-    Edificio* centro = infraestructura.obtener_centro_construccion();
+    Edificio* centro = infraestructura->obtener_centro_construccion();
     if (!centro)
         return Posicion(0, 0);
-    return terreno.obtener_posicion(centro);
+    return terreno->obtener_posicion(centro);
 }
 
 Infraestructura& Juego::obtener_infraestructura() {
-    return infraestructura;
+    return *infraestructura;
 }
 
 Ejercito& Juego::obtener_ejercito() {
-    return ejercito;
+    return *ejercito;
 }
 
 Terreno& Juego::obtener_terreno() {
-    return terreno;
+    return *terreno;
 }
 
 /***** Eventos recibidos desde el servidor *****/
@@ -88,9 +94,32 @@ void Juego::actualizar_energia(int nueva_energia, int) {
 }
 
 void Juego::mostrar_gusano(int x, int y) {
-    gusano.aparecer(x, y);
+    gusano->aparecer(x, y);
 }
 
-Juego::~Juego() { }
+bool Juego::inicio_sincronizado() const {
+    return sincronizado;
+}
+
+bool Juego::inicializacion_completa() const {
+    return inicializado;
+}
+
+void Juego::crear_jugador(int id_jugador, const std::string& nombre, 
+        const std::string& casa)
+{
+
+}
+    
+void Juego::indicar_jugador_listo(int id_jugador) {
+
+}
+
+Juego::~Juego() {
+    delete gusano;
+    delete ejercito;
+    delete infraestructura;
+    delete terreno;
+}
 
 } // namespace cliente

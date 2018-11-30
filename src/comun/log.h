@@ -16,9 +16,9 @@
     Log::obtener_instancia().\
         err(__FILE__, __LINE__, __func__, ##__VA_ARGS__)
 
-#define log_red(saliente, ...) \
+#define log_red(es_saliente, ...) \
     Log::obtener_instancia().\
-        red(saliente, ##__VA_ARGS__)
+        red(es_saliente, ##__VA_ARGS__)
 
 #define log_tiempo(ev, t) \
     Log::obtener_instancia().\
@@ -34,7 +34,8 @@ public:
     static Log& obtener_instancia();
     
     /**
-     * Emite un mensaje de depuración.
+     * \brief Emite un mensaje de depuración.
+     * 
      * El primer argumento variable debe ser la cadena con la información de
      * formato estilo printf.
      * Ej: dbg("a.cpp", 10, "funcion", "%s", "test");
@@ -42,7 +43,8 @@ public:
     void dbg(const char* archivo, int linea, const char* funcion, ...);
 
     /**
-     * Emite una advertencia
+     * \brief Emite una advertencia
+     * 
      * El primer argumento variable debe ser la cadena con la información de
      * formato estilo printf.
      * Ej: warn("a.cpp", 10, "funcion", "%s", "test");
@@ -50,13 +52,25 @@ public:
     void warn(const char* archivo, int linea, const char* funcion, ...);
 
     /**
-     * Emite un mensaje de error.
+     * \brief Emite un mensaje de error.
+     * 
      * El primer argumento variable debe ser la cadena con la información de
      * formato estilo printf.
      * Ej: err("a.cpp", 10, "funcion", "%s", "test");
      */
     void err(const char* archivo, int linea, const char* funcion, ...);
+
+    /**
+     * \brief Emite un mensaje a la terminal por la salida estándar.
+     */
+    void cout(const char* fmt, ...);
     
+    /**
+     * \brief Emite un mensaje a la terminal por la salida estándar de
+     *        errores.
+     */
+    void cerr(const char* fmt, ...);
+
     /**
      * \brief Emite un mensaje de depuración de red.
      * El primer argumento variable debe ser la cadena con la información de
@@ -72,7 +86,7 @@ public:
     
 private:
     Log();
-    std::mutex m_log;
+    std::mutex m_cout, m_cerr;
 };
 
 #endif // _LOGGING_H_

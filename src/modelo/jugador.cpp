@@ -216,4 +216,12 @@ IJugador* Jugador::get_jugador(){
     return comunicacion_jugador;
 }
 
+bool Jugador::inicio_sincronizado() const {
+    return sincronizado;
+}
+
+void Jugador::inicio_sincronizado(bool activar) {
+    sincronizado = activar;
+}
+
 }

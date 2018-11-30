@@ -64,19 +64,12 @@ public:
     /**
      * \brief Avisa el servidor que el jugador ya inició el cliente del juego.
      */
-    void avisar_jugador_listo();
+    bool avisar_jugador_listo();
 
     /**
-     * \brief Espera el inicio del juego y devuelve el identificador de jugador
-     *        del jugador actual.
-     * 
-     * Este método bloquea hasta que el servidor sincronice el inicio del 
-     * juego. Una vez sincronizado, iniciará la recepción asincrónica de 
-     * mensajes.
-     * 
-     * El mismo devuelve el identificador de jugador actual.
+     * \brief Inicia la recepción asincrónica de mensajes.
      */
-    int iniciar_juego();
+    void iniciar_comunicacion_asincronica();
 
     /**
      * \brief Verifica si hay nuevos eventos provenientes del servidor.
@@ -153,6 +146,13 @@ public:
      */
     void indicar_especia_cosechadora(const std::vector<int>& ids, int celda_x, 
         int celda_y);
+
+    /**
+     * \brief Indica al servidor que el cliente terminó de procesar la 
+     *        información de inicialización y está listo para empezar a dibujar
+     *        el juego.
+     */
+    void sincronizar_inicio();
 
     /**
      * \brief Detiene el hilo y cierra la conexión con el servidor.
