@@ -23,6 +23,8 @@ Dinero::Dinero(Juego& juego_) : juego(juego_) {
 }
 
 void Dinero::setear_dinero(int nuevo_dinero) {
+    if (nuevo_dinero < 0)
+        nuevo_dinero = 0;
     if (nuevo_dinero > pow(10, N_DIGITOS_DINERO))
         throw std::runtime_error("El dinero no es representable");
     
@@ -42,6 +44,7 @@ int Dinero::obtener_ancho() const {
 
 void Dinero::renderizar(Ventana& ventana, const Posicion& punto) {
     setear_dinero(juego.obtener_dinero());
+    
     int digito;
     int dx = 0;
     for (digito=N_DIGITOS_DINERO-1; digito > 0; digito--) {
