@@ -69,7 +69,10 @@ void SpriteAnimado::renderizar(Ventana& ventana, int x, int y) {
     cuadros[cuadro_actual].renderizar(ventana, pos_x, pos_y);
 
     if (!actualizacion_manual) {
-        actualizar(ventana.obtener_ms() - ts_ultimo_cuadro);
+        if (cuadro_actual != 0)
+            actualizar(ventana.obtener_ms() - ts_ultimo_cuadro);
+        else
+            actualizar(ms_por_cuadro);
         ts_ultimo_cuadro = ventana.obtener_ms();
     }
     actualizacion_manual = false;
