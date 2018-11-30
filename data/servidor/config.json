@@ -3,8 +3,8 @@
     "ruta_edificios": "./edificios.json",
     "ruta_ejercitos": "./ejercitos.json",
     "mapas": [
+        "./mapas/mapa2.json",
         "./mapas/mapa_prueba_4jug.json",
-        "./mapas/mapa-viejo.json",
-        "./mapas/mapa2.json"
+        "./mapas/mapa-viejo.json"
     ]
 }
