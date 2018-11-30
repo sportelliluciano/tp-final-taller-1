@@ -11,10 +11,13 @@
 #include "cliente/modelo/hud/barra_vida.h"
 #include "comun/log.h"
 #include "cliente/video/ventana.h"
+#include "cliente/sonido/sonido.h"
 
 #define THRESHOLD_SYNC_CAMINO 10
 
 #define CONSTANTE_VELOCIDAD ((0.4 / 15) / 16)
+
+#define CLASE_COSECHADORA "cosechadora"
 
 /**
  * Tropas
@@ -333,6 +336,10 @@ int Tropa::obtener_propietario() const {
 }
 
 void Tropa::atacar(int id_victima, int x_victima, int y_victima) {
+    if (esta_disparando() && id_atacado == id_victima)
+        return;
+    
+    Sonido::reproducir_sonido(SND_UNIDAD_ATACAR);
     b_esta_disparando = true;
     id_atacado = id_victima;
     if (disparo)
@@ -380,7 +387,8 @@ void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
     detener_ataque();
     camino_actual = camino;
     paso_actual = 0;
-    
+    if (clase != CLASE_COSECHADORA)
+        Sonido::reproducir_sonido(SND_UNIDAD_EN_CAMINO);
     // Iniciar la caminata.
     sync_camino(pos_actual.x, pos_actual.y);
 }
@@ -411,6 +419,7 @@ void Tropa::set_vida(int nueva_vida) {
 
 void Tropa::marcar() {
     esta_marcada = true;
+    Sonido::reproducir_sonido(SND_UNIDAD_MARCADA);
 }
 
 void Tropa::desmarcar() {

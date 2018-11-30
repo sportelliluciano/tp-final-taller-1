@@ -94,6 +94,13 @@ void Sonido::cargar_sonidos() {
         RUTA_SONIDOS "/anunciador_unit_ready.ogg");
     cargar(SND_UNIDAD_PERDIDA, 
         RUTA_SONIDOS "/anunciador_unit_lost.ogg");
+    
+    cargar(SND_UNIDAD_MARCADA, 
+        RUTA_SONIDOS "/harkonnen_il_yes_sir.ogg");
+    cargar(SND_UNIDAD_EN_CAMINO, 
+        RUTA_SONIDOS "/ordos_ip_on_our_way.ogg");
+    cargar(SND_UNIDAD_ATACAR, 
+        RUTA_SONIDOS "/harkonnen_il_over_n_out.ogg");
 }
 
 void Sonido::habilitar_sonidos(bool activar) {
