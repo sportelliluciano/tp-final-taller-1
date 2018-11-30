@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
+#include <stdlib.h> 
 
 #include "modelo/terreno.h"
 #include "modelo/unidad.h"
@@ -11,6 +12,7 @@
 #include "modelo/edificio.h"
 #include "modelo/id.h"
 #include "modelo/broadcaster.h"
+#include "modelo/gusano.h" 
 
 namespace modelo {
     
@@ -21,9 +23,14 @@ Ejercito::Ejercito(Broadcaster& broadcaster,Id& id)
 void Ejercito::inicializar(Terreno* terreno_,const nlohmann::json& ejercito_){
     prototipos.inicializar(terreno_,ejercito_);
     terreno=terreno_;
+    prototipos.get_tiempos_de_entrenamiento(tiempos_de_entrenamiento);
 }
 
 Ejercito::~Ejercito(){
+}
+
+std::unordered_map<std::string,int>& Ejercito::get_tiempos_entrenamiento(){
+    return tiempos_de_entrenamiento;
 }
 
 int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
@@ -40,14 +47,15 @@ int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
     return nuevo_id;
 }
 
-int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
+int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario,Jugador* comunicacion_jugador){
     Posicion pos(43,56);
     Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
     terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
     cosechadoras.emplace(nuevo_id,prototipos.clonar(
-            id_tipo,nuevo_id,posicion.x(),posicion.y(),terreno,id_propietario));
+            id_tipo,nuevo_id,posicion.x(),posicion.y(),
+            terreno,id_propietario,comunicacion_jugador));
     
     Posicion especia = terreno->obtener_especia_cercana(posicion);
     especia = terreno->obtener_posicion_caminable_cercana(especia);
@@ -97,18 +105,32 @@ void Ejercito::mover_cosechadora(int id,int x,int y){
         j->mover_tropa(id,v);
     });
 }
-void Ejercito::atacar(int id_victima,int id_atacante){
-    //ver si hay que seguirlo o no
-    if (tropas.count(id_atacante)!=0 && tropas.count(id_victima)!=0 ){
-        tropas.at(id_atacante).configurar_ataque(&tropas.at(id_victima));
-        tropas_atacando.insert(id_atacante);
-    }
-    if (tropas.count(id_atacante)!=0 && cosechadoras.count(id_victima)!=0 ){
-        tropas.at(id_atacante).configurar_ataque(&cosechadoras.at(id_victima));
-        tropas_atacando.insert(id_atacante);
-    }
+ void Ejercito::atacar(int id_victima,int id_atacante){
+     bool caminar = false;
+     Atacable* victima; 
+     if (tropas.count(id_atacante)!=0 && tropas.count(id_victima)!=0 ){
+         victima = &(tropas.at(id_victima));
+         if(tropas.at(id_atacante).configurar_ataque(victima)){
+             tropas_atacando.insert(id_atacante);
+         }else{
+             caminar = true;
+         }
+     }
+     if (tropas.count(id_atacante)!=0 && cosechadoras.count(id_victima)!=0 ){
+         victima = &(cosechadoras.at(id_victima));
+         if(tropas.at(id_atacante).configurar_ataque(victima)){
+             tropas_atacando.insert(id_atacante);
+         } else{
+             caminar = true;
+         }
+     }
+     if (caminar){
+         Posicion& posicion = victima->get_posicion();
+         mover(id_atacante,posicion.x(),posicion.y());
+     }
 
-}
+ }
+
 void Ejercito::atacar(Atacable* edificio,int id_atacante){
     // acercarme hasta cumplir con el rango 
     if (tropas.count(id_atacante)!=0) {
@@ -123,6 +145,14 @@ Unidad& Ejercito::get(int id) {
         return tropas.at(id);
     }
 }
+std::set<std::string>& Ejercito::get_requisitos(const std::string& clase){
+    return prototipos.get_requisitos(clase);
+}
+
+bool Ejercito::pertenece(const std::string& clase,const std::string& casa){
+    std::set<std::string>& casas = prototipos.get_casas(clase);
+    return casas.count(casa)!=0;
+}
 
 unsigned int Ejercito::get_costo(std::string id_tipo) {
     return prototipos.get_costo(id_tipo);
@@ -130,7 +160,8 @@ unsigned int Ejercito::get_costo(std::string id_tipo) {
 
 void Ejercito::matar_tropa(int id_victima,int id_atacante){
     tropas_muertas.insert(id_victima);
-    tropas.at(id_atacante).parar_ataque();
+    if (tropas.count(id_atacante) != 0)//puede ser el gusano
+        tropas.at(id_atacante).parar_ataque();
     if (tropas_en_movimiento.count(id_victima)!=0){
         tropas_en_movimiento.erase(id_victima);
     }
@@ -146,7 +177,7 @@ void Ejercito::eliminar_tropas(){
     for (auto it = tropas_muertas.begin();
             it != tropas_muertas.end();++it)
     {
-        if (tropas.count(*it != 0)){
+        if (tropas.count(*it) != 0){
             terreno->eliminar_tropa(tropas.at(*it).get_posicion(),
                                     tropas.at(*it).get_dimensiones());
             tropas.erase(*it);
@@ -241,6 +272,45 @@ void Ejercito::actualizar_movimiento(int dt){
     } 
 }
 
+Atacable& Ejercito::obtener_unidad_aleatorio(){
+    float bernulli = rand()/ RAND_MAX;
+    if (bernulli <= 0.5 && tropas.size() != 0){
+        int indice_vicitma = rand() % tropas.size();
+        std::cout << "indice de la victima: "<< indice_vicitma <<std::endl;
+        auto victima = tropas.begin();
+        std::advance(victima,indice_vicitma);
+        return (victima->second);
+    } else if (cosechadoras.size() != 0){
+        int indice_vicitma = rand() % cosechadoras.size();
+        std::cout << "indice de la cosechadora victima: "<< indice_vicitma <<std::endl;
+        auto victima = cosechadoras.begin();
+        std::advance(victima,indice_vicitma);
+        return (victima->second);
+    }
+    throw std::runtime_error("No hay unidades");
+}
+
+void Ejercito::actualizar_gusano(int dt){
+    if (gusano.esperando_comer()){
+        try {
+        Atacable& victima = obtener_unidad_aleatorio();
+        std::cout << "indice de la victima antes de comer: "<< victima.get_id() <<std::endl;
+        matar_tropa(victima.get_id(),gusano.get_id());
+        Posicion& pos = victima.get_posicion();
+        comunicacion_jugadores.broadcast([&] (IJugador *j) {
+                j->mostrar_gusano(pos.x(),pos.y());
+            });
+        }catch(std::runtime_error& e){
+            std::cout << "no hay comida "<<std::endl;
+            gusano.comer();
+            return;    
+        }
+
+        gusano.comer();
+    } else {
+        gusano.actualizar(dt);
+    }
+}
 void Ejercito::limpiar_tropas_atacando(){
     //saco a los muertos restantes del set
     for (auto it = tropas_atacando.begin();
@@ -283,6 +353,7 @@ void Ejercito::actualizar_ataques(int dt){
             continue;
         }
         //falta ver el tema del rango
+        try{
         int vida_nueva_victima = unidad.actualizar_ataque(dt,terreno);
         if (vida_nueva_victima <= 0) {
             matar_tropa(id_victima,*it);//lo saca del modelo
@@ -293,9 +364,14 @@ void Ejercito::actualizar_ataques(int dt){
                 j->atacar(unidad.get_id(), id_victima, vida_nueva_victima);
             });
         }
+        } catch(std::runtime_error& e){
+            it = tropas_atacando.erase(it);
+            borrado = true;
+        }
         if (!borrado)
             ++it;
     }
+    actualizar_gusano(dt);
     //saco a los muertos restantes del set
     limpiar_tropas_atacando();
     eliminar_tropas();

@@ -16,6 +16,7 @@
 #define ALTO "alto"
 #define ANCHO "ancho"
 #define ID "id"
+#define REQUISITOS "requerimiento"
 
 namespace modelo {
 
@@ -31,6 +32,8 @@ UnidadBase::UnidadBase(const nlohmann::json& data_unidad, const std::vector<Arma
     tiempo_de_entrenamiento = data_unidad[TIEMPO];
     costo = data_unidad[COSTO];
     vida = data_unidad[VIDA];
+    casa = data_unidad[CASA].get<std::set<std::string>>();;
+    requisitos =  data_unidad[REQUISITOS].get<std::set<std::string>>();
 }
 UnidadBase::~UnidadBase() { 
 
@@ -39,12 +42,9 @@ int UnidadBase::atacar_a(Atacable* victima) {
     if (armas.size() > 0)
         return armas.at(0)->atacar_a(victima);
     return 0;
-}/*
-void UnidadBase::atacar_a(Edificio* victima){
-    arma.atacar_a(victima);
-}*/
+}
 unsigned int UnidadBase::get_rango() const {
-    return rango;
+    return rango*4;
 }
 unsigned int UnidadBase::get_velocidad() const {
     return velocidad;
@@ -68,5 +68,11 @@ unsigned int UnidadBase::obtener_frecuencia(){
     if (armas.size() > 0)
         return armas.at(0)->obtener_frecuencia();
     return 1;
+}
+std::set<std::string>& UnidadBase::get_requisitos(){
+    return requisitos;
+}
+std::set<std::string>& UnidadBase::get_casas(){
+    return casa;
 }
 } // namespace modelo

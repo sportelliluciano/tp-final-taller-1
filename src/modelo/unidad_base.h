@@ -3,6 +3,7 @@
 
 #include <string>
 #include <utility>
+#include <set>
 
 #include "libs/json.hpp"
 
@@ -13,7 +14,8 @@ namespace modelo {
 
 class UnidadBase {
 private: 
-    //std::string casa;
+    std::set<std::string> casa;
+    std::set<std::string> requisitos;
     std::string clase;
     unsigned int rango;
     unsigned int velocidad;
@@ -37,6 +39,8 @@ public:
     std::pair<int,int>& get_dimensiones();
     std::string& get_clase();
     unsigned int obtener_frecuencia();
+    std::set<std::string>& get_requisitos();
+    std::set<std::string>& get_casas();
 };
 
 } // namespace modelo
