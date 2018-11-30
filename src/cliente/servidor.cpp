@@ -1,10 +1,8 @@
 #include "cliente/servidor.h"
 
 #include <chrono>
-#include <iostream>
 #include <thread>
 #include <stdexcept>
-#include <iostream>
 
 #include "libs/json.hpp"
 
@@ -15,9 +13,13 @@
 #include "comun/eventos_servidor.h"
 #include "comun/log.h"
 
+/**
+ * \brief Factor de dimensionalidad entre el mapa del servidor y el mapa
+ *        del cliente.
+ */
+#define FACTOR_DIMENSIONALIDAD (32 / 8)
+
 namespace cliente {
-
-
 
 Servidor::Servidor(const std::string& ip_servidor, 
     const std::string& puerto) 
@@ -206,7 +208,8 @@ void Servidor::ubicar_edificio(const std::string& clase, int celda_x,
     enviar_evento({
         {"id", EVS_UBICAR_EDIFICIO},
         {"clase", clase},
-        {"celda", {celda_x * 32 / 8, celda_y * 32 / 8}}
+        {"celda", {celda_x * FACTOR_DIMENSIONALIDAD, 
+            celda_y * FACTOR_DIMENSIONALIDAD}}
     });
 }
 
@@ -246,7 +249,8 @@ void Servidor::indicar_especia_cosechadora(const std::vector<int>& ids,
     enviar_evento({
         {"id", EVS_COSECHADORA_INDICAR_ESPECIA},
         {"ids_tropa", ids},
-        {"celda", {celda_x * 32 / 8, celda_y * 32 / 8}}
+        {"celda", {celda_x * FACTOR_DIMENSIONALIDAD, 
+            celda_y * FACTOR_DIMENSIONALIDAD}}
     });
 }
 
