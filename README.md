@@ -1,7 +1,9 @@
 # Trabajo práctico final de Taller 1: Dune 2000
 
 Link al informe técnico: https://www.overleaf.com/read/rgzkdzcxtbbx
+
 Link al informe general: https://es.overleaf.com/read/vjspvynrnrct
+
 Link al manual de usuario: https://www.overleaf.com/read/ymgsrcqhpgjg
 
 ### Para compilar el cliente
