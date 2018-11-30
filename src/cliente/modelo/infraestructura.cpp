@@ -205,8 +205,9 @@ void Infraestructura::atacar(int id, int nueva_vida) {
 
 void Infraestructura::crear_edificio(int id, int id_jugador, 
     const std::string& clase, const std::vector<int>& posicion)
-{
-    construcciones_iniciadas.erase(clase);
+{           
+    if (id_jugador == id_jugador_actual)
+        construcciones_iniciadas.erase(clase);
     Edificio nuevo = edificios.at(clase);
 
     // El servidor tiene celdas de 8x8
