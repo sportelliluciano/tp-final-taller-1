@@ -16,8 +16,8 @@ void EventoEntorno::actualizar(Juego& juego) {
     switch(id_evento) {
         case EVC_MOSTRAR_GUSANO:           // (posicion)
             juego.mostrar_gusano(
-                data.at("posicion").get<std::vector<int>>().at(0),
-                data.at("posicion").get<std::vector<int>>().at(1)
+                (data.at("posicion").get<std::vector<int>>().at(0) * 8) / 32,
+                (data.at("posicion").get<std::vector<int>>().at(1) * 8) / 32
             );
             break;
         case EVC_ELIMINAR_ESPECIA:         // (posicion)
