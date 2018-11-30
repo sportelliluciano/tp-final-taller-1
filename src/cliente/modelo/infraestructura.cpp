@@ -96,6 +96,8 @@ void Infraestructura::actualizar(int t_ms) {
         Edificio& edificio = par.second;
         if (!edificio.esta_vivo()) {
             edificios_a_eliminar.push_back(edificio.obtener_id());
+        } else {
+            edificio.actualizar(t_ms - last_ms);
         }
     }
 

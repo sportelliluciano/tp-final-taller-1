@@ -56,6 +56,15 @@ Edificio::Edificio(const nlohmann::json& data_edificio) {
     }
 }
 
+void Edificio::actualizar(int dt_ms) {
+    if (esta_destruido) {
+        sprite_destruccion.actualizar(dt_ms);
+    } else if (!esta_construido) {
+        sprite_construccion.actualizar(dt_ms);
+        esta_construido = sprite_construccion.finalizado();
+    }
+}
+
 void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
     if (!esta_vivo())
         return;

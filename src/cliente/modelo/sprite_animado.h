@@ -57,6 +57,13 @@ public:
     void desplazar_cuadro(int id_cuadro, int dx, int dy);
 
     /**
+     * \brief Actualiza el sprite sin renderizarlo.
+     * 
+     * Esto implica avanzar los cuadros correspondientes.
+     */
+    void actualizar(int dt_ms);
+
+    /**
      * \brief Renderiza el cuadro actual en la posición (x, y).
      * 
      * Renderiza el cuadro actual de la animación en la posición (x, y).
@@ -93,8 +100,10 @@ public:
 
 private:
     std::vector<Sprite> cuadros;
-    unsigned int cuadro_actual = 0, ms_por_cuadro, ts_ultimo_cuadro = 0;
-    bool loop = false, terminado = true, centrar = false;
+    unsigned int cuadro_actual = 0;
+    int ms_por_cuadro, ms_acumulado = 0, ts_ultimo_cuadro = 0;
+    bool loop = false, terminado = true, centrar = false, 
+        actualizacion_manual = false;
 };
 
 } // namespace cliente

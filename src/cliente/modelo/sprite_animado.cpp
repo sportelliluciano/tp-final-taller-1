@@ -33,12 +33,30 @@ void SpriteAnimado::desplazar_cuadro(int id_cuadro, int dx, int dy) {
     cuadros[id_cuadro].desplazar(dx, dy);
 }
 
+void SpriteAnimado::actualizar(int dt_ms) {
+    if (terminado)
+        return;
+
+    ms_acumulado += dt_ms;
+    while (ms_acumulado > ms_por_cuadro) {
+        ms_acumulado -= ms_por_cuadro;
+        cuadro_actual++;
+
+        if (cuadro_actual == cuadros.size()) {
+            if (!loop) {
+                terminado = true;
+                break;
+            } else {
+                cuadro_actual = 0;
+            }
+        }
+    }
+    actualizacion_manual = true;
+}
+
 void SpriteAnimado::renderizar(Ventana& ventana, int x, int y) {
     if (terminado)
         return;
-    
-    if (cuadro_actual == cuadros.size())
-        throw std::runtime_error("SpriteAnimado: Assertion failed en renderizar");
     
     int pos_x = x;
     int pos_y = y;
@@ -50,17 +68,11 @@ void SpriteAnimado::renderizar(Ventana& ventana, int x, int y) {
 
     cuadros[cuadro_actual].renderizar(ventana, pos_x, pos_y);
 
-    if (ventana.obtener_ms() > ts_ultimo_cuadro + ms_por_cuadro) {
+    if (!actualizacion_manual) {
+        actualizar(ventana.obtener_ms() - ts_ultimo_cuadro);
         ts_ultimo_cuadro = ventana.obtener_ms();
-        cuadro_actual++;
-
-        if (cuadro_actual == cuadros.size()) {
-            if (!loop)
-                terminado = true;
-            else
-                cuadro_actual = 0;
-        }
     }
+    actualizacion_manual = false;
 }
 
 int SpriteAnimado::obtener_alto(Ventana& ventana) {
