@@ -10,6 +10,8 @@
 
 #define COLOR_ROJO 1
 
+#define CLASE_COSECHADORA "cosechadora"
+
 namespace cliente {
 
 Ejercito::Ejercito(const nlohmann::json& ejercitos, Infraestructura& inf, 
@@ -215,14 +217,20 @@ void Ejercito::crear_tropa(int id, const std::string& clase,
 }
 
 void Ejercito::mover_tropa(int id, const std::vector<int>& camino) {
+    Tropa& tropa = tropas.at(id);
     std::vector<std::pair<int, int>> pasos;
     
     for (size_t i=0; i<camino.size(); i+=2) {
         pasos.push_back({camino[i], camino[i+1]});
     }
-    Posicion anterior = tropas.at(id).obtener_posicion();
-    tropas.at(id).seguir_camino(pasos);
-    terreno.mover_tropa(tropas.at(id), anterior);
+    Posicion anterior = tropa.obtener_posicion();
+    if ((tropa.obtener_clase() != CLASE_COSECHADORA) && 
+        (tropa.obtener_propietario() == id_jugador_actual))
+    {
+        Sonido::reproducir_sonido(SND_UNIDAD_EN_CAMINO);
+    }
+    tropa.seguir_camino(pasos);
+    terreno.mover_tropa(tropa, anterior);
 }
 
 void Ejercito::sincronizar_tropa(int id, const std::vector<int>& posicion) {
@@ -245,6 +253,14 @@ void Ejercito::atacar(int id_atacante, int id_victima, int nueva_vida) {
         Posicion pos_atacado = terreno.obtener_posicion(&atacado);
         x_destino = pos_atacado.x;
         y_destino = pos_atacado.y;
+    }
+
+    if (atacante.obtener_propietario() == id_jugador_actual) {
+        if (!atacante.esta_disparando() ||
+            id_victima != atacante.obtener_atacado())
+        {
+            Sonido::reproducir_sonido(SND_UNIDAD_ATACAR);
+        }
     }
 
     atacante.atacar(id_victima, x_destino, y_destino);

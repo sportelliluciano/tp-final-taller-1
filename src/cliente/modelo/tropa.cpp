@@ -17,8 +17,6 @@
 
 #define CONSTANTE_VELOCIDAD ((0.4 / 15) / 16)
 
-#define CLASE_COSECHADORA "cosechadora"
-
 /**
  * Tropas
  * SPRITE_BASE +
@@ -200,45 +198,29 @@ static int calcular_posicion_sprite(int vx, int vy, bool es_vehiculo) {
     switch(vx) {
         case -1:
         switch(vy) {
-            case -1:
-                pos_sprite = 7; //28;
-                break;
-            case  0:
-                pos_sprite = 6; //24;
-                break;
-            case  1:
-                pos_sprite = 5; //20;
-                break;
+            case -1: pos_sprite = 7; break;
+            case  0: pos_sprite = 6; break;
+            case  1: pos_sprite = 5; break;
         }
         break;
 
         case  0:
         switch(vy) {
-            case -1:
-                pos_sprite = 0; // 0; 
-                break;
+            case -1: pos_sprite = 0; break;
             case  0:
                 log_advertencia("Se pidió calcular dirección de sprite para"
                     " una tropa inmóvil", 0);
                 pos_sprite = 0;
                 break;
-            case  1:
-                pos_sprite = 4; //16;  
-                break;
+            case  1: pos_sprite = 4; break;
         }
         break;
 
         case  1:
         switch(vy) {
-            case -1:
-                pos_sprite = 1; //4;
-                break;
-            case  0:
-                pos_sprite = 2; //8;
-                break;
-            case  1:
-                pos_sprite = 3; //12;
-                break;
+            case -1: pos_sprite = 1; break;
+            case  0: pos_sprite = 2; break;
+            case  1: pos_sprite = 3; break;
         }
         break;
     }
@@ -338,8 +320,7 @@ int Tropa::obtener_propietario() const {
 void Tropa::atacar(int id_victima, int x_victima, int y_victima) {
     if (esta_disparando() && id_atacado == id_victima)
         return;
-    
-    Sonido::reproducir_sonido(SND_UNIDAD_ATACAR);
+
     b_esta_disparando = true;
     id_atacado = id_victima;
     if (disparo)
@@ -387,8 +368,6 @@ void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
     detener_ataque();
     camino_actual = camino;
     paso_actual = 0;
-    if (clase != CLASE_COSECHADORA)
-        Sonido::reproducir_sonido(SND_UNIDAD_EN_CAMINO);
     // Iniciar la caminata.
     sync_camino(pos_actual.x, pos_actual.y);
 }
