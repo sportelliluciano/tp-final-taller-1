@@ -7,7 +7,6 @@
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/servidor.h"
-#include "cliente/sonido/sonido.h"
 
 namespace cliente {
 
@@ -49,7 +48,6 @@ bool BotonConstruccion::mouse_click_izquierdo(const Posicion&) {
         if (cb_ubicar_edificio)
             cb_ubicar_edificio();
     } else {
-        Sonido::obtener_instancia().reproducir_sonido(SONIDO_BLEEP);
         servidor.iniciar_construccion(clase);
         tostador.hacer_tostada("Iniciar construcción: " + clase);
     }

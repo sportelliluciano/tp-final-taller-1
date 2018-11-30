@@ -4,6 +4,7 @@
 
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/sonido/sonido.h"
 
 #define MIN_TIEMPO_ENTRENAMIENTO 1
 
@@ -103,10 +104,6 @@ void Ejercito::actualizar(int t_ms) {
     last_ms = t_ms;
 }
 
-void Ejercito::set_tropa_disparando(int id_tropa, bool disparando) {
-    
-}
-
 const Tropa& Ejercito::obtener_tropa_base(const std::string& clase) const {
     return tropas_base.at(clase);
 }
@@ -185,12 +182,15 @@ Tropa& Ejercito::obtener(int id_tropa) {
 }
 
 void Ejercito::entrenar(const std::string& clase, int tiempo_ms) {
+    Sonido::reproducir_sonido(SND_ENTRENANDO);
     entrenamiento_actual[clase] = tiempo_ms;
 }
 
 void Ejercito::sincronizar_entrenamiento(const std::string& clase, 
     int tiempo_ms) 
 {
+    if (tiempo_ms == 0)
+        Sonido::reproducir_sonido(SND_UNIDAD_LISTA);
     entrenamiento_actual[clase] = tiempo_ms;
 }
 
@@ -251,7 +251,10 @@ void Ejercito::atacar(int id_atacante, int id_victima, int nueva_vida) {
 }
 
 void Ejercito::destruir_tropa(int id) {
-    terreno.eliminar_tropa(tropas.at(id));
+    Tropa& perdida = tropas.at(id);
+    if (perdida.obtener_propietario() == id_jugador_actual)
+        Sonido::reproducir_sonido(SND_UNIDAD_PERDIDA);
+    terreno.eliminar_tropa(perdida);
     tropas.erase(id);
 }
 

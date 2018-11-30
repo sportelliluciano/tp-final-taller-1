@@ -79,13 +79,20 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
     salir.set_padding(5, 4);
     salir.registrar_click([this] () { juego.detener(); });
 
+    Sonido& sonido = Sonido::obtener_instancia();
     mutear_sonido.set_tamanio(42, 32);
-    mutear_sonido.set_imagen(RUTA_IMAGENES "/sin-sonido.png");
+    if (sonido.sonido_activo())
+        mutear_sonido.set_imagen(RUTA_IMAGENES "/sin-sonido.png");
+    else
+        mutear_sonido.set_imagen(RUTA_IMAGENES "/con-sonido.png");
     mutear_sonido.set_padding(5, 4);
     mutear_sonido.registrar_click([this](){ toggle_sonido(); });
     
     mutear_musica.set_tamanio(42, 32);
-    mutear_musica.set_imagen(RUTA_IMAGENES "/musica-habilitada.png");
+    if (!sonido.musica_activa())
+        mutear_musica.set_imagen(RUTA_IMAGENES "/musica-habilitada.png");
+    else
+        mutear_musica.set_imagen(RUTA_IMAGENES "/musica-deshabilitada.png");
     mutear_musica.set_padding(5, 4);
     mutear_musica.registrar_click([this](){ toggle_musica(); });
 
@@ -132,27 +139,25 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
 }
 
 void HUD::toggle_sonido() {
-    if (!sonido_activo) {
+    Sonido& sonido = Sonido::obtener_instancia();
+    if (!sonido.sonido_activo()) {
         mutear_sonido.set_imagen(RUTA_IMAGENES "/sin-sonido.png");
-        Sonido::obtener_instancia().set_volumen_sonidos(100);
+        sonido.habilitar_sonidos(true);
     } else {
         mutear_sonido.set_imagen(RUTA_IMAGENES "/con-sonido.png");
-        Sonido::obtener_instancia().set_volumen_sonidos(0);
+        sonido.habilitar_sonidos(false);
     }
-
-    sonido_activo = !sonido_activo;
 }
 
 void HUD::toggle_musica() {
-    if (!musica_activa) {
+    Sonido& sonido = Sonido::obtener_instancia();
+    if (!sonido.musica_activa()) {
         mutear_musica.set_imagen(RUTA_IMAGENES "/musica-deshabilitada.png");
-        Sonido::obtener_instancia().iniciar_musica_fondo();
+        sonido.iniciar_musica_fondo();
     } else {
         mutear_musica.set_imagen(RUTA_IMAGENES "/musica-habilitada.png");
-        Sonido::obtener_instancia().detener_musica_fondo();
+        sonido.detener_musica_fondo();
     }
-
-    musica_activa = !musica_activa;
 }
 
 bool HUD::cerrar_ventana() {

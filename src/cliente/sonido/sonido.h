@@ -11,8 +11,15 @@
 namespace cliente {
 
 typedef enum {
-    SONIDO_BLEEP
+    SND_BASE_BAJO_ATAQUE,
+    SND_EDIFICIO_PERDIDO,
+    SND_CONSTRUYENDO,
+    SND_CONSTRUCCION_TERMINADA,
+    SND_ENTRENANDO,
+    SND_UNIDAD_LISTA,
+    SND_UNIDAD_PERDIDA
 } sonido_t;
+
 
 /**
  * \brief Encapsulamiento del módulo de sonido de SDL.
@@ -29,7 +36,12 @@ public:
      * Encola un sonido a ser reproducido. El mismo podría no reproducirse
      * si se detecta que hay demasiados sonidos similares sonando.
      */
-    void reproducir_sonido(sonido_t sonido, int volumen = 100);
+    static void reproducir_sonido(sonido_t sonido);
+
+    /**
+     * \brief Actualiza las colas de reproducción.
+     */
+    void actualizar();
 
     /**
      * \brief Inicia la reproducción de la música de fondo.
@@ -42,20 +54,20 @@ public:
     void detener_musica_fondo();
 
     /**
-     * \brief Configura el volumen de la música de fondo. 
+     * \brief Activa o desactiva los efectos de sonido.
      * 
-     * El volumen debe estar entre 0 y 100, siendo 0 silenciado y 100 volumen
-     * máximo.
      */
-    void set_volumen_musica_fondo(int volumen);
+    void habilitar_sonidos(bool activar);
 
     /**
-     * \brief Configura el volumen de los efectos de sonido.
-     * 
-     * El volumen debe estar entre 0 y 100, siendo 0 silenciado y 100 volumen
-     * máximo.
+     * \brief Devuelve true si el sonido está habilitado.
      */
-    void set_volumen_sonidos(int volumen);
+    bool sonido_activo() const;
+
+    /**
+     * \brief Devuelve true si la música está activa actualmente.
+     */
+    bool musica_activa() const;
 
     /**
      * \brief Apaga el sistema de sonido del juego liberando los recursos.
@@ -69,16 +81,24 @@ public:
 
 private:
     std::unordered_map<sonido_t, Mix_Chunk*> sonidos;
+    std::unordered_map<sonido_t, int> timeouts;
     Mix_Music* musica_fondo = NULL;
 
-    float volumen_sonidos = 1.0f;
-
     bool sonido_habilitado = true;
+    bool musica_habilitada = false;
+    bool subsistema_activo = false;
+
+    int last_t_ms = 0;
 
     /**
      * \brief Inicializa el subsistema de sonido.
      */
     Sonido();
+
+    void reproducir_sonido_(sonido_t sonido);
+    void cargar_sonidos();
+    void cargar_musica();
+    void cargar(sonido_t sonido, const char* ruta);
 };
 
 } // namespace cliente

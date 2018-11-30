@@ -46,12 +46,15 @@ bool ClienteJuego::ejecutar_juego() {
     if (!partida.partida_lista())
         return false;
     
+    Sonido& sonido = Sonido::obtener_instancia();
     Ventana ventana(partida.ancho_ventana(), partida.alto_ventana(),
         partida.pantalla_completa(), partida.vsync());
     
     Servidor *servidor = partida.servidor();
     partida.servidor(nullptr);
-    // TODO: configurar sonido
+    
+    
+
 
     servidor->iniciar_comunicacion_asincronica();
 
@@ -91,7 +94,10 @@ bool ClienteJuego::ejecutar_juego() {
     }
 
     Controlador controlador(ventana, *servidor, juego);
-   
+    sonido.habilitar_sonidos(partida.sonido());
+    if (partida.musica())
+        sonido.iniciar_musica_fondo();
+    
     while (!juego.esta_terminado()) {
         // Renderizar el juego
         controlador.renderizar();
@@ -102,6 +108,9 @@ bool ClienteJuego::ejecutar_juego() {
         // Procesar eventos
         ventana.procesar_eventos(); // Mouse / teclado
         controlador.procesar_entrada(); // Servidor 
+
+        // Actualizar sonidos
+        sonido.actualizar();
         
         // Actualizar el modelo del juego por último para salir
         //  si se detecta que terminó

@@ -6,7 +6,6 @@
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/servidor.h"
-#include "cliente/sonido/sonido.h"
 
 namespace cliente {
 
@@ -46,7 +45,6 @@ bool BotonEntrenamiento::mouse_click_izquierdo(const Posicion&) {
     if (!ejercito.esta_habilitada(clase))
         return false;
     
-    Sonido::obtener_instancia().reproducir_sonido(SONIDO_BLEEP);
     servidor.iniciar_entrenamiento(clase);
     tostador.hacer_tostada("Iniciar entrenamiento: " + clase);
     return false;

@@ -57,9 +57,6 @@ private:
     void click_modo_entrenar();
     void click_modo_vender();
 
-    bool sonido_activo = true;
-    bool musica_activa = false;
-
     bool shift_presionado = false;
 
     std::list<BotonConstruccion> botones_construccion;
