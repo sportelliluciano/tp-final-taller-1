@@ -39,6 +39,8 @@ bool Jugador::hay_suficiente_energia(unsigned int costo){
     return energia >= costo;
 }
 bool Jugador::empezar_construccion(const std::string& clase,unsigned int costo){
+    if (plata-costo < 0)
+        return false;
     if (construcciones_en_cola.count(clase) == 0)
         construcciones_en_cola[clase] = 1;
     else
@@ -61,7 +63,9 @@ bool Jugador::cancelar_construccion(const std::string& clase, unsigned int costo
 }
 
 bool Jugador::empezar_entrenamiento(const std::string& clase,unsigned int costo)
-{
+{   
+    if (plata-costo < 0)
+        return false;
     if (tropas_en_cola.count(clase) == 0)
             tropas_en_cola[clase] = 1;
     else
