@@ -61,6 +61,14 @@ const std::string& Partida::nombre_sala() const {
     return _nombre_sala;
 }
 
+void Partida::casa(const std::string& casa) {
+    _casa = casa;
+}
+
+const std::string& Partida::casa() const {
+    return _casa;
+}
+
 void Partida::mapa(const std::string& nombre_mapa) {
     _mapa = nombre_mapa;
 }

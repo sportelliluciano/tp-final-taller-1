@@ -26,11 +26,13 @@ public:
      * \brief Devuelve la casa a la que pertenece el jugador.
      */
     virtual const std::string& obtener_casa() const;
+    void set_casa(const std::string& casa_);
     
     /**
      * \brief Devuelve el nombre del jugador.
      */
     virtual const std::string& obtener_nombre() const;
+    void set_nombre(const std::string& nombre_);
 
     /**
      * \brief Envia los datos de inicialización al cliente

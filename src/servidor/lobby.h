@@ -117,7 +117,8 @@ private:
     /**
      * \brief Inicia el juego.
      */
-    bool iniciar_juego(Cliente& cliente);
+    bool iniciar_juego(Cliente& cliente, const std::string& nombre, 
+        const std::string& casa);
 };
 
 } // namespace servidor

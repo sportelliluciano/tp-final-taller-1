@@ -53,14 +53,11 @@ bool ClienteJuego::ejecutar_juego() {
     Servidor *servidor = partida.servidor();
     partida.servidor(nullptr);
     
-    
-
-
     servidor->iniciar_comunicacion_asincronica();
 
     PantallaCarga pantalla_carga;
 
-    Juego juego("ordos"); //partida.casa());
+    Juego juego(partida.casa());
 
     while (!juego.inicializacion_completa()) {
         while (servidor->hay_eventos()) {

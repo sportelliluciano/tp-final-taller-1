@@ -103,6 +103,12 @@ public:
     Servidor* servidor();
 
     /**
+     * \brief Configura la casa del jugador actual.
+     */
+    void casa(const std::string& casa);
+    const std::string& casa() const;
+
+    /**
      * \brief Indica que la partida está lista para arrancar.
      * 
      * Llamarlo sin parámetros obtiene el valor actual de la configuración.
@@ -122,7 +128,7 @@ private:
          _sonido = true,
          _esta_lista = false;
     
-    std::string _nombre_sala, _mapa;
+    std::string _nombre_sala, _mapa, _casa;
 
     int _ancho_ventana = 1024, _alto_ventana = 600;
 

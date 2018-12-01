@@ -26,12 +26,22 @@ EstadoLanzador* EstadoEnSala::btn_conectar_click() {
 }
 
 EstadoLanzador* EstadoEnSala::btn_iniciar_juego_click() {
-    if (!servidor->avisar_jugador_listo()) {
+    std::string casa = "atreides";
+    if (ui->rbHarkonnen->isChecked())
+        casa = "harkonnen";
+    else if (ui->rbOrdos->isChecked())
+        casa = "ordos";
+    
+    const std::string& nombre = 
+        ui->txtNombreJugador->text().toUtf8().constData();
+    
+    if (!servidor->avisar_jugador_listo(nombre, casa)) {
         QMessageBox msg_box;
         msg_box.setText("No se pudo iniciar la partida");
         msg_box.exec();
         return this;
     }
+    partida.casa(casa);
     partida.servidor(servidor);
     partida.musica(ui->cbMusica->isChecked());
     partida.sonido(ui->cbSFX->isChecked());

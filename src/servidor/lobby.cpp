@@ -74,7 +74,8 @@ void Lobby::procesar_evento(Cliente& cliente, const nlohmann::json& evento) {
     } else if (tipo == "crear_sala") {
         enviar_ok = crear_sala(cliente, evento.at("nombre"), evento.at("mapa"));
     } else if (tipo == "iniciar_juego") {
-        enviar_ok = iniciar_juego(cliente);
+        enviar_ok = iniciar_juego(cliente, evento.at("nombre_jugador"),
+            evento.at("casa_jugador"));
     } else {
         enviar_error(cliente, "Acción desconocida");
     }
@@ -167,13 +168,15 @@ bool Lobby::crear_sala(Cliente& cliente, const std::string& nombre,
     return true;
 }
 
-bool Lobby::iniciar_juego(Cliente& cliente) {
+bool Lobby::iniciar_juego(Cliente& cliente, const std::string& nombre, 
+    const std::string& casa) 
+{
     if (salas_clientes.count(&cliente) == 0) {
         enviar_error(cliente, "Debes estar en una sala para iniciar el juego");
         return false;
     }
 
-    salas_clientes[&cliente]->iniciar_partida(cliente);
+    salas_clientes[&cliente]->iniciar_partida(cliente, nombre, casa);
     return true;
 }
 

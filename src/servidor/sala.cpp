@@ -100,13 +100,18 @@ void Sala::configurar_recepcion_eventos() {
     }
 }
 
-void Sala::iniciar_partida(Cliente& cliente) {
+void Sala::iniciar_partida(Cliente& cliente, const std::string& nombre, 
+    const std::string& casa) 
+{
     if (partida_iniciada)
         throw std::runtime_error("Esta partida ya fue iniciada");
     
     sala_abierta = false;
 
-    clientes.at(&cliente).set_estado(true);
+    ConexionJugador& jugador_actual = clientes.at(&cliente);
+    jugador_actual.set_estado(true);
+    jugador_actual.set_nombre(nombre);
+    jugador_actual.set_casa(casa);
 
     bool todos_listos = true;
 

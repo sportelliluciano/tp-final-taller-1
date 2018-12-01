@@ -62,7 +62,8 @@ public:
      * Cuando todos los clientes en la sala hayan iniciado la partida se 
      * iniciará el juego.
      */
-    void iniciar_partida(Cliente& cliente);
+    void iniciar_partida(Cliente& cliente, const std::string& nombre, 
+        const std::string& casa);
 
     /**
      * \brief Termina abruptamente la partida

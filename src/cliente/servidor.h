@@ -64,7 +64,8 @@ public:
     /**
      * \brief Avisa el servidor que el jugador ya inició el cliente del juego.
      */
-    bool avisar_jugador_listo();
+    bool avisar_jugador_listo(const std::string& nombre, 
+        const std::string& casa);
 
     /**
      * \brief Inicia la recepción asincrónica de mensajes.

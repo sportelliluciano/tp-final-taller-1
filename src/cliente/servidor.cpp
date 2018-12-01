@@ -109,9 +109,13 @@ bool Servidor::crear_sala(const std::string& nombre, const std::string& mapa) {
     return true;
 }
 
-bool Servidor::avisar_jugador_listo() {
+bool Servidor::avisar_jugador_listo(const std::string& nombre, 
+    const std::string& casa) 
+{
     conn.enviar_json({
-        {"tipo", "iniciar_juego"}
+        {"tipo", "iniciar_juego"},
+        {"nombre_jugador", nombre},
+        {"casa_jugador", casa}
     });
 
     nlohmann::json respuesta = conn.recibir_json();
