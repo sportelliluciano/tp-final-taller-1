@@ -25,7 +25,6 @@ UnidadBase::UnidadBase(const nlohmann::json& data_unidad, const std::vector<Arma
                             //,dimensiones(std::pair<int,int>(data_unidad[ANCHO],
                             //                               data_unidad[ALTO])) 
                                                         {
-    //casa = data_unidad[CASA];
     clase = data_unidad[ID];
     rango = data_unidad[RANGO];
     velocidad = data_unidad[VEL];
@@ -44,7 +43,7 @@ int UnidadBase::atacar_a(Atacable* victima) {
     return 0;
 }
 unsigned int UnidadBase::get_rango() const {
-    return rango*4;
+    return rango;
 }
 unsigned int UnidadBase::get_velocidad() const {
     return velocidad;

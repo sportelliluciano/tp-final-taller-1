@@ -51,6 +51,7 @@ class Jugador{
                                     std::unordered_map<std::string,int>& tiempos_de_entrenamiento);
     IJugador* get_jugador();
     bool tiene(std::set<std::string>& requisitos,Infraestructura& inf);
+    float obtener_varaible_de_entrenamiento(std::set<std::string>& requisitos,Infraestructura& inf);
 
     /**
      * \brief Devuelve true si el jugador ya sincronizó su inicio de juego.

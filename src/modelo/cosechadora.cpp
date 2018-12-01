@@ -1,7 +1,7 @@
 #include "cosechadora.h"
 
 #define CONSTANTE_VELOCIDAD ((0.4f / 15) / 16)
-#define PLATA_DESCARGA 500
+#define PLATA_DESCARGA 200
 namespace modelo {
 
 Cosechadora::Cosechadora(int id_,int pos_x,int pos_y, UnidadBase& unidad_base_
@@ -26,18 +26,17 @@ void Cosechadora::operar(int ds){
     tiempo_descarga -= ds;
     if (tiempo_descarga <= 0){
         operando_ = false;
-        tiempo_descarga = ESPERA;
         if (camino_especia){//quiere decir que estaba en la refineria y me estoy yendo 
+            tiempo_descarga = ESPERA_CARGA;
             comunicacion_jugador -> aumentar_plata(PLATA_DESCARGA);
+        } else {
+            tiempo_descarga = ESPERA_DESCARGA;
         }
     }
 }
 bool Cosechadora::operando(){
     return operando_;
 }
-//IJugador* Cosechadora::obtener_jugador(){
-//    return jugador;
-//}
 bool Cosechadora::actualizar_posicion(int dt, Terreno* terreno) {
     if (!esta_en_camino)
         return false;

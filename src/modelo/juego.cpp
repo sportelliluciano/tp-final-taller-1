@@ -63,6 +63,7 @@ void Juego::iniciar_partida() {
         int x = posiciones_centros[i][0],
             y = posiciones_centros[i][1];
         int nuevo_id = inf.crear_centro_construccion(x, y, id_jugador);
+        terreno.agregar_centro(x,y,id_jugador);
         // TODO: deshardcodear ese centro_construcciones
         jugador.agregar_elemento(nuevo_id, 0, "centro_construcciones");
         i++;
@@ -187,6 +188,16 @@ void Juego::ubicar_edificio(IJugador* conexion_jugador, int celda_x,
 }
 
 void Juego::vender_edificio(IJugador* jugador, int id_edificio) {
+    std::cout << "voy a vender: "<<inf.get(id_edificio).get_tipo() << std::endl;
+    if (inf.get(id_edificio).get_tipo() == "centro_construccion"){
+        std::cout << "no se puede vender" << std::endl;
+        return;
+    }
+    if (!jugadores.at(jugador->obtener_id()).pertenece(id_edificio)){
+        std::cout << "no es tuyo gil" << std::endl;
+        return;
+    }
+
     unsigned int consumo = inf.get_energia(id_edificio);
     for (auto it = jugadores.begin();it!= jugadores.end();++it){
         if ((it->second).pertenece(id_edificio)){
@@ -205,7 +216,7 @@ void Juego::iniciar_entrenamiento_tropa(IJugador* jugador,
     Jugador& jugador_ = jugadores.at(jugador->obtener_id());
     if (!jugador_.tiene(requisitos,inf)||!ejercito.pertenece(clase,jugador->obtener_casa()))
         return;
-        
+    
     unsigned int costo = ejercito.get_costo(clase);
     jugadores.at(jugador->obtener_id()).empezar_entrenamiento(clase,costo);
 }

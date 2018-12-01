@@ -26,11 +26,9 @@ private:
     std::pair <int,int> dimensiones = std::pair <int,int> (1,1);
 
 public:
-    //UnidadBase();
     UnidadBase(const nlohmann::json& data_unidad, const std::vector<Arma*>& armas_);
     ~UnidadBase();
     int atacar_a(Atacable* victima);
-    //void atacar_a(Edificio* edificio);
     unsigned int get_rango() const;
     unsigned int get_velocidad() const;
     unsigned int get_tiempo() const;
