@@ -1,7 +1,7 @@
 #ifndef _GUSANO_H_
 #define _GUSANO_H_
 
-#define TIEMPO_ESPERA 100000 
+#define TIEMPO_ESPERA 150000//2.5min
 
 namespace modelo {
 

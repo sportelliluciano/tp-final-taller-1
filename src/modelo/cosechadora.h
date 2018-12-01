@@ -7,7 +7,8 @@
 #include "modelo/jugador.h"
 #include "comun/i_jugador.h"
 
-#define ESPERA 10000 
+#define ESPERA_CARGA 20000 //20S
+#define ESPERA_DESCARGA 150000//5MIN(300000)
 
 namespace modelo {
 
@@ -15,7 +16,7 @@ class Cosechadora:public Unidad {
     private:
     Terreno* terreno_;
     bool operando_ = false; // cargando o descargando especia
-    int tiempo_descarga = ESPERA;
+    int tiempo_descarga = ESPERA_CARGA;
     bool camino_especia = true;
     bool llegue = false;
     int id_propietario;

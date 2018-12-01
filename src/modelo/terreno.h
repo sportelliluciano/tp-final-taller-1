@@ -120,6 +120,12 @@ public:
 
     void eliminar_refineria(const Posicion& posicion,int id_jugador);
 
+    void agregar_centro(int x_, int y_,int id_jugador);
+
+    void eliminar_centro(int id_jugador);
+
+    Posicion& obtener_centro_posicion(int id_jugador);
+
     /**
      * \brief Obtiene las posiciones de las refinerías del jugador.
      */
@@ -139,6 +145,8 @@ private:
     std::vector<std::vector<Celda>> terreno;
 
     std::unordered_map<int,std::vector<Posicion>> refinerias;
+
+    std::unordered_map<int,Posicion> centros;
 
     /**
      * \brief Dimensiones del terreno, en celdas.

@@ -80,8 +80,9 @@ void Infraestructura::destruir(int id,int id_jugador){
     Edificio& edificio = edificios.at(id);
     terreno->eliminar_edificio(edificio.get_posicion(),edificio.get_dimensiones());
     if (edificio.get_tipo()=="refineria"){
-        std::cout<< "entre al destruir de infraestructura"<<std::endl;
         terreno->eliminar_refineria(edificio.get_posicion(),id_jugador);
+    } else if (edificio.get_tipo()=="centro_construcciones"){
+        terreno->eliminar_centro(id_jugador);
     }
     edificios.erase (id);
     comunicacion_jugadores.broadcast([&] (IJugador* j) {

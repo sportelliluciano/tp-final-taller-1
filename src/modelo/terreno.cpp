@@ -363,6 +363,19 @@ void Terreno::eliminar_refineria(const Posicion& posicion,int id_jugador) {
     }
 }
 
+
+void Terreno::agregar_centro(int x, int y,int id_jugador) {
+    centros.emplace(id_jugador,Posicion(x,y));
+}
+void Terreno::eliminar_centro(int id_jugador) {
+    if (centros.count(id_jugador != 0))
+        centros.erase(id_jugador);
+}
+Posicion& Terreno::obtener_centro_posicion(int id_jugador){
+    if (centros.count(id_jugador != 0))
+        centros.at(id_jugador);
+}
+
 //futura mejora: usar un heap
 Posicion Terreno::obtener_refinerias_cercana(const Posicion& pos,int id_jugador) {
     if (refinerias.count(id_jugador)==0)

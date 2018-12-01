@@ -1,6 +1,8 @@
 #ifndef _ATACABLE_H_
 #define _ATACABLE_H_
 
+#include <utility> 
+
 #include "modelo/posicion.h"
 /**
  * \brief Interfaz servidor-modelo
@@ -16,6 +18,7 @@ public:
     virtual int recibir_dano(unsigned int dano) = 0;
     virtual int get_id() = 0;
     virtual modelo::Posicion& get_posicion() = 0;
+    virtual std::pair<int,int>& get_dimensiones() = 0;
     /**
      * \brief Destructor virtual.
      */

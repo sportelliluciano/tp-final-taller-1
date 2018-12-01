@@ -34,8 +34,8 @@ std::unordered_map<std::string,int>& Ejercito::get_tiempos_entrenamiento(){
 }
 
 int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
-    Posicion pos(43,56);
-    Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
+    Posicion posicion = terreno->obtener_centro_posicion(id_propietario);
+    posicion = terreno->obtener_posicion_caminable_cercana(posicion);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
     tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,posicion.x(),posicion.y()));
@@ -48,8 +48,8 @@ int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
 }
 
 int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario,Jugador* comunicacion_jugador){
-    Posicion pos(43,56);
-    Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
+    Posicion posicion = terreno->obtener_centro_posicion(id_propietario);
+    posicion = terreno->obtener_posicion_caminable_cercana(posicion);
     if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
     terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
@@ -134,8 +134,12 @@ void Ejercito::mover_cosechadora(int id,int x,int y){
 void Ejercito::atacar(Atacable* edificio,int id_atacante){
     // acercarme hasta cumplir con el rango 
     if (tropas.count(id_atacante)!=0) {
-        tropas.at(id_atacante).configurar_ataque(edificio);
-        tropas_atacando.insert(id_atacante);
+        if (tropas.at(id_atacante).configurar_ataque(edificio)){
+            tropas_atacando.insert(id_atacante);
+        } else {
+            Posicion& posicion = edificio->get_posicion();
+            mover(id_atacante,posicion.x(),posicion.y());
+        }
     }
 }
 Unidad& Ejercito::get(int id) {
