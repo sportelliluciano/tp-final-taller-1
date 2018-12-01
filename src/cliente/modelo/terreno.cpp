@@ -186,6 +186,18 @@ Posicion Terreno::obtener_posicion(const Tropa* tropa) {
     return tropa->obtener_posicion();
 }
 
+Posicion Terreno::obtener_centro(const Edificio* edificio) {
+    Posicion esquina_superior = obtener_posicion(edificio);
+    Posicion esquina_inferior = obtener_posicion(
+        edificio->obtener_celda_x() + edificio->obtener_ancho_celdas(),
+        edificio->obtener_celda_y() + edificio->obtener_alto_celdas()
+    );
+
+    int x_medio = (esquina_superior.x + esquina_inferior.x) / 2;
+    int y_medio = (esquina_superior.y + esquina_inferior.y) / 2;
+    return Posicion(x_medio, y_medio);
+}
+
 void Terreno::para_cada_celda_en(const Rectangulo& area, 
     std::function<bool(int, int, bool)> accion) 
 {

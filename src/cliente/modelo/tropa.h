@@ -186,6 +186,8 @@ public:
      */
     float obtener_tiempo_entrenamiento() const;
 
+    ~Tropa();
+
 private:
     Posicion pos_actual;
     Posicion pos_destino;
@@ -251,6 +253,8 @@ private:
     void cargar_sprites_tropa(int sprite_base);
     void cargar_sprites_vehiculo(int sprite_base);
     SpriteAnimado& obtener_sprite();
+
+    std::string id_disparo;
 };
 
 } // namespace cliente

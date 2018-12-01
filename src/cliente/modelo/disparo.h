@@ -39,6 +39,8 @@ public:
      * \brief Renderiza el disparo en la ventana.
      */
     virtual void renderizar(Ventana& ventana, Camara& camara) = 0;
+
+    virtual ~Disparo() { }
 };
 
 } // namespace cliente

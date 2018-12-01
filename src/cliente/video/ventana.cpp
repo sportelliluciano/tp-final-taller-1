@@ -93,14 +93,13 @@ Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
 
     vsync = (info.flags & SDL_RENDERER_PRESENTVSYNC) ? true : false;
     admin_texturas = new AdministradorTexturas(renderer);
-    
+
     SDL_GetWindowSize(ventana, &ancho_px, &alto_px);
-    ancho_vp = ancho_px;
-    alto_vp = alto_px;
-    
+    viewport = Rectangulo(0, 0, ancho_px, alto_px);
+
     ticks_ultimo_cuadro = 0;
     ticks_ultimo_segundo = veces_renderizado = fps_ = 0;
-    
+
     plano_frontal = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
         SDL_TEXTUREACCESS_TARGET, ancho_px, alto_px);
     SDL_SetTextureBlendMode(plano_frontal, SDL_BLENDMODE_BLEND);
@@ -110,11 +109,11 @@ Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
 }
 
 int Ventana::ancho() const {
-    return ancho_vp;
+    return viewport.ancho();
 }
 
 int Ventana::alto() const {
-    return alto_vp;
+    return viewport.alto();
 }
 
 int Ventana::fps() const {
@@ -351,17 +350,15 @@ void Ventana::dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
 void Ventana::setear_viewport(const Rectangulo& seccion) {
     if (SDL_RenderSetViewport(renderer, &seccion.rect()) != 0)
         throw ErrorSDL("SDL_RenderSetViewport");
-    
-    ancho_vp = seccion.ancho();
-    alto_vp = seccion.alto();
+
+    viewport = seccion;
 }
 
 void Ventana::reestablecer_viewport() {
     if (SDL_RenderSetViewport(renderer, NULL) != 0)
         throw ErrorSDL("SDL_RenderSetViewport");
-    
-    ancho_vp = ancho_px;
-    alto_vp = alto_px;
+
+    viewport = Rectangulo(0, 0, ancho_px, alto_px);
 }
 
 void Ventana::ocultar_mouse() {
@@ -373,12 +370,19 @@ void Ventana::mostrar_mouse() {
 }
 
 void Ventana::cambiar_plano(bool frontal) {
+    if (en_plano_frontal == frontal)
+        return;
+    Rectangulo old_viewport = viewport;
+    reestablecer_viewport();
+
     if (frontal)
         SDL_SetRenderTarget(renderer, plano_frontal);
     else
         SDL_SetRenderTarget(renderer, NULL);
 
     en_plano_frontal = frontal;
+
+    setear_viewport(old_viewport);
 }
 
 Ventana::~Ventana() {

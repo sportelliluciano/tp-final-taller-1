@@ -46,6 +46,12 @@ public:
     Posicion obtener_posicion(const Tropa* tropa);
 
     /**
+     * \brief Obtiene la posición en píxeles globales del centro del edificio
+     *        indicado.
+     */
+    Posicion obtener_centro(const Edificio* edificio);
+
+    /**
      * \brief Devuelve los edificios que se encuentran en el área indicada.
      */
     std::unordered_set<Edificio*> obtener_edificios_en(const Rectangulo& area);

@@ -8,6 +8,8 @@
 #include "cliente/config.h"
 
 #include "cliente/modelo/disparo_misil.h"
+#include "cliente/modelo/disparo_plasma.h"
+#include "cliente/modelo/disparo_ondas.h"
 #include "cliente/modelo/hud/barra_vida.h"
 #include "comun/log.h"
 #include "cliente/video/ventana.h"
@@ -65,8 +67,13 @@
 #define JSON_CLAVE_T_ENTRENAMIENTO "tiempo de entrenamiento"
 #define JSON_CLAVE_VIDA_MAXIMA     "vida"
 #define JSON_CLAVE_METADATA        "metadata"
+#define JSON_CLAVE_ARMAS           "id_arma"
 
 #define JSON_VALOR_TIPO_VEHICULO   "vehiculo"
+
+#define ID_ARMA_MISIL "lanza_misiles"
+#define ID_ARMA_PLASMA "cañon_plasma"
+#define ID_ARMA_ONDAS "ondas_sonido"
 
 namespace cliente {
 
@@ -103,6 +110,15 @@ Tropa::Tropa(const nlohmann::json& data) {
     } else {
         cargar_sprites_tropa(sprite_base);
     }
+
+    for (const std::string& id_arma : data.at(JSON_CLAVE_ARMAS)) {
+        if ((id_arma == ID_ARMA_MISIL) || (id_arma == ID_ARMA_PLASMA) ||
+            (id_arma == ID_ARMA_ONDAS))
+        {
+            id_disparo = id_arma;
+            break;
+        }
+    }
 }
 
 void Tropa::cargar_sprites_vehiculo(int sprite_base) {
@@ -137,6 +153,13 @@ void Tropa::cargar_sprites_tropa(int sprite_base) {
 void Tropa::inicializar(int id, const Posicion& posicion, int vida_, 
     int id_propietario_)
 {
+    if (id_disparo == ID_ARMA_MISIL)
+        disparo = new DisparoMisil();
+    else if (id_disparo == ID_ARMA_PLASMA)
+        disparo = new DisparoPlasma();
+    else if (id_disparo == ID_ARMA_ONDAS)
+        disparo = new DisparoOndas();
+    
     fx_actual = pos_destino.x = pos_actual.x = posicion.x;
     fy_actual = pos_destino.y = pos_actual.y = posicion.y;
     id_tropa = id;
@@ -175,7 +198,7 @@ void Tropa::renderizar(Ventana& ventana, Camara& camara) {
     }
 
     sprite_tropa.renderizar(ventana, visual.x, visual.y);
-    if (disparo)
+    if (disparo && esta_disparando())
         disparo->renderizar(ventana, camara);
     
     barra_vida.set_ancho(sprite_tropa.obtener_ancho(ventana));
@@ -435,5 +458,9 @@ float Tropa::obtener_tiempo_entrenamiento() const {
     return tiempo_entrenamiento;
 }
 
+Tropa::~Tropa() {
+    if (disparo)
+        delete disparo;
+}
 
 } // namespace cliente

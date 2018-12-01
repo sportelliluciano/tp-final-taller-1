@@ -8,7 +8,10 @@
 
 namespace cliente {
 
-DisparoMisil::DisparoMisil() {
+DisparoMisil::DisparoMisil() 
+: DisparoProyectil(1.0f)
+{
+    orientacion_actual = 0;
     explosion = SpriteAnimado(3634, 3638);
     explosion.set_centrado(true);
     for (int i=0;i<32;i++) {
@@ -22,147 +25,34 @@ DisparoMisil::DisparoMisil() {
     }
 }
 
-void DisparoMisil::iniciar(int x_origen, int y_origen, int x_destino, 
-        int y_destino) 
-{
-    esta_activo = true;
-    esta_explotando = false;
-    esta_viajando = false;
-    origen = Posicion(x_origen, y_origen);
-    pos_actual = origen;
-    fx_actual = x_origen;
-    fy_actual = y_origen;
-    pos_victima = Posicion(x_destino, y_destino);
-}
-
-void DisparoMisil::actualizar_destino(int x_destino, int y_destino) {
-    pos_victima.x = x_destino;
-    pos_victima.y = y_destino;
-}
-
-void DisparoMisil::detener() {
-    esta_activo = false;
-}
-
-static int calcular_orientacion(const Posicion& actual, const Posicion& destino) 
-{
-    int vx = destino.x - actual.x;
-    int vy = destino.y - actual.y;
-    if (vx > 0)
-        vx = 1;
-    else if (vx < 0)
-        vx = -1;
-    if (vy > 0)
-        vy = 1;
-    else if (vy < 0)
-        vy = -1;
-    int pos_sprite = 0;
-    switch(vx) {
-        case -1:
-        switch(vy) {
-            case -1:
-                pos_sprite = 7; //28;
-                break;
-            case  0:
-                pos_sprite = 6; //24;
-                break;
-            case  1:
-                pos_sprite = 5; //20;
-                break;
-        }
-        break;
-
-        case  0:
-        switch(vy) {
-            case -1:
-                pos_sprite = 0; // 0; 
-                break;
-            case  0:
-                pos_sprite = 0;
-                break;
-            case  1:
-                pos_sprite = 4; //16;  
-                break;
-        }
-        break;
-
-        case  1:
-        switch(vy) {
-            case -1:
-                pos_sprite = 1; //4;
-                break;
-            case  0:
-                pos_sprite = 2; //8;
-                break;
-            case  1:
-                pos_sprite = 3; //12;
-                break;
-        }
-        break;
-    }
-    
-    return pos_sprite * 4;
-}
-
-#define CONSTANTE_VELOCIDAD ((0.4 / 15) / 16)
-void DisparoMisil::actualizar_movimiento(int dt_ms) {
-    if (pos_victima == pos_actual)
-        return;
-
-    int vx = pos_victima.x - pos_actual.x, vy = pos_victima.y - pos_actual.y;
-    
-    float velocidad = 32;
-
-    float k = CONSTANTE_VELOCIDAD * velocidad / sqrt(vx*vx + vy*vy);
-    float veloc_x = k * vx,
-          veloc_y = k * vy;
-
-    float dx = veloc_x * dt_ms,
-          dy = veloc_y * dt_ms;
-
-    if (abs(dx) < abs(pos_victima.x - fx_actual))
-        fx_actual += dx;
-    else
-        fx_actual = pos_victima.x;
-        
-    if (abs(dy) < abs(pos_victima.y - fy_actual))
-        fy_actual += dy;
-    else
-        fy_actual = pos_victima.y;
-    
-    pos_actual.x = round(fx_actual);
-    pos_actual.y = round(fy_actual);
-}
-
 void DisparoMisil::actualizar(int dt_ms) {
-    if (esta_explotando)
-        return;
-    
-    if (esta_activo && !esta_viajando) {
-        // Crear nuevo misil
-        pos_actual = origen;
-        fx_actual = origen.x;
-        fy_actual = origen.y;
-        esta_viajando = true;
-    } else if (esta_viajando) {
-        // Interpolar la posición
-        actualizar_movimiento(dt_ms);
-        if (pos_actual == pos_victima) {
-            esta_viajando = false;
-            esta_explotando = true;
-        }
+    int max_orientacion = 32;
+    if (orientacion != orientacion_actual) {   
+        int delta = orientacion - orientacion_actual;
+        if (abs(delta) > max_orientacion - abs(delta))
+            delta = -delta;
+
+        delta = delta / abs(delta);
+
+        orientacion_actual = orientacion_actual + delta;
+        if (orientacion_actual < 0)
+            orientacion_actual = max_orientacion - 1;
+        else if (orientacion_actual > max_orientacion - 1)
+            orientacion_actual = 0;
     }
+
+    DisparoProyectil::actualizar(dt_ms);
 }
 
 void DisparoMisil::renderizar(Ventana& ventana, Camara& camara) {
     if (!esta_activo && !esta_viajando && !esta_explotando)
         return;
     
+    ventana.cambiar_plano(true);
     Posicion visual = camara.traducir_a_visual(pos_actual);
 
     if (esta_viajando) {
-        // mostrar en el aire    
-        int orientacion = calcular_orientacion(pos_actual, pos_victima);
+        // mostrar en el aire
         misil[orientacion].renderizar(ventana, visual.x, visual.y);
     } else if (esta_explotando) {
         explosion.renderizar(ventana, visual.x, visual.y);
@@ -171,6 +61,7 @@ void DisparoMisil::renderizar(Ventana& ventana, Camara& camara) {
             explosion.reiniciar();
         }
     }
+    ventana.cambiar_plano(false);
 }
 
 } // namespace cliente

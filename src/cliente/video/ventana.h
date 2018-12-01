@@ -192,9 +192,9 @@ private:
     int ancho_px, alto_px;
 
     /**
-     * \brief Dimensiones del viewport.
+     * \brief Viewport actual.
      */
-    int ancho_vp, alto_vp;
+    Rectangulo viewport;
 
     /**
      * \brief Cantidad de veces que se renderizó la ventana en el último 

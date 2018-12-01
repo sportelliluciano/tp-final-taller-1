@@ -1,5 +1,5 @@
-#ifndef _DISPARO_MISIL_H_
-#define _DISPARO_MISIL_H_
+#ifndef _DISPARO_ONDAS_H_
+#define _DISPARO_ONDAS_H_
 
 #include "cliente/modelo/disparo_proyectil.h"
 #include "cliente/modelo/sprite_animado.h"
@@ -9,30 +9,27 @@
 
 namespace cliente {
 
-class DisparoMisil : public DisparoProyectil {
+class DisparoOndas : public DisparoProyectil {
 public:
-    DisparoMisil();
+    DisparoOndas();
 
-    /**
-     * \brief Actualiza el misil.
-     */
-    void actualizar(int dt_ms);
+    virtual void actualizar_destino(int x_destino, int y_destino) override;
+    virtual void actualizar(int dt_ms) override;
 
     /**
      * \brief Renderiza el disparo en la ventana.
      */
     virtual void renderizar(Ventana& ventana, Camara& camara) override;
 
-    virtual ~DisparoMisil() { }
+    virtual ~DisparoOndas() { }
 
 private:
-    const static int N_SPRITES_MISIL = 32;
-    SpriteAnimado misil[N_SPRITES_MISIL];
+    SpriteAnimado ondas;
     SpriteAnimado explosion;
 
-    int orientacion_actual;
+    Posicion nueva_pos_victima;
 };
 
 } // namespace cliente
 
-#endif // _DISPARO_MISIL_H_
+#endif // _DISPARO_ONDAS_H_

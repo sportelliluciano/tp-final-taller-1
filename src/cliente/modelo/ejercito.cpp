@@ -250,7 +250,7 @@ void Ejercito::atacar(int id_atacante, int id_victima, int nueva_vida) {
     } else {
         Edificio& atacado = infraestructura.obtener(id_victima);
         infraestructura.atacar(id_victima, nueva_vida);
-        Posicion pos_atacado = terreno.obtener_posicion(&atacado);
+        Posicion pos_atacado = terreno.obtener_centro(&atacado);
         x_destino = pos_atacado.x;
         y_destino = pos_atacado.y;
     }
