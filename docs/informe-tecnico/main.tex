@@ -198,66 +198,14 @@ Al momento de la entrega 6 se reconocen los siguientes problemas en el cliente q
 Para toda la comunicación cliente-servidor se utilizó el formato JSON. La elección del mismo es que es un formato ampliamente conocido, sencillo de usar, y por sobre todas las cosas, al serializarse como texto plano simplificó mucho la depuración de problemas de conexión.
 
 \newpage
-\section{Editor de mapas}
+\section{Editor}
 
-El editor de mapas fue desarrollado enteramente en Qt5. Esta compuesto por 2 elementos: el lanzador del editor, que permite elegir entre crear un mapa nuevo y editar un mapa creado anteriormente y el editor de mapas en sí. 
+\subsection{Requerimientos de softwate}
+Para compilar, desarrollar, probar y depurar el programa es necesario contar con un SO Linux, compilador GCC 7.3.0, Qt5, QtDesigner, User Interface Compiler (uic), biblioteca Json para c++ modernos y cmake.\\
 
-\subsection{Documentación técnica}
+\subsection{Descripción general}
 
-\subsubsection{Requerimientos de softwate}
-Para compilar, desarrollar, probar y depurar el programa es necesario contar con un SO Linux, compilador GCC 7.3.0, Qt5, QtDesigner, User Interface Compiler (uic), biblioteca Json para c++ modernos y cmake o similares.\\
-
-\subsection{Manual de usuario}
-
-\subsubsection{Instalar el programa}
-
-Para instalar el programa se necesita un SO Linux, compilador GCC 7.3.0, Qt5, User Interface Compiler (uic), biblioteca Json para c++ modernos y cmake. Luego de verificar que su computadora cumple con los requisitos anteriores, para generar la aplicación debe generarse una carpeta nueva en el directorio principal del editor, ingresar a dicha carpeta, abrir la consola y ejecutar el comando "cmake ..". Dicho comando generará un Makefile que será el encargado de generar el ejecutable de la aplicación, por lo tanto en la misma consola ejecutar el comando "make". Dentro de la carpeta creada anteriormente aparecerá el ejecutable, con el nombre editor. Para iniciar el programa, ejecutar el comando "./editor".\\
-
-\subsubsection{Formas de uso}
-
-El editor de mapas puede ser utilizado de 2 formas diferentes, para crear mapas y para cargar mapas para poder editarlos. La siguiente captura de pantalla pertenece al programa cuando es iniciado.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.25\textwidth]{../imagenes/menu_editor.png}
-	\caption{\label{fig:menu_editor} Menú principal del editor.}
-\end{figure}
-
-\subsubsection{Crear mapa}
-
-Para crear un mapa nuevo, hay que presionar el botón "Crear mapa", lo que genera una nueva ventana de configuración en el que deben ser elegidos el tamaño del mapa y la cantidad de jugadores.\\
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.25\textwidth]{../imagenes/conf_nuevo_mapa.png}
-	\caption{\label{fig:menu_editor} Configuración nuevo mapa.}
-\end{figure}
-
-Luego de llenar los campos de configuración y apretar OK, se abrirá el editor de mapa en sí mismo.\\ 
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.75\textwidth]{../imagenes/editor_ui.png}
-	\caption{\label{fig:menu_editor} Editor.}
-\end{figure}
-
-El editor esta compuesto por 3 elementos: el mapa, las pestañas con los elementos que pueden ser ubicados en el mapa y el boton de guardar el mapa. (Explicar como agregar elementos desde las pestañas al mapa y como guardar el mapa).\\
-
-\subsubsection{Cargar mapa}
-
-Para crear un mapa nuevo, hay que presionar el botón "Crear mapa", lo que genera una nueva ventana para elegir el archivo del mapa.\\
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\textwidth]{../imagenes/cargar_mapa.png}
-	\caption{\label{fig:menu_editor} Cargar mapa.}
-\end{figure}
-
-Luego de seleccionar el archivo se abrirá la ventana del editor en sí mismo. A partir de este momento, el funcionamiento es el mismo que al crear un mapa nuevo.\\
-
-\subsubsection{Errores al utilizar el programa}
-
-Es posible que aparezcan mensajes de error al utilizar el editor. Estos errores aparecen cuando el usuario quiere realizar una acción prohibida, como por ejemplo, agregar un jugador sobre la arena. En ese caso en particular, el mensaje de error aclara que los jugadores solo pueden ser ubicados sobre la roca.
+El editor esta codeado en el lenguaje C++ y adem .Esta compuesto por 2 elementos principales: el dialogo de bienvenida, que permite elegir entre crear un mapa nuevo y editar un mapa creado anteriormente y el editor de mapas en sí mismo.   
 
 
 \end{document}
