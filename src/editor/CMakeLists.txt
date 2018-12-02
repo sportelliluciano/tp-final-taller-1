@@ -9,11 +9,33 @@ project(editor)
 # agregar paquetes, ver https://blog.kitware.com/cmake-finding-qt5-the-right-way/
 find_package(Qt5Widgets)
 
-# Linkea libQt5Widgets.so al ejecutable
-#target_link_libraries(editor Qt5::Widgets)
+# Esta macro toma cada uno los parámetros y ejecuta *uic* sobre ellos
+# La aplicacion uic genera headers con la definición de los widgets
+# a partir de un archivo .ui
+# Los nombres de los headers generados se guardan en la variable pasada
+# como primer parámetro.
+# No, no los genera con la carpeta como prefijo.
+qt5_wrap_ui(UIS_HEADERS
+        ${PROJECT_SOURCE_DIR}/ui/Editor.ui
+)
 
-file(GLOB libeditor_srcs *.cpp)
-list(REMOVE_ITEM libeditor_srcs "main.cpp")
+# Agrego la carpeta con los headers autogenerados a los includes
+message("Agregando '${PROJECT_BINARY_DIR}' como directorio de includes")
+include_directories(${PROJECT_BINARY_DIR})
 
-add_library(libeditor ${libeditor_srcs})
-target_link_libraries(libeditor libcomun Qt5::Widgets)
+message("Headers generados: ${UIS_HEADERS}")
+
+add_executable(editor
+  Editor.cpp
+  main.cpp
+  LabelTab.cpp
+  LabelMapa.cpp
+  DialogoBienvenida.cpp
+  GeneradorSprites.cpp
+  ManejadorJson.cpp
+  Tabs.cpp
+  Mapa.cpp
+  ${UIS_HEADERS})
+
+# Use the Widgets module from Qt 5.
+target_link_libraries(editor Qt5::Widgets)
