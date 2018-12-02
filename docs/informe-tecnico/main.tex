@@ -200,12 +200,80 @@ Para toda la comunicación cliente-servidor se utilizó el formato JSON. La elec
 \newpage
 \section{Editor}
 
-\subsection{Requerimientos de softwate}
-Para compilar, desarrollar, probar y depurar el programa es necesario contar con un SO Linux, compilador GCC 7.3.0, Qt5, QtDesigner, User Interface Compiler (uic), biblioteca Json para c++ modernos y cmake.\\
+\subsection{Requerimientos de software}
+Para compilar, desarrollar, probar y depurar el programa es necesario contar con un SO Linux, compilador GCC 7.3.0, Qt5, QtDesigner, User Interface Compiler (uic), biblioteca Json para c++ modernos y cmake.
 
 \subsection{Descripción general}
 
-El editor esta codeado en el lenguaje C++ y adem .Esta compuesto por 2 elementos principales: el dialogo de bienvenida, que permite elegir entre crear un mapa nuevo y editar un mapa creado anteriormente y el editor de mapas en sí mismo.   
+El Editor esta codeado en el lenguaje C++ y además se utilizó la librería gráfica Qt 5 y la librería JSON para C++ modernos . La aplicación esta compuesta por 2 elementos principales: el dialogo de bienvenida y el editor de mapas. El dialogo de bienvenida contiene 2 botones que permiten elegir entre crear un mapa desde cero y cargar un mapa creando anteriormente. Luego de configurar el nuevo mapa o de elegir el mapa ya creado con anterioridad se abre la ventana del editor de mapas. Dicho editor esta compuesto por 3 elementos: el terreno del mapa, la pestaña que contiene los distintos terrenos posibles y la barra con el menu.\\
 
+Se utilizo Qt 5 para diseñar la interfaz gráfica y para atrapar los eventos que el usuario genere al utilizar dicha interfaz gráfica. Para almacenar un mapa utilizamos el formato JSON al ser un formato ampliamente conocido y sencillo de usar.
+
+\subsection{Clases, interfaces y estructuras}
+
+A continuación describiremos en profundidad las clases utilizadas por el Editor.
+
+\begin{itemize}
+
+\item DialogoBienvenida: clase que hereda de QDialog, por lo tanto representa a una ventana de diálogo. Contiene 2 QPushButton, uno para crear un mapa y el otro para cargar un mapa. Como layout utiliza un QFormLayout aunque podrían usar otros sin cambiar la funcionalidad. Los eventos de click de los botones generan la ejecución de los métodos DialogoBienvenida::mostrar\_dialogo\_crear\_mapa y DialogoBienvenida::mostrar\_dialogo\_cargar\_mapa. El primer método muestra otro diálogo conformado por QSpinBox para poder elegir la cantidad de jugadores y el tamaño del mapa y el segundo muestra un QFileDialog para elegir el archivo del mapa guardado. Al final de ambos métodos se iniciliza el objeto Editor.
+
+\item Editor: clase que hereda de QMainWindow ya que trae por defecto un QMenuBar, también implementa la interfaz 'Observador'.
+
+\item Mapa:
+
+\item Tabs:
+
+\item LabelMapa:
+
+\item LabelTab:
+
+\item GeneradorSprites:
+
+\item ManejadorJson:
+
+\item Sprite:
+
+\item Observador:
+
+\item ObservadorMapa:
+
+\item ObservadorTabs:
+
+\end{itemize}
+
+\subsection{Diagramas UML}
+
+\begin{itemize}
+
+\item Comunicación Editor-Mapa-Tabs\\
+
+En los siguientes diagramas se aprecia como funciona la comunicación entre los objetos Editor, Mapa y Tabs. (agregar los 2 diagramas)\\
+
+
+\end{itemize}
+
+\subsection{Descripción de archivos}
+
+\begin{itemize}
+
+\item Mapa\\
+
+El Editor tiene la función de crear mapas y almacenarlos en memoria. Elegimos almacenarlos en el formato JSON por las razones indicadas en la 'Descripción general' del informe técnico en la sección del Editor. Dentro del archivo JSON se almacenas 2 arrays: uno representa la posicion de cada jugador en el mapa y el otro reprenta al mapa en si mismo. \\
+
+El array de jugadores es de largo n siendo n la cantidad de jugadores. Cada elemento del array de jugadores a su vez es un array de largo 2 que representa la posición en el mapa del jugador, [X, Y]. \\
+
+El array que representa al mapa también es una array de arrays. En este caso los arrays que se encuentran dentro del array principal son de largo k siendo k la cantidad de columnas del mapa y el array principal tiene un largo de h siendo h la cantidad de filas del mapa. Dentro de los arrays secundarios se ubican strings que representas los diferentes terrenos ubicables en el mapa. A continuación explicaremos que son esos strings en el item 'Sprites terrenos'.
+
+\item Sprites terrenos\\
+
+Los sprites de los terrenos están distribuidos en cuadrados de 8x8 pixeles en el archivo 'd2k\_BLOXBASE.bmp' cuyo tamaño es de 160x320 pixeles. A su vez cada tile del mapa tiene un tamaño de 32x32 pixeles, lo que serían 16 cuadrados de 8x8. A su vez cada tile tiene un id en formato string (por ejemplo: "arena1") y un tipo en formato int (por ejemplo: "0"). Para cada tipo de terreno existen distintos tiles con distintos ids (por ejemplo: "roca1", "roca2", étc.).\\
+
+En el archivo terrenos.json se encuentran los distintos tipos de terrenos con sus respectivos tiles. Cada tile esta representado por un vector de ints de largo 16, cada elemento representa la posición de un cuadrado de 8x8 pixeles en el archivo .bmp indicado anteriormente, siendo el cuadrado que se encuentra en la esquina superior izquierda el 1, el cuadrado que se encuentra a su derecha el 2 y sigue contando de esa manera.
+
+\item Editor.ui\\
+
+Dicho archivo, editable con el programa Qt Designer, almacena la información de la interfaz gráfica (el diseño o wireframe, los distintos widgets, étc.).
+
+\end{itemize}
 
 \end{document}
