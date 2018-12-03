@@ -15,14 +15,14 @@ qt5_wrap_ui(UIS_HEADERS_EDITOR
 
 add_library(editor
   ${UIS_HEADERS_EDITOR}
-  Editor.cpp
-  LabelTab.cpp
-  LabelMapa.cpp
-  DialogoBienvenida.cpp
-  GeneradorSprites.cpp
-  ManejadorJson.cpp
-  Tabs.cpp
-  Mapa.cpp
+  editor.cpp
+  label_tab.cpp
+  label_mapa.cpp
+  dialogo_bienvenida.cpp
+  generador_sprites.cpp
+  manejador_json.cpp
+  tabs.cpp
+  mapa.cpp
 )
 
 # Use the Widgets module from Qt 5.
