@@ -24,6 +24,8 @@
 #define TICKS_POR_CUADRO (30 / MS_POR_TICK)
 #define TICKS_POR_SEGUNDO (1000 / MS_POR_TICK)
 
+#define TITULO_VENTANA "Dune Remake"
+
 namespace cliente {
 
 Ventana::Ventana() : Ventana(ANCHO_VENTANA_DEFECTO, ALTO_VENTANA_DEFECTO) { }
@@ -44,12 +46,12 @@ Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
     }
     
     if (pantalla_completa) {
-        ventana = SDL_CreateWindow("Dune Remake", 
+        ventana = SDL_CreateWindow(TITULO_VENTANA, 
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
             0, 0, 
             SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
     } else {
-        ventana = SDL_CreateWindow("Dune remake", 
+        ventana = SDL_CreateWindow(TITULO_VENTANA, 
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
             w, h, 
             SDL_WINDOW_SHOWN);
@@ -161,10 +163,21 @@ void Ventana::registrar_notificable(INotificable& notificable) {
 }
 
 // TODO: Refactorizar esto
-void Ventana::procesar_eventos() {
-    if (!receptor_eventos)
-        return;
+bool Ventana::procesar_eventos() {
     SDL_Event evento;
+
+    if (!receptor_eventos) {
+        // Si no hay nadie escuchando, 
+        //  por defecto procesar sólo el evento "salir"
+        while (SDL_PollEvent(&evento)) {
+            if (evento.type == SDL_QUIT) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     while (SDL_PollEvent(&evento)) {
         switch(evento.type) {
             case SDL_QUIT:
@@ -236,6 +249,8 @@ void Ventana::procesar_eventos() {
                 break;
         }
     }
+
+    return true;
 }
 
 void Ventana::actualizar() {

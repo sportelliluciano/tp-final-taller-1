@@ -90,8 +90,12 @@ public:
      * \brief Procesa los eventos que recibe la ventana.
      * 
      * Este método ejecuta los callbacks registrados.
+     * 
+     * Si no hay ningún callback registrado, se procesará únicamente el evento
+     * "salir" y devolverá false en caso de que se haya detectado dicho evento.
+     * En cualquier otro caso devolverá true.
      */
-    void procesar_eventos();
+    bool procesar_eventos();
 
     /**
      * \brief Dibuja un rectángulo de depuración sobre la ventana
