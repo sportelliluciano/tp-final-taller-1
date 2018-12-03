@@ -90,7 +90,7 @@ Basándonos en el enunciado del trabajo práctico nos dividimos las tareas de la
     Tarea & Integrante \\ \hline
     Servidor & Matias Iglesias  \\ \hline
     Cliente & Luciano Sportelli Castro \\ \hline
-    Editor & Santiago Alvarez Juliá\\
+    Editor & Santiago Alvarez Juliá \\
     \hline
     \end{tabular}
 \end{center}
@@ -99,7 +99,7 @@ Basándonos en el enunciado del trabajo práctico nos dividimos las tareas de la
 
 \subsection{Editor}
 
-
+Un inconveniente encontrado a la hora de programar el Editor fue la manera en que tenía que ser almacenado un mapa en memoria para que el Editor mismo lo pueda cargar y también lo puedan leer el Cliente y el Servidor. La dificultad en este caso era conseguir almacenar el mapa de manera que ocupe la menor cantidad de espacio en memoria posible, lo que aumentaría la velocidad de lectura de éste, y que además sea fácil leerlo. La solución que encontramos fue almacenarlos con el formato JSON al ser un formato ampliamente conocido y sencillo de usar. Dentro del JSON se almacenan 2 arrays: uno representa la posición de cada jugador en el mapa y el otro representa al mapa en si mismo. El array de jugadores es de largo n siendo n la cantidad de jugadores. Cada elemento del array de jugadores a su vez es un array de largo 2 que representa la posición en el mapa del jugador, [X, Y]. El array que representa al mapa también es una array de arrays. En este caso los arrays que se encuentran dentro del array principal son de largo k siendo k la cantidad de columnas del mapa y el array principal tiene un largo de h siendo h la cantidad de filas del mapa. Dentro de los arrays secundarios se ubican strings que representas los diferentes terrenos ubicables en el mapa.
 
 \section{Análisis de puntos pendientes}
 
