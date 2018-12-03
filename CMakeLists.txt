@@ -60,6 +60,7 @@ add_subdirectory(src/comun)
 add_subdirectory(src/cliente)
 add_subdirectory(src/modelo)
 add_subdirectory(src/servidor)
+add_subdirectory(src/editor)
 
 # Generar el cliente
 add_executable(dune-remake src/cliente/main.cpp)
@@ -73,8 +74,12 @@ endif(CL_USAR_ASAN)
 add_executable(dune-remake-servidor src/servidor/main.cpp)
 target_link_libraries(dune-remake-servidor servidor)
 
+# Generar el editor
+add_executable(dune-remake-editor src/editor/main.cpp)
+target_link_libraries(dune-remake-editor editor)
+
 # Copiar binarios
-install(TARGETS dune-remake dune-remake-servidor DESTINATION bin)
+install(TARGETS dune-remake dune-remake-servidor dune-remake-editor DESTINATION bin)
 # Copiar configuración inicial y mapas base del servidor
 install(FILES data/servidor/config.json
               data/servidor/edificios.json
