@@ -100,9 +100,30 @@ void Sala::configurar_recepcion_eventos() {
     }
 }
 
-void Sala::iniciar_partida(Cliente& cliente, const std::string& nombre, 
-    const std::string& casa) 
-{
+bool Sala::set_casa_cliente(Cliente& cliente, const std::string& casa) {
+    clientes.at(&cliente).set_casa(casa);
+    return true;
+}
+
+void Sala::listar_jugadores(Cliente& cliente) {
+    std::vector<nlohmann::json> data_clientes;
+
+    for (auto it=clientes.begin();it!=clientes.end();++it) {
+        ConexionJugador& jugador = it->second;
+        data_clientes.push_back({
+            {"nombre", jugador.obtener_nombre()},
+            {"casa", jugador.obtener_casa()},
+            {"listo", jugador.esta_listo()}
+        });
+    }
+
+    cliente.enviar({
+        {"estado", "OK"},
+        {"jugadores", data_clientes}
+    });
+}
+
+void Sala::iniciar_partida(Cliente& cliente) {
     if (partida_iniciada)
         throw std::runtime_error("Esta partida ya fue iniciada");
     
@@ -110,8 +131,6 @@ void Sala::iniciar_partida(Cliente& cliente, const std::string& nombre,
 
     ConexionJugador& jugador_actual = clientes.at(&cliente);
     jugador_actual.set_estado(true);
-    jugador_actual.set_nombre(nombre);
-    jugador_actual.set_casa(casa);
 
     bool todos_listos = true;
 

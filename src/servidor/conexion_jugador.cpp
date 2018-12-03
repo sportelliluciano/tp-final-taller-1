@@ -40,11 +40,7 @@ void ConexionJugador::set_casa(const std::string& casa_) {
 }
 
 const std::string& ConexionJugador::obtener_nombre() const {
-    return nombre;
-}
-
-void ConexionJugador::set_nombre(const std::string& nombre_) {
-    nombre = nombre_;
+    return conexion_cliente.obtener_nombre();
 }
 
 void ConexionJugador::notificar(const nlohmann::json& data) {

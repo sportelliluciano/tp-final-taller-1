@@ -15,7 +15,7 @@
 namespace servidor {
 
 Cliente::Cliente(SocketConexion socket_conexion) 
-: conexion(socket_conexion)
+: conexion(socket_conexion), nombre("-")
 { }
 
 Cliente::Cliente(Cliente&& otro) 
@@ -125,6 +125,14 @@ const std::string& Cliente::obtener_error() const {
         return error_emisor;
     
     return error_receptor;
+}
+
+void Cliente::set_nombre(const std::string& nuevo_nombre) {
+    nombre = nuevo_nombre;
+}
+
+const std::string& Cliente::obtener_nombre() const {
+    return nombre;
 }
 
 } // namespace servidor

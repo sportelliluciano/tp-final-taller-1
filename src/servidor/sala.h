@@ -62,8 +62,7 @@ public:
      * Cuando todos los clientes en la sala hayan iniciado la partida se 
      * iniciará el juego.
      */
-    void iniciar_partida(Cliente& cliente, const std::string& nombre, 
-        const std::string& casa);
+    void iniciar_partida(Cliente& cliente);
 
     /**
      * \brief Termina abruptamente la partida
@@ -80,6 +79,16 @@ public:
      * \brief Devuelve la cantidad de jugadores conectados a la sala.
      */
     int cantidad_jugadores_conectados();
+
+    /**
+     * \brief Setea la casa del cliente.
+     */
+    bool set_casa_cliente(Cliente& cliente, const std::string& casa);
+
+    /**
+     * \brief Envía al cliente la lista de jugadores conectados.
+     */
+    void listar_jugadores(Cliente& cliente);
 
     ~Sala();
 

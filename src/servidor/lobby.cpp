@@ -74,8 +74,13 @@ void Lobby::procesar_evento(Cliente& cliente, const nlohmann::json& evento) {
     } else if (tipo == "crear_sala") {
         enviar_ok = crear_sala(cliente, evento.at("nombre"), evento.at("mapa"));
     } else if (tipo == "iniciar_juego") {
-        enviar_ok = iniciar_juego(cliente, evento.at("nombre_jugador"),
-            evento.at("casa_jugador"));
+        enviar_ok = iniciar_juego(cliente);
+    } else if (tipo == "setear_casa") {
+        enviar_ok = set_casa(cliente, evento.at("casa"));
+    } else if (tipo == "setear_nombre") {
+        enviar_ok = set_nombre(cliente, evento.at("nombre"));
+    } else if (tipo == "listar_jugadores") {
+        listar_jugadores(cliente);
     } else {
         enviar_error(cliente, "Acción desconocida");
     }
@@ -168,17 +173,39 @@ bool Lobby::crear_sala(Cliente& cliente, const std::string& nombre,
     return true;
 }
 
-bool Lobby::iniciar_juego(Cliente& cliente, const std::string& nombre, 
-    const std::string& casa) 
-{
+bool Lobby::iniciar_juego(Cliente& cliente) {
     if (salas_clientes.count(&cliente) == 0) {
         enviar_error(cliente, "Debes estar en una sala para iniciar el juego");
         return false;
     }
 
-    salas_clientes[&cliente]->iniciar_partida(cliente, nombre, casa);
+    salas_clientes[&cliente]->iniciar_partida(cliente);
     return true;
 }
+
+bool Lobby::set_casa(Cliente& cliente, const std::string& casa) {
+    if (salas_clientes.count(&cliente) == 0) {
+        enviar_error(cliente, "Debes estar en una sala para iniciar el juego");
+        return false;
+    }
+
+    return salas_clientes[&cliente]->set_casa_cliente(cliente, casa);
+}
+
+bool Lobby::set_nombre(Cliente& cliente, const std::string& nombre) {
+    cliente.set_nombre(nombre);
+    return true;
+}
+
+void Lobby::listar_jugadores(Cliente& cliente) {
+    if (salas_clientes.count(&cliente) == 0) {
+        enviar_error(cliente, "Debes estar en la sala para ver sus jugadores");
+        return;
+    }
+
+    salas_clientes[&cliente]->listar_jugadores(cliente);
+}
+
 
 void Lobby::limpiar_salas() {
     for (auto it = salas.begin(); it != salas.end(); ) {

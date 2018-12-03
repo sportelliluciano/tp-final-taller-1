@@ -81,10 +81,16 @@ public:
      */
     const std::string& obtener_error() const;
 
+    void set_nombre(const std::string& nuevo_nombre);
+
+    const std::string& obtener_nombre() const;
+
 private:
     Conexion conexion;
     std::thread hilo_emisor, hilo_receptor;
     ColaProtegida<nlohmann::json> cola_salida;
+
+    std::string nombre;
 
     std::mutex m_cb_al_recibir_datos;
     std::function<void(const nlohmann::json&)> cb_al_recibir_datos = nullptr;
