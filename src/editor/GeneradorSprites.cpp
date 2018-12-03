@@ -32,10 +32,6 @@ map<string, Sprite> GeneradorSprites::generar_sprites_posibles() {
         json elem = valores_por_defecto;
         elem.update(*it);
 
-        // valores donde ubicar los label dentro de los gridLayout de cada pestaña.
-        int columna = 0;
-        int fila = 0;
-
         auto it_sprites = elem["sprites"].begin();
         for (int i = 0; it_sprites != elem["sprites"].end(); ++it_sprites) {
             json tile = *it;
@@ -66,12 +62,10 @@ Sprite GeneradorSprites::generar_sprite_inicial() {
     entrada >> terrenos_json;
 
     auto it = terrenos_json.begin();
-    const json& data_general = *it;
     
     ++it;
     const json& elem = *it;
 
-    auto it_tiles = elem["sprites"].begin();
     json tile = *it;
     string id = tile["sprites"][0]["id"];
     int tipo = elem["tipo"];

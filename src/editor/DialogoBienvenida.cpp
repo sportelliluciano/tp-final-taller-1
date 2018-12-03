@@ -12,8 +12,8 @@
 #define DIMENSION_MAXIMA_MAPA 1000
 using std::string;
 
-DialogoBienvenida::DialogoBienvenida(QWidget *parent) : editor_fue_creado(false), 
-    QDialog(parent) {
+DialogoBienvenida::DialogoBienvenida(QWidget *parent) : QDialog(parent), 
+    editor_fue_creado(false) {
     this->form_layout = new QFormLayout(this);
 
     this->titulo = new QLabel("Bienvenido al editor de mapas de Dune");
@@ -34,27 +34,27 @@ DialogoBienvenida::DialogoBienvenida(QWidget *parent) : editor_fue_creado(false)
 
 void DialogoBienvenida::mostrar_dialogo_crear_mapa() {
     QDialog dialog (this);
-    QFormLayout form_layout (&dialog);
+    QFormLayout form (&dialog);
 
     QString descripcion_filas ("Filas");
     QSpinBox spinbox_filas (&dialog);
     spinbox_filas.setMinimum(DIMENSION_MINIMA_MAPA);
     spinbox_filas.setMaximum(DIMENSION_MAXIMA_MAPA);
-    form_layout.addRow(descripcion_filas, &spinbox_filas);
+    form.addRow(descripcion_filas, &spinbox_filas);
 
     QString descripcion_columnas ("Columnas");
     QSpinBox spinbox_columnas (&dialog);
     spinbox_columnas.setMinimum(DIMENSION_MINIMA_MAPA);
     spinbox_columnas.setMaximum(DIMENSION_MAXIMA_MAPA);
-    form_layout.addRow(descripcion_columnas, &spinbox_columnas);
+    form.addRow(descripcion_columnas, &spinbox_columnas);
 
     QString descripcion_cant_jugadores ("Cantidad de jugadores");
     QSpinBox spinbox_jugadores (&dialog);
     spinbox_jugadores.setMinimum(MINIMO_CANTIDAD_JUGADORES);
-    form_layout.addRow(descripcion_cant_jugadores, &spinbox_jugadores);
+    form.addRow(descripcion_cant_jugadores, &spinbox_jugadores);
 
     QDialogButtonBox box_botones (QDialogButtonBox::Ok, Qt::Horizontal, &dialog);
-    form_layout.addRow(&box_botones);
+    form.addRow(&box_botones);
     QObject::connect(&box_botones, SIGNAL(accepted()), &dialog, SLOT(accept()));
 
     dialog.setWindowTitle("Crear mapa");

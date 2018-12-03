@@ -19,14 +19,14 @@ using std::vector;
 using std::map;
 using nlohmann::json;
 
-Mapa::Mapa(int filas, int columnas, QWidget* parent) : filas(filas), 
-    columnas(columnas), parent(parent) {
+Mapa::Mapa(int filas_mapa, int columnas_mapa, QWidget* parent_qwidget) : 
+    filas(filas_mapa), columnas(columnas_mapa), parent(parent_qwidget) {
     this->mapa = map<string, LabelMapa*>();
     this->jugadores = map<string, bool>();
 }
 
 
-Mapa::Mapa(QWidget* parent) : parent(parent) {
+Mapa::Mapa(QWidget* parent_qwidget) : parent(parent_qwidget) {
     this->mapa = std::map<std::string, LabelMapa*>();
     this->jugadores = map<string, bool>();
 }
@@ -45,7 +45,7 @@ int Mapa::get_cant_columnas() {
 void Mapa::parsear_json(string& filename_json) {
     // getteo el layout y el widget del Mapa
     QGridLayout* map_layout = this->parent->findChild<QGridLayout*>("mapLayout");
-    QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
+    //QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
 
     // cosas de parseo del json de terrenos
     std::ifstream entrada(filename_json);
@@ -125,7 +125,7 @@ void Mapa::parsear_json(string& filename_json) {
 void Mapa::inicializar_mapa() {
     // getteo el layout y el widget del Mapa-
     QGridLayout* map_layout = this->parent->findChild<QGridLayout*>("mapLayout");
-    QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
+    //QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
 
     // genero sprite inicial
     GeneradorSprites generador_sprites;

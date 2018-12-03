@@ -11,7 +11,7 @@ using std::map;
 using nlohmann::json;
 using std::vector;
 
-Tabs::Tabs(QWidget* parent) : parent(parent) {
+Tabs::Tabs(QWidget* parent_qwidget) : parent(parent_qwidget) {
     this->tabs_terrenos = map<string, LabelTab*>();
     Sprite sprite;
     sprite.id = "";

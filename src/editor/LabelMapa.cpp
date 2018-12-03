@@ -3,8 +3,9 @@
 #define TAMANIO_LABEL_MAPA 32
 using std::string;
 
-LabelMapa::LabelMapa(Sprite sprite, string& pos_label, 
-    QWidget* parent) : QLabel(parent), sprite(sprite), pos_label(pos_label) {
+LabelMapa::LabelMapa(Sprite data_sprite, string& position_label, 
+    QWidget* parent) : QLabel(parent), sprite(data_sprite), 
+    pos_label(position_label) {
     this->setFixedSize(TAMANIO_LABEL_MAPA, TAMANIO_LABEL_MAPA);
     this->setPixmap(sprite.imagen);
     this->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);

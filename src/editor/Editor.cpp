@@ -13,9 +13,9 @@
 #define TIPO_JUGADOR 6
 using std::string;
 
-Editor::Editor(int filas, int columnas, int cant_elegida_jugadores, QWidget *parent) : 
-    mapa(Mapa(filas, columnas, this)), tabs(Tabs(this)), min_cant_jugadores(MINIMO_CANTIDAD_JUGADORES),
-    cant_elegida_jugadores(cant_elegida_jugadores), QMainWindow(parent, Qt::Window) {
+Editor::Editor(int filas, int columnas, int cant_jugadores, QWidget *parent) : 
+    QMainWindow(parent, Qt::Window), mapa(Mapa(filas, columnas, this)), tabs(Tabs(this)),
+    cant_elegida_jugadores(cant_jugadores), min_cant_jugadores(MINIMO_CANTIDAD_JUGADORES) {
     // Instancio la configuracion generada por el designer y uic
     Ui::Editor editor;
     // Configuro este widget para que use esa configuracion. A partir de aca

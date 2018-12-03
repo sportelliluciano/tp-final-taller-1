@@ -17,16 +17,15 @@ void ManejadorJson::generar_json(string& nombre_archivo, int filas, int columnas
     
     vector<vector<string>> tipos;
     vector<vector<uint32_t>> jugadores_json;
-    int cont_sprites_agregados = 0;
 
     for (int i = 0; i < filas; ++i) {
         vector<string> tipos_por_columna;
         
-        for (int j = 0; j < columnas; ++j) {
+        for (int k = 0; k < columnas; ++k) {
             string id_label ("");
             id_label += std::to_string(i);
             id_label += ',';
-            id_label += std::to_string(j);
+            id_label += std::to_string(k);
             map<string, LabelMapa*>::iterator it = mapa.find(id_label);
 	        if (it != mapa.end()) {
                 tipos_por_columna.emplace_back(it->second->get_sprite().id);
