@@ -32,6 +32,53 @@ nlohmann::json Servidor::recibir_json() {
     return conn.recibir_json();
 }
 
+void Servidor::set_casa(const std::string& casa) {
+    conn.enviar_json({
+        {"tipo", "setear_casa"},
+        {"casa", casa}
+    });
+
+    nlohmann::json data = conn.recibir_json();
+    if (data.at("estado") != "OK")
+        throw std::runtime_error(data.at("mensaje"));
+}
+
+void Servidor::set_nombre(const std::string& nombre) {
+    conn.enviar_json({
+        {"tipo", "setear_nombre"},
+        {"nombre", nombre}
+    });
+
+    nlohmann::json data = conn.recibir_json();
+    if (data.at("estado") != "OK")
+        throw std::runtime_error(data.at("mensaje"));
+}
+
+std::vector<nlohmann::json>
+    Servidor::obtener_jugadores_en(const std::string& sala)
+{
+    conn.enviar_json({
+        {"tipo", "listar_jugadores"},
+        {"sala", sala}
+    });
+
+    nlohmann::json data = conn.recibir_json();
+    if (data.at("estado") != "OK")
+        throw std::runtime_error(data.at("mensaje"));
+    
+    return data.at("jugadores");
+}
+
+void Servidor::iniciar_juego() {
+    conn.enviar_json({
+        {"tipo", "iniciar_juego"}
+    });
+
+    nlohmann::json data = conn.recibir_json();
+    if (data.at("estado") != "OK")
+        throw std::runtime_error(data.at("mensaje"));
+}
+
 std::vector<std::string> Servidor::obtener_salas() {
     conn.enviar_json({
         {"tipo", "listar_salas"}
@@ -100,22 +147,6 @@ bool Servidor::crear_sala(const std::string& nombre, const std::string& mapa) {
         {"tipo", "crear_sala"},
         {"nombre", nombre},
         {"mapa", mapa}
-    });
-
-    nlohmann::json respuesta = conn.recibir_json();
-    if (respuesta.at("estado") != "OK")
-        return false;
-    
-    return true;
-}
-
-bool Servidor::avisar_jugador_listo(const std::string& nombre, 
-    const std::string& casa) 
-{
-    conn.enviar_json({
-        {"tipo", "iniciar_juego"},
-        {"nombre_jugador", nombre},
-        {"casa_jugador", casa}
     });
 
     nlohmann::json respuesta = conn.recibir_json();
@@ -263,6 +294,10 @@ void Servidor::detener() {
     
     if (hilo_receptor.joinable())
         hilo_receptor.join();
+}
+
+bool Servidor::esta_conectado() const {
+    return conn.esta_conectada();
 }
 
 Servidor::~Servidor() {

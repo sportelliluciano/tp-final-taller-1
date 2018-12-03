@@ -27,6 +27,12 @@ public:
 
     nlohmann::json recibir_json();
     
+    void set_casa(const std::string& casa);
+    void set_nombre(const std::string& nombre);
+    void iniciar_juego();
+    std::vector<nlohmann::json>
+        obtener_jugadores_en(const std::string& sala);
+
     /**
      * \brief Obtiene las salas disponibles en el servidor.
      * 
@@ -61,11 +67,7 @@ public:
      */
     bool crear_sala(const std::string& nombre, const std::string& mapa);
 
-    /**
-     * \brief Avisa el servidor que el jugador ya inició el cliente del juego.
-     */
-    bool avisar_jugador_listo(const std::string& nombre, 
-        const std::string& casa);
+    bool esta_conectado() const;
 
     /**
      * \brief Inicia la recepción asincrónica de mensajes.

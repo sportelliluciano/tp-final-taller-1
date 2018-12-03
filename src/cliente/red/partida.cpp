@@ -61,6 +61,14 @@ const std::string& Partida::nombre_sala() const {
     return _nombre_sala;
 }
 
+void Partida::nombre_jugador(const std::string& nombre) {
+    _nombre_jugador = nombre;
+}
+
+const std::string& Partida::nombre_jugador() const {
+    return _nombre_jugador;
+}
+
 void Partida::casa(const std::string& casa) {
     _casa = casa;
 }

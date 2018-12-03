@@ -79,6 +79,9 @@ public:
     void nombre_sala(const std::string& nombre);
     const std::string& nombre_sala() const;
 
+    void nombre_jugador(const std::string& nombre);
+    const std::string& nombre_jugador() const;
+
     /**
      * \brief Configura el nombre del mapa a jugar.
      * 
@@ -128,7 +131,7 @@ private:
          _sonido = true,
          _esta_lista = false;
     
-    std::string _nombre_sala, _mapa, _casa;
+    std::string _nombre_sala, _mapa, _casa, _nombre_jugador;
 
     int _ancho_ventana = 1024, _alto_ventana = 600;
 

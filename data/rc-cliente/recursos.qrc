@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="imgs/nuevos">
+    <file>harkonnen.png</file>
+    <file>ordos.png</file>
+    <file>atreides.png</file>
+    <file>dune.jpg</file>
     <file>check-square-solid.svg</file>
     <file>square-solid.svg</file>
   </qresource>

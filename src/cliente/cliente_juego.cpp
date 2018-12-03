@@ -2,7 +2,7 @@
 
 #include <QApplication>
 
-#include "cliente/lanzador/lanzador.h"
+#include "cliente/lanzador/ventana_principal.h"
 
 #include "cliente/modelo/controlador.h"
 #include "cliente/modelo/juego.h"
@@ -34,12 +34,61 @@ int ClienteJuego::correr(int argc, char *argv[]) {
 bool ClienteJuego::ejecutar_lanzador(int argc, char *argv[]) {
     QApplication app(argc, argv);
     
-    Lanzador lanzador(partida);
+    VentanaPrincipal lanzador(partida);
     lanzador.show();
 
     app.exec();
 
     return partida.partida_lista();
+}
+
+static bool procesar_eventos(Juego& juego, Servidor& servidor) {
+    while (servidor.hay_eventos()) {
+        Evento *evento = servidor.pop_evento();
+        try {
+            evento->actualizar(juego);
+        } catch (const std::exception& e) {
+            return false;
+        }
+        delete evento;
+    }
+
+    // Verificar si la conexión sigue abierta
+    return servidor.esta_conectado();
+}
+
+static bool realizar_ciclo_carga(Ventana& ventana, PantallaCarga& pantalla, 
+    Juego& juego, Servidor& servidor)
+{
+    if (!procesar_eventos(juego,  servidor))
+        return false;
+    pantalla.renderizar(ventana);
+    ventana.actualizar();
+    if (!ventana.procesar_eventos())
+        return false;
+    return true;
+}
+
+static bool cargar_juego(Juego& juego, Servidor& servidor, Ventana& ventana) {
+    servidor.iniciar_comunicacion_asincronica();
+
+    // Esperar datos de inicialización
+    PantallaCarga pantalla_carga;
+    while (!juego.inicializacion_completa()) {
+        if (!realizar_ciclo_carga(ventana, pantalla_carga, juego, servidor))
+            return false;
+    }
+
+    // Informar al servidor que el jugador está listo
+    servidor.sincronizar_inicio();
+
+    // Esperar sincronización con otros clientes
+    while (!juego.inicio_sincronizado()) {
+        if (!realizar_ciclo_carga(ventana, pantalla_carga, juego, servidor))
+            return false;
+    }
+
+    return true;
 }
 
 bool ClienteJuego::ejecutar_juego() {
@@ -52,43 +101,11 @@ bool ClienteJuego::ejecutar_juego() {
     
     Servidor *servidor = partida.servidor();
     partida.servidor(nullptr);
-    
-    servidor->iniciar_comunicacion_asincronica();
-
-    PantallaCarga pantalla_carga;
 
     Juego juego(partida.casa());
 
-    while (!juego.inicializacion_completa()) {
-        while (servidor->hay_eventos()) {
-            Evento *evento = servidor->pop_evento();
-            try {
-                evento->actualizar(juego);
-            } catch (const std::exception& e) {
-                log_error("Evento inválido: %s", e.what());
-            }
-            delete evento;
-        }
-        pantalla_carga.renderizar(ventana);
-        ventana.actualizar();
-    }
-
-    // Informar al servidor que el jugador está listo
-    servidor->sincronizar_inicio();
-
-    while (!juego.inicio_sincronizado()) {
-        while (servidor->hay_eventos()) {
-            Evento *evento = servidor->pop_evento();
-            try {
-                evento->actualizar(juego);
-            } catch (const std::exception& e) {
-                log_error("Evento inválido: %s", e.what());
-            }
-            delete evento;
-        }
-        pantalla_carga.renderizar(ventana);
-        ventana.actualizar();
-    }
+    if (!cargar_juego(juego, *servidor, ventana))
+        return false;
 
     Controlador controlador(ventana, *servidor, juego);
     sonido.habilitar_sonidos(partida.sonido());
