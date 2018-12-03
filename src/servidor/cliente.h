@@ -9,7 +9,7 @@
 
 #include "comun/conexion.h"
 #include "comun/socket_conexion.h"
-#include "servidor/cola_protegida.h"
+#include "comun/cola_protegida.h"
 
 namespace servidor {
 
