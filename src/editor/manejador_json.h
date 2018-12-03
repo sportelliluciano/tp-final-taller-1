@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "LabelMapa.h"
+#include "editor/label_mapa.h"
 
 class ManejadorJson {
     public: 

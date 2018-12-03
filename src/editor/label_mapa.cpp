@@ -1,4 +1,4 @@
-#include "LabelMapa.h"
+#include "editor/label_mapa.h"
 #include <iostream>
 #define TAMANIO_LABEL_MAPA 32
 using std::string;

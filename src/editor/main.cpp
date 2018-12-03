@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "DialogoBienvenida.h"
+#include "editor/dialogo_bienvenida.h"
 
 int main(int argc, char *argv[]) {
     // Clase que contiene el loop principal

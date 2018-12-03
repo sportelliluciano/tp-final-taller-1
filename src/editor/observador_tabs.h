@@ -1,6 +1,6 @@
 #ifndef OBSERVADOR_TABS_H
 #define OBSERVADOR_TABS_H
-#include "Sprite.h"
+#include "editor/sprite.h"
 
 class ObservadorTabs {
     public:

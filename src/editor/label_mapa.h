@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <QLabel>
 #include <string>
-#include "ObservadorMapa.h"
-#include "Sprite.h"
+#include "editor/observador_mapa.h"
+#include "editor/sprite.h"
 
 class LabelMapa : public QLabel {
     public:

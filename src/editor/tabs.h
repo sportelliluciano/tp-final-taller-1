@@ -4,9 +4,9 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "LabelTab.h"
-#include "ObservadorTabs.h"
-#include "Sprite.h"
+#include "editor/label_tab.h"
+#include "editor/observador_tabs.h"
+#include "editor/sprite.h"
 
 class Tabs : public ObservadorTabs {
     public:

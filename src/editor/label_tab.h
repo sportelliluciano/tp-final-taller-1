@@ -5,8 +5,8 @@
 #include <QLabel>
 #include <string>
 #include <vector>
-#include "ObservadorTabs.h"
-#include "GeneradorSprites.h"
+#include "editor/observador_tabs.h"
+#include "editor/generador_sprites.h"
 
 class LabelTab : public QLabel {
     public:

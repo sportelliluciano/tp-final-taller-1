@@ -1,4 +1,4 @@
-#include "Editor.h"
+#include "editor/editor.h"
 #include "ui_Editor.h"
 #include <iostream>
 #include <QMessageBox>
@@ -6,7 +6,7 @@
 #include <QFileDialog>
 #include <QFormLayout>
 #include <QDialogButtonBox>
-#include "Sprite.h"
+#include "editor/sprite.h"
 #define MINIMO_CANTIDAD_JUGADORES 2
 #define DIMENSION_MINIMA_MAPA 30
 #define DIMENSION_MAXIMA_MAPA 1000

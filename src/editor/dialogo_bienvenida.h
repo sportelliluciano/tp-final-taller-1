@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QFormLayout>
-#include "Editor.h"
+#include "editor/editor.h"
 
 class DialogoBienvenida : public QDialog {
     public:

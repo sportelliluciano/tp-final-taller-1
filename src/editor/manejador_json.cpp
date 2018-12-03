@@ -1,8 +1,8 @@
-#include "ManejadorJson.h"
+#include "editor/manejador_json.h"
 #include "libs/json.hpp"
 #include <fstream>
 #include <sstream>
-#include "GeneradorSprites.h"
+#include "editor/generador_sprites.h"
 #define DELIM_ID ','
 using std::vector;
 using std::map;

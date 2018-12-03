@@ -1,14 +1,14 @@
-#include "Mapa.h"
+#include "editor/mapa.h"
 #include <iostream>
 #include <QWidget>
 #include <QGridLayout>
-#include "LabelMapa.h"
+#include "editor/label_mapa.h"
 #include "libs/json.hpp"
 #include <sstream>
 #include <QMessageBox>
 #include <fstream>
 #include <QPainter>
-#include "ManejadorJson.h"
+#include "editor/manejador_json.h"
 #include <QPushButton>
 #define DELIM_ID ','
 #define TIPO_ROCA 0

@@ -1,4 +1,4 @@
-#include "LabelTab.h"
+#include "editor/label_tab.h"
 #include <iostream>
 #include <QPainter>
 #define DIMENSION_LABEL 32

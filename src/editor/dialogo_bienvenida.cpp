@@ -1,4 +1,4 @@
-#include "DialogoBienvenida.h"
+#include "editor/dialogo_bienvenida.h"
 #include <QFormLayout>
 #include <QPushButton>
 #include <QLabel>
@@ -6,7 +6,7 @@
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QMessageBox>
-#include "Editor.h"
+#include "editor/editor.h"
 #define MINIMO_CANTIDAD_JUGADORES 2
 #define DIMENSION_MINIMA_MAPA 10
 #define DIMENSION_MAXIMA_MAPA 1000

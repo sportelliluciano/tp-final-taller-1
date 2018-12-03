@@ -3,9 +3,9 @@
 
 #include <QWidget>
 #include <QMainWindow>
-#include "Tabs.h"
-#include "Mapa.h"
-#include "Observador.h"
+#include "editor/tabs.h"
+#include "editor/mapa.h"
+#include "editor/observador.h"
 #include <QSpinBox>
 #include <QMenuBar>
 

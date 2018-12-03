@@ -5,7 +5,7 @@
 #include <map>
 #include <QPixmap>
 #include <vector>
-#include "Sprite.h"
+#include "editor/sprite.h"
 
 class GeneradorSprites {
     public:

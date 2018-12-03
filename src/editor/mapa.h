@@ -4,10 +4,10 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "LabelMapa.h"
-#include "Observador.h"
-#include "ObservadorMapa.h"
-#include "GeneradorSprites.h"
+#include "editor/label_mapa.h"
+#include "editor/observador.h"
+#include "editor/observador_mapa.h"
+#include "editor/generador_sprites.h"
 
 class Mapa : public ObservadorMapa {
     public:

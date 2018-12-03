@@ -1,4 +1,4 @@
-#include "GeneradorSprites.h"
+#include "editor/generador_sprites.h"
 #include "libs/json.hpp"
 #include <QPainter>
 #include <fstream>

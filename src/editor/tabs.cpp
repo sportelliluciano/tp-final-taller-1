@@ -1,8 +1,8 @@
-#include "Tabs.h"
+#include "editor/tabs.h"
 #include <iostream>
 #include <QWidget>
 #include <QGridLayout>
-#include "LabelTab.h"
+#include "editor/label_tab.h"
 #include "libs/json.hpp"
 #include <fstream>
 #include <vector>
