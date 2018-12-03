@@ -3,7 +3,7 @@
 
 #include "libs/json.hpp"
 
-#include "cliente/eventos/evento.h"
+#include "cliente/modelo/eventos/evento.h"
 
 namespace cliente {
 

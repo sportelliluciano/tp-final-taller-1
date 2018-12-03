@@ -7,9 +7,9 @@
 #include "libs/json.hpp"
 
 #include "comun/lock.h"
-#include "cliente/eventos/evento.h"
-#include "cliente/eventos/factory_evento.h"
-#include "cliente/eventos/evento_terminar.h"
+#include "cliente/modelo/eventos/evento.h"
+#include "cliente/modelo/eventos/factory_evento.h"
+#include "cliente/modelo/eventos/evento_terminar.h"
 #include "comun/eventos_servidor.h"
 #include "comun/log.h"
 

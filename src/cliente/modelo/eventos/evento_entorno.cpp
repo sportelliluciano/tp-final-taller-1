@@ -1,4 +1,4 @@
-#include "cliente/eventos/evento_entorno.h"
+#include "cliente/modelo/eventos/evento_entorno.h"
 
 #include "libs/json.hpp"
 

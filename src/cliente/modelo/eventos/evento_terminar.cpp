@@ -1,4 +1,4 @@
-#include "cliente/eventos/evento_terminar.h"
+#include "cliente/modelo/eventos/evento_terminar.h"
 
 #include "cliente/modelo/juego.h"
 

@@ -1,11 +1,11 @@
-#include "cliente/eventos/factory_evento.h"
+#include "cliente/modelo/eventos/factory_evento.h"
 
 #include "comun/error_conexion.h"
 #include "comun/eventos_cliente.h"
-#include "cliente/eventos/evento_ejercito.h"
-#include "cliente/eventos/evento_entorno.h"
-#include "cliente/eventos/evento_infraestructura.h"
-#include "cliente/eventos/evento_jugador.h"
+#include "cliente/modelo/eventos/evento_ejercito.h"
+#include "cliente/modelo/eventos/evento_entorno.h"
+#include "cliente/modelo/eventos/evento_infraestructura.h"
+#include "cliente/modelo/eventos/evento_jugador.h"
 
 namespace cliente {
 

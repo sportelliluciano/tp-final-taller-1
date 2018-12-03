@@ -8,7 +8,7 @@
 #include "libs/json.hpp"
 
 #include "comun/conexion.h"
-#include "cliente/eventos/evento.h"
+#include "cliente/modelo/eventos/evento.h"
 
 namespace cliente {
 

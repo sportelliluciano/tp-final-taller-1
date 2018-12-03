@@ -1,4 +1,4 @@
-#include "cliente/eventos/evento_ejercito.h"
+#include "cliente/modelo/eventos/evento_ejercito.h"
 
 #include "libs/json.hpp"
 

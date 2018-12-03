@@ -1,7 +1,7 @@
 #ifndef _EVENTO_TERMINAR_H_
 #define _EVENTO_TERMINAR_H_
 
-#include "cliente/eventos/evento.h"
+#include "cliente/modelo/eventos/evento.h"
 
 namespace cliente {
 

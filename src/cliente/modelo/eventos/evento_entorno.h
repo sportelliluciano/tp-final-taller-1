@@ -1,21 +1,21 @@
-#ifndef _EVENTO_JUGADOR_H_
-#define _EVENTO_JUGADOR_H_
+#ifndef _EVENTO_ENTORNO_H_
+#define _EVENTO_ENTORNO_H_
 
 #include "libs/json.hpp"
 
-#include "cliente/eventos/evento.h"
+#include "cliente/modelo/eventos/evento.h"
 
 namespace cliente {
 
 /**
- * \brief Esta clase encapsula un evento referido al estado del jugador.
+ * \brief Esta clase encapsula un evento referido al estado general del juego.
  */
-class EventoJugador : public Evento {
+class EventoEntorno : public Evento {
 public:
     /**
      * \brief Constructor por serialización.
      */
-    EventoJugador(const nlohmann::json& serializado);
+    EventoEntorno(const nlohmann::json& serializado);
 
     /**
      * \brief Actualiza el modelo del juego de un cliente.
@@ -28,4 +28,4 @@ private:
 
 } // namespace cliente
 
-#endif // _EVENTO_JUGADOR_H_
+#endif // _EVENTO_ENTORNO_H_
