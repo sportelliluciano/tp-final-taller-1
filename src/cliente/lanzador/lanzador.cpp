@@ -5,7 +5,7 @@
 #include <QMessageBox>
 #include <QStringList>
 
-#include "cliente/partida.h"
+#include "cliente/red/partida.h"
 #include "cliente/lanzador/estado_desconectado.h"
 
 #include "ui_lanzador.h"

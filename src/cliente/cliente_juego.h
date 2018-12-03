@@ -1,7 +1,7 @@
 #ifndef _CLIENTE_JUEGO_H_
 #define _CLIENTE_JUEGO_H_
 
-#include "cliente/partida.h"
+#include "cliente/red/partida.h"
 
 namespace cliente {
 

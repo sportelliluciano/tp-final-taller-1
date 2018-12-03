@@ -7,7 +7,7 @@
 #include <QStringList>
 
 #include "cliente/cliente_juego.h"
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 #include "cliente/lanzador/estado_lanzador.h"
 
 #include "cliente/lanzador/ui_lanzador.fwd.h"

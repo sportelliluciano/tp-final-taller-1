@@ -5,7 +5,7 @@
 #include "cliente/modelo/hud/boton_temporizado.h"
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/hud/tostador.h"
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 
 namespace cliente {
 

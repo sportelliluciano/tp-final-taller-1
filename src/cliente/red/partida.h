@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 
 namespace cliente {
 

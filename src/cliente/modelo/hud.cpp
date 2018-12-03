@@ -5,7 +5,7 @@
 #include "cliente/modelo/hud/energia.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 #include "cliente/sonido/sonido.h"
 #include "cliente/video/ventana.h"
 #include "cliente/video/widgets/widget.h"

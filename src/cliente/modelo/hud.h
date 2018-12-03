@@ -11,7 +11,7 @@
 #include "cliente/modelo/hud/fps.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 #include "cliente/video/ventana.h"
 #include "cliente/video/widgets/widget_raiz.h"
 #include "cliente/video/widgets/caja_horizontal.h"

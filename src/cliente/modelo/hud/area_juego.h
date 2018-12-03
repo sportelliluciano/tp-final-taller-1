@@ -8,7 +8,7 @@
 #include "cliente/video/camara.h"
 #include "cliente/video/posicion.h"
 #include "cliente/video/widgets/widget.h"
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 
 namespace cliente {
 

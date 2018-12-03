@@ -17,6 +17,7 @@ endif(CL_USAR_ASAN)
 add_subdirectory(video)
 add_subdirectory(sonido)
 add_subdirectory(modelo)
+add_subdirectory(red)
 add_subdirectory(lanzador)
 
 # Generar una libería estática con todo el cliente EXCEPTO el main
@@ -25,6 +26,7 @@ target_link_libraries(cliente
     comun
     clientevideo
     clientesonido
+    clientered
     clientemodelo
     lanzadorcliente
 )

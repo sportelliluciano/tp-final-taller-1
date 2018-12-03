@@ -1,8 +1,8 @@
 #ifndef _ESTADO_LANZADOR_H_
 #define _ESTADO_LANZADOR_H_
 
-#include "cliente/partida.h"
-#include "cliente/servidor.h"
+#include "cliente/red/partida.h"
+#include "cliente/red/servidor.h"
 #include "cliente/lanzador/ui_lanzador.fwd.h"
 
 class EstadoLanzador {

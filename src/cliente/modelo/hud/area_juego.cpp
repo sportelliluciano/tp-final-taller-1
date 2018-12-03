@@ -5,7 +5,7 @@
 #include "cliente/modelo/juego.h"
 #include "cliente/video/camara.h"
 #include "cliente/modelo/sprite.h"
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 
 #define ANCHO_MOV_CAMARA 15
 #define ALTO_MOV_CAMARA  15 

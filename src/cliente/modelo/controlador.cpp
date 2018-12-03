@@ -3,7 +3,7 @@
 #include "cliente/modelo/hud.h"
 #include "cliente/modelo/juego.h"
 #include "cliente/modelo/eventos/evento.h"
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 #include "cliente/video/ventana.h"
 #include "comun/log.h"
 
