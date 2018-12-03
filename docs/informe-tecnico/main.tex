@@ -201,11 +201,11 @@ Para toda la comunicación cliente-servidor se utilizó el formato JSON. La elec
 \section{Editor}
 
 \subsection{Requerimientos de software}
-Para compilar, desarrollar, probar y depurar el programa es necesario contar con un SO Linux, compilador GCC 7.3.0, Qt5, QtDesigner, User Interface Compiler (uic), biblioteca Json para c++ modernos y cmake.
+Para compilar, desarrollar, probar y depurar el programa es necesario contar con un SO Linux, compilador GCC 7.3.0, Qt 5, QtDesigner, User Interface Compiler (uic), biblioteca Json para c++ modernos y cmake.
 
 \subsection{Descripción general}
 
-El Editor esta codeado en el lenguaje C++ y además se utilizó la librería gráfica Qt 5 y la librería JSON para C++ modernos . La aplicación esta compuesta por 2 elementos principales: el dialogo de bienvenida y el editor de mapas. El dialogo de bienvenida contiene 2 botones que permiten elegir entre crear un mapa desde cero y cargar un mapa creando anteriormente. Luego de configurar el nuevo mapa o de elegir el mapa ya creado con anterioridad se abre la ventana del editor de mapas. Dicho editor esta compuesto por 3 elementos: el terreno del mapa, la pestaña que contiene los distintos terrenos posibles y la barra con el menu.\\
+El Editor fue codeado en el lenguaje C++ y además se utilizó la librería gráfica Qt 5 y la librería JSON para C++ modernos . La aplicación esta compuesta por 2 elementos principales: el dialogo de bienvenida y el editor de mapas. El dialogo de bienvenida contiene 2 botones que permiten elegir entre crear un mapa desde cero y cargar un mapa creando anteriormente. Luego de configurar el nuevo mapa o de elegir el mapa ya creado con anterioridad se abre la ventana del editor de mapas. Dicho editor esta compuesto por 3 elementos: el terreno del mapa, la pestaña que contiene los distintos terrenos ubicables en el mapa y la barra con el menu.\\
 
 Se utilizo Qt 5 para diseñar la interfaz gráfica y para atrapar los eventos que el usuario genere al utilizar dicha interfaz gráfica. Para almacenar un mapa utilizamos el formato JSON al ser un formato ampliamente conocido y sencillo de usar.
 
@@ -217,27 +217,32 @@ A continuación describiremos en profundidad las clases utilizadas por el Editor
 
 \item DialogoBienvenida: clase que hereda de QDialog, por lo tanto representa a una ventana de diálogo. Contiene 2 QPushButton, uno para crear un mapa y el otro para cargar un mapa. Como layout utiliza un QFormLayout aunque podrían usar otros sin cambiar la funcionalidad. Los eventos de click de los botones generan la ejecución de los métodos DialogoBienvenida::mostrar\_dialogo\_crear\_mapa y DialogoBienvenida::mostrar\_dialogo\_cargar\_mapa. El primer método muestra otro diálogo conformado por QSpinBox para poder elegir la cantidad de jugadores y el tamaño del mapa y el segundo muestra un QFileDialog para elegir el archivo del mapa guardado. Al final de ambos métodos se iniciliza el objeto Editor.
 
-\item Editor: clase que hereda de QMainWindow ya que trae por defecto un QMenuBar, también implementa la interfaz 'Observador'.
+\item Editor: clase que hereda de QMainWindow ya que trae por defecto un QMenuBar, también implementa la interfaz 'Observador'. Se encarga de inicializar 'Mapa' y 'Tabs', de implementar respuestas a clicks en el QMenuBar (desde mostrar diálogos para modificar la configuración del mapa hasta guardar el mapa o cargar otro mapa) y oficia de intermediario entre el Mapa y la pestaña de Terrenos. Es observador de su propio 'Mapa' y se encarga de actualizar el terreno de un 'LabelMapa' en el caso de que este sea clickeado y a su vez este clickeado un 'LabelTab'. En el caso especial de que el LabelTab sea el de un jugador, se hacen verificaciones extras (por ejemplo este solo puede ubicarse sobre la roca) y estas verificaciones las delega en Mapa. 
 
-\item Mapa:
+\item Mapa: clase que implementa la interfaz 'ObservadorMapa' para justamente observar los 'LabelMapa' y ser notificado cuando uno de estos es clickeado. Se encarga de generar los 'LabelMapa' y agregarlos a un QGridLayout scrollable para representar un mapa. Tambien almacena las posiciones de los distintos jugadores ubicados por el usuario. El 'Editor' delega el cambio de tamaño del mapa en esta clase al justamente tener toda la información de los labels que conforman al mapa en ese momento. 
 
-\item Tabs:
+\item Tabs: clase que implementa la interfaz 'ObservadorTabs' para justamente observar los 'LabelTab' y ser notificado cuando uno de estos es clickeado. Tiene como atributos un std::map con los sprites que son mostrados en la pestaña de Terrenos y un 'Sprite' que representa al sprite del 'LabelTab' que fue clickeado (puede ser ninguno). Dicho Sprite es solicitado por 'Editor' cuando es clickeado un 'LabelMapa' para poder actualizar dicho LabelMapa.
 
-\item LabelMapa:
+\item LabelTab: clase que hereda de QLabel ya que permite settearle un QPixmap y además puede atrapar el evento de click del mouse. Es el objeto que aparece en la pestaña de Terrenos del editor de mapas. A su vez es observado por otro objeto que implementa la interfaz 'ObservadorTabs'. Dicho observador es notificado cuando se hace click sobre el label. El observador luego se encarga de almacenar cual LabelTab fue clickeado y si debe dibujarse un marco de clickeado o debe ser borrado su marco de clickeado (caso en el que el LabelTab había sido seleccionado anteriormente). Tiene la función de devolver su 'Sprite' correspondiente que luego es utilizado por otras clases para actualizar la imagen de un 'LabelMapa' al ser este clickeado.
 
-\item LabelTab:
+\item LabelMapa: clase que hereda de QLabel (por las mismas razones que 'LabelTab') y ademas porque puede atrapar los eventos de enter y leave mouse (solamente se utiliza para mostrar un marco negro alrededor del label para mejorar la interfaz del usuario). Es el objeto que aparece en el mapa. A su vez es observado por otro objeto que implementa la interfaz 'ObservadorMapa'. Dicho observador es notificado cuando se hace click sobre el label. El observador luego se encarga de verificar si hay que actualizar el terreno que representa el LabelMapa.
 
-\item GeneradorSprites:
 
-\item ManejadorJson:
+\item GeneradorSprites: clase encargada de la generación de elementos 'Sprite'. El método público 'generar\_sprites\_posibles' es utilizado por la clase 'Mapa' antes de cargar un mapa, su función es generar todos los Sprites posibles que pueden ser ubicados en un mapa y así evitar la repetición de generación de un 'Sprite' en particular. Por ejemplo el Sprite arena es el mas utilizado en los mapas y en mapas grandes pueden haber cientos de Sprites arena, para no generar mas de 100 veces el mismo QPixmap, este método lo genera un única vez y devuelve un std::map con todos los sprites posibles. Luego se le pasa por parámetro el Sprite al constructor de 'LabelMapa'.\\
 
-\item Sprite:
+Otro método público llamado 'generar\_sprite\_inicial', similar al anterior y pensado de la misma manera, genera un 'Sprite' que es elegido por nosotros como inicial o por default para completar un 'Mapa' creado desde cero. Elegimos que dicho Sprite por default sea el de la arena.\\
 
-\item Observador:
+Finalmente implementa otro método público llamado 'generar\_sprite', utilizado por 'LabelTab' para generar los 'Sprite' de cada terreno que luego es mostrado en 'Tab'. Recibe como parámetro el id, el tipo y el vector de posiciones de los tiles de 8x8 dentro del archivo de terrenos .bmp (que es el único atributo de esta clase, en forma de QPixmap).
 
-\item ObservadorMapa:
+\item ManejadorJson: clase cuya función única es generar el mapa en formato JSON. Recibe por parámetro el nombre del archivo a generar, el tamaño del mapa, la posición de los jugadores y la información de los terrenos que conforman al mapa. Le quita responsabilidades a la clase 'Mapa'.
 
-\item ObservadorTabs:
+\item Sprite: estructura que representa a un sprite. Esta compuesta por 3 elementos: un id de tipo string, un int que representa al tipo y un QPixmap que es la imagen en sí misma.
+
+\item Observador: interfaz implementada por 'Editor'. Es utilizado por 'Mapa' para avisarle a 'Editor' cuando se hizo un click sobre un 'LabelMapa', el método virtual tiene como único parámetro el id de dicho 'LabelMapa'.
+
+\item ObservadorMapa: interfaz implementada por 'Mapa'. Es utilizado por 'LabelMapa' para avisarle al observador que fue clickeado. El método virtual tiene como único parámetro el id de dicho 'LabelMapa'. 
+
+\item ObservadorTabs: interfaz implementada por 'Tabs'. Es utilizado por 'LabelTab' para avisarle al observador que fue clickeado. El método virtual tiene como único parámetro el id de dicho 'LabelTab'. 
 
 \end{itemize}
 
