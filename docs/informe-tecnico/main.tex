@@ -86,36 +86,31 @@ Cada jugador debe explorar el terreno de juego y recolectar especia melange que 
 El clon realizado del juego espera ser una versión moderna y reducida del juego original. Durante el desarrollo del mismo se confeccionaron tres aplicaciones: el cliente de juego, encargado de interactuar con el jugador y mostrarle la interfaz del juego; el servidor del juego, encargado de administrar las partidas multijugador a través de la red y el editor de mapas que permite crear nuevos mapas de juego.
 
 \section{Cliente}
-El cliente del juego fue desarrollado en Qt5 y SDL 2.0. El mismo se compone de dos partes, el lanzador del juego, realizado enteramente en Qt5, que permite conectarse a un servidor, unirse o crear una sala de juego y luego iniciar el juego; y juego en sí, desarrollado en SDL.
+El cliente del juego fue desarrollado en Qt5 y SDL 2.0. El mismo se compone de dos partes, el lanzador del juego, realizado enteramente en Qt5, que permite conectarse a un servidor, unirse o crear una sala de juego y luego iniciar el juego; y el juego en sí, desarrollado en SDL.
 
-\subsection{Arquitectura}
-El juego se dividió en tres secciones: el área del juego, es decir, el terreno, las unidades y edificios; la interfaz de interacción con el usuario, en adelante el HUD; y la interfaz de conexión con el servidor.
+El cliente está separado en cinco secciones: video, sonido, red, modelo y lanzador. Las secciones video, sonido y red se encargan de encapsular los distintos recursos del sistema, mientras que la lógica de negocio se encuentra en las secciones modelo y lanzador.
 
-Las primeras dos secciones son las encargadas de renderizar todos los elementos visuales en pantalla y atender los comandos que ingresa el usuario, por teclado o mouse, mientras que la última sección se encarga de recibir los eventos del servidor y actualizar la representación interna del modelo de juego de forma acorde.
+\subsection{Video}
+El renderizado del juego se realizó utilizando la biblioteca SDL, la cual fue encapsulada en el paquete \textit{video}. El encapsulamiento realizado contempla principalmente el uso de RAII para la adquisición de recursos, tales como texturas o contextos de renderizado y el control de errores mediante excepciones.
 
-Para la renderización de elementos se encapsuló la biblioteca SDL en las clases Ventana, Sonido y Textura. Todos los elementos se renderizan haciendo uso de la ventana y una o más texturas. En particular el área de juego se apoya en un elemento gráfico más, la cámara, que permite determinar que sección del terreno se está renderizando en este momento.
+Para maximizar el rendimiento del juego y minimizar el consumo de recursos se decidió utilizar únicamente texturas. Si bien esto es positivo desde el punto de vista del rendimiento, implicó una fuerte dependencia al contexto de renderizado ya que las texturas dependen directamente del mismo (a diferencia de las superficies, que se convierten al momento de renderizarlas).  
 
-\subsubsection{Tropas y edificios}
-Para el modelo gráfico de tropas y edificios se decidió implementar un diseño basado en prototipos. El mismo nos permitió tener menos clases, evitar la herencia y además tener más flexibilidad a la hora de ultimar detalles cómo el posicionamiento de los sprites, ya que tomamos la decisión de bajar esta información a archivos de datos. Tanto las tropas como los edificios cargan su modelo de datos desde archivos en formato JSON.
+Esta fuerte dependencia genera dos grandes problemas:
+\begin{itemize}
+\item No se pueden conocer las dimensiones de las imágenes hasta el momento del primer renderizado.
 
-\subsubsection{Área de juego}
-El área de juego es el componente central del cliente y está conformada por cuatro entidades que representan en conjunto la partida. La primer entidad es el Juego en sí, que reúne a las otras tres entidades y mantiene información sobre el juego del jugador a quién está representando, tales como la energía o el dinero.
-Las siguientes entidades son infraestructura y ejército, que se encargan de administrar los edificios y las tropas de todos los jugadores en la partida.
-Por último pero no menos importante está el terreno de juego. El terreno es un elemento central en este juego ya que es el encargado de detectar las interacciones entre elementos. 
+Con lo cual, si se quisiera dimensionar dinámicamente un botón para un panel no podría hacerse en el constructor del mismo, sino que se debe posponer hasta el primer renderizado (a menos que se arrastre el contexto de renderizado por todos lados).
 
-El área de juego tiene una cámara que permite renderizar una sección del mismo y moverse sobre el terreno según sea necesario. 
+\item No se puede almacenar localmente la textura como caché.
 
-\subsubsection{Visualización Head-Up}
-Para la implementación del HUD se decidió utilizar un diseño basado en Widgets. Este diseño si bien no es sencillo de implementar, una vez resuelto permitió tener un sistema de eventos mucho más sencillo, mucha más movilidad a la hora de diseñar el HUD en sí y simplificar el problema de las dimensiones variables de la ventana. Con el diseño basado en Widgets, al correr el cliente en modo ventana o en modo pantalla completa el mismo se ajusta automáticamente según el espacio disponible.
+Esto es debido a que si en el próximo renderizado se cambia de contexto entonces las texturas se invalidarían dado que fueron creadas para el primer contexto. Este caso podría suceder en el supuesto que se cambie de ventana, por ejemplo al pasar a pantalla completa.
+\end{itemize}
 
-La implementación de eventos en los widgets se hizo de forma directa utilizando herencia.
+El primer problema fue solucionado evitando el uso de dimensionado dinámico. En la mayoría de los casos esto no es necesario, y en los pocos casos donde sería útil se pudo reemplazar con tamaños de boton fijos.
 
-\subsection{Renderizado}
-El renderizado de la ventana del cliente se realizó utilizando SDL2. Para esto se realizó un encapsulamiento de los subsistemas de SDL que permitieron abstraer el renderizado del juego de la biblioteca utilizada.
+El segundo problema es un poco más complicado y casi obligatorio de resolver debido a que el rendimiento del cliente depende mucho del almacenamiento de texturas prerenderizadas en caché. Para solucionarlo se creó una clase \textit{AdministradorTexturas} que se encarga de crear texturas y sus derivados (cargar imágenes, renderizar texto) y además proveer un almacenamiento de tipo ID->Textura de modo de poder almacenar las texturas directamente en el contexto de renderizado. Esto permite que cada entidad que requiera almacenar una textura en caché pueda tener un identificador de la misma y preguntarle al contexto de renderizado si ``la textura ya fue renderizada en ese contexto''. En el caso de que cambiara el contexto simplemente se renderiza nuevamente y se almacena en el contexto nuevo.
 
-Todo el cliente utiliza texturas para el renderizado lo que implica que la mayor parte del trabajo se realiza directamente sobre la placa de video. Sin embargo, las texturas tienen una fuerte dependencia respecto del contexto de renderizado lo cual trajo algunos problemas respecto del encapsulamiento\footnote{Ver al final de esta sección ``Problemas en la entrega 6``}. 
-
-Uno de los problemas más fuertes fue debido a considerar que la ventana no debería ser un Singleton ni ningún tipo de variable de acceso global. Para poder cargar un sprite es necesario tener la ventana, ya que la carga de texturas está ligada directamente al contexto de renderizado a utilizar. Esto no es un problema si sólo se quiere renderizar el sprite en la pantalla, pero, si se quiere realizar acciones basándose en las \textit{dimensiones} de este sprite, entonces es necesario tener el contexto de renderizado para poder cargarlo y luego obtener sus dimensiones.
+En gran parte estos problemas se deben a considerar que la ventana no debería ser un Singleton ni ningún tipo de variable de acceso global. Para poder cargar un sprite es necesario tener la ventana, ya que la carga de texturas está ligada directamente al contexto de renderizado a utilizar. Esto no es un problema si sólo se quiere renderizar el sprite en la pantalla, pero, si se quiere realizar acciones basándose en las \textit{dimensiones} de este sprite, entonces es necesario tener el contexto de renderizado para poder cargarlo y luego obtener sus dimensiones.
 
 Este problema no es tan importante para renderizar el terreno de juego y sus unidades pero sí representa un problema grave al renderizar el HUD. El HUD en particular requiere conocer los tamaños de los botones, que en muchos casos están ligados al tamaño de los sprites y esto es escencialmente necesario para poder posicionarlos en la ventana. Gran parte del posicionamiento de sprites se realiza en los constructores de los widgets; los cuales, en el caso de los botones no tendrían tamaño hasta no ser renderizados al menos una vez (de modo de obtener el contexto de renderizado y las dimensiones del mismo). Lo mismo sucede para los widgets que contienen texto; no se puede dimensionar el texto hasta no pasar por el contexto de renderizado.
 
@@ -136,18 +131,57 @@ El terreno de juego tiene un tamaño mucho mayor al tamaño de la ventana, ya qu
 Para poder renderizar el fragmento que se está observando se utiliza una cámara que tiene como funcionalidad traducir las posiciones lógicas en visuales y viceversa. Sólo se renderiza en la ventana aquellas partes que están en el área de la cámara. 
 
 \subsection{Sonido}
-El sistema de sonido fue encapsulado como un Singleton en una única clase. La misma se encarga de inicializar el sistema de sonido de SDL, reproducir la música y los sonidos.
+Para el sonido se decidió implementar un patrón de diseño Singleton. La razón para la elección del mismo es que díficilmente cambie el contexto de mezclado de sonidos a lo largo del juego (como sí podría pasar en el caso de un cambio de resolución con el video).
 
-Hay dos razones para utilizar un Singleton, la primera es que dificilmente se cambie la salida de sonido en alguna forma que afecte al programa durante su ejecución; la segunda es que aunque cambie la salida de sonido durante el programa no es necesario tener tanta consideración ya que no hay procesamiento realizado a la hora de reproducir un sonido (como sí lo hay a la hora de dibujar un sprite en la ventana). Esto permite que el Singleton realice todo el almacenamiento en caché requerido y proveer una interfaz sencilla que permita reproducir un sonido en un momento determinado del tiempo.
+El subsistema de sonido es un encapsulamiento de SDL muy sencillo que se tiene tres funciones principales:
+\begin{itemize}
+\item Almacenar los sonidos y música en caché
+\item Reproducir sonidos y evitar que se superpongan sonidos iguales
+\item Reproducir música de fondo
+\end{itemize}
 
-Actualmente sólo los botones de entrenamiento / construcción tienen sonido ya que no teníamos a disposición los sonidos para el resto de las acciones y preferimos darle más importancia a otras secciones del cliente.
+En particular debe notarse que el sistema mismo evita reproducir dos sonidos iguales al mismo tiempo pero no evita la superposición de  sonidos distintos superpuestos (ya que perdería el sentido del mezclador).
 
-\subsection{Conexión al servidor}
-La comunicación con el servidor tiene dos etapas. Una etapa tiene lugar durante el tiempo en que el cliente está ejecutando el lanzador y la otra etapa es cuando está ejecutando el juego en sí.
+\subsection{Red}
+La comunicación a través de la red con el servidor se encapsuló en la clase Servidor. La misma tiene dos modos de operación: sincrónico y asincrónico. 
 
-Durante el tiempo que el cliente está utilizando el lanzador, esto es, creando o uniéndose a una sala y todo el tiempo previo a hacer clic en ``iniciar juego'', la conexión con el servidor se realiza de forma sincrónica. El lanzador envía una solicitud y espera a que el servidor le responda el estado de la solicitud.
+Toda la comunicación que se realiza desde el lanzador del juego se hace en modo sincrónico, ya que en este momento los tiempos de espera de la red no son problemáticos; la entrada de usuario suele ser lenta en general.
 
-Una vez que se inicia el juego, la comunicación pasa a ser asincrónica. A partir de este momento el cliente puede enviar en cualquier momento un mensaje al servidor y viceversa, y cada uno procesa el mensaje en el momento que considere oportuno.
+Por otra parte, toda la comunicación que se realiza durante el juego se hace de forma asincrónica. A medida que llegan los mensajes del servidor se van encolando hasta que el ciclo de juego decida procesarlos.
+
+Tanto la comunicación sincrónica como la asincrónica se realizó utilizando el formato de serialización JSON ya que nos permitió depurar fácilmente el envío de mensajes. En caso de querer cambiarse, la serialización está encapsulada en la clase Conexión de modo que modificando los métodos enviar y recibir se puede optar por una serialización diferente.
+
+Para notificar al modelo de los cambios remotos se utilizó un sistema de eventos serializables. La clase Servidor se encarga recibir los datos e ir almacenando los eventos en una cola. Cada evento irá modificando el modelo de juego según corresponda al momento de ser procesado.
+
+\subsection{Lanzador}
+El lanzador del modelo se desarrolló en Qt5, está compuesto de tres pantallas/estados que son: conexion, en lobby y en sala. 
+
+El estado de conexión es el estado inicial y es el que permite conectarse a un servidor remoto. Una vez conectado se pasa al estado ``en lobby'', donde uno puede ver las salas disponibles, elegir una sala o crear una nueva.
+
+Al ingresar a la sala se pasa a la etapa final. En esta última el jugador puede ver a el estado de sus compañeros de partida, elegir la casa con que va a jugar y lanzar el cliente.
+
+Inicialmente el lanzador iba a soportar notificaciones push, de modo que en el momento en que el servidor detecte un evento se lo indique directamente sin que el mismo tenga que preguntar al servidor. Por problemas generales y falta de tiempo esta característica no se pudo implementar pero se la reemplazó solicitando actualizaciones al servidor cada un determinado período de tiempo, actualmente configurado en 10 segundos.
+
+\subsection{Modelo}
+El modelo de juego se compone de cinco entidades principales: Juego, Infraestructura, Ejercito, Terreno y HUD. 
+
+Juego es el administrador general de la partida y se encarga principalmente de actualizar el estado general de la partida y de manejar las variables del jugador tales como la energía y el dinero disponible.
+
+Infraestructura y Ejercito son los administradores de edificios y tropas, respectivamente. Los mismos se encargan de manejar las colas de construcción / entrenamiento, determinar a quién le pertenece un edificio o tropa y emitir los eventos sonoros correspondientes a bajas y ataques.
+
+El Terreno es un componente central en el juego y particularmente en el cliente. El mismo permite resolver las solicitudes puntuales o de área del usuario, por ejemplo, en el caso en que el usuario arrastra un para generar un rectángulo en la ventana y seleccionar las tropas. A su vez el mismo resuelve otras solicitudes, por ejemplo si se puede construir un edificio en la posición indicada.
+
+El HUD por otra parte es el punto de entrada a la visualización head-up. El mismo renderiza sobre la ventana los elementos extra tales como botones, el cursor del mouse, el rectángulo de selección, el dinero disponible, etc. A su vez actúa de controlador principal de la partida obteniendo la entrada del mouse y el teclado.
+
+\subsubsection{Infraestructura y Ejército}
+Para el modelo gráfico de tropas y edificios se decidió implementar un diseño basado en prototipos. El mismo nos permitió tener menos clases, evitar la herencia y además tener más flexibilidad a la hora de ultimar detalles cómo el posicionamiento de los sprites, ya que tomamos la decisión de bajar esta información a archivos de datos. Tanto las tropas como los edificios cargan su modelo de datos desde archivos en formato JSON.
+
+\subsubsection{Visualización Head-Up}
+Para la implementación del HUD se decidió utilizar un diseño basado en Widgets. Este diseño si bien no es sencillo de implementar, una vez resuelto permitió tener un sistema de eventos mucho más sencillo, mucha más movilidad a la hora de diseñar el HUD en sí y simplificar el problema de las dimensiones variables de la ventana. Con el diseño basado en Widgets, al correr el cliente en modo ventana o en modo pantalla completa el mismo se ajusta automáticamente según el espacio disponible.
+
+La implementación de eventos en los widgets se hizo de forma directa utilizando herencia.
+
+El componente central del HUD es el área de juego. La misma se encarga de renderizar el modelo y responder a la interacción del usuario, ya sea desde el mouse o el teclado. Estas interacciones pueden ser desde un movimiento de cámara hasta solicitar un ataque.
 
 \subsection{Ciclo de juego}
 El ciclo de juego en el cliente se realiza de la siguiente manera:
@@ -179,23 +213,31 @@ Para esto se diseñaron distintas clases de eventos cuya responsabilidad es actu
 \subsubsection{Avanzar el juego en un fragmento de tiempo}
 Una vez que se procesaron todos los eventos, se realiza la actualización temporal del modelo. Esta actualización es la que se encarga de interpolar el movimiento de tropas, cambiar el estado de los botones temporzados, animar la construcción y destrucción de edificios y cualquier otra acción que dependa del tiempo.
 
-\subsection{Problemas conocidos en la entrega 6}
-
-Al momento de la entrega 6 se reconocen los siguientes problemas en el cliente que se espera resolver para la entrega final:
-\begin{itemize}
-    \item Reestructurar el sistema de renderizado, modificando el sistema de caché de texturas por uno más inteligente, sencillo y fuerte. Esto incluye una refactorización, y posiblemente un rediseñado del sistema de carga y renderizado de sprites (\texttt{Sprite}, \texttt{SpriteCompuesto}, \texttt{SpriteAnimado}).
-    \item Refactorizar el procesado de eventos en la clase Ventana
-    \item Implementar la lógica de misiles
-    \item Solucionar un problema con la oscilación de los sprites posicionales (vehículos).
-    \item Agregar una pantalla de carga más descriptiva respecto del proceso de carga.
-    \item Mejorar la recepción de información de inicialización desde el servidor.
-    \item Refactorizar clases Tropa y Edificio
-    \item Agregar más sonidos al juego.
-\end{itemize}
-
 \newpage
 \section{Servidor}
 Para toda la comunicación cliente-servidor se utilizó el formato JSON. La elección del mismo es que es un formato ampliamente conocido, sencillo de usar, y por sobre todas las cosas, al serializarse como texto plano simplificó mucho la depuración de problemas de conexión.
+
+El servidor modela a los clientes con dos hilos y una cola: un hilo y una cola para enviar los mensajes, y un hilo y callbacks para recibir los mensajes. 
+
+Para el envío de mensajes se utiliza una cola para poder ofrecer al modelo de juego una latencia mínima. Esto permite que si un cliente por algún motivo es lento para recibir, el mismo quede esperando en un hilo separado hasta que la red se descongestione y el modelo pueda seguir con su procesamiento. 
+
+Para la recepción de mensajes se decidió utilizar callbacks debido a su simplicidad. Utilizar una cola por cliente para recibir los mensajes implicaría distintos problemas, tales como necesitar tener un hilo específico para poder reunir los mensajes de todos los clientes y comunicarselos al modelo o tener que pasar una cola a todos los clientes.  
+Dado que el servidor trabaja en dos etapas: etapa de sala/lobby y etapa de partida, la solución más sencilla consistió en tener un callback en cada cliente que indique que se recibieron nuevos datos. De este modo se configura el callback en la etapa de lobby para que procese los mensajes del lobby y luego se configura un callback en la partida que simplemente encole el mensaje en la cola de mensajes 
+del modelo.
+
+Esto nos permitió tener sólo dos hilos por cliente y un hilo por partida, de modo que, en el caso general la cantidad de hilos corriendo en el servidor está dada por la siguiente expresión:
+$$ n_{hilos} = 2 + 2 \cdot n_{clientes} + n_{partidas_activas}$$
+
+Es decir, el hilo principal, el hilo que acepta conexiones, dos hilos por cliente y un hilo por partida activa.
+La etapa de lobby/sala no requiere hilos ya que se aprovechan los hilos de recepción de los clientes.
+
+\subsection{Interacción con el modelo de juego}
+Para poder disociar el servidor y todo lo que implique conectividad y concurrencia del modelo de juego, se diseñaron dos interfaces: \texttt{IModelo} e \texttt{IJugador}.
+
+La primera es la interfaz que el servidor espera encontrar y que el modelo de juego debe implementar. La misma consiste en unos pocos métodos que permiten interactuar con el servidor, como iniciar la partida o saber si terminó; y métodos que significan mensajes provenientes desde un jugador. El modelo de juego sólo debe implementar estos métodos para poder escuchar a los jugadores y puede asegurarse de que los métodos se ejecutarán de forma sincrónica, protegidos por el servidor.
+
+La segunda es la interfaz que el modelo espera encontrar y que el servidor debe implementar. Esta permite que el modelo le \textit{hable} a los jugadores y se compone principalmente de todos los mensajes que el modelo le puede enviar a un determinado jugador, más un par de métodos misceláneos que permiten conocer el nombre del jugador, la casa a la que pertenece o un ID numérico.
+
 
 \newpage
 \section{Editor}
