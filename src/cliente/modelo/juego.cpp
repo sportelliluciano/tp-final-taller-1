@@ -15,7 +15,12 @@ namespace cliente {
 Juego::Juego(const std::string& casa_)
 : esta_jugando(true), 
   casa(casa_)
-{ }
+{ 
+    terreno = nullptr;
+    gusano = nullptr;
+    infraestructura = nullptr;
+    ejercito = nullptr;
+}
 
 void Juego::inicializar(int id_jugador, const nlohmann::json& edificios, 
     const nlohmann::json& ejercitos, const nlohmann::json& mapa)
@@ -111,14 +116,12 @@ bool Juego::inicializacion_completa() const {
     return inicializado;
 }
 
-void Juego::crear_jugador(int id_jugador, const std::string& nombre, 
-        const std::string& casa)
-{
-
+void Juego::crear_jugador(int, const std::string&, const std::string&) {
+    // A implementar
 }
     
-void Juego::indicar_jugador_listo(int id_jugador) {
-
+void Juego::indicar_jugador_listo(int) {
+    // A implementar
 }
 
 bool Juego::termino_correctamente() const {
@@ -130,10 +133,14 @@ const std::string& Juego::obtener_ganador() const {
 }
 
 Juego::~Juego() {
-    delete gusano;
-    delete ejercito;
-    delete infraestructura;
-    delete terreno;
+    if (gusano)
+        delete gusano;
+    if (ejercito)
+        delete ejercito;
+    if (infraestructura)
+        delete infraestructura;
+    if (terreno)
+        delete terreno;
 }
 
 } // namespace cliente
