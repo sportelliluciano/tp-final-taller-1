@@ -45,8 +45,7 @@ int Mapa::get_cant_columnas() {
 void Mapa::parsear_json(string& filename_json) {
     // getteo el layout y el widget del Mapa
     QGridLayout* map_layout = this->parent->findChild<QGridLayout*>("mapLayout");
-    //QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
-
+    
     // cosas de parseo del json de terrenos
     std::ifstream entrada(filename_json);
     json mapa_json;
@@ -125,7 +124,6 @@ void Mapa::parsear_json(string& filename_json) {
 void Mapa::inicializar_mapa() {
     // getteo el layout y el widget del Mapa-
     QGridLayout* map_layout = this->parent->findChild<QGridLayout*>("mapLayout");
-    //QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
 
     // genero sprite inicial
     GeneradorSprites generador_sprites;
@@ -143,26 +141,12 @@ void Mapa::inicializar_mapa() {
             
             label_mapa->agregar_observador(this);
             
-            map_layout->addWidget(label_mapa, i + 1, j + 1);
+            map_layout->addWidget(label_mapa, i, j);
             
             this->mapa.emplace(pos_label, label_mapa);
-
-            //QPushButton* buttonLeft = new QPushButton(this->parent);
-            //buttonLeft->setFixedSize(20, 20);
-            //map_layout->addWidget(buttonLeft, i + 1,j +1);
         }
     }
     map_layout->setSpacing(0);
-
-    // Vertical spacers
-    //map_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding), 0, 0, 1, this->filas + 2);
-    //map_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding), this->filas + 1, 0, 1, this->filas + 2);
-
-    // Horizontal spacers
-    //map_layout->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 1, 0, this->columnas, 1);
-    //map_layout->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 1, this->columnas + 1, this->columnas, 1);
-
-    //scroll_area_mapa->setLayout(map_layout);
 }
 
 
