@@ -6,6 +6,7 @@
 #include "libs/json.hpp"
 #include <fstream>
 #include <vector>
+#include "editor/config.h"
 using std::string;
 using std::map;
 using nlohmann::json;
