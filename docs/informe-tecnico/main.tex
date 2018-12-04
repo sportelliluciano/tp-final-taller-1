@@ -90,8 +90,6 @@ El cliente del juego fue desarrollado en Qt5 y SDL 2.0. El mismo se compone de d
 
 El cliente está separado en cinco secciones: video, sonido, red, modelo y lanzador. Las secciones video, sonido y red se encargan de encapsular los distintos recursos del sistema, mientras que la lógica de negocio se encuentra en las secciones modelo y lanzador.
 
-<<<<<<< HEAD
-=======
 En el siguiente esquema se puede observar la interacción entre los distintos bloques durante la partida. Por simplicidad no se agrega el lanzador al esquema. Las líneas llenas representan interacción interna al cliente (dependencias entre bloques) mientras que las líneas punteadas indican eventos externos.
 \begin{figure}[H]
 	\centering
@@ -99,7 +97,6 @@ En el siguiente esquema se puede observar la interacción entre los distintos bl
 	\caption{\label{fig:esquema-bloques-cliente} Esquema en bloques del funcionamiento general del cliente.}
 \end{figure}
 
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \subsection{Video}
 El renderizado del juego se realizó utilizando la biblioteca SDL, la cual fue encapsulada en el paquete \textit{video}. El encapsulamiento realizado contempla principalmente el uso de RAII para la adquisición de recursos, tales como texturas o contextos de renderizado y el control de errores mediante excepciones.
 
@@ -140,15 +137,12 @@ El terreno de juego tiene un tamaño mucho mayor al tamaño de la ventana, ya qu
 
 Para poder renderizar el fragmento que se está observando se utiliza una cámara que tiene como funcionalidad traducir las posiciones lógicas en visuales y viceversa. Sólo se renderiza en la ventana aquellas partes que están en el área de la cámara. 
 
-<<<<<<< HEAD
-=======
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=12cm]{../imagenes/cliente-esquema-video.jpg}
 	\caption{\label{fig:cliente-esquema-video} Esquema general del encapsulamiento de video.}
 \end{figure}
 
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \subsection{Sonido}
 Para el sonido se decidió implementar un patrón de diseño Singleton. La razón para la elección del mismo es que díficilmente cambie el contexto de mezclado de sonidos a lo largo del juego (como sí podría pasar en el caso de un cambio de resolución con el video).
 
@@ -192,15 +186,12 @@ El Terreno es un componente central en el juego y particularmente en el cliente.
 
 El HUD por otra parte es el punto de entrada a la visualización head-up. El mismo renderiza sobre la ventana los elementos extra tales como botones, el cursor del mouse, el rectángulo de selección, el dinero disponible, etc. A su vez actúa de controlador principal de la partida obteniendo la entrada del mouse y el teclado.
 
-<<<<<<< HEAD
-=======
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=14cm]{../imagenes/esquema-cliente-modelo.jpg}
 	\caption{\label{fig:esquema-cliente-modelo} Esquema general del modelo local.}
 \end{figure}
 
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \subsubsection{Infraestructura y Ejército}
 Para el modelo gráfico de tropas y edificios se decidió implementar un diseño basado en prototipos. El mismo nos permitió tener menos clases, evitar la herencia y además tener más flexibilidad a la hora de ultimar detalles cómo el posicionamiento de los sprites, ya que tomamos la decisión de bajar esta información a archivos de datos. Tanto las tropas como los edificios cargan su modelo de datos desde archivos en formato JSON.
 
@@ -211,15 +202,12 @@ La implementación de eventos en los widgets se hizo de forma directa utilizando
 
 El componente central del HUD es el área de juego. La misma se encarga de renderizar el modelo y responder a la interacción del usuario, ya sea desde el mouse o el teclado. Estas interacciones pueden ser desde un movimiento de cámara hasta solicitar un ataque.
 
-<<<<<<< HEAD
-=======
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=14cm]{../imagenes/cliente-esquema-HUD.jpg}
 	\caption{\label{fig:cliente-esquema-HUD} Esquema general del HUD.}
 \end{figure}
 
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \subsection{Ciclo de juego}
 El ciclo de juego en el cliente se realiza de la siguiente manera:
 \begin{enumerate}
@@ -315,11 +303,11 @@ A continuación describiremos en profundidad las clases, las interfaces y las es
 
 \item IJugador: es la interfaz que el modelo espera encontrar y que el servidor debe implementar. Esta permite que el modelo le \textit{hable} a los jugadores y se compone principalmente de todos los mensajes que el modelo le puede enviar a un determinado jugador, más un par de métodos misceláneos que permiten conocer el nombre del jugador, la casa a la que pertenece o un ID numérico.
 
-\item ConexionJugador: es la clase que implementa la interfaz IJugador. Lo notifica a Cliente sobre las modificaciones en el modelo para que dicha clase se la envíe a los jugadores.
+\item ConexionJugador: es la clase que implementa la interfaz IJugador. Esta clase adapta la clase interna \texttt{Cliente} a la interfaz requerida por el modelo de juego para realizar las comunicaciones.
 
 \end{itemize}
 
-\subsection{Diagramas UML}
+section{Diagramas UML}
 \begin{itemize}
 
 \item Modelo del juego\\
@@ -392,21 +380,13 @@ El archivo de edificios contiene la información relativa a los edificios que se
 
 \item Ejércitos\\
 
-<<<<<<< HEAD
-El archivo de ejércitos es el que contiene toda la información requerida por el servidor y los clientes sobre los distintos tipos de tropa. El mismo debe estar en formato JSON y contener, **únicamente** un objeto con 
-=======
 El archivo de ejércitos es el que contiene toda la información requerida por el servidor y los clientes sobre los distintos tipos de tropa. El mismo debe estar en formato JSON y contener, \textbf{únicamente} un objeto con 
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 dos atributos: `armas` y `unidades`.  El atributo `armas` debe ser un arreglo de objetos con los siguientes atributos:
 
 
 \begin{itemize}
 
-<<<<<<< HEAD
-\item ID: este es el identificador del *tipo* de arma. Debe ser único por cada clase de arma distinta. Este parámetro es obligatorio.
-=======
 \item ID: este es el identificador del \textit{tipo} de arma. Debe ser único por cada clase de arma distinta. Este parámetro es obligatorio.
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Daño: el daño que hace el arma cada vez que es disparada.
 
@@ -425,15 +405,9 @@ El atributo `unidades` debe ser un arreglo de objetos con los siguientes atribut
 
 \begin{itemize}
 
-<<<<<<< HEAD
-\item ID: este es el identificador del *tipo* de tropa. Debe ser único por cada clase de tropa distinta.
-
-\item Nombre: el nombre *legible por humanos* de la tropa, para mostrar en la interfaz gráfica.
-=======
 \item ID: este es el identificador del \textit{tipo} de tropa. Debe ser único por cada clase de tropa distinta.
 
 \item Nombre: el nombre \textit{legible por humanos} de la tropa, para mostrar en la interfaz gráfica.
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Descripción: descripción de la tropa para mostrar en la interfaz gráfica. No debe superar los 100 caracteres.
 
@@ -467,10 +441,47 @@ El atributo `unidades` debe ser un arreglo de objetos con los siguientes atribut
 
 \end{itemize}
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
+\subsection{Análisis de tiempos y ciclo de juego}
+El ciclo de juego del modelo se realiza dentro del servidor, en la clase \texttt{Sala}. La misma procesa los eventos y actualiza el modelo cada 20ms. Cada ciclo de juego se compone de dos etapas: procesar eventos recibidos y actualizar un paso del modelo.
+
+Todos los eventos se reciben asincrónicamente y se encolan en una cola bloqueante temporizada. La misma permite obtener un dato y bloquear el hilo por un máximo de tiempo si está vacía. Durante la etapa de procesamiento de eventos recibidos se realiza un ``pull'' a la cola con un tiempo límite de 18ms (80\% del tiempo de actualización del modelo). Esto permite tener 2ms de márgen para que se termine de procesar algún evento.
+
+Una vez que transcurrieron los 18ms de procesamiento de eventos se realiza una espera hasta que se cumplan los 20ms totales y luego se actualiza el modelo.
+
+Podría suceder, eventualmente que un evento tarde más de 18ms en procesarse. Para no perder el sincronismo, la base de tiempo se actualiza de forma fija cada 20ms y si esto sucediera se realizaran varios ciclos de actualizacion del modelo sin obtener eventos de la cola, hasta que el modelo alcance el tiempo correspondiente.
+
+Esto es negativo para el desarrollo del juego y es un problema que fue considerado durante el desarrollo pero por falta de tiempo no se llegó a solucionar. En particular el evento que más tarda en procesarse es el de movimiento de tropas, ya que implica calcular el algoritmo A* para cada tropa que vaya a moverse.
+
+A continuación se muestra un gráfico donde se analizan los tiempos en un caso general de prueba del servidor:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=16cm]{../imagenes/analisis-tiempos-1.png}
+	\caption{\label{fig:tiempos-ciclo-juego-1} Tiempos de respuesta del ciclo de juego.}
+\end{figure}
+
+El mismo muestra en el eje X el tiempo transcurrido de la partida y en el eje Y el tiempo que tomó cada variable medida. Ambos ejes están en milisegundos.
+
+Las líneas verde, naranja y azul (horizontal) muestran los promedios en ventanas de un segundo de el tiempo total de la iteración, el tiempo tomado esperando / procesando eventos y el tiempo de actualización del modelo, respectivamente. En los tres casos se puede observar que las líneas son generalmente constantes con mínimas variaciones.
+
+La línea roja, por otra parte, muestra el tiempo que tomó procesar el evento mover tropas, dividido por 10 para escalarlo al gráfico. En el gráfico siguiente se puede observar en escala 1:1.
+
+Las líneas verticales rosas, verdes y azules muestran el momento en el modelo recibió un evento ``mover tropa'', ``atacar tropa'' y cualquier otro evento, respectivamente.
+
+
+En el gráfico se puede observar que el tiempo tomado al procesar el evento mover tropa varía bruscamente en cada caso y el mismo depende fuertemente de la cantidad de tropas a mover, la distancia al destino y la cantidad de obstáculos en el camino.
+
+En el siguiente gráfico se muestra únicamente los eventos, sin escalar el tiempo. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=16cm]{../imagenes/analisis-tiempos-2.png}
+	\caption{\label{fig:tiempos-ciclo-juego-2} Tiempos de respuesta de eventos mover tropas.}
+\end{figure}
+
+Se puede observar que el tiempo, si bien varía bruscamente en los casos generales está dentro de los 20ms de ventana, y debido a la espera adaptable en el ciclo de juego esto se vuelve imperceptible.
+
 \newpage
 \section{Editor}
 
