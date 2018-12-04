@@ -12,7 +12,16 @@ namespace modelo { class ArmaBase; }
 #include "modelo/atacable.h"
 
 namespace modelo {
-
+/**
+ * \brief ArmaBase
+ * 
+ * El arma base es un arma generica que guarda toda la informacion 
+ * de cualquier arma.
+ * Entre la informacion que posee se encuenta:
+ * Tipo: nombre del arma.
+ * Dano: cantidad de vida que le saca al oponenete al atacar.
+ * Frecuencia: frecuencia de disparo.
+ */
 class ArmaBase {
 private:
     std::string tipo;
@@ -22,10 +31,17 @@ private:
     
 public:
     ArmaBase();
-    ArmaBase(const nlohmann::json& data_arma);
+    /**
+     * \brief Constructor.
+     *  
+     * Inicializa el arma a partir de data_arma, atributo en formato JSON.
+     */
+    explicit ArmaBase(const nlohmann::json& data_arma);
     ~ArmaBase();
+    /**
+     * \brief Reduce la vida a la victima de acuerdo al atributo dano.
+     */
     int atacar_a(Atacable* victima);
-    //void atacar_a(Edificio* victima);
     unsigned int obtener_frecuencia();
 };
 

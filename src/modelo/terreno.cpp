@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <limits>
 #include <queue>
+#include <utility> 
 
 #include "modelo/a_estrella.h"
 #include "modelo/celda.h"
@@ -18,19 +19,18 @@
 //  pero el tamaño de una celda del modelo es de 8x8 para poder ubicar 
 //  una tropa por celda.
 #define FACTOR_DIMENSION 4
-#define RANGO 5 * FACTOR_DIMENSION
+#define RANGO 5 //* FACTOR_DIMENSION
 
 namespace modelo {
 
-Terreno::Terreno() { }
+Terreno::Terreno() {
+ }
 
 void Terreno::inicializar(const nlohmann::json& mapa) {
     alto = ancho = 0;
     const std::vector<std::vector<int>>& tipos = 
         mapa.at("tipo").get<std::vector<std::vector<int>>>();
-
     alto = tipos.size() * FACTOR_DIMENSION;
-
     if (alto == 0) {
         throw std::runtime_error("Terreno inválido");
     }
@@ -87,7 +87,7 @@ std::vector<int> Terreno::obtener_vecinos(int nodo) const {
          derecha = ((x + 1) < ancho) && terreno[y][x+1].es_caminable();
     // Celdas que son caminables sólo si las aledañas son caminables
     //  (y no son obstáculos)
-    bool arriba_izq = (arriba && izquierda) && terreno[y-1][x-1].es_caminable(),
+    bool arriba_izq =(arriba && izquierda) && terreno[y-1][x-1].es_caminable(),
          arriba_der = (arriba && derecha) && terreno[y-1][x+1].es_caminable(),
          abajo_izq = (abajo && izquierda) && terreno[y+1][x-1].es_caminable(),
          abajo_der = (abajo && derecha) && terreno[y+1][x+1].es_caminable();
@@ -114,9 +114,11 @@ std::vector<int> Terreno::obtener_vecinos(int nodo) const {
 }
 
 std::vector<Posicion> 
-    Terreno::buscar_camino_minimo(const Posicion& inicio, const Posicion& fin) const {
+    Terreno::buscar_camino_minimo(const Posicion& inicio,
+                                  const Posicion& fin) const {
     struct CalcularDistancia {
-        CalcularDistancia(const Terreno& terreno_) : terreno(terreno_) { }
+        explicit CalcularDistancia(const Terreno& terreno_): terreno(terreno_){
+        }
         double operator()(int id_origen, int id_destino) {
             int x_origen, y_origen;
             terreno.revertir_hash(id_origen, x_origen, y_origen);
@@ -151,26 +153,31 @@ std::vector<Posicion>
 }
 
 bool Terreno::puede_construir_edificio(int x, int y, std::pair<int,int>& dim) {
-    int dim_x = dim.first;
-    int dim_y = dim.second;
-    int inicio_x = x-RANGO;
+    std::cout << "entre " <<std::endl;
+    int dim_x = dim.first*FACTOR_DIMENSION;
+    int dim_y = dim.second*FACTOR_DIMENSION;
+    int inicio_x = x-(RANGO*FACTOR_DIMENSION);
     if (inicio_x < 0) inicio_x = 0; 
-    int inicio_y = y-RANGO;
+    int inicio_y = y-(RANGO*FACTOR_DIMENSION);
     if (inicio_y < 0) inicio_y = 0;
-    int fin_x = x+dim_x+RANGO;
+    int fin_x = x+dim_x+(RANGO*FACTOR_DIMENSION);
     if (fin_x > ancho) fin_x = ancho;
-    int fin_y = y+dim_y+RANGO;
+    int fin_y = y+dim_y+(RANGO*FACTOR_DIMENSION);
     if (fin_y > alto) fin_y = alto;
     bool rango_valido = false;
+    std::cout << "inicio en x: " <<inicio_x<<" fin x: "<<fin_x<<std::endl;
+    std::cout << "inicio en y: " <<inicio_y<<" fin y: "<<fin_y<<std::endl;
     for (int j = inicio_y; j < fin_y; j++){
-        for (int i = inicio_x; i < inicio_x; i++){
-            if( j >= y && j< y+dim_y && i >= x && i< x+dim_x){
-                if(!terreno[j][i].es_construible()) {
-                   return false;    
+        for (int i = inicio_x; i < fin_x; i++){
+            std::cout << "celda(" <<i<<";"<<j<<")"<<std::endl;
+            if (j >= y && j< (y+dim_y) && i >= x && i< (x+dim_x)){
+                if (!terreno[j][i].es_construible()){
+                    std::cout << "no es construible, es de tipo  "<<terreno[j][i].tipo() <<std::endl;
+                   return false;
                 }
                 continue;
             }
-            if(terreno[j][i].tiene_edificio()) {
+            if (terreno[j][i].tiene_edificio()) {
                 rango_valido = true;
             }
         }
@@ -197,11 +204,14 @@ bool Terreno::tiene_edificio(int x_, int y_) {
 }
 
 void Terreno::agregar_edificio(int x_, int y_,std::pair<int,int>& dim){
-    int dim_x = dim.first * FACTOR_DIMENSION;
-    int dim_y = dim.second * FACTOR_DIMENSION;
+    std::cout << "Posicion inicial (" <<x_<<";"<<y_<<")"<<std::endl;
+    int dim_x = dim.first * 4;
+    int dim_y = dim.second * 4;
+    std::cout << "dimension (" <<dim_y<<"x"<<dim_x<<")"<<std::endl;
     for (int j = y_; j < y_ + dim_y; j++) {
         for (int i = x_; i < x_ + dim_x; i++) {
             terreno[j][i].agregar_edificio();
+            std::cout << "agregue un edificio en la (" <<i<<";"<<j<<")"<<std::endl; 
         }
     }
 }
@@ -226,7 +236,7 @@ bool Terreno::hay_tropa(int x, int y) {
     return terreno[y][x].hay_tropa();
 }
 
-void Terreno::agregar_tropa(const Posicion& posicion, std::pair<int,int>& dim) {
+void Terreno::agregar_tropa(const Posicion& posicion, std::pair<int,int>& dim){
     int dim_x = dim.first;
     int dim_y = dim.second;
     for (int j = posicion.y(); j < posicion.y() + dim_y; j++){
@@ -252,7 +262,7 @@ Posicion Terreno::obtener_especia_cercana(Posicion& posicion_i) {
      for (int j = 0; j < alto; j++){
         for (int i = 0; i < ancho; i++){
             Celda& celda_actual = terreno[j][i]; 
-            if(celda_actual.tipo()==4) {
+            if (celda_actual.tipo()==4) {
                 encontre = true;
                 Posicion pos_actual(celda_actual.x(),celda_actual.y());
                 float distancia = posicion_i.distancia_a(pos_actual);
@@ -294,7 +304,7 @@ Posicion Terreno::obtener_especia_cercana(Posicion& posicion_i) {
 */
 
 bool tiene(std::vector<Posicion>& visitados, Posicion& vecino_pos){
-    for (auto it = visitados.begin(); it != visitados.end();++it){
+    for (auto it = visitados.begin(); it != visitados.end(); ++it){
         if (*it == vecino_pos)
             return true;
     }
@@ -332,7 +342,7 @@ Posicion Terreno::obtener_posicion_caminable_cercana(
         const Posicion& posicion_inicial) {
     for (int j = posicion_inicial.y(); j <alto; j++){
         for (int i = posicion_inicial.x(); i < ancho; i++){
-            if(!terreno[j][i].es_caminable())
+            if (!terreno[j][i].es_caminable())
                 continue;
             return Posicion(terreno[j][i].x(),terreno[j][i].y());
         }
@@ -350,11 +360,13 @@ void Terreno::agregar_refineria(int x, int y,int id_jugador) {
     }
     refinerias.at(id_jugador).push_back(Posicion(x,y));
 }
+
 void Terreno::eliminar_refineria(const Posicion& posicion,int id_jugador) {
     std::cout << "Eliminada refineria para " << id_jugador << "en ("
               << posicion.x() << ";" << posicion.y() << ")" << std::endl;
     std::vector<Posicion>& refinerias_jugador = refinerias.at(id_jugador);
-    for (auto it = refinerias_jugador.begin(); it != refinerias_jugador.end(); ++it) {
+    for (auto it = refinerias_jugador.begin(); it != refinerias_jugador.end();
+                                                                     ++it) {
         Posicion& pos_refineria = *it;
         if (pos_refineria == posicion) {
             refinerias_jugador.erase(it);
@@ -363,30 +375,32 @@ void Terreno::eliminar_refineria(const Posicion& posicion,int id_jugador) {
     }
 }
 
-
 void Terreno::agregar_centro(int x, int y,int id_jugador) {
     centros.emplace(id_jugador,Posicion(x,y));
 }
+
 void Terreno::eliminar_centro(int id_jugador) {
     if (centros.count(id_jugador != 0))
         centros.erase(id_jugador);
 }
+
 Posicion& Terreno::obtener_centro_posicion(int id_jugador){
     if (centros.count(id_jugador != 0))
         centros.at(id_jugador);
 }
 
 //futura mejora: usar un heap
-Posicion Terreno::obtener_refinerias_cercana(const Posicion& pos,int id_jugador) {
+Posicion Terreno::obtener_refinerias_cercana(const Posicion& pos,
+                                                    int id_jugador) {
     if (refinerias.count(id_jugador)==0)
         throw std::runtime_error("no hay refinerias");
     std::vector<Posicion>& refinerias_ = refinerias.at(id_jugador);
     if (refinerias_.empty())
         throw std::runtime_error("no hay refinerias");
-    std::cout << "al buscar refnerias hay  "<<refinerias_.size() <<" refinerias" << std::endl;    
     float distancia_minima = std::numeric_limits<float>::infinity();
     Posicion min_pos = refinerias_.front();
-    for (auto refineria = refinerias_.begin();refineria!=refinerias_.end();++refineria){
+    for (auto refineria = refinerias_.begin(); refineria!=refinerias_.end();
+                                                                ++refineria){
         float distancia = pos.distancia_a(*refineria);
         if (distancia < distancia_minima){
             min_pos = *refineria;

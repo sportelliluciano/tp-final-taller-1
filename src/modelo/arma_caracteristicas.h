@@ -3,13 +3,18 @@
 
 namespace modelo {
 
-//comportamiento extra
+/**
+ * \brief ArmaCaracteristicas
+ * 
+ * Encampsula el comportamiento extra o especifico de un arma. 
+ */
 class ArmaCaracteristicas{
     private:
-
     public:
     virtual ~ArmaCaracteristicas(){}
     virtual void aplicar();
 };
-}
-#endif
+
+}// namespace modelo
+
+#endif // _ARMA_CARACTERISTICAS_H_

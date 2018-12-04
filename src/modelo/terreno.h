@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <utility>
 
 #include "libs/json.hpp"
 
@@ -60,8 +61,6 @@ public:
      */
     std::vector<Posicion> buscar_camino_minimo(const Posicion& inicio, 
         const Posicion& fin) const;
-    
-
     /**
      * \brief Determina si se puede construir un edificio en la posición
      *        indicada.
@@ -75,7 +74,6 @@ public:
      * podrá construir.
      */
     bool puede_construir_edificio(int x, int y, std::pair<int,int>& dim);
-
     
     bool rango_valido_tropa(int x, int y, std::pair<int,int>& dim);
     

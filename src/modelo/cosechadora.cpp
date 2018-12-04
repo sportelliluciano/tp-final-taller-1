@@ -10,10 +10,8 @@ Cosechadora::Cosechadora(int id_,int pos_x,int pos_y, UnidadBase& unidad_base_
     terreno_(terreno),
     id_propietario(id_propietario_),
     comunicacion_jugador(comunicacion_jugador_){    
-    
 }
 Cosechadora::~Cosechadora(){
-
 }
 int Cosechadora::obtener_id_jugador(){
     return id_propietario;
@@ -26,7 +24,8 @@ void Cosechadora::operar(int ds){
     tiempo_descarga -= ds;
     if (tiempo_descarga <= 0){
         operando_ = false;
-        if (camino_especia){//quiere decir que estaba en la refineria y me estoy yendo 
+        if (camino_especia){
+            //quiere decir que estaba en la refineria y me estoy yendo.
             tiempo_descarga = ESPERA_CARGA;
             comunicacion_jugador -> aumentar_plata(PLATA_DESCARGA);
         } else {
@@ -50,7 +49,6 @@ bool Cosechadora::actualizar_posicion(int dt, Terreno* terreno) {
             //llegue
             operando_ = true;
             camino_especia = !camino_especia;
-
             esta_en_camino = false;
             paso_actual = 0;
             return resincronizar;
@@ -99,4 +97,4 @@ bool Cosechadora::actualizar_posicion(int dt, Terreno* terreno) {
     
     return resincronizar;
 }
-}
+} // namespace modelo

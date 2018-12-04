@@ -2,17 +2,14 @@
 
 namespace modelo {
 EdificioCaracteristicas::EdificioCaracteristicas(){
-    
 }
 EdificioCaracteristicas::EdificioCaracteristicas(int id_,int x_,int y_,
                             unsigned int puntos_de_estructura_):
                             id(id_),
                             posicion(Posicion(x_,y_)),
                             puntos_de_estructura(puntos_de_estructura_){
-    //asignar id unico
 }
 EdificioCaracteristicas::~EdificioCaracteristicas(){
-
 }
 int EdificioCaracteristicas::reducir_ptos_est(int dano){
     puntos_de_estructura -= dano;
@@ -27,4 +24,4 @@ int EdificioCaracteristicas::get_vida(){
 Posicion& EdificioCaracteristicas::get_posicion(){
     return posicion;
 }
-}
+} // namespace modelo

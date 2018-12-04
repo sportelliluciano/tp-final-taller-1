@@ -1,9 +1,11 @@
+
 #ifndef _UNIDAD_BASE_H_
 #define _UNIDAD_BASE_H_
 
 #include <string>
 #include <utility>
 #include <set>
+#include <vector>
 
 #include "libs/json.hpp"
 
@@ -11,7 +13,27 @@ namespace modelo { class UnidadBase; }
 #include "modelo/arma.h"
 
 namespace modelo {
-
+/**
+ * \brief UnidadBase. 
+ * 
+ * Encampsula la infromacion de un tipo de unidad.
+ * Requisitos: Edificios que se deben tener para poder entrenar
+ * una unidad de esta clase.
+ * Casa: casa a la que pertence la casa. Solo estas casas
+ * pueden tener una instancia de esta unidad.
+ * Clase: nombre de la unidad.
+ * Rango: distancia minima a la que tiene que estar la unidad para poder
+ * atacar (medido en celdas).
+ * Velocidad: constante utilizada para calcular el largo de cada paso
+ * que da la unidad al caminar.
+ * Tiempo_de_entrenamiento: tiempo por default que se tarda en entrenar
+ * cada unidad de esta clase.  
+ * Costo: cantidad de plata necesaria para poder entenar una intancia de 
+ * esta unidad.
+ * vida: cantidad de vida que posee la unidad. A llegar a cero la unidad es
+ * destruida.
+ * Armas: armas relacionadas con la unidad.
+ */
 class UnidadBase {
 private: 
     std::set<std::string> casa;
@@ -26,8 +48,17 @@ private:
     std::pair <int,int> dimensiones = std::pair <int,int> (1,1);
 
 public:
-    UnidadBase(const nlohmann::json& data_unidad, const std::vector<Arma*>& armas_);
+    /**
+     * \brief Constructor.
+     * crea una unidad de acuerdo a data_unidad
+     * en formato JSON.
+     */
+    UnidadBase(const nlohmann::json& data_unidad, 
+                    const std::vector<Arma*>& armas_);
     ~UnidadBase();
+    /**
+     * \brief Ejecuta el ataque hacia victima.
+     */
     int atacar_a(Atacable* victima);
     unsigned int get_rango() const;
     unsigned int get_velocidad() const;

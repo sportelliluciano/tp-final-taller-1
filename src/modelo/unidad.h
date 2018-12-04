@@ -1,10 +1,11 @@
 #ifndef _UNIDAD_H_
 #define _UNIDAD_H_
 
-#include "libs/json.hpp"
+#include <utility>
+#include <vector>
+#include <string>
 
-// TODO: Arreglar esto
-//namespace modelo { class Unidad; }
+#include "libs/json.hpp"
 
 #include "modelo/atacable.h"
 #include "modelo/arma.h"
@@ -14,7 +15,13 @@
 #include "modelo/terreno.h"
 
 namespace modelo {
-
+/**
+ * \brief Unidad. 
+ * 
+ * Id: identificar unico dentro del juego.
+ * Unidad_base: informacion general del tipo de unidad.
+ * Posicion: posicion dentro del terreno donde se ubica la unidad.
+ */
 class Unidad: public Atacable {
 private:
     int id;
@@ -34,13 +41,31 @@ protected:
 public:
     Unidad(int id,int pos_x,int pos_y, UnidadBase& unidad_base);
     ~Unidad();
-
+    /**
+     * setea toda la informacion para poder atacar a victima.
+     * devuelve true si se cumplen todas las conidciones para poder atacar,
+     * false de lo contrario.
+     */
     bool configurar_ataque(Atacable* victima);
+    /**
+     * ejecuta el ataque hacia victima.
+     */
     int atacar(Atacable* victima);
+    /**
+     * reduce la vida de la unidad en unidades igual a dano
+     */
     int recibir_dano(unsigned int dano);
+    /**
+     * desconfigura el ataque a victima.
+     */
     void parar_ataque();
-
+    /**
+     * setea toda la informacion para poder moverse.
+     */
     virtual void configurar_camino(const std::vector<Posicion>& nuevo_camino);
+    /**
+     * devuelve true si la unidad esta en movimeinto.
+     */
     virtual bool en_movimiento() const;
     /**
      * Devuelve true si hay que sincronizar con los jugadores

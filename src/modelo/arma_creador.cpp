@@ -21,7 +21,7 @@ void ArmaCreador::inicializar(const nlohmann::json& data_armas_base) {
     auto it = data_armas_base.begin();
     const json& valores_por_defecto = *it;
     ++it;
-    for(; it != data_armas_base.end(); ++it) {
+    for (; it != data_armas_base.end(); ++it) {
         // Mergear valores por defecto con el elemento actual
         json elem = valores_por_defecto;
         elem.update(*it);
@@ -30,7 +30,7 @@ void ArmaCreador::inicializar(const nlohmann::json& data_armas_base) {
 }
 ArmaCreador::~ArmaCreador(){
 }
-Arma& ArmaCreador::get(std::string id){
+Arma& ArmaCreador::get(const std::string& id){
     return prototipos.at(id);
 }
 void ArmaCreador::inicializar_armas_base(const nlohmann::json& data_armas_base) 
@@ -40,14 +40,14 @@ void ArmaCreador::inicializar_armas_base(const nlohmann::json& data_armas_base)
     auto it = data_armas_base.begin();
     const json& valores_por_defecto = *it;
     ++it;
-    for(; it != data_armas_base.end(); ++it) {
+    for (; it != data_armas_base.end(); ++it) {
         // Mergear valores por defecto con el elemento actual
         json elem = valores_por_defecto;
         elem.update(*it);
         armas_base.emplace(elem["id"], ArmaBase(elem));
     }
 }
-bool ArmaCreador::tiene(std::string id){
+bool ArmaCreador::tiene(const std::string& id){
     return prototipos.count(id)>0;
 }
 }

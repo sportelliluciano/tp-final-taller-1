@@ -12,7 +12,6 @@
 namespace modelo {
 
 InfraestructuraCreador::InfraestructuraCreador(){
-
 }
 
 void InfraestructuraCreador::inicializar(const nlohmann::json& edificios_json){
@@ -29,17 +28,24 @@ void InfraestructuraCreador::inicializar(const nlohmann::json& edificios_json){
         prototipos.emplace(elem["id"], Edificio(info_base.at(elem["id"])));
     }
 }
-InfraestructuraCreador::~InfraestructuraCreador(){}
-Edificio InfraestructuraCreador::clonar(std::string id_tipo,int id,int x,int y){
+
+InfraestructuraCreador::~InfraestructuraCreador(){
+}
+
+Edificio InfraestructuraCreador::clonar(const std::string& id_tipo,int id,
+                                                                int x,int y){
     return prototipos.at(id_tipo).clonar(id,x,y);
 }
-unsigned int InfraestructuraCreador::get_costo(std::string id_tipo){
+
+unsigned int InfraestructuraCreador::get_costo(const std::string& id_tipo){
     return info_base.at(id_tipo).get_costo();
 }
-unsigned int InfraestructuraCreador::get_energia(std::string id_tipo){
+
+unsigned int InfraestructuraCreador::get_energia(const std::string& id_tipo){
     return info_base.at(id_tipo).get_energia();
 }
-std::pair<int,int>& InfraestructuraCreador::get_dimensiones(std::string id_tipo){
+
+std::pair<int,int>& InfraestructuraCreador::get_dimensiones(const std::string& id_tipo){
     return info_base.at(id_tipo).get_dimensiones();
 }
-}
+} // namespace modelo}

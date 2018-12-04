@@ -61,7 +61,8 @@ public:
      * a otra posición.
      */
     float distancia_a(const Posicion& otro) const;
-    int distancia_celda_a(const Posicion& otro,std::pair<int,int>& dimension) const;
+    int distancia_celda_a(const Posicion& otro,
+                        std::pair<int,int>& dimension) const;
 
     /**
      * \brief Getters para acceder por coordenada.

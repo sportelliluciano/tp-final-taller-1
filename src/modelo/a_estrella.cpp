@@ -53,7 +53,7 @@ struct Nodo {
 
     }*/
     Nodo* esta(std::vector<Nodo>* myset,int id_vecino){
-        for (std::vector<Nodo>::iterator it=(*myset).begin(); it!=(*myset).end(); ++it){
+        for (auto it=(*myset).begin(); it!=(*myset).end(); ++it){
             if ((*it).id == id_vecino){
                 return &(*it);
             }    
@@ -63,12 +63,12 @@ struct Nodo {
     Nodo mas_chico(std::vector<Nodo>* myset){
         Nodo tmp;
         double mas_chico = std::numeric_limits<double>::infinity();
-        for (std::vector<Nodo>::iterator it=(*myset).begin(); it!=(*myset).end(); ++it){
+        for (auto it=(*myset).begin(); it!=(*myset).end(); ++it){
             if ((*it).f_score < mas_chico){
                 mas_chico = (*it).f_score;
             }
         }
-        for (std::vector<Nodo>::iterator it=(*myset).begin(); it!=(*myset).end(); ++it){
+        for (auto it=(*myset).begin(); it!=(*myset).end(); ++it){
             if ((*it).f_score == mas_chico){
                 tmp = *it;
                 myset->erase(it);
@@ -90,8 +90,7 @@ std::vector<int>
     std::vector<Nodo> nodos_sin_visitar;
     std::unordered_set<int> nodos_visitados;
     std::unordered_map<int, int> de_donde_vine;
-
-    Nodo nodo (id_origen);
+    Nodo nodo(id_origen);
     nodo.g_score = 0;
     nodo.f_score = distancia_entre(id_origen, id_destino);
     nodos_sin_visitar.push_back(nodo);
@@ -103,7 +102,8 @@ std::vector<int>
         }
         nodos_visitados.insert(actual.id);
         std::vector<int> vecinos = grafo->obtener_vecinos(actual.id);
-        for (auto id_vecino=vecinos.begin(); id_vecino != vecinos.end(); ++id_vecino) {
+        for (auto id_vecino=vecinos.begin(); id_vecino != vecinos.end(); 
+            ++id_vecino) {
             if (nodos_visitados.count(*id_vecino) != 0){
                 continue;
             }

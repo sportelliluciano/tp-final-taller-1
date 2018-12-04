@@ -3,26 +3,23 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <set>
 
 #include "modelo/infraestructura.h"
 #include "modelo/ejercito.h"
 #include "modelo/terreno.h"
 
-// Refactor this? mati:no
-// ok pero deberia ser configurable desde un archivo (enunciado)
 #define DINERO_INICIAL         10000
 #define DINERO_MAXIMO_INICIAL  10000
 #define ENERGIA_INICIAL        1000
 #define ENERGIA_MAXIMA_INICIAL 1000
-//falta el tema de eliminar la refineria
-//falta cuando no hay refinerias
-//falta la especia
-//
+
 namespace modelo {
 
 Juego::Juego() 
 : inf(comunicacion_jugadores,id), ejercito(comunicacion_jugadores,id) 
-{ }
+{ 
+}
 
 void Juego::inicializar(const nlohmann::json& mapa, 
     const nlohmann::json& edificios, const nlohmann::json& ejercito_)
@@ -42,8 +39,7 @@ void Juego::inicializar(const nlohmann::json& mapa,
 void Juego::crear_jugador(IJugador* jugador) {
     jugadores.emplace(
         jugador->obtener_id(),
-        Jugador(jugador->obtener_casa(), jugador)
-    );
+        Jugador(jugador->obtener_casa(), jugador));
     comunicacion_jugadores.agregar_jugador(jugador);
 }
 
@@ -97,8 +93,10 @@ void Juego::actualizar(int dt_ms) {
     for (auto it=jugadores.begin(); it != jugadores.end(); ++it) {
         Jugador& jugador = it->second;
         jugador.actualizar_construcciones(dt_ms, inf);
-        jugador.actualizar_entrenamientos(dt_ms, tropas_a_construir,ejercito.get_tiempos_entrenamiento());
-        for (auto it2=tropas_a_construir.begin();it2!=tropas_a_construir.end();++it2){
+        jugador.actualizar_entrenamientos(dt_ms, tropas_a_construir,
+                                        ejercito.get_tiempos_entrenamiento());
+        for (auto it2=tropas_a_construir.begin();
+                 it2!=tropas_a_construir.end(); ++it2){
             int nuevo_id;
             if (*it2 == "cosechadora"){
                 nuevo_id = ejercito.crear_cosechadora(*it2,
@@ -117,7 +115,7 @@ void Juego::actualizar(int dt_ms) {
     // actualizo las bajas en el modelo
     std::unordered_set<int>& bajas = ejercito.notificar_bajas(); 
     for (auto it = bajas.begin(); it != bajas.end(); ++it) {
-        for (auto it2=jugadores.begin();it2!=jugadores.end();++it2){
+        for (auto it2=jugadores.begin(); it2!=jugadores.end(); ++it2){
             Jugador& jugador = it2->second;
             if (jugador.pertenece(*it)){
                 if (inf.pertenece(*it)){
@@ -177,18 +175,19 @@ void Juego::ubicar_edificio(IJugador* conexion_jugador, int celda_x,
     Jugador& jugador = jugadores.at(conexion_jugador->obtener_id());
 
     if (!jugador.ubicar_edificio(clase, celda_x, celda_y, inf)) {
-        std::cout << "------------------Dentro del modelo------------------" <<'\n';
+        std::cout << "---------------Dentro del modelo---------------" <<'\n';
         std::cout << "No se ubico el edificio" << std::endl;
     } else {
         if (clase=="refineria"){
             std::cout << "Se creo una refineria" << std::endl;
-            terreno.agregar_refineria(celda_x,celda_y,conexion_jugador->obtener_id());
+            terreno.agregar_refineria(celda_x,celda_y,
+                    conexion_jugador->obtener_id());
         }
     }
 }
 
 void Juego::vender_edificio(IJugador* jugador, int id_edificio) {
-    std::cout << "voy a vender: "<<inf.get(id_edificio).get_tipo() << std::endl;
+    std::cout << "voy a vender: "<<inf.get(id_edificio).get_tipo()<< std::endl;
     if (inf.get(id_edificio).get_tipo() == "centro_construccion"){
         std::cout << "no se puede vender" << std::endl;
         return;
@@ -199,10 +198,11 @@ void Juego::vender_edificio(IJugador* jugador, int id_edificio) {
     }
 
     unsigned int consumo = inf.get_energia(id_edificio);
-    for (auto it = jugadores.begin();it!= jugadores.end();++it){
+    for (auto it = jugadores.begin(); it!= jugadores.end(); ++it){
         if ((it->second).pertenece(id_edificio)){
             (it->second).eliminar_elemento(id_edificio,consumo);
-            unsigned int plata_retorno = inf.reciclar(id_edificio,jugador->obtener_id());
+            unsigned int plata_retorno = inf.reciclar(id_edificio,
+                jugador->obtener_id());
             (it->second).aumentar_plata(plata_retorno);
             return;
         }
@@ -214,7 +214,8 @@ void Juego::iniciar_entrenamiento_tropa(IJugador* jugador,
 {
     std::set<std::string>& requisitos = ejercito.get_requisitos(clase);
     Jugador& jugador_ = jugadores.at(jugador->obtener_id());
-    if (!jugador_.tiene(requisitos,inf)||!ejercito.pertenece(clase,jugador->obtener_casa()))
+    if (!jugador_.tiene(requisitos,inf)||!ejercito.pertenece(clase,
+            jugador->obtener_casa()))
         return;
     
     unsigned int costo = ejercito.get_costo(clase);
@@ -249,7 +250,7 @@ void Juego::atacar(IJugador* jugador,
         const std::unordered_set<int>& ids_atacantes, int id_atacado)
 {
     Jugador& atacante = jugadores.at(jugador->obtener_id());
-    for (auto it = ids_atacantes.begin();it != ids_atacantes.end();++it){
+    for (auto it = ids_atacantes.begin(); it != ids_atacantes.end(); ++it){
         if (atacante.pertenece(id_atacado) && atacante.pertenece(*it)){
             continue;
         }
@@ -262,9 +263,7 @@ void Juego::atacar(IJugador* jugador,
 }
 
 void Juego::indicar_especia_cosechadora(IJugador* jugador,
-    const std::unordered_set<int>& ids, int celda_x, int celda_y) 
-{
-
+    const std::unordered_set<int>& ids, int celda_x, int celda_y) {
 }
 
-}
+} // namespace modelo

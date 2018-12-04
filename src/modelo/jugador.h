@@ -5,14 +5,23 @@
 #include <unordered_map>
 #include <set>
 #include <unordered_set>
+#include <vector>
 
 #include "comun/i_modelo.h"
 #include "comun/i_jugador.h"
 #include "modelo/infraestructura.h"
-//#include "modelo/ejercito.h"
 
 namespace modelo {
-
+/**
+ * \brief Jugador dentro del juego. 
+ * Modelizacion del jugador, el mismo contiene y administra toda
+ * la informacion del mismo.
+ * Casa: casa a la que pertence el jugador.
+ * Inventario: posee todos los id´s de las entidades pertenecientes
+ * al jugador.
+ * Energia: es la energia que tiene el jugador.
+ * plata: es la plata que tiene el jugador.
+ */
 class Jugador{
     private:
     bool sincronizado = false;
@@ -25,7 +34,6 @@ class Jugador{
     std::unordered_map<std::string, int> construcciones;
     std::unordered_set<std::string> construcciones_esperando_ubicacion;
     std::unordered_map<std::string, int> construcciones_en_cola;
-
     std::unordered_map<std::string, int> tropas;
     std::unordered_map<std::string, int> tropas_en_cola;
 
@@ -38,21 +46,51 @@ class Jugador{
     void reducir_plata(unsigned int costo);
     std::string get_casa();
     bool hay_suficiente_energia(unsigned int costo);
+    /**
+     * \brief Inicializa la construccion de un edificio de tipo igual a clase.
+     *  Devuelve true si se cumplen los requisitos para la contruccion,
+     * false en caso contrario.
+     */
     bool empezar_construccion(const std::string& clase,unsigned int costo);
+    /**
+     * \brief Inicializa el entrenamiento de una unidad de tipo igual a clase.
+     *  Devuelve true si se cumplen los requisitos para empezar el
+     *  entrenamiento, false en caso contrario.
+     */
     bool empezar_entrenamiento(const std::string& clase,unsigned int costo);
+    /**
+     * \brief Cancela la construccion de un edificio de tipo igual a clase. 
+     */
     bool cancelar_construccion(const std::string& clase,unsigned int costo);
+    /**
+     * \brief Cancela el entrenamiento de una unidad de tipo igual a clase. 
+     */
     bool cancelar_entrenamiento(const std::string& clase,unsigned int costo);
-    bool ubicar_edificio(const std::string& clase, int celda_x, int celda_y, Infraestructura& inf);
-    void agregar_elemento(int id,unsigned int energia_,const std::string& clase);
+    /**
+     * \brief Crea un edificio ya construido.
+     * El edificio es de tipo igual a clase y se crea 
+     * en la posicion con coordenas (x,y). 
+     */
+    bool ubicar_edificio(const std::string& clase, int celda_x, int celda_y,
+                         Infraestructura& inf);
+    void agregar_elemento(int id,unsigned int energia_,
+                          const std::string& clase);
     void eliminar_elemento(int id,unsigned int energia_consumida);
     bool pertenece(int id);
+    /**
+     * \brief Actualizacion temporal de las construcciones. 
+     */
     void actualizar_construcciones(int dt, Infraestructura& infraestructura);
-    void actualizar_entrenamientos(int dt,std::vector<std::string>& nuevas_tropas,
-                                    std::unordered_map<std::string,int>& tiempos_de_entrenamiento);
+    /**
+     * \brief Actualizacion temporal de los entrenamientos. 
+     */
+    void actualizar_entrenamientos(int dt,
+            std::vector<std::string>& nuevas_tropas,
+            std::unordered_map<std::string,int>& tiempos_de_entrenamiento);
     IJugador* get_jugador();
     bool tiene(std::set<std::string>& requisitos,Infraestructura& inf);
-    float obtener_varaible_de_entrenamiento(std::set<std::string>& requisitos,Infraestructura& inf);
-
+    float obtener_varaible_de_entrenamiento(std::set<std::string>& requisitos,
+                                            Infraestructura& inf);
     /**
      * \brief Devuelve true si el jugador ya sincronizó su inicio de juego.
      */
@@ -64,5 +102,7 @@ class Jugador{
      */
     void inicio_sincronizado(bool activar);
 };
-}
-#endif
+
+} // namespace modelo
+
+#endif //  _JUGADOR_H_
