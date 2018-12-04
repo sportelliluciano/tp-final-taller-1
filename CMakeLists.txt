@@ -90,10 +90,6 @@ install(FILES data/servidor/config.json
         DESTINATION ${SV_CONFIG_DIR})
 file(GLOB SV_MAPAS_BASE data/servidor/mapas/*.json)
 install(FILES ${SV_MAPAS_BASE} DESTINATION ${SV_CONFIG_DIR}/mapas)
-# Copiar datos editor
-install(FILES data/editor/terrenos.json
-              data/editor/d2k_BLOXBASE.bmp
-        DESTINATION ${EDITOR_CONFIG_DIR})
 # Copiar assets
 install(FILES data/assets/fuente.ttf DESTINATION ${ASSETS_INSTALL_DIR})
 file(GLOB_RECURSE ASSETS_SONIDOS data/assets/sonidos/*)
@@ -106,7 +102,7 @@ install(CODE "execute_process(COMMAND ${RM} -rf \"${ASSETS_DIR}/sprites\")")
 install(CODE "execute_process(COMMAND ${UTIL_7Z} e \"${TERRAIN_7Z}\" terrain/* -y \"-o${ASSETS_DIR}/terrenos\")")
 install(CODE "execute_process(COMMAND ${UTIL_7Z} e \"${SPRITES_7Z}\" imgs/imgs/* -y \"-o${ASSETS_DIR}/sprites\")")
 install(CODE "message(\"Procesando sprites\")")
-install(CODE "execute_process(COMMAND ${PYTHON3} ${RENOMBRADOR} \"${ASSETS_DIR}/sprites\" OUTPUT_FILE renombrar.sh)")
+install(CODE "execute_process(COMMAND ${PYTHON3} \"${RENOMBRADOR}\" \"${ASSETS_DIR}/sprites\" OUTPUT_FILE renombrar.sh)")
 install(CODE "execute_process(COMMAND ${CHMOD} +x renombrar.sh)")
 install(CODE "execute_process(COMMAND ./renombrar.sh)")
 install(CODE "execute_process(COMMAND ${RM} renombrar.sh)")
