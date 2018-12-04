@@ -7,7 +7,6 @@
 #include "cliente/video/error_sdl.h"
 #include "cliente/video/color.h"
 #include "cliente/video/textura.h"
-#include "comun/log.h"
 
 namespace cliente {
 
@@ -46,7 +45,6 @@ const Textura& AdministradorTexturas::cargar_imagen(const std::string& img) {
 
     texturas.emplace(img, Textura(renderer, textura));
     
-    log_depuracion("Cargado %s", img.c_str());
     return texturas.find(img)->second;
 }
 
