@@ -140,12 +140,17 @@ para poder ejecutar el mismo directamente.
 
 \newpage
 \section{Cliente}
+
+\subsection{Ejecutar el programa}
+
 Para ejecutar el cliente se debe ejecutar el siguiente comando:
 \begin{verbatim}
 $ dune-remake
 \end{verbatim}
 
-La primer ventana que verá es la siguiente:
+\subsection{Formas de uso}
+
+Luego de ejecutar el cliente la primer ventana que verá es la siguiente:
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=12cm]{../imagenes/lanzador-cliente-conexion.png}
@@ -203,12 +208,15 @@ Para centrar la cámara en su centro de construcciones puede pulsar la tecla F2.
 
 \newpage
 \section{Servidor}
+
+\subsection{Ejecutar el programa}
+
 Para ejecutar el servidor del juego, una vez instalado deberá correr el siguiente comando:
 \begin{verbatim}
 $ dune-remake-servidor
 \end{verbatim}
 
-Una vez ejecutado el servidor iniciará y cargará la configuración desde el archivo \texttt{config.json}, que se ubica en \texttt{\{prefijo de instalacion\}/etc/dune-remake/config.json}. Usualmente esto es \texttt{/usr/local/etc/dune-remake/config.json}.
+Una vez ejecutado el servidor cargará la configuración desde el archivo \texttt{config.json}, que se ubica en \texttt{\{prefijo de instalacion\}/etc/dune-remake/config.json}. Usualmente esto es \texttt{/usr/local/etc/dune-remake/config.json}.
 
 A partir de este archivo se cargarán los mapas disponibles, la información sobre edificios y ejércitos y se escucharán conexiones en el puerto establecido.
 
@@ -237,9 +245,12 @@ Se detuvo el servidor
 \newpage
 \section{Editor}
 
-\subsection{Instalar el programa}
+\subsection{Ejecutar el programa}
 
-Para instalar el programa se necesita un SO Linux, compilador GCC 7.3.0, Qt5, User Interface Compiler (uic), biblioteca Json para c++ modernos y cmake. Luego de verificar que su computadora cumple con los requisitos anteriores, para generar la aplicación debe generarse una carpeta nueva en el directorio principal del editor, ingresar a dicha carpeta, abrir la consola y ejecutar el comando 'cmake ..'. Dicho comando generará un Makefile que será el encargado de generar el ejecutable de la aplicación, por lo tanto en la misma consola ejecutar el comando 'make'. Dentro de la carpeta creada anteriormente aparecerá el ejecutable, con el nombre editor. Para iniciar el programa, ejecutar el comando './editor'.\\
+Para ejecutar el cliente se debe ejecutar el siguiente comando:
+\begin{verbatim}
+$ dune-remake-editor
+\end{verbatim}
 
 \subsection{Formas de uso}
 
