@@ -1,0 +1,19 @@
+#ifndef _EDITOR_CONFIG_H_
+#define _EDITOR_CONFIG_H_
+/**
+ * Este archivo define distintas configuraciones que dependen de la ruta
+ * de instalación y son completadas por CMake automágicamente.
+ */
+
+/**
+ * Ruta completa a la carpeta donde está la configuración del servidor.
+ */
+#define RUTA_BASE_EDITOR "@EDITOR_CONFIG_DIR@"
+
+/**
+ * Ruta completa a los datos del Editor
+ */
+#define RUTA_TERRENOS_JSON RUTA_BASE_EDITOR "/terrenos.json"
+#define RUTA_TILES_TERRENO RUTA_BASE_EDITOR "/d2k_BLOXBASE.bmp"
+
+#endif // _EDITOR_CONFIG_H_

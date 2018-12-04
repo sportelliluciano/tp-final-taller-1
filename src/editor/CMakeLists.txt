@@ -8,6 +8,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)
 
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/src/editor")
+configure_file(
+    "${PROJECT_SOURCE_DIR}/src/editor/config.h.in"
+    "${PROJECT_BINARY_DIR}/src/editor/config.h"
+)
 
 qt5_wrap_ui(UIS_HEADERS_EDITOR
   ./ui/Editor.ui

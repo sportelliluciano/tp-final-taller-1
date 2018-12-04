@@ -13,3 +13,6 @@ Recursos del lanzador del cliente.
 
 #### renombrar-imagenes.py
 Herramienta para renombrar los sprites.
+
+### editor
+Data sobre terrenos y los tiles.
