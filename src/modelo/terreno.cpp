@@ -35,6 +35,43 @@ void Terreno::inicializar(const nlohmann::json& mapa) {
         throw std::runtime_error("Terreno inválido");
     }
 
+    /*  para mapa generado por el editor
+     *
+
+    const std::vector<std::vector<std::string>>& tipos = 
+        mapa.at("tipo").get<std::vector<std::vector<std::string>>>();
+
+     * 
+     *  Parseo terrenos.json -> tiene los tipos segun el string almacenado en el
+     *  JSON del mapa
+     * 
+    
+    std::map<std::string, int> tipo_terrenos;
+
+    std::ifstream entrada(RUTA_TERRENOS_JSON);
+
+    nlohmann::json terrenos_json;
+
+    entrada >> terrenos_json;
+
+    auto it = terrenos_json.begin();
+    const json& valores_por_defecto = *it;
+    ++it;
+    for (; it != terrenos_json.end(); ++it) {
+        // Mergear valores por defecto con el elemento actual
+        nlohmann::json elem = valores_por_defecto;
+        elem.update(*it);
+
+        auto it_sprites = elem["sprites"].begin();
+        for (int i = 0; it_sprites != elem["sprites"].end(); ++it_sprites) {
+            json tile = *it;
+            
+            std::string id = tile["sprites"][i]["id"];
+            terrenos_posibles.emplace(id, elem["tipo"]);
+        }
+    }
+
+     */
     ancho = tipos.at(0).size() * FACTOR_DIMENSION;
 
     for (int y=0; y < alto; y++) {
@@ -43,6 +80,17 @@ void Terreno::inicializar(const nlohmann::json& mapa) {
             int x_tipo = x / FACTOR_DIMENSION;
             int y_tipo = y / FACTOR_DIMENSION;
             fila_actual.push_back(
+                // aca habria que leer el string que esta en el json del mapa
+                // (creo que sería asi, no estoy seguro)
+
+                // std::string id = tipos[y_tipo][x_tipo];
+
+                // obtener el tipo(int) del std::map 
+
+                // int tipo_terreno = tipo_terrenos.find(id)->second;
+
+                // pasarle al constructor de Celda el int tipo_terreno casteado
+                // a tipo_celda_t
                 Celda((tipo_celda_t)tipos[y_tipo][x_tipo], x, y));
         }
         terreno.push_back(fila_actual);
