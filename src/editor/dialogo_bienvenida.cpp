@@ -67,7 +67,7 @@ void DialogoBienvenida::mostrar_dialogo_crear_mapa() {
         
         this->editor = new Editor (filas, columnas, cantidad_de_jugadores);
         this->editor_fue_creado = true;
-        this->editor->show();
+        this->editor->showMaximized();
 
         // cierro DialogoBienvenida
         this->close();
@@ -90,7 +90,7 @@ void DialogoBienvenida::mostrar_dialogo_cargar_mapa() {
 
     // cierro DialogoBienvenida y muestro el Editor.
     this->close();
-    this->editor->show();
+    this->editor->showMaximized();
 }
 
 DialogoBienvenida::~DialogoBienvenida() {

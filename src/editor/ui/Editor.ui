@@ -24,15 +24,15 @@
     <item>
      <widget class="QScrollArea" name="scrollArea_mapa">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
-        <width>200</width>
-        <height>200</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="widgetResizable">
@@ -46,7 +46,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>502</width>
+         <width>804</width>
          <height>553</height>
         </rect>
        </property>
@@ -57,6 +57,21 @@
         </sizepolicy>
        </property>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item row="0" column="0">
          <layout class="QGridLayout" name="mapLayout">
           <property name="spacing">
@@ -70,6 +85,19 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="sizePolicy">
@@ -179,7 +207,7 @@
    </widget>
    <widget class="QMenu" name="menuEditar">
     <property name="title">
-     <string>Editar</string>
+     <string>Edi&amp;tar</string>
     </property>
     <addaction name="actionCambiar_cantidad_de_jugadores"/>
     <addaction name="separator"/>
@@ -205,27 +233,27 @@
   </action>
   <action name="actionGuardar_mapa">
    <property name="text">
-    <string>Guardar mapa</string>
+    <string>&amp;Guardar mapa</string>
    </property>
   </action>
   <action name="actionCargar_mapa">
    <property name="text">
-    <string>Cargar mapa</string>
+    <string>&amp;Cargar mapa</string>
    </property>
   </action>
   <action name="actionSalir">
    <property name="text">
-    <string>Salir</string>
+    <string>&amp;Salir</string>
    </property>
   </action>
   <action name="actionCambiar_cantidad_de_jugadores">
    <property name="text">
-    <string>Cambiar cantidad de jugadores</string>
+    <string>&amp;Cambiar cantidad de jugadores</string>
    </property>
   </action>
   <action name="actionCambiar_tama_o_del_mapa">
    <property name="text">
-    <string>Cambiar tamaño del mapa</string>
+    <string>Cambiar &amp;tamaño del mapa</string>
    </property>
   </action>
  </widget>

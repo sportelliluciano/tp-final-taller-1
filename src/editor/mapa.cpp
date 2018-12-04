@@ -251,8 +251,7 @@ void Mapa::cambiar_tamanio(int nueva_cant_filas, int nueva_cant_columnas) {
 void Mapa::agrandar_mapa(int nueva_cant_filas, int nueva_cant_columnas) {
     // getteo el layout y el widget del Mapa-
     QGridLayout* map_layout = this->parent->findChild<QGridLayout*>("mapLayout");
-    QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
-     
+    
     // genero sprite inicial o default
     GeneradorSprites generador_sprites;
     Sprite sprite_inicial = generador_sprites.generar_sprite_inicial();
@@ -296,13 +295,11 @@ void Mapa::agrandar_mapa(int nueva_cant_filas, int nueva_cant_columnas) {
 
     this->filas = nueva_cant_filas;
     this->columnas = nueva_cant_columnas;
-    scroll_area_mapa->setLayout(map_layout);
 }
 
 void Mapa::achicar_mapa(int nueva_cant_filas, int nueva_cant_columnas) {
     // getteo el layout y el widget del Mapa-
     QGridLayout* map_layout = this->parent->findChild<QGridLayout*>("mapLayout");
-    QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
     
     for (int i = 0; i < nueva_cant_filas; ++i) {
         for (int j = (this->columnas - 1); j >= nueva_cant_columnas; --j) {
@@ -351,15 +348,13 @@ void Mapa::achicar_mapa(int nueva_cant_filas, int nueva_cant_columnas) {
 
     this->filas = nueva_cant_filas;
     this->columnas = nueva_cant_columnas;
-    scroll_area_mapa->setLayout(map_layout);
 }
 
 void Mapa::sacar_columnas_agregar_filas(int nueva_cant_filas, 
     int nueva_cant_columnas) {
     // getteo el layout y el widget del Mapa-
     QGridLayout* map_layout = this->parent->findChild<QGridLayout*>("mapLayout");
-    QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
-
+    
     // genero sprite inicial o default
     GeneradorSprites generador_sprites;
     Sprite sprite_inicial = generador_sprites.generar_sprite_inicial();
@@ -409,15 +404,13 @@ void Mapa::sacar_columnas_agregar_filas(int nueva_cant_filas,
     }
 
     this->filas = nueva_cant_filas;
-    scroll_area_mapa->setLayout(map_layout);
 }
 
 void Mapa::sacar_filas_agregar_columnas(int nueva_cant_filas, 
     int nueva_cant_columnas) {
     // getteo el layout y el widget del Mapa-
     QGridLayout* map_layout = this->parent->findChild<QGridLayout*>("mapLayout");
-    QWidget* scroll_area_mapa = this->parent->findChild<QWidget*>("scrollArea_widget_mapa");
-
+    
     // genero sprite inicial
     GeneradorSprites generador_sprites;
     Sprite sprite_inicial = generador_sprites.generar_sprite_inicial();
@@ -467,7 +460,6 @@ void Mapa::sacar_filas_agregar_columnas(int nueva_cant_filas,
     }
 
     this->columnas = nueva_cant_columnas;
-    scroll_area_mapa->setLayout(map_layout);
 }
 
 
