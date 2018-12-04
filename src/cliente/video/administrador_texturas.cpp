@@ -5,6 +5,7 @@
 
 #include "cliente/config.h"
 #include "cliente/video/error_sdl.h"
+#include "cliente/video/color.h"
 #include "cliente/video/textura.h"
 #include "comun/log.h"
 
@@ -80,14 +81,6 @@ Textura& AdministradorTexturas::crear_textura(const std::string& id, int w,
     return texturas_creadas.find(id)->second;
 }
 
-Textura& AdministradorTexturas::obtener_o_crear_textura(
-    const std::string& nombre, int w, int h) 
-{
-    if (contiene_textura(nombre))
-        return obtener_textura(nombre);
-    return crear_textura(nombre, w, h);
-}
-
 Textura& AdministradorTexturas::crear_texto(const std::string& texto) {
     if (texturas_creadas.find("texto-" + texto) != texturas_creadas.end())
         return texturas_creadas.find("texto-" + texto)->second;
@@ -107,13 +100,8 @@ Textura& AdministradorTexturas::crear_texto(const std::string& texto) {
 }
 
 Textura AdministradorTexturas::crear_texto(const std::string& texto,
-    const Rectangulo& caja, int color, tamanio_fuente_t tamanio) 
+    const Rectangulo& caja, const Color& color, tamanio_fuente_t tamanio) 
 {
-    SDL_Color c = {255, 255, 255, 0};
-
-    if (color == 1)
-        c = {0xff, 0x73, 0x73, 255};
-
     TTF_Font* fuente = fuente_normal;
     if (tamanio == TAM_FUENTE_GRANDE)
         fuente = fuente_grande;
@@ -123,7 +111,7 @@ Textura AdministradorTexturas::crear_texto(const std::string& texto,
         fuente = fuente_micro;
 
     SDL_Surface *sf = TTF_RenderUTF8_Blended_Wrapped(fuente, texto.c_str(), 
-        c, caja.ancho());
+        *color.obtener_color(), caja.ancho());
     if (!sf)
         throw ErrorSDL("TTF_RenderUTF8_Blended_Wrapped", TTF_GetError());
     

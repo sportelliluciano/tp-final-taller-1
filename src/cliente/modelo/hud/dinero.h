@@ -8,26 +8,16 @@
 
 namespace cliente {
 
+/**
+ * \brief Muestra el dinero disponible del jugador.
+ */
 class Dinero : public Widget {
 public:
     Dinero(Juego& juego_);
 
-    /**
-     * \brief Devuelve el ancho del widget, en píxeles.
-     */  
+    /** Interfaz widget **/
     int obtener_alto() const override;
-
-    /**
-     * \brief Devuelve el ancho del widget, en píxeles.
-     */
     int obtener_ancho() const override;
-
-    /**
-     * \brief Renderiza el widget en la posición (x, y).
-     * 
-     * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
-     * la ventana (global).
-     */
     void renderizar(Ventana& ventana, const Posicion& punto) override;
 
 private:

@@ -17,6 +17,9 @@
 #define MAX_ALTO_CUERPO 75
 
 #define COLOR_FONDO_TOOLTIP Color(0, 0, 0, 225)
+#define COLOR_ROSA Color(0xff, 0x73, 0x73, 255)
+
+#define PREFIJO_TOOLTIP "tooltip-"
 
 namespace cliente {
 
@@ -26,10 +29,11 @@ void Tooltip::set_titulo(const std::string& titulo) {
 
 void Tooltip::set_cuerpo(const std::string& cuerpo) {
     cuerpo_ = cuerpo;
+    id_textura = PREFIJO_TOOLTIP + titulo_ + cuerpo_;
 }
 
 void Tooltip::set_metadata(
-        const std::vector<std::pair<std::string, std::string>>& metadata) 
+    const std::vector<std::pair<std::string, std::string>>& metadata) 
 {
     for (const std::pair<std::string, std::string>& par : metadata) {
         meta.push_back(par.first + ": " + par.second);
@@ -46,69 +50,89 @@ void Tooltip::set_costo_tiempo(int costo, float tiempo) {
     tiempo_ = buffer;
 }
 
-// TODO: caché por acá..
-void Tooltip::renderizar(Ventana& ventana, int x, int y) {
-    Rectangulo rc(0, 0, ANCHO_TOOLTIP - 2*PADDING_X, 1);
-    Textura titulo = ventana
-        .obtener_administrador_texturas()
-        .crear_texto(titulo_, rc,1);
-        
-    Textura cuerpo = ventana
-        .obtener_administrador_texturas()
-        .crear_texto(cuerpo_, rc,0, TAM_FUENTE_CHICO);
-    
-    Textura costo = ventana
-        .obtener_administrador_texturas()
-        .crear_texto(costo_, rc,1, TAM_FUENTE_CHICO);
-    
-    Textura tiempo = ventana
-        .obtener_administrador_texturas()
-        .crear_texto(tiempo_, rc, 1, TAM_FUENTE_CHICO);
-    
-    Textura& tooltip = ventana
-        .obtener_administrador_texturas()
-        .obtener_o_crear_textura("tooltip", ANCHO_TOOLTIP, ALTO_TOOLTIP);
-    
-    y -= ALTO_TOOLTIP;
-    if (x + ANCHO_TOOLTIP > ventana.ancho())
-        x = ventana.ancho() - ANCHO_TOOLTIP;
-    tooltip.limpiar(COLOR_FONDO_TOOLTIP);
-    titulo.renderizar(PADDING_X, PADDING_Y, tooltip);
-    int dy = titulo.obtener_alto();
-    
-    if (cuerpo.obtener_alto() <= MAX_ALTO_CUERPO) {
-        cuerpo.renderizar(PADDING_X, PADDING_Y + dy, tooltip);
-        dy += cuerpo.obtener_alto();
-    } else {
-        Textura cuerpo_micro = ventana
-            .obtener_administrador_texturas()
-            .crear_texto(cuerpo_, rc,0, TAM_FUENTE_MICRO);
-        cuerpo_micro.renderizar(PADDING_X, PADDING_Y + dy, tooltip);
-        dy += cuerpo_micro.obtener_alto();
-    }
-    
-    dy += SEPARACION;
+void Tooltip::renderizar_metadata(AdministradorTexturas& admin_texturas, 
+    Textura& tooltip, int offset_y, const Rectangulo& encuadre) 
+{
     bool derecha = true;
     for (const std::string& metaval : meta) {
-        Textura m = ventana
-            .obtener_administrador_texturas()
-            .crear_texto(metaval, Rectangulo(0, 0, ANCHO_TOOLTIP, ANCHO_TOOLTIP), 0, TAM_FUENTE_CHICO);
+        Textura m = admin_texturas.crear_texto(metaval, encuadre, COLOR_BLANCO, 
+            TAM_FUENTE_CHICO);
         
         if (derecha) {
-            m.renderizar(PADDING_X, PADDING_Y + dy, tooltip);
+            m.renderizar(PADDING_X, PADDING_Y + offset_y, tooltip);
         } else {
             m.renderizar(ANCHO_TOOLTIP - PADDING_X - m.obtener_ancho(), 
-                PADDING_Y + dy, tooltip);
+                PADDING_Y + offset_y, tooltip);
 
-            dy += m.obtener_alto();
+            offset_y += m.obtener_alto();
         }
 
         derecha = !derecha;
     }
+}
+
+Textura Tooltip::crear_textura_cuerpo(AdministradorTexturas& admin_texturas,
+    const Rectangulo& encuadre)
+{
+    Textura cuerpo = admin_texturas.crear_texto(cuerpo_, encuadre, COLOR_BLANCO, 
+        TAM_FUENTE_CHICO);
+    
+    if (cuerpo.obtener_alto() > MAX_ALTO_CUERPO) {
+        return admin_texturas.crear_texto(cuerpo_, encuadre, COLOR_BLANCO, 
+            TAM_FUENTE_MICRO);
+    }
+
+    return cuerpo;
+}
+
+Textura& Tooltip::crear_tooltip(AdministradorTexturas& admin_texturas) {
+    Textura& tooltip = admin_texturas.crear_textura(id_textura, 
+        ANCHO_TOOLTIP, ALTO_TOOLTIP);
+    
+    Rectangulo encuadre(0, 0, ANCHO_TOOLTIP - (2 * PADDING_X), ALTO_TOOLTIP);
+    
+    Textura 
+        titulo = admin_texturas.crear_texto(titulo_, encuadre, COLOR_ROSA),
+        costo = admin_texturas.crear_texto(costo_, encuadre, COLOR_ROSA),
+        tiempo = admin_texturas.crear_texto(tiempo_, encuadre, COLOR_ROSA),
+        cuerpo = crear_textura_cuerpo(admin_texturas, encuadre);
+    
+    tooltip.limpiar(COLOR_FONDO_TOOLTIP);
+
+    int dy = titulo.obtener_alto();
+
+    titulo.renderizar(PADDING_X, PADDING_Y, tooltip);
+    cuerpo.renderizar(PADDING_X, PADDING_Y + dy, tooltip);
+
+    dy += cuerpo.obtener_alto();
+    dy += SEPARACION;
+    
+    renderizar_metadata(admin_texturas, tooltip, dy, encuadre);
+    
     costo.renderizar(PADDING_X, 
         ALTO_TOOLTIP - costo.obtener_alto() - PADDING_Y, tooltip);
     tiempo.renderizar(ANCHO_TOOLTIP - tiempo.obtener_ancho() - PADDING_X, 
         ALTO_TOOLTIP - tiempo.obtener_alto() - PADDING_Y, tooltip);
+    
+    return tooltip;
+}
+
+Textura& Tooltip::obtener_textura(Ventana& ventana) {
+    AdministradorTexturas& admin_texturas =
+        ventana.obtener_administrador_texturas();
+    
+    if (admin_texturas.contiene_textura(id_textura))
+        return admin_texturas.obtener_textura(id_textura);
+    
+    return crear_tooltip(admin_texturas);
+}
+
+void Tooltip::renderizar(Ventana& ventana, int x, int y) {
+    Textura& tooltip = obtener_textura(ventana);
+    
+    y -= tooltip.obtener_alto();
+    if (x + tooltip.obtener_ancho() > ventana.ancho())
+        x = ventana.ancho() - tooltip.obtener_ancho();
     
     tooltip.renderizar(x, y);
 }

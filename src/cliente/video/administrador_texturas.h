@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "cliente/video/color.h"
 #include "cliente/video/textura.h"
 
 namespace cliente {
@@ -62,8 +63,6 @@ public:
      * obtener_textura pasándole como parámetro el nombre de la misma.
      */
     Textura& crear_textura(const std::string& nombre, int w, int h);
-    Textura& obtener_o_crear_textura(const std::string& nombre, int w, int h);
-    
 
     /**
      * \brief Crea una nueva textura con el texto indicado y la almacena
@@ -77,7 +76,7 @@ public:
     Textura crear_texto_nc(const std::string& texto);
 
     Textura crear_texto(const std::string& texto,
-        const Rectangulo& caja, int color, 
+        const Rectangulo& caja, const Color& color, 
         tamanio_fuente_t tamanio = TAM_FUENTE_NORMAL);
 
     /**

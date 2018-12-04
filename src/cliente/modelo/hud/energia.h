@@ -7,23 +7,16 @@
 
 namespace cliente {
 
+/**
+ * \brief Muestra la energía disponible del jugador.
+ */
 class Energia : public Widget {
 public:
     Energia(Juego& juego_);
 
+    /** Interfaz widget **/
     int obtener_alto() const override;
-
-    /**
-     * \brief Devuelve el ancho del widget, en píxeles.
-     */
     int obtener_ancho() const override;
-
-    /**
-     * \brief Renderiza el widget en la posición (x, y).
-     * 
-     * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
-     * la ventana (global).
-     */
     void renderizar(Ventana& ventana, const Posicion& punto) override;
 
 private:

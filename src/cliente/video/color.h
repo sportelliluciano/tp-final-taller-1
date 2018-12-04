@@ -6,6 +6,7 @@
 #include <string>
 
 #define COLOR_NEGRO Color(0, 0, 0, 255)
+#define COLOR_BLANCO Color(255, 255, 255, 255)
 
 namespace cliente {
 
@@ -19,7 +20,7 @@ public:
     /**
      * \brief Crea un nuevo color a partir de un color SDL.
      */
-    Color(const SDL_Color* color_sdl);
+    explicit Color(const SDL_Color* color_sdl);
 
     /**
      * \brief Crea un nuevo color a partir de sus componentes RGBA.

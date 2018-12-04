@@ -61,17 +61,17 @@ HUD::HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_)
 
     modo_construccion.set_imagen(RUTA_IMAGENES "/icono-construir.png");
     modo_construccion.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
-    modo_construccion.set_autopadding(true);
+    modo_construccion.centrar_imagen(true);
     modo_construccion.registrar_click([this](){ click_modo_construir(); });
     
     modo_entrenamiento.set_imagen(RUTA_IMAGENES "/icono-entrenar.png");
     modo_entrenamiento.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
-    modo_entrenamiento.set_autopadding(true);
+    modo_entrenamiento.centrar_imagen(true);
     modo_entrenamiento.registrar_click([this](){ click_modo_entrenar(); });
     
     modo_vender.set_imagen(RUTA_IMAGENES "/icono-vender.png");
     modo_vender.set_tamanio(ANCHO_BOTONERA / 3, ALTO_BARRA_BOTONERA);
-    modo_vender.set_autopadding(true);
+    modo_vender.centrar_imagen(true);
     modo_vender.registrar_click([this](){ click_modo_vender(); });    
     
     salir.set_tamanio(42, 32);

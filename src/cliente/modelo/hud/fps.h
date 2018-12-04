@@ -6,21 +6,17 @@
 
 namespace cliente {
 
+/**
+ * \brief Widget que muestra los cuadros por segundo a los cuales se está
+ *        renderizando la ventana.
+ */
 class FPS : public Widget {
 public:
+    FPS() = default;
+    
+    /** Interfaz widget **/
     int obtener_alto() const override;
-
-    /**
-     * \brief Devuelve el ancho del widget, en píxeles.
-     */
     int obtener_ancho() const override;
-
-    /**
-     * \brief Renderiza el widget en la posición (x, y).
-     * 
-     * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
-     * la ventana (global).
-     */
     void renderizar(Ventana& ventana, const Posicion& punto) override;
 
 private:

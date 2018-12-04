@@ -28,7 +28,7 @@ void Tostador::renderizar(Ventana& ventana, const Posicion&) {
             continue;
         }
         tostada.renderizar(ventana, pos_x, pos_y + dy);
-        dy += tostada.obtener_alto();
+        dy += tostada.obtener_alto(ventana);
         ++it;
     }
 }

@@ -15,38 +15,35 @@ namespace cliente {
  */
 class Botonera : public Contenedor {
 public:
+    /**
+     * \brief Crea una nueva botonera con el tamaño indicado.
+     */
     Botonera(int ancho_, int alto_);
-
-    int obtener_alto() const override;
-
-    /**
-     * \brief Devuelve el ancho del widget, en píxeles.
-     */
-    int obtener_ancho() const override;
-
-    /**
-     * \brief Renderiza el widget en la posición (x, y).
-     * 
-     * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
-     * la ventana (global).
-     */
-    void renderizar(Ventana& ventana, const Posicion& punto) override;
-
 
     /**
      * \brief Agrega un nuevo widget a la botonera.
      */
     void agregar_widget(Widget& widget);
 
-protected:
-    virtual std::vector<Widget*> obtener_widgets();
+    /** Interfaz widget **/
+    int obtener_alto() const override;
+    int obtener_ancho() const override;
+    void renderizar(Ventana& ventana, const Posicion& punto) override;
 
-    virtual std::vector<std::pair<Posicion, Widget*>>
+protected:
+    /** Métodos sobreescritos de contendor. **/
+    std::vector<Widget*> obtener_widgets();
+    std::vector<std::pair<Posicion, Widget*>>
         obtener_widgets(const Posicion& punto);
 
 private:
     std::list<Widget*> widgets;
     int ancho, alto, padding_x, padding_y, spacing;
+    
+    /**
+     * \brief Calcula el padding requerido para centrar la botonera en base 
+     *        al tamaño y la cantidad de los botones.
+     */
     void calcular_padding();
 };
 
