@@ -35,6 +35,13 @@ public:
     void sincronizar_inicio();
 
     /**
+     * \brief Devuelve true si el juego terminó correctamente 
+     */
+    bool termino_correctamente() const;
+
+    const std::string& obtener_ganador() const;
+
+    /**
      * \brief Devuelve true si el juego terminó.
      */
     bool esta_terminado() const;
@@ -125,6 +132,11 @@ public:
     void mostrar_gusano(int x, int y);
 
     /**
+     * \brief Indica que terminó el juego
+     */
+    void terminar(const std::string& nombre_ganador);
+
+    /**
      * \brief Destructor.
      */
     ~Juego();
@@ -135,9 +147,11 @@ private:
     Infraestructura* infraestructura;
     Ejercito* ejercito;
     bool esta_jugando;
+    bool termino_ok = false;
     int dinero = 0, energia = 0;
     std::string casa;
     bool sincronizado = false, inicializado = false;
+    std::string ganador = "-";
 };
 
 } // namespace cliente

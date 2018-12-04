@@ -35,6 +35,7 @@ public:
 private:
     Partida partida;
     bool corriendo = false;
+    std::string ganador = "-";
 
     /**
      * \brief Ejecuta el lanzador del juego para realizar las configuraciones
@@ -56,6 +57,11 @@ private:
      * true en caso de haber terminado el juego sin errores.
      */
     bool ejecutar_juego();
+
+    /**
+     * \brief Muestra la ventana con el ganador del juego.
+     */
+    bool mostrar_ganador();
 };
 
 } // namespace cliente

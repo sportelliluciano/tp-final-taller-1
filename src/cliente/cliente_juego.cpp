@@ -3,6 +3,7 @@
 #include <QApplication>
 
 #include "cliente/lanzador/ventana_principal.h"
+#include "cliente/lanzador/ventana_juego_terminado.h"
 
 #include "cliente/modelo/controlador.h"
 #include "cliente/modelo/juego.h"
@@ -12,6 +13,10 @@
 #include "cliente/sonido/sonido.h"
 #include "cliente/video/ventana.h"
 #include "comun/log.h"
+
+#define ARGC_POR_DEFECTO 1
+#define ARGV_POR_DEFECTO {"dune-remake", NULL}
+
 namespace cliente {
 
 ClienteJuego::ClienteJuego() { }
@@ -28,6 +33,9 @@ int ClienteJuego::correr(int argc, char *argv[]) {
     if (!ejecutar_juego())
         return EXIT_FAILURE;
     
+    if (!mostrar_ganador())
+        return EXIT_FAILURE;
+
     return EXIT_SUCCESS;
 }
 
@@ -91,27 +99,49 @@ static bool cargar_juego(Juego& juego, Servidor& servidor, Ventana& ventana) {
     return true;
 }
 
+bool ClienteJuego::mostrar_ganador() {
+    int argc = 1;
+    char *argv[2];
+    argv[0] = (char*)"dune-remake";
+    argv[1] = NULL;
+    QApplication app(argc, argv);
+    
+    VentanaJuegoTerminado juego_terminado(ganador);
+    juego_terminado.show();
+
+    app.exec();
+    return true;
+}
+
 bool ClienteJuego::ejecutar_juego() {
     if (!partida.partida_lista())
         return false;
     
+    // Configurar sonido
     Sonido& sonido = Sonido::obtener_instancia();
-    Ventana ventana(partida.ancho_ventana(), partida.alto_ventana(),
-        partida.pantalla_completa(), partida.vsync());
-    
-    Servidor *servidor = partida.servidor();
-    partida.servidor(nullptr);
-
-    Juego juego(partida.casa());
-
-    if (!cargar_juego(juego, *servidor, ventana))
-        return false;
-
-    Controlador controlador(ventana, *servidor, juego);
     sonido.habilitar_sonidos(partida.sonido());
     if (partida.musica())
         sonido.iniciar_musica_fondo();
+
+    // Crear ventana
+    Ventana ventana(partida.ancho_ventana(), partida.alto_ventana(),
+        partida.pantalla_completa(), partida.vsync());
     
+    // Obtener la conexión
+    Servidor *servidor = partida.servidor();
+    partida.servidor(nullptr);
+
+    // Inicializar el modelo
+    Juego juego(partida.casa());
+
+    // Cargar los datos iniciales y esperar jugadores
+    if (!cargar_juego(juego, *servidor, ventana))
+        return false;
+
+    // Crear el controlador del juego
+    Controlador controlador(ventana, *servidor, juego);
+    
+    // Ciclo principal del juego
     while (!juego.esta_terminado()) {
         // Renderizar el juego
         controlador.renderizar();
@@ -131,10 +161,17 @@ bool ClienteJuego::ejecutar_juego() {
         juego.actualizar(ventana.obtener_ms());
     }
 
+    // Cerrar conexión
     servidor->detener();
     delete servidor;
     
+    // Apagar el sistema de sonido
     Sonido::obtener_instancia().apagar();
+
+    if (!juego.termino_correctamente())
+        return false;
+    
+    ganador = juego.obtener_ganador();
     return true;
 }
 

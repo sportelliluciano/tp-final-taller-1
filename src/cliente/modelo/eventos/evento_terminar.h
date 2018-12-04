@@ -10,12 +10,15 @@ namespace cliente {
  */
 class EventoTerminar : public Evento {
 public:
-    EventoTerminar() = default;
+    EventoTerminar(const nlohmann::json& serializado);
 
     /**
      * \brief Actualiza el modelo del juego de un cliente.
      */
     void actualizar(Juego& juego);
+
+private:
+    nlohmann::json data;
 };
 
 } // namespace cliente

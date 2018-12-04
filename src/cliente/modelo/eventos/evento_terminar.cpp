@@ -4,8 +4,12 @@
 
 namespace cliente {
 
+EventoTerminar::EventoTerminar(const nlohmann::json& serializado) {
+    data = serializado;
+}
+
 void EventoTerminar::actualizar(Juego& juego) {
-    juego.detener();
+    juego.terminar(data.at("ganador"));
 }
 
 } // namespace cliente

@@ -26,6 +26,9 @@ void Controlador::procesar_entrada() {
         }
         delete evento;
     }
+
+    if (!servidor.esta_conectado())
+        juego.detener();
 }
 
 void Controlador::inicializar_juego() {

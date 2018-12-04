@@ -284,10 +284,10 @@ void ConexionJugador::jugador_listo(int id_jugador) {
     });
 }
 
-void ConexionJugador::juego_terminado(int id_ganador) {
+void ConexionJugador::juego_terminado(const std::string& nombre_ganador) {
     notificar({
         {"id", EVC_JUEGO_TERMINADO},
-        {"id_ganador", id_ganador}
+        {"ganador", nombre_ganador}
     });
 }
 

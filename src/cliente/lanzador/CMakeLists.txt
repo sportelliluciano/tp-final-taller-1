@@ -15,6 +15,7 @@ qt5_wrap_ui(UIS_HEADERS
     ./lanzador.ui
     ./lanzador_en_sala.ui
     ./lanzador_elegir_sala.ui
+    ./ventana_juego_terminado.ui
 )
 
 qt5_add_resources(UIS_RC
@@ -28,6 +29,7 @@ add_library(lanzadorcliente
     lanzador_en_sala.cpp
     lanzador_elegir_sala.cpp
     lanzador.cpp
+    ventana_juego_terminado.cpp
     ventana_principal.cpp
 )
 

@@ -181,8 +181,7 @@ void Servidor::recibir() {
     } catch (...) {
         log_error("Se produjo un error desconocido en el servidor.", 0);
     }
-    
-    push_evento(new EventoTerminar());
+    hilo_recepcion_terminado = true;
 }
 
 bool Servidor::hay_eventos() const {
@@ -297,7 +296,7 @@ void Servidor::detener() {
 }
 
 bool Servidor::esta_conectado() const {
-    return conn.esta_conectada();
+    return !hilo_recepcion_terminado && conn.esta_conectada();
 }
 
 Servidor::~Servidor() {

@@ -261,7 +261,7 @@ public:
      * 
      * Luego de enviarse este evento se cerrará la conexión.
      */
-    virtual void juego_terminado(int id_ganador);
+    virtual void juego_terminado(const std::string& nombre_ganador);
 
     void set_estado(bool listo_);
     bool esta_listo() const;

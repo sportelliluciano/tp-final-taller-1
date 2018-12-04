@@ -2,7 +2,6 @@
 #define _LANZADOR_H_
 
 #include <QWidget>
-#include <QStackedLayout>
 
 #include "cliente/red/partida.h"
 #include "cliente/red/servidor_protegido.h"

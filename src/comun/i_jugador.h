@@ -269,7 +269,7 @@ public:
      * 
      * Luego de enviarse este evento se cerrará la conexión.
      */
-    virtual void juego_terminado(int id_ganador) = 0;
+    virtual void juego_terminado(const std::string& nombre_ganador) = 0;
 
     /**
      * \brief Destructor virtual.

@@ -170,6 +170,7 @@ public:
 private:
     std::thread hilo_receptor;
     bool terminar;
+    bool hilo_recepcion_terminado = false;
 
     std::string clase_edificio;
 

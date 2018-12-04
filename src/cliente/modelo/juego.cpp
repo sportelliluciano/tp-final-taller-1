@@ -97,6 +97,12 @@ void Juego::mostrar_gusano(int x, int y) {
     gusano->aparecer(x, y);
 }
 
+void Juego::terminar(const std::string& nombre_ganador) {
+    ganador = nombre_ganador;
+    esta_jugando = false;
+    termino_ok = true;
+}
+
 bool Juego::inicio_sincronizado() const {
     return sincronizado;
 }
@@ -113,6 +119,14 @@ void Juego::crear_jugador(int id_jugador, const std::string& nombre,
     
 void Juego::indicar_jugador_listo(int id_jugador) {
 
+}
+
+bool Juego::termino_correctamente() const {
+    return termino_ok;
+}
+
+const std::string& Juego::obtener_ganador() const {
+    return ganador;
 }
 
 Juego::~Juego() {

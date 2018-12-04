@@ -6,6 +6,7 @@
 #include "cliente/modelo/eventos/evento_entorno.h"
 #include "cliente/modelo/eventos/evento_infraestructura.h"
 #include "cliente/modelo/eventos/evento_jugador.h"
+#include "cliente/modelo/eventos/evento_terminar.h"
 
 namespace cliente {
 
@@ -45,6 +46,8 @@ Evento* FactoryEvento::crear_desde_json(const nlohmann::json& serializado) {
         case EVC_ELIMINAR_ESPECIA:
         case EVC_COSECHADORA_DESCARGAR:
             return new EventoEntorno(serializado);
+        case EVC_JUEGO_TERMINADO:
+            return new EventoTerminar(serializado);
         default:
             break;
     }
