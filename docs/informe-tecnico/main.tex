@@ -90,6 +90,16 @@ El cliente del juego fue desarrollado en Qt5 y SDL 2.0. El mismo se compone de d
 
 El cliente está separado en cinco secciones: video, sonido, red, modelo y lanzador. Las secciones video, sonido y red se encargan de encapsular los distintos recursos del sistema, mientras que la lógica de negocio se encuentra en las secciones modelo y lanzador.
 
+<<<<<<< HEAD
+=======
+En el siguiente esquema se puede observar la interacción entre los distintos bloques durante la partida. Por simplicidad no se agrega el lanzador al esquema. Las líneas llenas representan interacción interna al cliente (dependencias entre bloques) mientras que las líneas punteadas indican eventos externos.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=16cm]{../imagenes/esquema-bloques-cliente.jpg}
+	\caption{\label{fig:esquema-bloques-cliente} Esquema en bloques del funcionamiento general del cliente.}
+\end{figure}
+
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \subsection{Video}
 El renderizado del juego se realizó utilizando la biblioteca SDL, la cual fue encapsulada en el paquete \textit{video}. El encapsulamiento realizado contempla principalmente el uso de RAII para la adquisición de recursos, tales como texturas o contextos de renderizado y el control de errores mediante excepciones.
 
@@ -130,6 +140,15 @@ El terreno de juego tiene un tamaño mucho mayor al tamaño de la ventana, ya qu
 
 Para poder renderizar el fragmento que se está observando se utiliza una cámara que tiene como funcionalidad traducir las posiciones lógicas en visuales y viceversa. Sólo se renderiza en la ventana aquellas partes que están en el área de la cámara. 
 
+<<<<<<< HEAD
+=======
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{../imagenes/cliente-esquema-video.jpg}
+	\caption{\label{fig:cliente-esquema-video} Esquema general del encapsulamiento de video.}
+\end{figure}
+
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \subsection{Sonido}
 Para el sonido se decidió implementar un patrón de diseño Singleton. La razón para la elección del mismo es que díficilmente cambie el contexto de mezclado de sonidos a lo largo del juego (como sí podría pasar en el caso de un cambio de resolución con el video).
 
@@ -173,6 +192,15 @@ El Terreno es un componente central en el juego y particularmente en el cliente.
 
 El HUD por otra parte es el punto de entrada a la visualización head-up. El mismo renderiza sobre la ventana los elementos extra tales como botones, el cursor del mouse, el rectángulo de selección, el dinero disponible, etc. A su vez actúa de controlador principal de la partida obteniendo la entrada del mouse y el teclado.
 
+<<<<<<< HEAD
+=======
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{../imagenes/esquema-cliente-modelo.jpg}
+	\caption{\label{fig:esquema-cliente-modelo} Esquema general del modelo local.}
+\end{figure}
+
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \subsubsection{Infraestructura y Ejército}
 Para el modelo gráfico de tropas y edificios se decidió implementar un diseño basado en prototipos. El mismo nos permitió tener menos clases, evitar la herencia y además tener más flexibilidad a la hora de ultimar detalles cómo el posicionamiento de los sprites, ya que tomamos la decisión de bajar esta información a archivos de datos. Tanto las tropas como los edificios cargan su modelo de datos desde archivos en formato JSON.
 
@@ -183,6 +211,15 @@ La implementación de eventos en los widgets se hizo de forma directa utilizando
 
 El componente central del HUD es el área de juego. La misma se encarga de renderizar el modelo y responder a la interacción del usuario, ya sea desde el mouse o el teclado. Estas interacciones pueden ser desde un movimiento de cámara hasta solicitar un ataque.
 
+<<<<<<< HEAD
+=======
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{../imagenes/cliente-esquema-HUD.jpg}
+	\caption{\label{fig:cliente-esquema-HUD} Esquema general del HUD.}
+\end{figure}
+
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \subsection{Ciclo de juego}
 El ciclo de juego en el cliente se realiza de la siguiente manera:
 \begin{enumerate}
@@ -257,9 +294,15 @@ A continuación describiremos en profundidad las clases, las interfaces y las es
 
 \item Servidor: dentro de la clase Servidor, el método correr es prácticamente un ciclo while en el que el socket aceptador acepta conexiones con nuevos clientes, una vez concretada dicha conexión se agrega e inicializa un objeto Cliente cuyo constructor tiene como parámetro el socket conexión asociado al cliente (el socket que es devuelto por el accept del socket aceptador del servidor). También se agrega el nuevo cliente al Lobby. El ciclo puede ser detenido desde el main por el usuario mediante el método de centinela.
 
+<<<<<<< HEAD
 \item Cliente:
 
 \item Sala:
+=======
+\item Cliente: Encapsula la conexión del cliente y los hilos de transmisión y recepción.
+
+\item Sala: Gestiona el modelo de juego para una partida y los jugadores que están conectados a la misma.
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Lobby: el lobby es el lugar en el que están los clientes que se conectaron al Servidor pero todavía no se unieron a ninguna Sala. Recibe en el constructor la data de la configuración (mapas, edificios y ejércitos) ya que desde esta clase se crean las Salas (completar).
 
@@ -275,7 +318,13 @@ A continuación describiremos en profundidad las clases, las interfaces y las es
 
 \subsection{Diagramas UML}
 
+<<<<<<< HEAD
 \subsection{Descripción de archivos}
+=======
+\subsection{Formato de los archivos de configuración}
+
+Todos los archivos de configuración deben estar en formato JSON. A continuación se describe el contenido de los mismos
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \begin{itemize}
 
@@ -289,9 +338,15 @@ El archivo de edificios contiene la información relativa a los edificios que se
 
 \begin{itemize}
 
+<<<<<<< HEAD
 \item ID:  este es el identificador del *tipo* de edificio. Debe ser único por cada clase de edificio distinto.
 
 \item Nombre: el nombre *legible por humanos* del edificio, para mostrar en la interfaz gráfica.
+=======
+\item ID:  este es el identificador del \textit{tipo} de edificio. Debe ser único por cada clase de edificio distinto.
+
+\item Nombre: el nombre \textit{legible por humanos} del edificio, para mostrar en la interfaz gráfica.
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Descripción: descripción del edificio para mostrar en la interfaz gráfica. No debe superar los 100 caracteres.
 
@@ -309,7 +364,11 @@ El archivo de edificios contiene la información relativa a los edificios que se
 
 \item Capacidad de almacenamiento de especia: si el edificio puede almacenar especia, debe indicarse la cantidad en este campo.
 
+<<<<<<< HEAD
 \item Sprite base, construido y destruido : estos sprites definen cómo se dibujará el edificio en la pantalla de los clientes. El sprite *construido* representa el número de imagen a mostrar por el cliente cuando el edificio está construido y con más del 20\% de la vida. El sprite *destruido* representa el edificio cuando tiene menos del 20\% de la vida. El sprite *base* se utiliza cuando un edificio requiere componer su imagen a partir de dos sprites. Los parámetros `x` e `y` en los tres casos permiten desplazar el sprite para hacerlo coincidir con el sprite base.
+=======
+\item Sprite base, construido y destruido : estos sprites definen cómo se dibujará el edificio en la pantalla de los clientes. El sprite \textit{construido} representa el número de imagen a mostrar por el cliente cuando el edificio está construido y con más del 20\% de la vida. El sprite \textit{destruido} representa el edificio cuando tiene menos del 20\% de la vida. El sprite \textit{base} se utiliza cuando un edificio requiere componer su imagen a partir de dos sprites. Los parámetros `x` e `y` en los tres casos permiten desplazar el sprite para hacerlo coincidir con el sprite base.
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Sprite del botón de construcción: indica cual es el número de imagen correspondiente al botón de construir.
 
@@ -317,13 +376,21 @@ El archivo de edificios contiene la información relativa a los edificios que se
 
 \item Ejércitos\\
 
+<<<<<<< HEAD
 El archivo de ejércitos es el que contiene toda la información requerida por el servidor y los clientes sobre los distintos tipos de tropa. El mismo debe estar en formato JSON y contener, **únicamente** un objeto con 
+=======
+El archivo de ejércitos es el que contiene toda la información requerida por el servidor y los clientes sobre los distintos tipos de tropa. El mismo debe estar en formato JSON y contener, \textbf{únicamente} un objeto con 
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 dos atributos: `armas` y `unidades`.  El atributo `armas` debe ser un arreglo de objetos con los siguientes atributos:
 
 
 \begin{itemize}
 
+<<<<<<< HEAD
 \item ID: este es el identificador del *tipo* de arma. Debe ser único por cada clase de arma distinta. Este parámetro es obligatorio.
+=======
+\item ID: este es el identificador del \textit{tipo} de arma. Debe ser único por cada clase de arma distinta. Este parámetro es obligatorio.
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Daño: el daño que hace el arma cada vez que es disparada.
 
@@ -342,9 +409,15 @@ El atributo `unidades` debe ser un arreglo de objetos con los siguientes atribut
 
 \begin{itemize}
 
+<<<<<<< HEAD
 \item ID: este es el identificador del *tipo* de tropa. Debe ser único por cada clase de tropa distinta.
 
 \item Nombre: el nombre *legible por humanos* de la tropa, para mostrar en la interfaz gráfica.
+=======
+\item ID: este es el identificador del \textit{tipo} de tropa. Debe ser único por cada clase de tropa distinta.
+
+\item Nombre: el nombre \textit{legible por humanos} de la tropa, para mostrar en la interfaz gráfica.
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Descripción: descripción de la tropa para mostrar en la interfaz gráfica. No debe superar los 100 caracteres.
 
@@ -378,6 +451,10 @@ El atributo `unidades` debe ser un arreglo de objetos con los siguientes atribut
 
 \end{itemize}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 \newpage
 \section{Editor}
 

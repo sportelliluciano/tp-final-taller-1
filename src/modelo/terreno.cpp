@@ -427,10 +427,16 @@ void Terreno::agregar_centro(int x, int y,int id_jugador) {
     centros.emplace(id_jugador,Posicion(x,y));
 }
 
+<<<<<<< HEAD
 int Terreno::eliminar_centro(int id_jugador) {
     if (centros.count(id_jugador != 0))
         centros.erase(id_jugador);
     return centros.size();
+=======
+void Terreno::eliminar_centro(int id_jugador) {
+    if (centros.count(id_jugador != 0))
+        centros.erase(id_jugador);
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 }
 
 Posicion& Terreno::obtener_centro_posicion(int id_jugador){

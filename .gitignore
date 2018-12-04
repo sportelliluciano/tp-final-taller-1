@@ -1,3 +1,15 @@
+# Latex
+*.aux
+*.log
+*.synctex.gz
+*.dvi
+*.toc
+
+# Assets
+data/imgs.7z
+data/terrain.7z
+*.7z
+
 # Jupyter notebook
 *.py[co]
 __pycache__
