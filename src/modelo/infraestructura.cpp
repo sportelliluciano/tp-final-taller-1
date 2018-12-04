@@ -77,8 +77,13 @@ void Infraestructura::destruir(int id,int id_jugador){
                                 edificio.get_dimensiones());
     if (edificio.get_tipo()=="refineria"){
         terreno->eliminar_refineria(edificio.get_posicion(),id_jugador);
-    } else if (edificio.get_tipo()=="centro_construcciones"){
-        terreno->eliminar_centro(id_jugador);
+    } else if (edificio.get_tipo()==TIPO_CENTRO_CONSTRUCCION){
+        if (terreno->eliminar_centro(id_jugador)==1){
+            IJugador* jugador = comunicacion_jugadores.obtener_jugador(id_jugador); 
+            comunicacion_jugadores.broadcast([&] (IJugador* j) {
+                j->juego_terminado(jugador->obtener_nombre());
+            });
+        }
     }
     edificios.erase(id);
     comunicacion_jugadores.broadcast([&] (IJugador* j) {

@@ -22,4 +22,11 @@ void Broadcaster::broadcast(std::function<void(IJugador*)> mensaje) {
     }
 }
 
+IJugador* Broadcaster::obtener_jugador(int id){
+    for (auto it=jugadores.begin(); it!= jugadores.end(); ++it){
+        if ((*it)->obtener_id() == id)
+            return *it;
+    }
+}
+
 } // namespace modelo

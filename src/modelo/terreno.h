@@ -120,7 +120,11 @@ public:
 
     void agregar_centro(int x_, int y_,int id_jugador);
 
+<<<<<<< HEAD
+    int eliminar_centro(int id_jugador);
+=======
     void eliminar_centro(int id_jugador);
+>>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
     Posicion& obtener_centro_posicion(int id_jugador);
 

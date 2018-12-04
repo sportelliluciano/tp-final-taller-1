@@ -33,6 +33,7 @@ public:
      */
     void broadcast(std::function<void(IJugador*)> mensaje);
 
+    IJugador* obtener_jugador(int id);
 private:
     std::unordered_set<IJugador*> jugadores;
 };
