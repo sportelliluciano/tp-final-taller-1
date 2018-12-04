@@ -61,7 +61,7 @@ private:
     /**
      * \brief Muestra la ventana con el ganador del juego.
      */
-    bool mostrar_ganador();
+    bool mostrar_ganador(int argc, char *argv[]);
 };
 
 } // namespace cliente

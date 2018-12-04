@@ -14,9 +14,6 @@
 #include "cliente/video/ventana.h"
 #include "comun/log.h"
 
-#define ARGC_POR_DEFECTO 1
-#define ARGV_POR_DEFECTO {"dune-remake", NULL}
-
 namespace cliente {
 
 ClienteJuego::ClienteJuego() { }
@@ -33,7 +30,7 @@ int ClienteJuego::correr(int argc, char *argv[]) {
     if (!ejecutar_juego())
         return EXIT_FAILURE;
     
-    if (!mostrar_ganador())
+    if (!mostrar_ganador(argc, argv))
         return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
@@ -99,11 +96,7 @@ static bool cargar_juego(Juego& juego, Servidor& servidor, Ventana& ventana) {
     return true;
 }
 
-bool ClienteJuego::mostrar_ganador() {
-    int argc = 1;
-    char *argv[2];
-    argv[0] = (char*)"dune-remake";
-    argv[1] = NULL;
+bool ClienteJuego::mostrar_ganador(int argc, char *argv[]) {
     QApplication app(argc, argv);
     
     VentanaJuegoTerminado juego_terminado(ganador);
