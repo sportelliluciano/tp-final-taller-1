@@ -2,6 +2,7 @@
 #include "libs/json.hpp"
 #include <QPainter>
 #include <fstream>
+#include "editor/config.h"
 using std::vector;
 using nlohmann::json;
 using std::map;
