@@ -8,7 +8,7 @@
 #include <QDialogButtonBox>
 #include "editor/sprite.h"
 #define MINIMO_CANTIDAD_JUGADORES 2
-#define DIMENSION_MINIMA_MAPA 30
+#define DIMENSION_MINIMA_MAPA 10
 #define DIMENSION_MAXIMA_MAPA 1000
 #define TIPO_JUGADOR 6
 using std::string;
