@@ -14,6 +14,10 @@ public:
 
 private:
     int ancho;
+
+    Textura& obtener_textura(Ventana& ventana, int vida, int max);
+    Textura& crear_barra_vida(AdministradorTexturas& admin_texturas, 
+        const std::string& id_textura, int vida, int max);
 };
 
 } // namespace cliente

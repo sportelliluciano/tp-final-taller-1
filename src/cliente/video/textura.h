@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "cliente/video/rectangulo.h"
+#include "cliente/video/color.h"
 
 namespace cliente {
 
@@ -68,21 +69,26 @@ public:
         const Rectangulo& destino, Textura& renderizable) const;
 
     /**
-     * \brief Limpia la textura a un fondo de color, por defecto negro.
+     * \brief Elimina todo el contenido de la textura.
      */
-    void limpiar(int r = 0, int g = 0, int b = 0, int a = 0);
+    void limpiar();
+
+    /**
+     * \brief Elimina todo el contenido de la textura, dejandola del color 
+     *        indicado.
+     */
+    void limpiar(const Color& color);
 
     /**
      * \brief Dibuja un rectángulo sin relleno sobre la textura.
      */
     void dibujar_rectangulo(const Rectangulo& rc, int ancho_linea, 
-        Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+        const Color& color);
 
     /**
      * \brief Dibuja un rectángulo con relleno sobre la textura.
      */
-    void rellenar_rectangulo(const Rectangulo& rc,
-        Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+    void rellenar_rectangulo(const Rectangulo& rc, const Color& color);
     
     Rectangulo obtener_rect() const;
     

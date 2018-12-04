@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 
+#include "cliente/video/color.h"
 #include "cliente/video/ventana.h"
 
 #define ANCHO_TOOLTIP 220
@@ -14,6 +15,8 @@
 #define SEPARACION 2
 
 #define MAX_ALTO_CUERPO 75
+
+#define COLOR_FONDO_TOOLTIP Color(0, 0, 0, 225)
 
 namespace cliente {
 
@@ -69,7 +72,7 @@ void Tooltip::renderizar(Ventana& ventana, int x, int y) {
     y -= ALTO_TOOLTIP;
     if (x + ANCHO_TOOLTIP > ventana.ancho())
         x = ventana.ancho() - ANCHO_TOOLTIP;
-    tooltip.limpiar(0, 0, 0, 225);
+    tooltip.limpiar(COLOR_FONDO_TOOLTIP);
     titulo.renderizar(PADDING_X, PADDING_Y, tooltip);
     int dy = titulo.obtener_alto();
     

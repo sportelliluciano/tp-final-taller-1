@@ -1,7 +1,5 @@
 #include "cliente/modelo/terreno.h"
 
-#include <iostream>
-#include <fstream>
 #include <functional>
 #include <sstream>
 #include <stdexcept>
@@ -9,6 +7,7 @@
 
 #include "cliente/modelo/celda.h"
 #include "cliente/video/camara.h"
+#include "cliente/video/color.h"
 #include "cliente/video/ventana.h"
 #include "comun/log.h"
 
@@ -19,53 +18,6 @@
 #define ALTO_SELECCION 16
 
 namespace cliente {
-
-Terreno::Terreno(const char *ruta_csv) {
-    std::ifstream entrada(ruta_csv);
-    if (!entrada.good())
-        throw std::runtime_error("No se pudo abrir el archivo de terreno");
-    
-    int x = 0, y = 0;
-    alto = ancho = 0;
-
-    while (!entrada.eof()) {
-        std::string linea, tile;
-        std::getline(entrada, linea);
-        std::stringstream s_linea(linea);
-        
-        std::vector<Celda> fila_actual;
-        
-        while (std::getline(s_linea, tile, ';')) {
-            std::stringstream s_tile(tile);
-            int tile_no = 0;
-            if (!(s_tile >> tile_no))
-                throw std::runtime_error("Archivo de terreno inválido");
-            
-            tipo_celda_t tipo = CELDA_ARENA;
-            if (tile_no == 1)
-                tipo = CELDA_ROCA;
-
-            fila_actual.push_back(Celda(tipo));
-            
-            if (x > ancho)
-                ancho = x;
-            
-            x++;
-        }
-        
-        if (y > alto)
-            alto = y;
-
-        x = 0;
-        y++;
-        terreno.push_back(fila_actual);
-    }
-
-    ultimo_celda_x0 = ancho + 1;
-    ultimo_celda_x1 = ancho + 1;
-    ultimo_celda_y0 = alto + 1;
-    ultimo_celda_y1 = alto + 1;
-}
 
 Terreno::Terreno(const nlohmann::json& mapa) {
     alto = ancho = 0;
@@ -140,7 +92,7 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     Textura& textura = admin_texturas.crear_textura("terreno", 
         ventana.ancho() + 128, ventana.alto() + 128);
 
-    textura.limpiar(0, 0, 0, 255);
+    textura.limpiar(COLOR_NEGRO);
 
     for (int x = celda_inicial_x; x <= celda_final_x; x++) {
         if ((x < 0) || (x >= ancho))

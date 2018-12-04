@@ -2,9 +2,12 @@
 
 #include <string>
 
+#include "cliente/video/color.h"
 #include "cliente/video/ventana.h"
 
 #define ALTO_TOSTADA 20
+
+#define COLOR_FONDO_TOSTADA Color(0x22, 0x22, 0x22, 180)
 
 namespace cliente {
 
@@ -38,7 +41,7 @@ void Tostada::renderizar(Ventana& ventana, int x, int y) {
         Textura& textura = admin_texturas.crear_textura("tostada-" + texto, 
             texto.length() * 10, ALTO_TOSTADA);
         
-        textura.limpiar(0x22, 0x22, 0x22, 180);
+        textura.limpiar(COLOR_FONDO_TOSTADA);
         
         admin_texturas.crear_texto_nc(texto).renderizar(0, 0, textura);
     }

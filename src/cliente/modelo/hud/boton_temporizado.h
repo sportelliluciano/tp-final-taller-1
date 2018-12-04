@@ -1,8 +1,10 @@
 #ifndef _BOTON_TEMPORIZADO_H_
 #define _BOTON_TEMPORIZADO_H_
 
-#include "cliente/video/widgets/widget.h"
 #include "cliente/modelo/hud/tooltip.h"
+#include "cliente/video/color.h"
+#include "cliente/video/ventana.h"
+#include "cliente/video/widgets/widget.h"
 
 namespace cliente {
 
@@ -50,7 +52,14 @@ public:
      */
     void reiniciar();
 
+    /**
+     * \brief Muestra el tooltip cuando el mouse esta sobre el botón.
+     */
     bool mouse_entra(const Posicion& pos) override;
+
+    /**
+     * \brief Oculta el tooltip cuando el mouse sale del botón.
+     */
     bool mouse_sale(const Posicion& pos) override;
 
 protected:
@@ -63,6 +72,26 @@ private:
     bool con_filtro_gris = false;
     bool con_filtro_verde = false;
     int sprite_id = -1;
+
+    /**
+     * \brief Obtiene un filtro semi-transparente para agregarle al botón.
+     */
+    Textura& obtener_filtro(Ventana& ventana, const Color& color);
+
+    /**
+     * \brief Renderiza el filtro correspondiente sobre la ventana.
+     */
+    void renderizar_filtros(Ventana& ventana, const Posicion& punto);
+
+    /**
+     * \brief Renderiza la cantidad de elementos en cola.
+     */
+    void renderizar_cola(Ventana& ventana, const Posicion& punto);
+
+    /**
+     * \brief Renderiza el tiempo restante sobre el boton.
+     */
+    void renderizar_tiempo_restante(Ventana& ventana, const Posicion& punto);
 };
 
 } // namespace cliente
