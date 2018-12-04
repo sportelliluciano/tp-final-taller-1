@@ -46,7 +46,7 @@ class Edificio :public Atacable{
     std::pair<int,int>& get_dimensiones();
     Posicion& get_posicion();
     unsigned int get_tiempo();
-    std::string& get_tipo();
+    std::string& get_tipo() const;
 };
 
 } // namespace modelo

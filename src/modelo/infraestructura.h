@@ -56,6 +56,12 @@ class Infraestructura{
      * (es un porcentaje del costo del edificio determinado en FACTOR).
      */
     unsigned int reciclar(int id,int id_jugador);
+
+    /**
+     * \brief Obtiene los ID de los centros de construcciones.
+     */
+    std::vector<int> get_centros_construcciones() const;
+
     /**
      * \brief Elimina al edificio con id pasado por parametro del juego,
      */

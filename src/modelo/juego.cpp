@@ -129,6 +129,20 @@ void Juego::actualizar(int dt_ms) {
             }    
         }
     }
+
+    std::vector<int> centros = inf.get_centros_construcciones();
+    if (centros.size() == 1) {
+        for (auto it=jugadores.begin(); it!=jugadores.end(); ++it){
+            Jugador& jugador = it->second;
+            if (jugador.pertenece(centros.at(0))) {
+                comunicacion_jugadores.broadcast([&] (IJugador *j) {
+                    j->juego_terminado(jugador.get_jugador()->obtener_nombre());
+                });
+                empezo = false;
+                return;
+            }    
+        }
+    }
 }
 
 bool Juego::partida_terminada() const {

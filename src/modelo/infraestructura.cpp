@@ -71,19 +71,24 @@ unsigned int Infraestructura::reciclar(int id,int id_jugador){
     return energia_retorno;
 }
 
+std::vector<int> Infraestructura::get_centros_construcciones() const {
+    std::vector<int> resultado;
+    for (auto it = edificios.begin(); it != edificios.end(); ++it) {
+        const Edificio& edificio = it->second;
+        if (edificio.get_tipo() == TIPO_CENTRO_CONSTRUCCION) {
+            resultado.push_back(it->first);
+        }
+    }
+
+    return resultado;
+}
+
 void Infraestructura::destruir(int id,int id_jugador){
     Edificio& edificio = edificios.at(id);
     terreno->eliminar_edificio(edificio.get_posicion(),
                                 edificio.get_dimensiones());
     if (edificio.get_tipo()=="refineria"){
         terreno->eliminar_refineria(edificio.get_posicion(),id_jugador);
-    } else if (edificio.get_tipo()==TIPO_CENTRO_CONSTRUCCION){
-        if (terreno->eliminar_centro(id_jugador)==1){
-            IJugador* jugador = comunicacion_jugadores.obtener_jugador(id_jugador); 
-            comunicacion_jugadores.broadcast([&] (IJugador* j) {
-                j->juego_terminado(jugador->obtener_nombre());
-            });
-        }
     }
     edificios.erase(id);
     comunicacion_jugadores.broadcast([&] (IJugador* j) {

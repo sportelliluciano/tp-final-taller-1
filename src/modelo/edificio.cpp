@@ -29,7 +29,7 @@ int Edificio::recibir_dano(unsigned int dano){
     return caracteristicas.reducir_ptos_est(dano);
 }
 
-int Edificio::get_id(){
+int Edificio::get_id() {
     return caracteristicas.get_id();    
 }
 
@@ -57,7 +57,7 @@ unsigned int Edificio::get_tiempo(){
     return info_base.get_tiempo();
 }
 
-std::string& Edificio::get_tipo(){
+std::string& Edificio::get_tipo() const {
     return info_base.get_tipo();
 }
 } // namespace modelo

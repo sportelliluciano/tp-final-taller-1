@@ -259,7 +259,6 @@ void Terreno::agregar_edificio(int x_, int y_,std::pair<int,int>& dim){
     for (int j = y_; j < y_ + dim_y; j++) {
         for (int i = x_; i < x_ + dim_x; i++) {
             terreno[j][i].agregar_edificio();
-            std::cout << "agregue un edificio en la (" <<i<<";"<<j<<")"<<std::endl; 
         }
     }
 }
