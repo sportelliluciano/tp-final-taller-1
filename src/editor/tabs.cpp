@@ -24,9 +24,7 @@ void Tabs::inicializar_tabs() {
     QVBoxLayout* terrenos_layout = this->parent->findChild<QVBoxLayout*>("verticalLayout_terrenos");
     QWidget* scroll_area_terrenos = this->parent->findChild<QWidget*>("scrollArea_widget_terrenos");
 
-    // hardcodeo la ubicacion del archivo .json con la informacion sobre los
-    // sprites del archivo this->imagen_terrenos.
-    std::ifstream entrada("../sprites/terrain/terrenos.json");
+    std::ifstream entrada(RUTA_TERRENOS_JSON);
 
     json terrenos_json;
 

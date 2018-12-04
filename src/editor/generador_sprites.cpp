@@ -9,16 +9,13 @@ using std::string;
 using std::vector;
 
 GeneradorSprites::GeneradorSprites() {
-    // hardcodeo la ubicacion del archivo .bmp con los tiles de terreno.
-    this->imagen_terrenos = QPixmap ("../sprites/terrain/d2k_BLOXBASE.bmp");
+    this->imagen_terrenos = QPixmap (RUTA_TILES_TERRENO);
 }
 
 map<string, Sprite> GeneradorSprites::generar_sprites_posibles() {
     map<string, Sprite> sprites_posibles;
 
-    // hardcodeo la ubicacion del archivo .json con la informacion sobre los
-    // sprites del archivo de terrenos (QPixmap terrenos).
-    std::ifstream entrada("../sprites/terrain/terrenos.json");
+    std::ifstream entrada(RUTA_TERRENOS_JSON);
 
     json terrenos_json;
 
@@ -57,7 +54,7 @@ Sprite GeneradorSprites::generar_sprite_inicial() {
     Sprite sprite_inicial;
 
     // cosas de parseo del json de terrenos.
-    std::ifstream entrada("../sprites/terrain/terrenos.json");
+    std::ifstream entrada(RUTA_TERRENOS_JSON);
     json terrenos_json;
     entrada >> terrenos_json;
 
