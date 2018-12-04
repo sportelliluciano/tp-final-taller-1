@@ -27,6 +27,47 @@ Terreno::Terreno(const nlohmann::json& mapa) {
     //const std::vector<std::vector<int>>& sprites = 
     //    mapa.at("sprite").get<std::vector<std::vector<int>>>();
 
+    //  para mapa generado por el editor
+    /*
+
+    const std::vector<std::vector<std::string>>& tipos = 
+        mapa.at("tipo").get<std::vector<std::vector<std::string>>>();
+
+     * 
+     *  Parseo terrenos.json -> tiene los vectores de 16 ints
+     * 
+    
+    map<string, DataTerreno> terrenos_posibles;
+
+    std::ifstream entrada(RUTA_TERRENOS_JSON);
+
+    json terrenos_json;
+
+    entrada >> terrenos_json;
+
+    auto it = terrenos_json.begin();
+    const json& valores_por_defecto = *it;
+    ++it;
+    for (; it != terrenos_json.end(); ++it) {
+        // Mergear valores por defecto con el elemento actual
+        json elem = valores_por_defecto;
+        elem.update(*it);
+
+        auto it_sprites = elem["sprites"].begin();
+        for (int i = 0; it_sprites != elem["sprites"].end(); ++it_sprites) {
+            json tile = *it;
+
+            DataTerreno data_terreno;
+            data_terreno.tipo = elem["tipo"];
+            data_terreno.pos_tiles = tile["sprites"][i]["pos_tiles"];
+            data_terreno.id = tile["sprites"][i]["id"];
+
+            terrenos_posibles.emplace(id, data_terreno);
+        }
+    }
+
+     */
+
     alto = tipos.size();
 
     if (alto == 0) {
@@ -39,6 +80,16 @@ Terreno::Terreno(const nlohmann::json& mapa) {
         std::vector<Celda> fila_actual;
         for (int x=0;x<ancho;x++) {
             fila_actual.push_back(
+                // aca habria que leer el string que esta en el json del mapa
+
+                // std::string id = tipos[y][x];
+
+                // obtener el DataTerreno del std::map 
+
+                // DataTerreno terreno = terrenos_posibles.find(id)->second;
+
+                // data terreno tiene el vector de pos_tiles, el tipo (es un int),
+                // y un id (enumera sprites).
                 Celda((tipo_celda_t)tipos[y][x]) //, sprites, x, y)
             );
         }
