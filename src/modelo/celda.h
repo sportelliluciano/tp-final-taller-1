@@ -12,8 +12,8 @@ namespace modelo {
  * \brief Tipos de celda.
  */
 typedef enum {
-    CELDA_ROCA,       // Se puede construir y caminar sobre este terreno
     CELDA_ARENA,      // Sólo se puede caminar sobre este terreno.
+    CELDA_ROCA,       // Se puede construir y caminar sobre este terreno
     CELDA_PRECIPICIO, // Barrera natural.
     CELDA_DUNA,       // Se puede caminar por este terreno a menos velocidad
     CELDA_ESPECIA     // Especia recolectable.
@@ -39,7 +39,17 @@ public:
     bool tiene_edificio() const;
     void agregar_edificio();
     void eliminar_edificio();
+    /**
+     * \brief Devuelve true en caso de que la celda sea caminable.
+     * Entiendase por caminable una celda de tipo ARENA, ESPECIA.
+     * ROCA o DUNA que este libre (sin edificios ni otras tropas).
+     */
     bool es_caminable() const;
+    /**
+     * \brief Devuelve true en caso de que la celda sea construible.
+     * Entiendase por caminable una celda de tipo ROCA que este libre
+     * (sin edificios ni otras tropas).
+     */
     bool es_construible();
     bool hay_tropa() const;
     void agregar_tropa();
@@ -48,23 +58,14 @@ public:
 private:
     int posicion_x, posicion_y;
     tipo_celda_t tipo_celda = CELDA_ARENA;
-    
     /**
-     * \brief Tropas paradas en la celda actual.
+     * \brief Unidad paradas en la celda actual.
      */
     bool tropa = false;
+    /**
+     * \brief Edicifio construido en la celda actual.
+     */
     bool edificio = false;
-    /**
-     * \brief Si hay un edificio en esta celda entonces este puntero 
-     *        apuntará al mismo.
-     * 
-     * Sólo puede haber un edificio por celda.
-     */
-    //const Edificio *edificio = nullptr;
-
-    /**
-     * \brief Identificador único de celda.
-     */
 };
 
 } // namespace modelo

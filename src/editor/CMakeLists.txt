@@ -1,19 +1,34 @@
 cmake_minimum_required(VERSION 3.1.0)
-# Qt5 pide minimo v3.1.0
-project(editor)
 
-# Busca el módulo Widgets de la biblioteca Qt5
-# en particular toma la configuración de /usr/lib/x86_64-linux-gnu/cmake/Qt5/Qt5WidgetsConfig.cmake
+find_package(Qt5 COMPONENTS Core Widgets CONFIG REQUIRED)
+# http://doc.qt.io/qt-5/cmake-manual.html
 
-# find_package(Qt5 COMPONENTS Widgets Core <...>) es una forma más feliz de
-# agregar paquetes, ver https://blog.kitware.com/cmake-finding-qt5-the-right-way/
-find_package(Qt5Widgets)
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed
+set(CMAKE_AUTOMOC ON)
 
-# Linkea libQt5Widgets.so al ejecutable
-#target_link_libraries(editor Qt5::Widgets)
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/src/editor")
+configure_file(
+    "${PROJECT_SOURCE_DIR}/src/editor/config.h.in"
+    "${PROJECT_BINARY_DIR}/src/editor/config.h"
+)
 
-file(GLOB libeditor_srcs *.cpp)
-list(REMOVE_ITEM libeditor_srcs "main.cpp")
+qt5_wrap_ui(UIS_HEADERS_EDITOR
+  ./ui/Editor.ui
+)
 
-add_library(libeditor ${libeditor_srcs})
-target_link_libraries(libeditor libcomun Qt5::Widgets)
+add_library(editor
+  ${UIS_HEADERS_EDITOR}
+  editor.cpp
+  label_tab.cpp
+  label_mapa.cpp
+  dialogo_bienvenida.cpp
+  generador_sprites.cpp
+  manejador_json.cpp
+  tabs.cpp
+  mapa.cpp
+)
+
+# Use the Widgets module from Qt 5.
+target_link_libraries(editor Qt5::Widgets)

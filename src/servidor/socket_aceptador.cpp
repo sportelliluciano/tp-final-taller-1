@@ -9,13 +9,14 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#include "conexion/error_socket.h"
-#include "conexion/socket_conexion.h"
+#include "comun/error_socket.h"
+#include "comun/socket_conexion.h"
 
 namespace servidor {
 
 SocketAceptador::SocketAceptador(const std::string& servicio) 
-    : socket_escucha(SOCKET_INVALIDO), detencion_solicitada(false) {
+    : socket_escucha(SOCKET_INVALIDO), detencion_solicitada(false) 
+{
     struct addrinfo hints;
     struct addrinfo *ptr = NULL;
 
@@ -26,36 +27,36 @@ SocketAceptador::SocketAceptador(const std::string& servicio)
 
     int err = getaddrinfo(NULL, servicio.c_str(), &hints, &ptr);
     if (err == SOCKET_ERROR)
-        throw conexion::ErrorSocket("getaddrinfo", gai_strerror(err), err);
+        throw ErrorSocket("getaddrinfo", gai_strerror(err), err);
 
     socket_escucha = socket(ptr->ai_family, ptr->ai_socktype, 
         ptr->ai_protocol);
 
     if (socket_escucha == SOCKET_INVALIDO) {
         freeaddrinfo(ptr);
-        throw conexion::ErrorSocket("socket");
+        throw ErrorSocket("socket");
     }
 
     err = bind(socket_escucha, ptr->ai_addr, ptr->ai_addrlen);
     if (err == SOCKET_ERROR) {
         close(socket_escucha);
         freeaddrinfo(ptr);
-        throw conexion::ErrorSocket("bind");
+        throw ErrorSocket("bind");
     }
     freeaddrinfo(ptr);
 
     if (listen(socket_escucha, 20) == SOCKET_ERROR) {
         close(socket_escucha);
-        throw conexion::ErrorSocket("listen");
+        throw ErrorSocket("listen");
     }
 }
 
-conexion::SocketConexion SocketAceptador::esperar_conexion() {
+SocketConexion SocketAceptador::esperar_conexion() {
     int s = accept(socket_escucha, NULL, NULL);
     if (s == SOCKET_INVALIDO) 
-        throw conexion::ErrorSocket("accept");
+        throw ErrorSocket("accept");
 
-    return conexion::SocketConexion(s);
+    return SocketConexion(s);
 }
 
 void SocketAceptador::detener() noexcept {

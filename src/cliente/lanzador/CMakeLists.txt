@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1.0)
 
 find_package(Qt5 COMPONENTS Core Widgets CONFIG REQUIRED)
 
@@ -13,6 +13,9 @@ set(CMAKE_AUTOMOC ON)
 
 qt5_wrap_ui(UIS_HEADERS
     ./lanzador.ui
+    ./lanzador_en_sala.ui
+    ./lanzador_elegir_sala.ui
+    ./ventana_juego_terminado.ui
 )
 
 qt5_add_resources(UIS_RC
@@ -22,12 +25,12 @@ qt5_add_resources(UIS_RC
 add_library(lanzadorcliente
     ${UIS_RC}
     ${UIS_HEADERS}
-    estado_en_sala.cpp
-    estado_conectado.cpp
-    estado_desconectado.cpp
-    estado_lanzador.cpp
-    estado_lanzador.h
+    jugador.cpp
+    lanzador_en_sala.cpp
+    lanzador_elegir_sala.cpp
     lanzador.cpp
+    ventana_juego_terminado.cpp
+    ventana_principal.cpp
 )
 
-target_link_libraries(lanzadorcliente Qt5::Widgets)
+target_link_libraries(lanzadorcliente Qt5::Widgets clientered)

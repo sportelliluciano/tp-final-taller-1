@@ -10,41 +10,53 @@
 namespace cliente {
 
 /**
- * \brief Boton del HUD.
+ * \brief Botón genérico con imagen.
  */
 class Boton : public Widget {
 public:
+    /**
+     * \brief Crea un nuevo botón.
+     */
     Boton();
-    Boton(int sprite_id);
-
-    void set_sprite(int sprite_id);
-
-    void set_imagen(const char *img);
-
-    void set_tamanio(int ancho, int alto);
-
-    void set_padding(int x, int y);
-
-    int obtener_alto() const override;
-    
-    int obtener_ancho() const override;
-
-    void autoresize(bool activar);
-    void set_autopadding(bool activar);
-
-    void registrar_click(std::function<void(void)> callback);
 
     /**
-     * \brief Renderiza el botón en la posición indicada.
+     * \brief Setea la imagen del botón.
      */
-    void renderizar(Ventana& ventana, const Posicion& punto);
+    void set_imagen(const char *img);
 
+    /**
+     * \brief Setea el tamaño del botón. 
+     * 
+     * La imagen del mismo se escalará de forma acorde.
+     */
+    void set_tamanio(int ancho, int alto);
+
+    /**
+     * \brief Agrega un padding al botón.
+     * 
+     * El padding es el espacio que hay entre el borde del botón y la imagen.
+     */
+    void set_padding(int x, int y);
+
+    /**
+     * \brief Centra la imagen vertical y horizontalmente en el botón.
+     */
+    void centrar_imagen(bool activar);
+
+    /**
+     * \brief Callback para cuando el usuario hace clic con el botón 
+     *        izquierdo del mouse en el botón.
+     */
+    void registrar_click(std::function<void(void)> callback);
+
+    /** Interfaz Widget **/
+    int obtener_alto() const override;
+    int obtener_ancho() const override;
+    void renderizar(Ventana& ventana, const Posicion& punto) override;
     bool mouse_click_izquierdo(const Posicion& punto) override;
 
 private:
     const char *imagen;
-    int sprite;
-    bool autoresize_activo = false;
     bool autopadding = false;
     
     int padding_x = 0, padding_y = 0;

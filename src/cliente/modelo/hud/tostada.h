@@ -27,14 +27,29 @@ public:
     /**
      * \brief Devuelve el alto de la tostada.
      */
-    int obtener_alto() const;
+    int obtener_alto(Ventana& ventana) const;
 
 private:
-    std::string texto;
+    std::string texto, id_textura;
     int duracion;
     bool terminada;
     uint64_t fin_ms;
     bool iniciada;
+
+    /**
+     * \brief Renderiza la tostada sobre una nueva textura y la devuelve.
+     * 
+     * La textura creada se almacenará en la caché de la ventana.
+     */
+    Textura& crear_textura_tostada(Ventana& ventana) const;
+
+    /**
+     * \brief Obtiene la textura de la tostada.
+     * 
+     * Si la textura no había sido creada se creará.
+     */
+    Textura& obtener_textura(Ventana& ventana) const;
+    
 };
 
 } // namespace cliente

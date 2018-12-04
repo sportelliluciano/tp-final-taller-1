@@ -9,11 +9,8 @@
 #include "cliente/video/administrador_texturas.h"
 #include "cliente/video/camara.h"
 #include "cliente/video/i_notificable.h"
+#include "cliente/video/color.h"
 #include "cliente/video/teclas.h"
-
-// Descomentar la siguiente línea para habilitar la depuración del
-// dibujado
-//#define DEPURACION_DIBUJO 1
 
 namespace cliente {
 
@@ -90,20 +87,17 @@ public:
      * \brief Procesa los eventos que recibe la ventana.
      * 
      * Este método ejecuta los callbacks registrados.
+     * 
+     * Si no hay ningún callback registrado, se procesará únicamente el evento
+     * "salir" y devolverá false en caso de que se haya detectado dicho evento.
+     * En cualquier otro caso devolverá true.
      */
-    void procesar_eventos();
+    bool procesar_eventos();
 
     /**
-     * \brief Dibuja un rectángulo de depuración sobre la ventana
-     * TODO: Arreglar esto
+     * \brief Dibuja un rectángulo sobre la ventana
      */
-    void dibujar_rectangulo(int x0, int y0, int x1, int y1, int color = 0);
-
-    /**
-     * \brief Dibuja una grilla de 32x32 sobre la ventana.
-     * TODO: Eliminar esto
-     */
-    void dibujar_grilla(int x_offset, int y_offset);
+    void dibujar_rectangulo(int x0, int y0, int x1, int y1, const Color& color);
 
     /**
      * \brief Dibuja una poligonal a partir de sus vértices.
@@ -192,9 +186,9 @@ private:
     int ancho_px, alto_px;
 
     /**
-     * \brief Dimensiones del viewport.
+     * \brief Viewport actual.
      */
-    int ancho_vp, alto_vp;
+    Rectangulo viewport;
 
     /**
      * \brief Cantidad de veces que se renderizó la ventana en el último 

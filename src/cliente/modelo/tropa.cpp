@@ -5,9 +5,15 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include "cliente/config.h"
+
+#include "cliente/modelo/disparo_misil.h"
+#include "cliente/modelo/disparo_plasma.h"
+#include "cliente/modelo/disparo_ondas.h"
 #include "cliente/modelo/hud/barra_vida.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 #include "cliente/video/ventana.h"
+#include "cliente/sonido/sonido.h"
 
 #define THRESHOLD_SYNC_CAMINO 10
 
@@ -61,15 +67,19 @@
 #define JSON_CLAVE_T_ENTRENAMIENTO "tiempo de entrenamiento"
 #define JSON_CLAVE_VIDA_MAXIMA     "vida"
 #define JSON_CLAVE_METADATA        "metadata"
+#define JSON_CLAVE_ARMAS           "id_arma"
 
 #define JSON_VALOR_TIPO_VEHICULO   "vehiculo"
+
+#define ID_ARMA_MISIL "lanza_misiles"
+#define ID_ARMA_PLASMA "cañon_plasma"
+#define ID_ARMA_ONDAS "ondas_sonido"
 
 namespace cliente {
 
 Tropa::Tropa(const nlohmann::json& data) {
     clase = data.at(JSON_CLAVE_CLASE);
     sprite_boton = data.at(JSON_CLAVE_SPRITE_BOTON);
-    int sprite_base = data.at(JSON_CLAVE_SPRITE_BASE);
     es_vehiculo = (data.at(JSON_CLAVE_TIPO) == JSON_VALOR_TIPO_VEHICULO);
     velocidad = data.at(JSON_CLAVE_VELOCIDAD);
     requerimientos = 
@@ -80,6 +90,8 @@ Tropa::Tropa(const nlohmann::json& data) {
     costo = data.at(JSON_CLAVE_COSTO);
     tiempo_entrenamiento = data.at(JSON_CLAVE_T_ENTRENAMIENTO);
     vida = vida_maxima = data.at(JSON_CLAVE_VIDA_MAXIMA);
+    
+    int sprite_base = data.at(JSON_CLAVE_SPRITE_BASE);
     
     orientacion_sprite = nueva_orientacion_sprite = 0;
     fx_actual = pos_destino.x = pos_actual.x = 0;
@@ -98,6 +110,15 @@ Tropa::Tropa(const nlohmann::json& data) {
         cargar_sprites_vehiculo(sprite_base);
     } else {
         cargar_sprites_tropa(sprite_base);
+    }
+
+    for (const std::string& id_arma : data.at(JSON_CLAVE_ARMAS)) {
+        if ((id_arma == ID_ARMA_MISIL) || (id_arma == ID_ARMA_PLASMA) ||
+            (id_arma == ID_ARMA_ONDAS))
+        {
+            id_disparo = id_arma;
+            break;
+        }
     }
 }
 
@@ -133,6 +154,13 @@ void Tropa::cargar_sprites_tropa(int sprite_base) {
 void Tropa::inicializar(int id, const Posicion& posicion, int vida_, 
     int id_propietario_)
 {
+    if (id_disparo == ID_ARMA_MISIL)
+        disparo = new DisparoMisil();
+    else if (id_disparo == ID_ARMA_PLASMA)
+        disparo = new DisparoPlasma();
+    else if (id_disparo == ID_ARMA_ONDAS)
+        disparo = new DisparoOndas();
+    
     fx_actual = pos_destino.x = pos_actual.x = posicion.x;
     fy_actual = pos_destino.y = pos_actual.y = posicion.y;
     id_tropa = id;
@@ -159,7 +187,7 @@ void Tropa::renderizar(Ventana& ventana, Camara& camara) {
     if (esta_marcada) {
         const Textura& marca = ventana
             .obtener_administrador_texturas()
-            .cargar_imagen("./assets/nuevos/unidad-seleccionada.png");
+            .cargar_imagen(RUTA_IMAGENES "/unidad-seleccionada.png");
         
         marca.renderizar(visual.x - marca.obtener_ancho() / 2, 
             visual.y);
@@ -171,6 +199,8 @@ void Tropa::renderizar(Ventana& ventana, Camara& camara) {
     }
 
     sprite_tropa.renderizar(ventana, visual.x, visual.y);
+    if (disparo && esta_disparando())
+        disparo->renderizar(ventana, camara);
     
     barra_vida.set_ancho(sprite_tropa.obtener_ancho(ventana));
     barra_vida.renderizar(ventana, 
@@ -192,45 +222,29 @@ static int calcular_posicion_sprite(int vx, int vy, bool es_vehiculo) {
     switch(vx) {
         case -1:
         switch(vy) {
-            case -1:
-                pos_sprite = 7; //28;
-                break;
-            case  0:
-                pos_sprite = 6; //24;
-                break;
-            case  1:
-                pos_sprite = 5; //20;
-                break;
+            case -1: pos_sprite = 7; break;
+            case  0: pos_sprite = 6; break;
+            case  1: pos_sprite = 5; break;
         }
         break;
 
         case  0:
         switch(vy) {
-            case -1:
-                pos_sprite = 0; // 0; 
-                break;
+            case -1: pos_sprite = 0; break;
             case  0:
                 log_advertencia("Se pidió calcular dirección de sprite para"
                     " una tropa inmóvil", 0);
                 pos_sprite = 0;
                 break;
-            case  1:
-                pos_sprite = 4; //16;  
-                break;
+            case  1: pos_sprite = 4; break;
         }
         break;
 
         case  1:
         switch(vy) {
-            case -1:
-                pos_sprite = 1; //4;
-                break;
-            case  0:
-                pos_sprite = 2; //8;
-                break;
-            case  1:
-                pos_sprite = 3; //12;
-                break;
+            case -1: pos_sprite = 1; break;
+            case  0: pos_sprite = 2; break;
+            case  1: pos_sprite = 3; break;
         }
         break;
     }
@@ -328,6 +342,9 @@ int Tropa::obtener_propietario() const {
 }
 
 void Tropa::atacar(int id_victima, int x_victima, int y_victima) {
+    if (esta_disparando() && id_atacado == id_victima)
+        return;
+
     b_esta_disparando = true;
     id_atacado = id_victima;
     if (disparo)
@@ -375,21 +392,19 @@ void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
     detener_ataque();
     camino_actual = camino;
     paso_actual = 0;
-    
     // Iniciar la caminata.
     sync_camino(pos_actual.x, pos_actual.y);
 }
 
 void Tropa::sync_camino(int x, int y) {
     /*** Chequear posiciones -- dbg ***/
-    float mse = ((pos_actual.x - x) * (pos_actual.x - x)) + (pos_actual.y - y) * (pos_actual.y - y);
+    float mse = ((pos_actual.x - x) * (pos_actual.x - x)) +     
+        (pos_actual.y - y) * (pos_actual.y - y);
     if (mse > THRESHOLD_SYNC_CAMINO) {
         log_advertencia("El MSE entre posiciones es >%d [%.2f]", mse,
             THRESHOLD_SYNC_CAMINO);
     }
     
-    /******* TODO: Eliminar esto ******/
-    log_depuracion("(%d, %d) <> (%d, %d)", pos_actual.x, pos_actual.y, x, y);
     fx_actual = pos_actual.x = x;
     fy_actual = pos_actual.y = y;
 
@@ -406,6 +421,7 @@ void Tropa::set_vida(int nueva_vida) {
 
 void Tropa::marcar() {
     esta_marcada = true;
+    Sonido::reproducir_sonido(SND_UNIDAD_MARCADA);
 }
 
 void Tropa::desmarcar() {
@@ -417,8 +433,7 @@ const std::vector<std::string>& Tropa::obtener_requerimientos() const {
 }
 
 bool Tropa::casa_puede_entrenar(const std::string& casa) const {
-    //return casas_habilitadas.count(casa) != 0;
-    return true;
+    return casas_habilitadas.count(casa) != 0;
 }
 
 const std::string& Tropa::obtener_nombre() const {
@@ -443,5 +458,9 @@ float Tropa::obtener_tiempo_entrenamiento() const {
     return tiempo_entrenamiento;
 }
 
+Tropa::~Tropa() {
+    if (disparo)
+        delete disparo;
+}
 
 } // namespace cliente

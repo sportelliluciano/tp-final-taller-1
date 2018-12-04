@@ -3,22 +3,17 @@
 
 #include <list>
 
-#include "cliente/modelo/hud/area_juego.h"
-#include "cliente/modelo/hud/boton.h"
-#include "cliente/modelo/hud/botonera.h"
-#include "cliente/modelo/hud/dinero.h"
-#include "cliente/modelo/hud/energia.h"
-#include "cliente/modelo/hud/fps.h"
-#include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
-#include "cliente/servidor.h"
+#include "cliente/modelo/hud/area_juego.h"
+#include "cliente/modelo/hud/barra_superior.h"
+#include "cliente/modelo/hud/panel_lateral.h"
+
+#include "cliente/red/servidor.h"
+
 #include "cliente/video/ventana.h"
 #include "cliente/video/widgets/widget_raiz.h"
 #include "cliente/video/widgets/caja_horizontal.h"
 #include "cliente/video/widgets/caja_vertical.h"
-
-#include "cliente/modelo/hud/boton_entrenamiento.h"
-#include "cliente/modelo/hud/boton_construccion.h"
 
 namespace cliente {
 
@@ -30,40 +25,28 @@ public:
     HUD(Ventana& ventana, Juego& juego_, Servidor& servidor_);
 
     /**
+     * \brief Es llamado al iniciar el juego.
+     * 
+     * Centra la cámara en el centro de construcciones.
+     */
+    void inicializar_juego();
+
+    /**
      * \brief Este evento se ejecuta cuando el usuario decide cerrar la ventana.
      */
     virtual bool cerrar_ventana();
 
 private:
     Juego& juego;
-    Servidor& servidor;
-    AreaJuego area_juego;
-    Botonera botonera_construccion, botonera_entrenamiento;
-    CajaHorizontal base, barra_superior, barra_botoneras;
-    CajaVertical area_general, panel_lateral;
-
-    Boton modo_construccion, modo_entrenamiento, modo_vender;
-    
     Tostador tostador;
     
-    Boton mutear_sonido, mutear_musica, salir;
-    Dinero dinero;
-    Energia energia;
-    FPS fps;
+    CajaHorizontal base;
+    
+    CajaVertical panel_izquierdo;
+    BarraSuperior barra_superior;
+    AreaJuego area_juego;
 
-    void toggle_sonido();
-    void toggle_musica();
-    void click_modo_construir();
-    void click_modo_entrenar();
-    void click_modo_vender();
-
-    bool sonido_activo = true;
-    bool musica_activa = false;
-
-    bool shift_presionado = false;
-
-    std::list<BotonConstruccion> botones_construccion;
-    std::list<BotonEntrenamiento> botones_entrenamiento;
+    PanelLateral panel_derecho;
 };
 
 } // namespace cliente

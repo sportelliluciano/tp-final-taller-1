@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <utility>
 
 #include "libs/json.hpp"
 
@@ -60,8 +61,6 @@ public:
      */
     std::vector<Posicion> buscar_camino_minimo(const Posicion& inicio, 
         const Posicion& fin) const;
-    
-
     /**
      * \brief Determina si se puede construir un edificio en la posición
      *        indicada.
@@ -75,7 +74,6 @@ public:
      * podrá construir.
      */
     bool puede_construir_edificio(int x, int y, std::pair<int,int>& dim);
-
     
     bool rango_valido_tropa(int x, int y, std::pair<int,int>& dim);
     
@@ -120,11 +118,17 @@ public:
 
     void eliminar_refineria(const Posicion& posicion,int id_jugador);
 
+    void agregar_centro(int x_, int y_,int id_jugador);
+
+    int eliminar_centro(int id_jugador);
+
+    Posicion& obtener_centro_posicion(int id_jugador);
+
     /**
      * \brief Obtiene las posiciones de las refinerías del jugador.
      */
     
-    Posicion& obtener_refinerias_cercana(const Posicion& pos,int id_jugador);
+    Posicion obtener_refinerias_cercana(const Posicion& pos,int id_jugador);
 
     bool es_especia(const Posicion& posicion);
     
@@ -139,6 +143,8 @@ private:
     std::vector<std::vector<Celda>> terreno;
 
     std::unordered_map<int,std::vector<Posicion>> refinerias;
+
+    std::unordered_map<int,Posicion> centros;
 
     /**
      * \brief Dimensiones del terreno, en celdas.

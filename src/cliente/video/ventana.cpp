@@ -11,7 +11,7 @@
 #include "cliente/video/camara.h"
 #include "cliente/video/error_sdl.h"
 #include "cliente/video/i_notificable.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 #define ANCHO_VENTANA_DEFECTO 800
 #define ALTO_VENTANA_DEFECTO  600
@@ -23,6 +23,8 @@
 // 30ms ~ 30 FPS
 #define TICKS_POR_CUADRO (30 / MS_POR_TICK)
 #define TICKS_POR_SEGUNDO (1000 / MS_POR_TICK)
+
+#define TITULO_VENTANA "Dune Remake"
 
 namespace cliente {
 
@@ -44,12 +46,12 @@ Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
     }
     
     if (pantalla_completa) {
-        ventana = SDL_CreateWindow("Dune Remake", 
+        ventana = SDL_CreateWindow(TITULO_VENTANA, 
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
             0, 0, 
             SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
     } else {
-        ventana = SDL_CreateWindow("Dune remake", 
+        ventana = SDL_CreateWindow(TITULO_VENTANA, 
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
             w, h, 
             SDL_WINDOW_SHOWN);
@@ -93,14 +95,13 @@ Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
 
     vsync = (info.flags & SDL_RENDERER_PRESENTVSYNC) ? true : false;
     admin_texturas = new AdministradorTexturas(renderer);
-    
+
     SDL_GetWindowSize(ventana, &ancho_px, &alto_px);
-    ancho_vp = ancho_px;
-    alto_vp = alto_px;
-    
+    viewport = Rectangulo(0, 0, ancho_px, alto_px);
+
     ticks_ultimo_cuadro = 0;
     ticks_ultimo_segundo = veces_renderizado = fps_ = 0;
-    
+
     plano_frontal = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
         SDL_TEXTUREACCESS_TARGET, ancho_px, alto_px);
     SDL_SetTextureBlendMode(plano_frontal, SDL_BLENDMODE_BLEND);
@@ -110,11 +111,11 @@ Ventana::Ventana(int w, int h, bool pantalla_completa, bool vsync_) {
 }
 
 int Ventana::ancho() const {
-    return ancho_vp;
+    return viewport.ancho();
 }
 
 int Ventana::alto() const {
-    return alto_vp;
+    return viewport.alto();
 }
 
 int Ventana::fps() const {
@@ -162,10 +163,21 @@ void Ventana::registrar_notificable(INotificable& notificable) {
 }
 
 // TODO: Refactorizar esto
-void Ventana::procesar_eventos() {
-    if (!receptor_eventos)
-        return;
+bool Ventana::procesar_eventos() {
     SDL_Event evento;
+
+    if (!receptor_eventos) {
+        // Si no hay nadie escuchando, 
+        //  por defecto procesar sólo el evento "salir"
+        while (SDL_PollEvent(&evento)) {
+            if (evento.type == SDL_QUIT) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     while (SDL_PollEvent(&evento)) {
         switch(evento.type) {
             case SDL_QUIT:
@@ -237,6 +249,8 @@ void Ventana::procesar_eventos() {
                 break;
         }
     }
+
+    return true;
 }
 
 void Ventana::actualizar() {
@@ -279,18 +293,14 @@ AdministradorTexturas& Ventana::obtener_administrador_texturas() {
     return *admin_texturas;
 }
 
-// TODO: Sacar esto
-void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
-    Uint8 r, g, b, a;
-    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
-    if (color == 0)
-        SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
-    else if (color == 1)
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    else if (color == 2)
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    else if (color == 3)
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, 
+    const Color& color) 
+{
+    SDL_Color anterior;
+    const SDL_Color *nuevo = color.obtener_color();
+    SDL_GetRenderDrawColor(renderer, &anterior.r, &anterior.g, 
+        &anterior.b, &anterior.a);
+    SDL_SetRenderDrawColor(renderer, nuevo->r, nuevo->g, nuevo->b, nuevo->a);
 
     SDL_Rect rc;
     rc.x = x0; rc.y = y0;
@@ -298,36 +308,9 @@ void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
     SDL_RenderDrawRect(renderer, &rc);
     rc.x += 1; rc.y += 1; rc.w -= 2; rc.h -= 2;
     SDL_RenderDrawRect(renderer, &rc);
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
-}
-
-void Ventana::dibujar_grilla(int x_offset, int y_offset) {
-    if (x_offset > 0)
-        x_offset = (x_offset % 32);
-    else
-        x_offset = -((-x_offset) % 32);
     
-    if (y_offset > 0)
-        y_offset = (y_offset % 32);
-    else
-        y_offset = -((-y_offset) % 32);
-
-    Uint8 r, g, b, a;
-    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    /******** GRILLA DEPURACION *********/
-    for (int i=0; i<=ancho() / 32; i++) {
-        SDL_RenderDrawLine(renderer, 
-            x_offset + i*32, y_offset, 
-            x_offset + i*32, alto() + y_offset);
-        for (int j=0; j<= alto() / 32; j++) {
-            SDL_RenderDrawLine(renderer, 
-                x_offset, j * 32 + y_offset, 
-                ancho() + x_offset, j * 32 + y_offset);
-        }
-    }
-    /************************************/
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    SDL_SetRenderDrawColor(renderer, anterior.r, anterior.g, 
+        anterior.b, anterior.a);
 }
 
 void Ventana::dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
@@ -336,7 +319,6 @@ void Ventana::dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
     Uint8 r, g, b, a;
     SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
     SDL_SetRenderDrawColor(renderer, 0x22, 0x22, 0x22, 255);
-    /******** GRILLA DEPURACION *********/
     for (size_t i=0;i<linea.size();i++) {
         if (i+1 >= linea.size())
             break;
@@ -344,24 +326,21 @@ void Ventana::dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
             linea[i].first - trasladar_x, linea[i].second - trasladar_y, 
             linea[i+1].first - trasladar_x, linea[i+1].second - trasladar_y);
     }
-    /************************************/
     SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
 
 void Ventana::setear_viewport(const Rectangulo& seccion) {
     if (SDL_RenderSetViewport(renderer, &seccion.rect()) != 0)
         throw ErrorSDL("SDL_RenderSetViewport");
-    
-    ancho_vp = seccion.ancho();
-    alto_vp = seccion.alto();
+
+    viewport = seccion;
 }
 
 void Ventana::reestablecer_viewport() {
     if (SDL_RenderSetViewport(renderer, NULL) != 0)
         throw ErrorSDL("SDL_RenderSetViewport");
-    
-    ancho_vp = ancho_px;
-    alto_vp = alto_px;
+
+    viewport = Rectangulo(0, 0, ancho_px, alto_px);
 }
 
 void Ventana::ocultar_mouse() {
@@ -373,12 +352,19 @@ void Ventana::mostrar_mouse() {
 }
 
 void Ventana::cambiar_plano(bool frontal) {
+    if (en_plano_frontal == frontal)
+        return;
+    Rectangulo old_viewport = viewport;
+    reestablecer_viewport();
+
     if (frontal)
         SDL_SetRenderTarget(renderer, plano_frontal);
     else
         SDL_SetRenderTarget(renderer, NULL);
 
     en_plano_frontal = frontal;
+
+    setear_viewport(old_viewport);
 }
 
 Ventana::~Ventana() {

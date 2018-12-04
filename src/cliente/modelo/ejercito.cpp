@@ -4,14 +4,16 @@
 
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
+#include "cliente/sonido/sonido.h"
+#include "cliente/video/color.h"
 
 #define MIN_TIEMPO_ENTRENAMIENTO 1
 
-#define COLOR_ROJO 1
+#define CLASE_COSECHADORA "cosechadora"
 
 namespace cliente {
 
-Ejercito::Ejercito(const nlohmann::json& tropas_json, Infraestructura& inf, 
+Ejercito::Ejercito(const nlohmann::json& ejercitos, Infraestructura& inf, 
     Terreno& terreno_juego, int id_jugador_actual_, const std::string& casa_) 
 : casa(casa_),
   infraestructura(inf),
@@ -19,6 +21,8 @@ Ejercito::Ejercito(const nlohmann::json& tropas_json, Infraestructura& inf,
   id_jugador_actual(id_jugador_actual_)
 {
     using nlohmann::json;
+
+    const nlohmann::json& tropas_json = ejercitos.at("unidades");
 
     auto it = tropas_json.begin();
     const json& valores_por_defecto = *it;
@@ -35,17 +39,6 @@ Ejercito::Ejercito(const nlohmann::json& tropas_json, Infraestructura& inf,
 
 void Ejercito::renderizar(Ventana& ventana, Camara& camara) {
     for (Tropa* tropa : terreno.obtener_tropas_en(camara.obtener_vista())) {
-#ifdef DEPURACION_DIBUJO
-        /*** Pintar celda ***/
-        int celda_x, celda_y;
-        terreno.obtener_celda(terreno.obtener_posicion(tropa), 
-            celda_x, celda_y);
-        
-        Posicion grilla = camara.traducir_a_visual(
-            terreno.obtener_posicion(celda_x, celda_y));
-        Sprite(1).renderizar(ventana, grilla.x, grilla.y);
-        /*** Fin pintar celda ***/
-#endif
         tropa->renderizar(ventana, camara);
 
         Posicion visual = camara.traducir_a_visual(tropa->obtener_posicion());
@@ -101,10 +94,6 @@ void Ejercito::actualizar(int t_ms) {
     last_ms = t_ms;
 }
 
-void Ejercito::set_tropa_disparando(int id_tropa, bool disparando) {
-    
-}
-
 const Tropa& Ejercito::obtener_tropa_base(const std::string& clase) const {
     return tropas_base.at(clase);
 }
@@ -114,12 +103,12 @@ int Ejercito::obtener_sprite_clase(const std::string& clase) const {
 }
 
 bool Ejercito::esta_habilitada(const std::string& clase) const {
-    // for (const std::string& requerimiento : 
-    //     tropas_base.at(clase).obtener_requerimientos()) 
-    // {
-    //     if (!infraestructura.jugador_actual_tiene(requerimiento))
-    //         return false;
-    // }
+    for (const std::string& requerimiento : 
+        tropas_base.at(clase).obtener_requerimientos()) 
+    {
+        if (!infraestructura.jugador_actual_tiene(requerimiento))
+            return false;
+    }
     return true;
 }
 
@@ -183,12 +172,15 @@ Tropa& Ejercito::obtener(int id_tropa) {
 }
 
 void Ejercito::entrenar(const std::string& clase, int tiempo_ms) {
+    Sonido::reproducir_sonido(SND_ENTRENANDO);
     entrenamiento_actual[clase] = tiempo_ms;
 }
 
 void Ejercito::sincronizar_entrenamiento(const std::string& clase, 
     int tiempo_ms) 
 {
+    if (tiempo_ms == 0)
+        Sonido::reproducir_sonido(SND_UNIDAD_LISTA);
     entrenamiento_actual[clase] = tiempo_ms;
 }
 
@@ -213,14 +205,20 @@ void Ejercito::crear_tropa(int id, const std::string& clase,
 }
 
 void Ejercito::mover_tropa(int id, const std::vector<int>& camino) {
+    Tropa& tropa = tropas.at(id);
     std::vector<std::pair<int, int>> pasos;
     
     for (size_t i=0; i<camino.size(); i+=2) {
         pasos.push_back({camino[i], camino[i+1]});
     }
-    Posicion anterior = tropas.at(id).obtener_posicion();
-    tropas.at(id).seguir_camino(pasos);
-    terreno.mover_tropa(tropas.at(id), anterior);
+    Posicion anterior = tropa.obtener_posicion();
+    if ((tropa.obtener_clase() != CLASE_COSECHADORA) && 
+        (tropa.obtener_propietario() == id_jugador_actual))
+    {
+        Sonido::reproducir_sonido(SND_UNIDAD_EN_CAMINO);
+    }
+    tropa.seguir_camino(pasos);
+    terreno.mover_tropa(tropa, anterior);
 }
 
 void Ejercito::sincronizar_tropa(int id, const std::vector<int>& posicion) {
@@ -240,16 +238,27 @@ void Ejercito::atacar(int id_atacante, int id_victima, int nueva_vida) {
     } else {
         Edificio& atacado = infraestructura.obtener(id_victima);
         infraestructura.atacar(id_victima, nueva_vida);
-        Posicion pos_atacado = terreno.obtener_posicion(&atacado);
+        Posicion pos_atacado = terreno.obtener_centro(&atacado);
         x_destino = pos_atacado.x;
         y_destino = pos_atacado.y;
+    }
+
+    if (atacante.obtener_propietario() == id_jugador_actual) {
+        if (!atacante.esta_disparando() ||
+            id_victima != atacante.obtener_atacado())
+        {
+            Sonido::reproducir_sonido(SND_UNIDAD_ATACAR);
+        }
     }
 
     atacante.atacar(id_victima, x_destino, y_destino);
 }
 
 void Ejercito::destruir_tropa(int id) {
-    terreno.eliminar_tropa(tropas.at(id));
+    Tropa& perdida = tropas.at(id);
+    if (perdida.obtener_propietario() == id_jugador_actual)
+        Sonido::reproducir_sonido(SND_UNIDAD_PERDIDA);
+    terreno.eliminar_tropa(perdida);
     tropas.erase(id);
 }
 

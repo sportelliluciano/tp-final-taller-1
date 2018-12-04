@@ -2,6 +2,7 @@
 #define _A_ESTRELLA_H_
 
 #include <functional>
+#include <vector>
 #include <unordered_map>
 
 #include "grafo.h"

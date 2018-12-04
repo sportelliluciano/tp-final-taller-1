@@ -8,11 +8,12 @@ namespace modelo {
 //comportamiento extra
 class AtaqueCaminado:public ArmaCaracteristicas{
     private:
-
     public:
     AtaqueCaminado();
     ~AtaqueCaminado();
     void aplicar();
 };
+
 }
-#endif
+
+#endif //_ATAQUE_CAMINADO_H_

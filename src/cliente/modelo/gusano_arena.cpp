@@ -22,8 +22,8 @@ void GusanoArena::aparecer(int x_, int y_) {
 
 void GusanoArena::renderizar(Ventana& ventana, Camara& camara) {
     if (mostrar) {
-        // TODO: no renderizar si no es visible
-        Posicion visual = camara.traducir_a_visual(Posicion(x, y));
+        Posicion visual = camara.traducir_a_visual(
+                terreno.obtener_posicion(x, y));
         sprite.renderizar(ventana, visual.x, visual.y);
         if (sprite.finalizado())
             mostrar = false;

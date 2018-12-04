@@ -8,6 +8,7 @@
 #include "libs/json.hpp"
 
 #include "cliente/modelo/terreno.h"
+#include "cliente/sonido/sonido.h"
 
 /**
  * Los contadores de tiempo de construcción se reducen hasta un mínimo.
@@ -96,6 +97,8 @@ void Infraestructura::actualizar(int t_ms) {
         Edificio& edificio = par.second;
         if (!edificio.esta_vivo()) {
             edificios_a_eliminar.push_back(edificio.obtener_id());
+        } else {
+            edificio.actualizar(t_ms - last_ms);
         }
     }
 
@@ -183,11 +186,15 @@ void Infraestructura::iniciar_construccion(const std::string& clase,
     int tiempo_ms)
 {
     construcciones_iniciadas[clase] = tiempo_ms;
+    Sonido::reproducir_sonido(SND_CONSTRUYENDO);
 }
 
 void Infraestructura::sincronizar_construccion(const std::string& clase, 
     int tiempo_ms) 
 {
+    if (tiempo_ms == 0) {
+        Sonido::reproducir_sonido(SND_CONSTRUCCION_TERMINADA);
+    }
     construcciones_iniciadas[clase] = tiempo_ms;
 }
 
@@ -200,13 +207,22 @@ void Infraestructura::actualizar_cola(const std::string& clase, int cantidad) {
 }
 
 void Infraestructura::atacar(int id, int nueva_vida) {
+    Edificio& atacado = edificios_construidos.at(id);
+    if ((atacado.obtener_clase() == "centro_construccion") && 
+        (atacado.obtener_propietario() == id_jugador_actual))
+    {
+        Sonido::reproducir_sonido(SND_BASE_BAJO_ATAQUE);
+    }
+
     edificios_construidos.at(id).set_vida(nueva_vida);
 }
 
 void Infraestructura::crear_edificio(int id, int id_jugador, 
     const std::string& clase, const std::vector<int>& posicion)
-{
-    construcciones_iniciadas.erase(clase);
+{           
+    if (id_jugador == id_jugador_actual) {
+        construcciones_iniciadas.erase(clase);
+    }
     Edificio nuevo = edificios.at(clase);
 
     // El servidor tiene celdas de 8x8
@@ -236,8 +252,11 @@ void Infraestructura::eliminar_edificio(int id) {
 }
 
 void Infraestructura::destruir_edificio(int id) {
-    terreno.eliminar_edificio(edificios_construidos.at(id));
-    edificios_construidos.at(id).destruir();
+    Edificio& destruido = edificios_construidos.at(id);
+    if (destruido.obtener_propietario() == id_jugador_actual)
+        Sonido::reproducir_sonido(SND_EDIFICIO_PERDIDO);
+    terreno.eliminar_edificio(destruido);
+    destruido.destruir();
 }
 
 int Infraestructura::obtener_sprite_clase(const std::string& clase) const {

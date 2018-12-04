@@ -26,8 +26,8 @@ def main():
     ids = { int(s.split('.')[0], 16): s for s in archivos }
 
     for i, k in enumerate(sorted(ids.keys())):
-        print("mv", os.path.join(sys.argv[1], ids[k]),
-            os.path.join(sys.argv[1], "{:05d}.bmp".format(i)))
+        print("mv -f \"{}\" \"{}\"".format(os.path.join(sys.argv[1], ids[k]),
+            os.path.join(sys.argv[1], "{:05d}.bmp".format(i))))
 
     return 0
 

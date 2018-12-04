@@ -103,9 +103,15 @@ bool Contenedor::mouse_entra(const Posicion& punto) {
 }
 
 bool Contenedor::mouse_sale(const Posicion& punto) {
+    if (ultimo_notificado_e_s) {
+        ultimo_notificado_e_s->mouse_sale(punto);
+        ultimo_notificado_e_s = nullptr;
+    }
+    
     for (auto& par : obtener_widgets(punto)) {
         const Posicion& punto_relativo = par.first;
         Widget* widget = par.second;
+
         if (!widget->mouse_sale(punto_relativo))
             return false;
     }

@@ -1,7 +1,7 @@
 #include "cliente/video/textura.h"
 
 #include "cliente/video/error_sdl.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 namespace cliente {
 
@@ -43,6 +43,19 @@ Textura& Textura::operator=(Textura&& otro) {
     otro.renderer = NULL;
     otro.src = { 0, 0, 0, 0 };
     return *this;
+}
+
+/**
+ * \brief Cambia el color del renderer y devuelve el color anterior.
+ */
+static Color set_render_color(SDL_Renderer *renderer, const Color& color) {
+    SDL_Color anterior;
+    const SDL_Color* nuevo = color.obtener_color();
+    SDL_GetRenderDrawColor(renderer, &anterior.r, &anterior.g, &anterior.b, 
+        &anterior.a);
+    SDL_SetRenderDrawColor(renderer, nuevo->r, nuevo->g, nuevo->b, nuevo->a);
+    
+    return Color(&anterior);
 }
 
 int Textura::obtener_alto() const {
@@ -137,31 +150,31 @@ Rectangulo Textura::obtener_rect() const {
     return Rectangulo(0, 0, src.w, src.h);
 }
 
-void Textura::limpiar(int r, int g, int b, int a) {
+void Textura::limpiar() {
+    limpiar(Color(0, 0, 0, 0));
+}
+
+void Textura::limpiar(const Color& color) {
     SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
     if (SDL_SetRenderTarget(renderer, textura) != 0)
         throw ErrorSDL("SDL_SetRenderTarget");
     
-    Uint8 rr, gg, bb, aa;
-    SDL_GetRenderDrawColor(renderer, &rr, &gg, &bb, &aa);
-    SDL_SetRenderDrawColor(renderer, (Uint8)r, (Uint8)g, (Uint8)b, (Uint8) a);
+    Color anterior = set_render_color(renderer, color);
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, rr, gg, bb, aa);
+    set_render_color(renderer, anterior);
     
     if (SDL_SetRenderTarget(renderer, old_target) != 0)
         throw ErrorSDL("SDL_SetRenderTarget");
 }
 
 void Textura::dibujar_rectangulo(const Rectangulo& rc, int ancho_linea, 
-    Uint8 r, Uint8 g, Uint8 b, Uint8 a) 
+    const Color& color) 
 {
     SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
     if (SDL_SetRenderTarget(renderer, textura) != 0)
         throw ErrorSDL("SDL_SetRenderTarget");
     
-    Uint8 rr, gg, bb, aa;
-    SDL_GetRenderDrawColor(renderer, &rr, &gg, &bb, &aa);
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    Color anterior = set_render_color(renderer, color);
 
     Rectangulo linea = Rectangulo(rc.x() + ancho_linea, rc.y(), rc.ancho(), 
         ancho_linea);
@@ -178,25 +191,24 @@ void Textura::dibujar_rectangulo(const Rectangulo& rc, int ancho_linea,
 
     linea.x(rc.x() + rc.ancho());
     SDL_RenderFillRect(renderer, &linea.rect());
-    SDL_SetRenderDrawColor(renderer, rr, gg, bb, aa);
+    
+    set_render_color(renderer, anterior);
+    
     if (SDL_SetRenderTarget(renderer, old_target) != 0)
         throw ErrorSDL("SDL_SetRenderTarget");
 }
 
-void Textura::rellenar_rectangulo(const Rectangulo& rc,Uint8 r, Uint8 g, 
-    Uint8 b, Uint8 a)
-{
+void Textura::rellenar_rectangulo(const Rectangulo& rc, const Color& color) {
     SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
     if (SDL_SetRenderTarget(renderer, textura) != 0)
         throw ErrorSDL("SDL_SetRenderTarget");
     
-    Uint8 rr, gg, bb, aa;
-    SDL_GetRenderDrawColor(renderer, &rr, &gg, &bb, &aa);
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    Color anterior = set_render_color(renderer, color);
 
     SDL_RenderFillRect(renderer, &rc.rect());
 
-    SDL_SetRenderDrawColor(renderer, rr, gg, bb, aa);
+    set_render_color(renderer, anterior);
+    
     if (SDL_SetRenderTarget(renderer, old_target) != 0)
         throw ErrorSDL("SDL_SetRenderTarget");
 }

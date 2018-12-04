@@ -1,7 +1,5 @@
 #include "cliente/modelo/terreno.h"
 
-#include <iostream>
-#include <fstream>
 #include <functional>
 #include <sstream>
 #include <stdexcept>
@@ -9,8 +7,9 @@
 
 #include "cliente/modelo/celda.h"
 #include "cliente/video/camara.h"
+#include "cliente/video/color.h"
 #include "cliente/video/ventana.h"
-#include "cliente/video/log.h"
+#include "comun/log.h"
 
 #define ANCHO_CELDA 32
 #define ALTO_CELDA 32
@@ -20,53 +19,6 @@
 
 namespace cliente {
 
-Terreno::Terreno(const char *ruta_csv) {
-    std::ifstream entrada(ruta_csv);
-    if (!entrada.good())
-        throw std::runtime_error("No se pudo abrir el archivo de terreno");
-    
-    int x = 0, y = 0;
-    alto = ancho = 0;
-
-    while (!entrada.eof()) {
-        std::string linea, tile;
-        std::getline(entrada, linea);
-        std::stringstream s_linea(linea);
-        
-        std::vector<Celda> fila_actual;
-        
-        while (std::getline(s_linea, tile, ';')) {
-            std::stringstream s_tile(tile);
-            int tile_no = 0;
-            if (!(s_tile >> tile_no))
-                throw std::runtime_error("Archivo de terreno inválido");
-            
-            tipo_celda_t tipo = CELDA_ARENA;
-            if (tile_no == 1)
-                tipo = CELDA_ROCA;
-
-            fila_actual.push_back(Celda(tipo));
-            
-            if (x > ancho)
-                ancho = x;
-            
-            x++;
-        }
-        
-        if (y > alto)
-            alto = y;
-
-        x = 0;
-        y++;
-        terreno.push_back(fila_actual);
-    }
-
-    ultimo_celda_x0 = ancho + 1;
-    ultimo_celda_x1 = ancho + 1;
-    ultimo_celda_y0 = alto + 1;
-    ultimo_celda_y1 = alto + 1;
-}
-
 Terreno::Terreno(const nlohmann::json& mapa) {
     alto = ancho = 0;
     const std::vector<std::vector<int>>& tipos = 
@@ -74,6 +26,47 @@ Terreno::Terreno(const nlohmann::json& mapa) {
     
     //const std::vector<std::vector<int>>& sprites = 
     //    mapa.at("sprite").get<std::vector<std::vector<int>>>();
+
+    //  para mapa generado por el editor
+    /*
+
+    const std::vector<std::vector<std::string>>& tipos = 
+        mapa.at("tipo").get<std::vector<std::vector<std::string>>>();
+
+     * 
+     *  Parseo terrenos.json -> tiene los vectores de 16 ints
+     * 
+    
+    std::map<std::string, DataTerreno> terrenos_posibles;
+
+    std::ifstream entrada(RUTA_TERRENOS_JSON);
+
+    nlohmann::json terrenos_json;
+
+    entrada >> terrenos_json;
+
+    auto it = terrenos_json.begin();
+    const json& valores_por_defecto = *it;
+    ++it;
+    for (; it != terrenos_json.end(); ++it) {
+        // Mergear valores por defecto con el elemento actual
+        nlohmann::json elem = valores_por_defecto;
+        elem.update(*it);
+
+        auto it_sprites = elem["sprites"].begin();
+        for (int i = 0; it_sprites != elem["sprites"].end(); ++it_sprites) {
+            json tile = *it;
+
+            DataTerreno data_terreno;
+            data_terreno.tipo = elem["tipo"];
+            data_terreno.pos_tiles = tile["sprites"][i]["pos_tiles"];
+            
+            std::string id = tile["sprites"][i]["id"];
+            terrenos_posibles.emplace(id, data_terreno);
+        }
+    }
+
+     */
 
     alto = tipos.size();
 
@@ -87,6 +80,15 @@ Terreno::Terreno(const nlohmann::json& mapa) {
         std::vector<Celda> fila_actual;
         for (int x=0;x<ancho;x++) {
             fila_actual.push_back(
+                // aca habria que leer el string que esta en el json del mapa
+
+                // std::string id = tipos[y][x];
+
+                // obtener el DataTerreno del std::map 
+
+                // DataTerreno terreno = terrenos_posibles.find(id)->second;
+
+                // data terreno tiene el vector de pos_tiles y el tipo (int).
                 Celda((tipo_celda_t)tipos[y][x]) //, sprites, x, y)
             );
         }
@@ -125,9 +127,6 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
             .obtener_administrador_texturas()
             .obtener_textura("terreno")
             .renderizar(visual.x, visual.y);
-#ifdef DEPURACION_DIBUJO
-        ventana.dibujar_grilla(visual.x, visual.y);
-#endif
         return;
     }
     
@@ -140,7 +139,7 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     Textura& textura = admin_texturas.crear_textura("terreno", 
         ventana.ancho() + 128, ventana.alto() + 128);
 
-    textura.limpiar(0, 0, 0, 255);
+    textura.limpiar(COLOR_NEGRO);
 
     for (int x = celda_inicial_x; x <= celda_final_x; x++) {
         if ((x < 0) || (x >= ancho))
@@ -163,9 +162,6 @@ void Terreno::renderizar(Ventana& ventana, Camara& camara) {
     Posicion visual = camara.traducir_a_visual(
         obtener_posicion(celda_inicial_x, celda_inicial_y));
     textura.renderizar(visual.x, visual.y);
-#ifdef DEPURACION_DIBUJO
-        ventana.dibujar_grilla(visual.x, visual.y);
-#endif
 }
 
 void Terreno::obtener_celda(const Posicion& pos, int& celda_x, int& celda_y) {
@@ -184,6 +180,18 @@ Posicion Terreno::obtener_posicion(const Edificio* edificio) {
 
 Posicion Terreno::obtener_posicion(const Tropa* tropa) {
     return tropa->obtener_posicion();
+}
+
+Posicion Terreno::obtener_centro(const Edificio* edificio) {
+    Posicion esquina_superior = obtener_posicion(edificio);
+    Posicion esquina_inferior = obtener_posicion(
+        edificio->obtener_celda_x() + edificio->obtener_ancho_celdas(),
+        edificio->obtener_celda_y() + edificio->obtener_alto_celdas()
+    );
+
+    int x_medio = (esquina_superior.x + esquina_inferior.x) / 2;
+    int y_medio = (esquina_superior.y + esquina_inferior.y) / 2;
+    return Posicion(x_medio, y_medio);
 }
 
 void Terreno::para_cada_celda_en(const Rectangulo& area, 

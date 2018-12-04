@@ -1,0 +1,18 @@
+#ifndef _SERVIDOR_CONFIG_H_
+#define _SERVIDOR_CONFIG_H_
+/**
+ * Este archivo define distintas configuraciones que dependen de la ruta
+ * de instalación y son completadas por CMake automágicamente.
+ */
+
+/**
+ * Ruta completa a la carpeta donde está la configuración del servidor.
+ */
+#define RUTA_BASE_CONFIG "@SV_CONFIG_DIR@"
+
+/**
+ * Ruta completa al archivo de configuración config.json
+ */
+#define RUTA_CONFIG_JSON RUTA_BASE_CONFIG "/config.json"
+
+#endif // _SERVIDOR_CONFIG_H_

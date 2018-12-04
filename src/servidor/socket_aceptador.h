@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "conexion/error_socket.h"
-#include "conexion/socket_conexion.h"
+#include "comun/error_socket.h"
+#include "comun/socket_conexion.h"
 
 namespace servidor {
 
@@ -29,7 +29,7 @@ public:
      * Lanza ErrorSocket si se produce algún error al aceptar o si se detiene
      * el aceptador.
      */
-    conexion::SocketConexion esperar_conexion();
+    SocketConexion esperar_conexion();
 
     /**
      * Cierra el socket aceptador e indica que la detención fue solicitada.

@@ -7,9 +7,9 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/conexion.h"
-#include "conexion/socket_conexion.h"
-#include "servidor/cola_protegida.h"
+#include "comun/conexion.h"
+#include "comun/socket_conexion.h"
+#include "comun/cola_protegida.h"
 
 namespace servidor {
 
@@ -22,7 +22,7 @@ public:
     /**
      * \brief Crea un nuevo cliente a partir del socket indicado.
      */
-    Cliente(conexion::SocketConexion socket_conexion);
+    Cliente(SocketConexion socket_conexion);
 
     /**
      * \brief Constructor por movimiento
@@ -81,10 +81,16 @@ public:
      */
     const std::string& obtener_error() const;
 
+    void set_nombre(const std::string& nuevo_nombre);
+
+    const std::string& obtener_nombre() const;
+
 private:
-    conexion::Conexion conexion;
+    Conexion conexion;
     std::thread hilo_emisor, hilo_receptor;
     ColaProtegida<nlohmann::json> cola_salida;
+
+    std::string nombre;
 
     std::mutex m_cb_al_recibir_datos;
     std::function<void(const nlohmann::json&)> cb_al_recibir_datos = nullptr;
@@ -94,6 +100,9 @@ private:
     std::string error_emisor, error_receptor;
 
     bool async_iniciado = false;
+
+    void main_hilo_emisor();
+    void main_hilo_receptor();
 };
 
 } // namespace servidor

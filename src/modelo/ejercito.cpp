@@ -3,6 +3,10 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
+#include <stdlib.h>
+#include <utility>
+#include <vector>
+#include <set>
 
 #include "modelo/terreno.h"
 #include "modelo/unidad.h"
@@ -11,27 +15,35 @@
 #include "modelo/edificio.h"
 #include "modelo/id.h"
 #include "modelo/broadcaster.h"
+#include "modelo/gusano.h" 
 
 namespace modelo {
     
 Ejercito::Ejercito(Broadcaster& broadcaster,Id& id) 
-: comunicacion_jugadores(broadcaster),id_(id) 
-{ }
+: comunicacion_jugadores(broadcaster),id_(id) { 
+}
 
 void Ejercito::inicializar(Terreno* terreno_,const nlohmann::json& ejercito_){
     prototipos.inicializar(terreno_,ejercito_);
     terreno=terreno_;
+    prototipos.get_tiempos_de_entrenamiento(tiempos_de_entrenamiento);
 }
 
 Ejercito::~Ejercito(){
 }
 
+std::unordered_map<std::string,int>& Ejercito::get_tiempos_entrenamiento(){
+    return tiempos_de_entrenamiento;
+}
+
 int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
-    Posicion pos(43,56);
-    Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
-    if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
+    Posicion posicion = terreno->obtener_centro_posicion(id_propietario);
+    posicion = terreno->obtener_posicion_caminable_cercana(posicion);
+    if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),
+        prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
-    tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,posicion.x(),posicion.y()));
+    tropas.emplace(nuevo_id,prototipos.clonar(id_tipo,
+            nuevo_id,posicion.x(),posicion.y()));
     terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->crear_tropa(nuevo_id, id_tipo, posicion.px_x(), posicion.px_y(),
@@ -40,14 +52,17 @@ int Ejercito::crear(const std::string& id_tipo, int id_propietario) {
     return nuevo_id;
 }
 
-int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario){
-    Posicion pos(43,56);
-    Posicion posicion = terreno->obtener_posicion_caminable_cercana(pos);
-    if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
+int Ejercito::crear_cosechadora(const std::string& id_tipo,int id_propietario,
+                                                Jugador* comunicacion_jugador){
+    Posicion posicion = terreno->obtener_centro_posicion(id_propietario);
+    posicion = terreno->obtener_posicion_caminable_cercana(posicion);
+    if (!(terreno->rango_valido_tropa(posicion.x(),posicion.y(),
+        prototipos.get_dimensiones(id_tipo)))) return 0; //raise error
     int nuevo_id = id_.nuevo_id();
     terreno->agregar_tropa(posicion, prototipos.get_dimensiones(id_tipo));
     cosechadoras.emplace(nuevo_id,prototipos.clonar(
-            id_tipo,nuevo_id,posicion.x(),posicion.y(),terreno,id_propietario));
+            id_tipo,nuevo_id,posicion.x(),posicion.y(),
+            terreno,id_propietario,comunicacion_jugador));
     
     Posicion especia = terreno->obtener_especia_cercana(posicion);
     especia = terreno->obtener_posicion_caminable_cercana(especia);
@@ -74,7 +89,7 @@ void Ejercito::mover(int id, int x, int y) {
     
     std::vector<std::pair<int,int>> v;
     
-    for (auto it = a_estrella.begin(); it!= a_estrella.end();++it) {
+    for (auto it = a_estrella.begin(); it!= a_estrella.end(); ++it) {
         v.emplace_back(std::pair<int,int>((*it).px_x(), (*it).px_y()));
     }
     
@@ -85,35 +100,53 @@ void Ejercito::mover(int id, int x, int y) {
 
 void Ejercito::mover_cosechadora(int id,int x,int y){
     Cosechadora& cosechadora = cosechadoras.at(id);
-    std::vector<Posicion> a_estrella = terreno->buscar_camino_minimo(cosechadora.get_posicion(), 
-                                                           Posicion(x,y)); 
+    std::vector<Posicion> a_estrella =
+            terreno->buscar_camino_minimo(cosechadora.get_posicion(),
+                                                        Posicion(x,y));
     cosechadora.configurar_camino(a_estrella);
     tropas_en_movimiento.insert(id);
     std::vector<std::pair<int,int>> v;
-    for (auto it = a_estrella.begin(); it!= a_estrella.end();++it){
+    for (auto it = a_estrella.begin(); it!= a_estrella.end(); ++it){
         v.emplace_back(std::pair<int,int>((*it).px_x(),(*it).px_y()));
     }
     comunicacion_jugadores.broadcast([&] (IJugador *j) {
         j->mover_tropa(id,v);
     });
 }
-void Ejercito::atacar(int id_victima,int id_atacante){
-    //ver si hay que seguirlo o no
-    if (tropas.count(id_atacante)!=0 && tropas.count(id_victima)!=0 ){
-        tropas.at(id_atacante).configurar_ataque(&tropas.at(id_victima));
-        tropas_atacando.insert(id_atacante);
-    }
-    if (tropas.count(id_atacante)!=0 && cosechadoras.count(id_victima)!=0 ){
-        tropas.at(id_atacante).configurar_ataque(&cosechadoras.at(id_victima));
-        tropas_atacando.insert(id_atacante);
-    }
+ void Ejercito::atacar(int id_victima,int id_atacante){
+     bool caminar = false;
+     Atacable* victima; 
+     if (tropas.count(id_atacante)!=0 && tropas.count(id_victima)!=0){
+         victima = &(tropas.at(id_victima));
+         if (tropas.at(id_atacante).configurar_ataque(victima)){
+             tropas_atacando.insert(id_atacante);
+         } else{
+             caminar = true;
+         }
+     }
+     if (tropas.count(id_atacante)!=0 && cosechadoras.count(id_victima)!=0){
+         victima = &(cosechadoras.at(id_victima));
+         if (tropas.at(id_atacante).configurar_ataque(victima)){
+             tropas_atacando.insert(id_atacante);
+         } else{
+             caminar = true;
+         }
+     }
+     if (caminar){
+         Posicion& posicion = victima->get_posicion();
+         mover(id_atacante,posicion.x(),posicion.y());
+     }
+ }
 
-}
 void Ejercito::atacar(Atacable* edificio,int id_atacante){
     // acercarme hasta cumplir con el rango 
     if (tropas.count(id_atacante)!=0) {
-        tropas.at(id_atacante).configurar_ataque(edificio);
-        tropas_atacando.insert(id_atacante);
+        if (tropas.at(id_atacante).configurar_ataque(edificio)){
+            tropas_atacando.insert(id_atacante);
+        } else {
+            Posicion& posicion = edificio->get_posicion();
+            mover(id_atacante,posicion.x(),posicion.y());
+        }
     }
 }
 Unidad& Ejercito::get(int id) {
@@ -123,14 +156,23 @@ Unidad& Ejercito::get(int id) {
         return tropas.at(id);
     }
 }
+std::set<std::string>& Ejercito::get_requisitos(const std::string& clase){
+    return prototipos.get_requisitos(clase);
+}
 
-unsigned int Ejercito::get_costo(std::string id_tipo) {
+bool Ejercito::pertenece(const std::string& clase,const std::string& casa){
+    std::set<std::string>& casas = prototipos.get_casas(clase);
+    return casas.count(casa)!=0;
+}
+
+unsigned int Ejercito::get_costo(const std::string& id_tipo) {
     return prototipos.get_costo(id_tipo);
 }
 
 void Ejercito::matar_tropa(int id_victima,int id_atacante){
     tropas_muertas.insert(id_victima);
-    tropas.at(id_atacante).parar_ataque();
+    if (tropas.count(id_atacante) != 0)//puede ser el gusano
+        tropas.at(id_atacante).parar_ataque();
     if (tropas_en_movimiento.count(id_victima)!=0){
         tropas_en_movimiento.erase(id_victima);
     }
@@ -144,9 +186,9 @@ void Ejercito::matar_tropa(int id_victima,int id_atacante){
 }
 void Ejercito::eliminar_tropas(){
     for (auto it = tropas_muertas.begin();
-            it != tropas_muertas.end();++it)
+            it != tropas_muertas.end(); ++it)
     {
-        if (tropas.count(*it != 0)){
+        if (tropas.count(*it) != 0){
             terreno->eliminar_tropa(tropas.at(*it).get_posicion(),
                                     tropas.at(*it).get_dimensiones());
             tropas.erase(*it);
@@ -163,20 +205,7 @@ void Ejercito::eliminar_tropas(){
 std::unordered_set<int>& Ejercito::notificar_bajas(){
     return tropas_muertas;
 }
- /*
-        si es una cosechadora
-            si no llego a destino
-                actualizar posicion
-            si llego(cuando llego pongo descando en true)
-                si estas operando
-                    pasar tiempo
-                si no esta operando (ya opero)
-                    si esta en camino a la especia(cuadno llego a la epecia lo pongo en false)
-                        nueva posicion = posicion especia
-                    sino
-                        nueva psocion = posicion refineria
-                    mover a neuva posciom      
-        */
+
 void Ejercito::actualizar_cosechadoras(int dt,Cosechadora& cosechadora){
     if (cosechadora.operando()){
             cosechadora.operar(dt);
@@ -184,11 +213,9 @@ void Ejercito::actualizar_cosechadoras(int dt,Cosechadora& cosechadora){
         try{ //por si no hay posicion (no hay refinerias o no hay mas especia)
         Posicion posicion;
         if (cosechadora.camino_a_especia()){
-            std::cout << "voy a la especia"<< std::endl;
-            posicion = terreno->obtener_especia_cercana(cosechadora.get_posicion());
-            std::cout << "En posicion: "<<posicion.x() <<" - "<< posicion.y() <<std::endl;
+            posicion=
+                terreno->obtener_especia_cercana(cosechadora.get_posicion());
             posicion = Posicion(posicion.x(),posicion.y());
-            //posicion = Posicion(43,67); //especia
         } else {
             posicion = terreno->obtener_refinerias_cercana(
                                             cosechadora.get_posicion(),
@@ -197,17 +224,16 @@ void Ejercito::actualizar_cosechadoras(int dt,Cosechadora& cosechadora){
         posicion = terreno->obtener_posicion_caminable_cercana(posicion); 
         mover_cosechadora(cosechadora.get_id(),posicion.x(),posicion.y());
         std::cout << "en camino"<< std::endl;
-        }catch(std::runtime_error& e)
+        } catch(std::runtime_error& e)
         {
             return;
         }
     } else{
         if (cosechadora.actualizar_posicion(dt,terreno)) {
-            comunicacion_jugadores.broadcast([this, &cosechadora] (IJugador *j) {
+            comunicacion_jugadores.broadcast([this, &cosechadora](IJugador *j){
             j->sincronizar_tropa(cosechadora.get_id(), 
                 cosechadora.get_posicion().px_x(),
-                cosechadora.get_posicion().px_y()
-                );
+                cosechadora.get_posicion().px_y());
             });
         }        
     }
@@ -233,14 +259,49 @@ void Ejercito::actualizar_movimiento(int dt){
             comunicacion_jugadores.broadcast([this, &unidad] (IJugador *j) {
                 j->sincronizar_tropa(unidad.get_id(), 
                     unidad.get_posicion().px_x(),
-                    unidad.get_posicion().px_y()
-                );
+                    unidad.get_posicion().px_y());
             });
         }
         ++it;
-    } 
+    }
 }
 
+Atacable& Ejercito::obtener_unidad_aleatorio(){
+    float bernulli = rand()/ RAND_MAX;
+    if (bernulli <= 0.5 && tropas.size() != 0){
+        int indice_vicitma = rand() % tropas.size();
+        auto victima = tropas.begin();
+        std::advance(victima,indice_vicitma);
+        return (victima->second);
+    } else if (cosechadoras.size() != 0){
+        int indice_vicitma = rand() % cosechadoras.size();
+        auto victima = cosechadoras.begin();
+        std::advance(victima,indice_vicitma);
+        return (victima->second);
+    }
+    throw std::runtime_error("No hay unidades");
+}
+
+void Ejercito::actualizar_gusano(int dt){
+    if (gusano.esperando_comer()){
+        try {
+        Atacable& victima = obtener_unidad_aleatorio();
+        matar_tropa(victima.get_id(),gusano.get_id());
+        Posicion& pos = victima.get_posicion();
+        comunicacion_jugadores.broadcast([&] (IJugador *j) {
+                j->mostrar_gusano(pos.x(),pos.y());
+            });
+        } catch(std::runtime_error& e){
+            std::cout << "no hay comida "<<std::endl;
+            gusano.comer();
+            return;    
+        }
+
+        gusano.comer();
+    } else {
+        gusano.actualizar(dt);
+    }
+}
 void Ejercito::limpiar_tropas_atacando(){
     //saco a los muertos restantes del set
     for (auto it = tropas_atacando.begin();
@@ -251,7 +312,8 @@ void Ejercito::limpiar_tropas_atacando(){
             it = tropas_atacando.erase(it);
             continue;
         } else if (tropas_muertas.count(tropas.at(*it).id_victima())!=0){
-            //aquellos que atacaron y no mataron a su victima pero despues alguien mas la mato
+            //aquellos que atacaron y no mataron a su 
+            //victima pero despues alguien mas la mato
             tropas.at(*it).parar_ataque();
             it = tropas_atacando.erase(it);
             continue;
@@ -263,14 +325,15 @@ void Ejercito::limpiar_tropas_atacando(){
 void Ejercito::actualizar_ataques(int dt){
      tropas_muertas.clear();
     for (auto it = tropas_atacando.begin();
-            it != tropas_atacando.end();)
+            it != tropas_atacando.end(); )
     {
         bool borrado = false;
         if (tropas_muertas.count(*it)!= 0) {
             it = tropas_atacando.erase(it);
             continue;
         }
-        // el verificar la muerte aca hace que limpiar_tropas_atacado sea mas rapido 
+        // el verificar la muerte aca hace que
+        // limpiar_tropas_atacado sea mas rapido
         Unidad& unidad = tropas.at(*it);
         if (!unidad.esta_atacando()) {
             it = tropas_atacando.erase(it);
@@ -283,6 +346,7 @@ void Ejercito::actualizar_ataques(int dt){
             continue;
         }
         //falta ver el tema del rango
+        try{
         int vida_nueva_victima = unidad.actualizar_ataque(dt,terreno);
         if (vida_nueva_victima <= 0) {
             matar_tropa(id_victima,*it);//lo saca del modelo
@@ -293,9 +357,14 @@ void Ejercito::actualizar_ataques(int dt){
                 j->atacar(unidad.get_id(), id_victima, vida_nueva_victima);
             });
         }
+        } catch(std::runtime_error& e){
+            it = tropas_atacando.erase(it);
+            borrado = true;
+        }
         if (!borrado)
             ++it;
     }
+    actualizar_gusano(dt);
     //saco a los muertos restantes del set
     limpiar_tropas_atacando();
     eliminar_tropas();
@@ -305,7 +374,7 @@ void Ejercito::actualizar_tropas(int dt) {
     actualizar_movimiento(dt);
     actualizar_ataques(dt);
 }
-unsigned int Ejercito::get_tiempo(std::string id_tipo){
+unsigned int Ejercito::get_tiempo(const std::string& id_tipo){
     return prototipos.get_tiempo(id_tipo);
 }
-}
+} // namespace modelos

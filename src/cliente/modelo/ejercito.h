@@ -64,8 +64,6 @@ public:
 
     const Tropa& obtener_tropa_base(const std::string& clase) const;
 
-    void set_tropa_disparando(int id_tropa, bool disparando);
-
     /**
      * \brief Devuelve true si hay al menos una tropa enemiga en el punto dado.
      */

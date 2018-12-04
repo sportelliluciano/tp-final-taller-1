@@ -1,21 +1,21 @@
 #include "servidor/cliente.h"
 
-#include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
 
 #include "libs/json.hpp"
 
-#include "conexion/conexion.h"
-#include "conexion/lock.h"
-#include "conexion/socket_conexion.h"
-#include "servidor/cola_protegida.h"
+#include "comun/conexion.h"
+#include "comun/lock.h"
+#include "comun/log.h"
+#include "comun/socket_conexion.h"
+#include "comun/cola_protegida.h"
 
 namespace servidor {
 
-Cliente::Cliente(conexion::SocketConexion socket_conexion) 
-: conexion(socket_conexion)
+Cliente::Cliente(SocketConexion socket_conexion) 
+: conexion(socket_conexion), nombre("-")
 { }
 
 Cliente::Cliente(Cliente&& otro) 
@@ -42,54 +42,57 @@ Cliente::Cliente(Cliente&& otro)
     async_iniciado = false;
 }
 
+void Cliente::main_hilo_emisor() { 
+    try {
+        while (conexion.esta_conectada()) {
+            conexion.enviar_json(cola_salida.pull());
+        }
+    } catch(const std::exception& e) {
+        error_emisor = e.what();
+        hubo_error_emisor = true;
+        conexion.cerrar(true);
+        if (!detencion_solicitada)
+            log_advertencia("Hilo cliente (E) explotó\n --> %s", e.what());
+    }
+
+    log_depuracion("Hilo cliente (E) terminado");
+}
+
+void Cliente::main_hilo_receptor() { 
+    try {
+        while (conexion.esta_conectada()) {
+            nlohmann::json data = conexion.recibir_json();
+            {
+                Lock l(m_cb_al_recibir_datos);
+                if (cb_al_recibir_datos)
+                    cb_al_recibir_datos(data);
+            }
+        }
+    } catch(const std::exception& e) {
+        error_receptor = e.what();
+        hubo_error_receptor = true;
+        conexion.cerrar(true);
+        if (!detencion_solicitada)
+            log_advertencia("Hilo cliente (R) explotó\n --> %s", e.what());
+    }
+
+    log_depuracion("Hilo cliente (R) terminado");
+    cola_salida.desbloquear();
+}
+
 void Cliente::iniciar_async() {
     if (async_iniciado)
         throw std::runtime_error("Este cliente ya fue iniciado");
     
     async_iniciado = true;
-
-    hilo_emisor = std::thread([this]() {
-        try {
-            while (conexion.esta_conectada()) {
-                conexion.enviar_json(cola_salida.pull());
-            }
-        } catch(const std::exception& e) {
-            error_emisor = e.what();
-            hubo_error_emisor = true;
-            conexion.cerrar(true);
-            std::cout << "Hilo cliente (E) explotó" << std::endl;
-            std::cout << " --> " << e.what() << std::endl;
-        }
-
-        std::cout << "Hilo cliente (E) died" << std::endl;
-    });
-
-    hilo_receptor = std::thread([this]() {
-        try {
-            while (conexion.esta_conectada()) {
-                nlohmann::json data = conexion.recibir_json();
-                {
-                    Lock l(m_cb_al_recibir_datos);
-                    if (cb_al_recibir_datos)
-                        cb_al_recibir_datos(data);
-                }
-            }
-        } catch(const std::exception& e) {
-            error_receptor = e.what();
-            hubo_error_receptor = true;
-            conexion.cerrar(true);
-            std::cout << "Hilo cliente (R) explotó" << std::endl;
-            std::cout << " --> " << e.what() << std::endl;
-        }
-
-        std::cout << "Hilo cliente (R) died" << std::endl;
-    });
+    hilo_emisor = std::thread(&Cliente::main_hilo_emisor, this);
+    hilo_receptor = std::thread(&Cliente::main_hilo_receptor, this);
 }
 
 void Cliente::detener_async() {
     detencion_solicitada = true;
     conexion.cerrar(true);
-    cola_salida.push({}); // Desbloquear la cola
+    cola_salida.desbloquear();
     if (hilo_emisor.joinable())
         hilo_emisor.join();
     if (hilo_receptor.joinable())
@@ -123,6 +126,14 @@ const std::string& Cliente::obtener_error() const {
         return error_emisor;
     
     return error_receptor;
+}
+
+void Cliente::set_nombre(const std::string& nuevo_nombre) {
+    nombre = nuevo_nombre;
+}
+
+const std::string& Cliente::obtener_nombre() const {
+    return nombre;
 }
 
 } // namespace servidor

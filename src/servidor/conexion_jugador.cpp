@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "conexion/conexion.h"
-#include "conexion/eventos_cliente.h"
-#include "conexion/i_jugador.h"
-#include "conexion/i_modelo.h"
+#include "comun/conexion.h"
+#include "comun/eventos_cliente.h"
+#include "comun/i_jugador.h"
+#include "comun/i_modelo.h"
 #include "servidor/cliente.h"
 
 #define SIN_IMPLEMENTAR(evento) { \
@@ -35,8 +35,12 @@ const std::string& ConexionJugador::obtener_casa() const {
     return casa;
 }
 
+void ConexionJugador::set_casa(const std::string& casa_) {
+    casa = casa_;
+}
+
 const std::string& ConexionJugador::obtener_nombre() const {
-    return nombre;
+    return conexion_cliente.obtener_nombre();
 }
 
 void ConexionJugador::notificar(const nlohmann::json& data) {
@@ -49,13 +53,18 @@ ConexionJugador::~ConexionJugador() {
 
 /***** Implementaciones de mensajes *****/
 
-void ConexionJugador::inicializar(const nlohmann::json& mapa, 
+void ConexionJugador::inicializar(
+    int id,
+    const nlohmann::json& mapa, 
     const nlohmann::json& infraestructura,
     const nlohmann::json& ejercito) 
 {
     notificar({
-        {"id", EVC_INICIALIZAR_EJERCITO},
-        {"ejercito", ejercito}
+        {"id", EVC_INICIALIZAR},
+        {"id_jugador", id},
+        {"edificios", infraestructura},
+        {"ejercitos", ejercito},
+        {"mapa", mapa}
     });
 }
 
@@ -275,10 +284,10 @@ void ConexionJugador::jugador_listo(int id_jugador) {
     });
 }
 
-void ConexionJugador::juego_terminado(int id_ganador) {
+void ConexionJugador::juego_terminado(const std::string& nombre_ganador) {
     notificar({
         {"id", EVC_JUEGO_TERMINADO},
-        {"id_ganador", id_ganador}
+        {"ganador", nombre_ganador}
     });
 }
 

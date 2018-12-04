@@ -3,8 +3,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "cliente/config.h"
 #include "cliente/video/error_sdl.h"
-#include "cliente/video/log.h"
+#include "cliente/video/color.h"
 #include "cliente/video/textura.h"
 
 namespace cliente {
@@ -12,10 +13,10 @@ namespace cliente {
 AdministradorTexturas::AdministradorTexturas(SDL_Renderer *renderer_) {
     renderer = renderer_;
     // TODO: refactorizar esto / chequear errores correctamente
-    fuente_micro = TTF_OpenFont("./assets/fuente.ttf", 12);
-    fuente_chico = TTF_OpenFont("./assets/fuente.ttf", 14);
-    fuente_normal = TTF_OpenFont("./assets/fuente.ttf", 18);
-    fuente_grande = TTF_OpenFont("./assets/fuente.ttf", 30);
+    fuente_micro = TTF_OpenFont(RUTA_FUENTE, 12);
+    fuente_chico = TTF_OpenFont(RUTA_FUENTE, 14);
+    fuente_normal = TTF_OpenFont(RUTA_FUENTE, 18);
+    fuente_grande = TTF_OpenFont(RUTA_FUENTE, 30);
     if (!fuente_micro || !fuente_chico || !fuente_normal || !fuente_grande)
         throw ErrorSDL("TTF_OpenFont", TTF_GetError());
 }
@@ -44,7 +45,6 @@ const Textura& AdministradorTexturas::cargar_imagen(const std::string& img) {
 
     texturas.emplace(img, Textura(renderer, textura));
     
-    log_depuracion("Cargado %s", img.c_str());
     return texturas.find(img)->second;
 }
 
@@ -79,14 +79,6 @@ Textura& AdministradorTexturas::crear_textura(const std::string& id, int w,
     return texturas_creadas.find(id)->second;
 }
 
-Textura& AdministradorTexturas::obtener_o_crear_textura(
-    const std::string& nombre, int w, int h) 
-{
-    if (contiene_textura(nombre))
-        return obtener_textura(nombre);
-    return crear_textura(nombre, w, h);
-}
-
 Textura& AdministradorTexturas::crear_texto(const std::string& texto) {
     if (texturas_creadas.find("texto-" + texto) != texturas_creadas.end())
         return texturas_creadas.find("texto-" + texto)->second;
@@ -106,13 +98,8 @@ Textura& AdministradorTexturas::crear_texto(const std::string& texto) {
 }
 
 Textura AdministradorTexturas::crear_texto(const std::string& texto,
-    const Rectangulo& caja, int color, tamanio_fuente_t tamanio) 
+    const Rectangulo& caja, const Color& color, tamanio_fuente_t tamanio) 
 {
-    SDL_Color c = {255, 255, 255, 0};
-
-    if (color == 1)
-        c = {0xff, 0x73, 0x73, 255};
-
     TTF_Font* fuente = fuente_normal;
     if (tamanio == TAM_FUENTE_GRANDE)
         fuente = fuente_grande;
@@ -122,7 +109,7 @@ Textura AdministradorTexturas::crear_texto(const std::string& texto,
         fuente = fuente_micro;
 
     SDL_Surface *sf = TTF_RenderUTF8_Blended_Wrapped(fuente, texto.c_str(), 
-        c, caja.ancho());
+        *color.obtener_color(), caja.ancho());
     if (!sf)
         throw ErrorSDL("TTF_RenderUTF8_Blended_Wrapped", TTF_GetError());
     

@@ -28,9 +28,9 @@ public:
     Edificio(const nlohmann::json& data_edificio);
 
     /**
-     * \brief Actualiza el prototipo con información del servidor.
+     * \brief Actualiza las animaciones del edificio.
      */
-    void actualizar_prototipo(const nlohmann::json& data_edificio);
+    void actualizar(int dt_ms);
 
     /**
      * \brief Renderiza el edificio en la posición (x, y).

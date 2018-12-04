@@ -3,7 +3,7 @@
 
 #include <unordered_set>
 
-#include "conexion/i_jugador.h"
+#include "comun/i_jugador.h"
 
 namespace modelo {
 
@@ -33,6 +33,7 @@ public:
      */
     void broadcast(std::function<void(IJugador*)> mensaje);
 
+    IJugador* obtener_jugador(int id);
 private:
     std::unordered_set<IJugador*> jugadores;
 };

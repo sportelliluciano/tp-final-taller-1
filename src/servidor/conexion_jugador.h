@@ -1,15 +1,15 @@
 #ifndef _CONEXION_JUGADOR_H_
 #define _CONEXION_JUGADOR_H_
 
-#include "conexion/conexion.h"
-#include "conexion/eventos_cliente.h"
-#include "conexion/i_jugador.h"
-#include "conexion/i_modelo.h"
+#include "comun/conexion.h"
+#include "comun/eventos_cliente.h"
+#include "comun/i_jugador.h"
+#include "comun/i_modelo.h"
 #include "servidor/cliente.h"
 
 namespace servidor {
 
-using namespace conexion;
+
 
 class ConexionJugador : public IJugador {
 public:
@@ -26,6 +26,7 @@ public:
      * \brief Devuelve la casa a la que pertenece el jugador.
      */
     virtual const std::string& obtener_casa() const;
+    void set_casa(const std::string& casa_);
     
     /**
      * \brief Devuelve el nombre del jugador.
@@ -35,7 +36,9 @@ public:
     /**
      * \brief Envia los datos de inicialización al cliente
      */
-    virtual void inicializar(const nlohmann::json& mapa,
+    virtual void inicializar(
+        int id,
+        const nlohmann::json& mapa,
         const nlohmann::json& infraestructura,
         const nlohmann::json& ejercito);
 
@@ -258,7 +261,7 @@ public:
      * 
      * Luego de enviarse este evento se cerrará la conexión.
      */
-    virtual void juego_terminado(int id_ganador);
+    virtual void juego_terminado(const std::string& nombre_ganador);
 
     void set_estado(bool listo_);
     bool esta_listo() const;

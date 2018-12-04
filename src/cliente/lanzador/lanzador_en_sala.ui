@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LanzadorEnSala</class>
+ <widget class="QWidget" name="LanzadorEnSala">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>845</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>845</width>
+    <height>500</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Dune Remake</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#contenedorJugadores, QTextEdit, QLineEdit {
+ background: rgba(34, 34, 34, 210);
+ color: white;
+}
+
+QLineEdit {
+ padding: 3px;
+ border: 1px solid white;
+}
+
+QRadioButton {
+ font-weight: 800;
+ font-size: 24px;
+ color: white;
+}
+
+QLabel {
+ color: white;
+}
+
+QPushButton:pressed {
+    background-color: #111;
+    color: white;
+}
+QPushButton {
+     background-color: #222; border: 1px solid white;
+     border-radius: 5px;
+     color: white;
+}
+
+QPushButton:disabled {
+    background-color: rgb(170, 170, 127);
+    color: white;
+}
+
+QCheckBox::indicator:checked {
+	image: url(:/imgs/nuevos/check-square-solid.svg);
+	height: 32px;
+    width: 32px;
+}
+
+QCheckBox::indicator:unchecked {
+	image: url(:/imgs/nuevos/square-solid.svg);
+	height: 32px;
+    width: 32px;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="wxContenedor" native="true">
+     <property name="styleSheet">
+      <string notr="true">QWidget#wxContenedor{
+        background-repeat: none;
+        background-position: center;
+        background-image: url(:/imgs/nuevos/harkonnen.png);
+        background-color: #550000;
+}</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+       <widget class="QLabel" name="lblNombreSala">
+        <property name="styleSheet">
+         <string notr="true">QLabel#lblNombreSala {
+ font-size: 36px;
+}</string>
+        </property>
+        <property name="text">
+         <string>SALA: Machbeer Learning</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="horizontalWidget_5" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>70</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QWidget" name="horizontalWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>3</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QWidget" name="verticalWidget" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>4</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>130</width>
+                <height>0</height>
+               </size>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <item alignment="Qt::AlignHCenter|Qt::AlignTop">
+                <widget class="QLabel" name="lblNombreJugador">
+                 <property name="styleSheet">
+                  <string notr="true">font-size: 18px;
+font-weight: 800;</string>
+                 </property>
+                 <property name="text">
+                  <string>LUCHO</string>
+                 </property>
+                </widget>
+               </item>
+               <item alignment="Qt::AlignHCenter">
+                <widget class="QLabel" name="lblJugandoCon">
+                 <property name="text">
+                  <string>JUGANDO CON: HARKONNEN</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QWidget" name="verticalWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>4</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QPushButton" name="btnOrdos">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>ORDOS</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../../data/rc-cliente/recursos.qrc">
+                  <normaloff>:/imgs/nuevos/ordos.png</normaloff>:/imgs/nuevos/ordos.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>45</width>
+                  <height>64</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnAtreides">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>ATREIDES</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../../data/rc-cliente/recursos.qrc">
+                  <normaloff>:/imgs/nuevos/atreides.png</normaloff>:/imgs/nuevos/atreides.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>45</width>
+                  <height>64</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnHarkonnen">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>HARKONNEN</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../../data/rc-cliente/recursos.qrc">
+                  <normaloff>:/imgs/nuevos/harkonnen.png</normaloff>:/imgs/nuevos/harkonnen.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>45</width>
+                  <height>64</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="contenedorJugadores" native="true">
+        <property name="styleSheet">
+         <string notr="true">QLabel {
+ background-color: rgba(127, 127, 127, 127);
+}
+
+QFrame {
+ background-repeat:none;
+ background-position: center;
+}
+
+QCheckBox {
+ background-color: green;
+ border-radius: 5px;
+}</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <layout class="QHBoxLayout" name="wxJugadores">
+           <item>
+            <widget class="QPushButton" name="btnActualizarJugadores">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>50</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>ACTUALIZAR</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>100</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QFrame" name="baseFrame">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QFrame#baseFrame {
+ background: url(:/imgs/nuevos/harkonnen.png);
+ background-position: center;
+}</string>
+             </property>
+             <widget class="QFrame" name="frmCbListo">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>64</y>
+                <width>100</width>
+                <height>34</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>34</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>34</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <widget class="QCheckBox" name="cbJugListo">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="geometry">
+                <rect>
+                 <x>34</x>
+                 <y>0</y>
+                 <width>32</width>
+                 <height>32</height>
+                </rect>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </widget>
+             <widget class="QWidget" name="verticalWidget_3" native="true">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>100</width>
+                <height>64</height>
+               </rect>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item alignment="Qt::AlignTop">
+                <widget class="QLabel" name="lblNombreJugRemoto">
+                 <property name="text">
+                  <string>MATI</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignHCenter|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="horizontalWidget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QFrame" name="frame_4">
+           <property name="minimumSize">
+            <size>
+             <width>430</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>430</width>
+             <height>90</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QCheckBox {
+ background-color:white;
+ border-radius: 5px;
+}</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <widget class="QCheckBox" name="cbPantallaCompleta">
+            <property name="geometry">
+             <rect>
+              <x>50</x>
+              <y>40</y>
+              <width>32</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_11">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>0</y>
+              <width>91</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>PANTALLA COMPLETA</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_12">
+            <property name="geometry">
+             <rect>
+              <x>120</x>
+              <y>0</y>
+              <width>91</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>VSYNC</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="cbVsync">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>40</y>
+              <width>32</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="cbSFX">
+            <property name="geometry">
+             <rect>
+              <x>250</x>
+              <y>40</y>
+              <width>32</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_13">
+            <property name="geometry">
+             <rect>
+              <x>220</x>
+              <y>0</y>
+              <width>91</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>SONIDO</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="cbMusica">
+            <property name="geometry">
+             <rect>
+              <x>360</x>
+              <y>40</y>
+              <width>32</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_14">
+            <property name="geometry">
+             <rect>
+              <x>330</x>
+              <y>0</y>
+              <width>91</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>MUSICA</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnIniciarJuego">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>190</width>
+             <height>60</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>190</width>
+             <height>60</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>INICIAR JUEGO</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../../data/rc-cliente/recursos.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -9,17 +9,17 @@
 
 #include "libs/json.hpp"
 
-#include "conexion/conexion.h"
-#include "conexion/i_modelo.h"
+#include "comun/conexion.h"
+#include "comun/i_modelo.h"
 #include "servidor/cliente.h"
 #include "servidor/conexion_jugador.h"
-#include "servidor/cola_protegida.h"
+#include "comun/cola_protegida.h"
 
 namespace servidor {
 
 class Sala {
 public:
-    Sala(const std::string& nombre_, size_t capacidad_maxima);
+    Sala(const std::string& nombre_, size_t capacidad_maxima, IModelo* juego);
 
     /**
      * \brief Constructor por movimiento
@@ -80,6 +80,16 @@ public:
      */
     int cantidad_jugadores_conectados();
 
+    /**
+     * \brief Setea la casa del cliente.
+     */
+    bool set_casa_cliente(Cliente& cliente, const std::string& casa);
+
+    /**
+     * \brief Envía al cliente la lista de jugadores conectados.
+     */
+    void listar_jugadores(Cliente& cliente);
+
     ~Sala();
 
 private:
@@ -92,16 +102,16 @@ private:
 
     std::unordered_map<int, ConexionJugador*> jugadores;
     std::unordered_map<Cliente*, ConexionJugador> clientes;
+    
+    bool sala_abierta = true;
+    
     int ultimo_id = 0;
     
     bool partida_iniciada = false;
 
     bool terminar;
-    const int TICK_MS = 20;
 
     size_t capacidad = 0;
-
-    nlohmann::json mapa, edificios, ejercito;
 
     ColaProtegida<std::pair<IJugador*, nlohmann::json>> cola_eventos;
 

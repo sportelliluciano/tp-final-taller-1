@@ -1,10 +1,11 @@
 #include "cliente/modelo/hud/area_juego.h"
 
+#include "cliente/config.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/juego.h"
 #include "cliente/video/camara.h"
 #include "cliente/modelo/sprite.h"
-#include "cliente/servidor.h"
+#include "cliente/red/servidor.h"
 
 #define ANCHO_MOV_CAMARA 15
 #define ALTO_MOV_CAMARA  15 
@@ -13,26 +14,43 @@
 
 #define DESPL_EXTRA_CAMARA 16
 
+#define SPRITE_INICIAL_VENDER 3932
+#define SPRITE_FINAL_VENDER 3939
+#define SPRITE_INICIAL_MOVER_TROPA 5010
+#define SPRITE_FINAL_MOVER_TROPA 5023
+
 namespace cliente {
 
 AreaJuego::AreaJuego(Juego& juego_, Servidor& servidor_, Tostador& tostador_) 
-    : juego(juego_), ejercito(juego.obtener_ejercito()), 
-      infraestructura(juego.obtener_infraestructura()), 
-      servidor(servidor_), tostador(tostador_), 
-      mouse_vender(3932, 3939), mouse_mover_tropa(5010, 5023)
+: juego(juego_), ejercito(juego.obtener_ejercito()), 
+  infraestructura(juego.obtener_infraestructura()), 
+  servidor(servidor_), tostador(tostador_), 
+  mouse_vender(SPRITE_INICIAL_VENDER, SPRITE_FINAL_VENDER), 
+  mouse_mover_tropa(SPRITE_INICIAL_MOVER_TROPA, SPRITE_FINAL_MOVER_TROPA)
 { 
     mouse_vender.configurar_repeticion(true);
+    
     mouse_mover_tropa.set_centrado(true);
-    mouse_atacar = SpriteAnimado({Sprite("./assets/nuevos/atacar.png")}, 1);
+    
+    mouse_atacar = SpriteAnimado({Sprite(RUTA_IMAGENES "/atacar.png")}, 1);
     mouse_atacar.configurar_repeticion(true);
 }
-    
-int AreaJuego::obtener_alto() const {
-    return alto;
+
+void AreaJuego::centrar_camara() {
+    Posicion centro = juego.obtener_centro();
+    Posicion centro_camara(
+        centro.x - (camara.obtener_vista().ancho() / 2),
+        centro.y - (camara.obtener_vista().alto() / 2)
+    );
+    camara.mover_camara(centro_camara);
 }
 
-int AreaJuego::obtener_ancho() const {
-    return ancho;
+void AreaJuego::set_modo_vender(bool habilitado) {
+    en_modo_vender = habilitado;
+    if (habilitado)
+        sprite_mouse = &mouse_vender;
+    else
+        sprite_mouse = nullptr;
 }
 
 void AreaJuego::set_tamanio(int ancho_, int alto_) {
@@ -41,6 +59,10 @@ void AreaJuego::set_tamanio(int ancho_, int alto_) {
     camara = Camara(ancho, alto, 
         juego.obtener_terreno().obtener_ancho_px() + DESPL_EXTRA_CAMARA - ancho,
         juego.obtener_terreno().obtener_alto_px() + DESPL_EXTRA_CAMARA - alto);
+}
+
+void AreaJuego::ubicar_edificio(const Edificio* edificio) {
+    edificio_a_ubicar = edificio;
 }
 
 void AreaJuego::renderizar(Ventana& ventana, const Posicion& punto) {
@@ -53,51 +75,11 @@ void AreaJuego::renderizar(Ventana& ventana, const Posicion& punto) {
 
     juego.renderizar(ventana, camara);
 
-    if (esta_draggeando) {
-        ventana.dibujar_rectangulo(drag_start.x, drag_start.y,
-            drag_end.x, drag_end.y, 3);
-    }
-
-    if (edificio_a_ubicar) {
-        int celda_x, celda_y;
-        Terreno& terreno = juego.obtener_terreno();
-        terreno.obtener_celda(camara.traducir_a_logica(mouse), celda_x, celda_y);
-
-        for (int cx = 0; cx < edificio_a_ubicar->obtener_ancho_celdas(); cx++) {
-            for (int cy = 0; cy < edificio_a_ubicar->obtener_alto_celdas(); cy++) {
-                Posicion visual = camara.traducir_a_visual(
-                    terreno.obtener_posicion(celda_x + cx, celda_y + cy));
-                if (terreno.es_construible(celda_x + cx, celda_y + cy)) {
-                    Sprite(0).renderizar(ventana, visual.x, visual.y);
-                } else {
-                    Sprite(1).renderizar(ventana, visual.x, visual.y);
-                }
-            }
-        }
-    }
-
-    if (mouse_en_ventana) {
-        if (sprite_mouse) {
-            ventana.ocultar_mouse();
-            sprite_mouse->renderizar(ventana, mouse.x, mouse.y);
-            if (sprite_mouse->finalizado())
-                sprite_mouse = nullptr;
-        } else {
-            ventana.mostrar_mouse();
-        }
-    } else {
-        ventana.mostrar_mouse();
-    }
+    renderizar_rectangulo_seleccion(ventana);
+    renderizar_edificio_ubicando(ventana);
+    renderizar_cursor(ventana);
     
     ventana.reestablecer_viewport();
-}
-
-void AreaJuego::set_modo_vender(bool habilitado) {
-    en_modo_vender = habilitado;
-    if (habilitado)
-        sprite_mouse = &mouse_vender;
-    else
-        sprite_mouse = nullptr;
 }
 
 bool AreaJuego::seleccionar_edificio(const Posicion& punto) {
@@ -270,6 +252,14 @@ bool AreaJuego::mouse_movimiento(const Posicion& punto) {
     return false;
 }
 
+bool AreaJuego::mouse_fin_arrastre(const Posicion& punto) {
+    drag_end = punto;
+    esta_draggeando = false;
+    seleccionar_tropas(drag_start.x, drag_start.y, drag_end.x, drag_end.y);
+    deseleccionar_edificio();
+    return false;
+}
+
 bool AreaJuego::mouse_entra(const Posicion&) {
     mover_camara_x = mover_camara_y = 0;
     mouse_en_ventana = true;
@@ -280,14 +270,6 @@ bool AreaJuego::mouse_sale(const Posicion&) {
     mover_camara_x = mover_camara_y = 0;
     mouse_en_ventana = false;
     esta_draggeando = false;
-    return false;
-}
-
-bool AreaJuego::mouse_fin_arrastre(const Posicion& punto) {
-    drag_end = punto;
-    esta_draggeando = false;
-    seleccionar_tropas(drag_start.x, drag_start.y, drag_end.x, drag_end.y);
-    deseleccionar_edificio();
     return false;
 }
 
@@ -314,15 +296,6 @@ bool AreaJuego::teclado_presionado(tecla_t tecla) {
     return false;
 }
 
-void AreaJuego::centrar_camara() {
-    Posicion centro = juego.obtener_centro();
-    Posicion centro_camara(
-        centro.x - (camara.obtener_vista().ancho() / 2),
-        centro.y - (camara.obtener_vista().alto() / 2)
-    );
-    camara.mover_camara(centro_camara);
-}
-
 bool AreaJuego::teclado_suelto(tecla_t tecla) {
     switch(tecla) {
         case TECLA_ABAJO:
@@ -345,8 +318,51 @@ bool AreaJuego::teclado_suelto(tecla_t tecla) {
     return false;
 }
 
-void AreaJuego::ubicar_edificio(const Edificio* edificio) {
-    edificio_a_ubicar = edificio;
+void AreaJuego::renderizar_edificio_ubicando(Ventana& ventana) {
+    if (!edificio_a_ubicar)
+        return;
+    int celda_x, celda_y;
+    Terreno& terreno = juego.obtener_terreno();
+    terreno.obtener_celda(camara.traducir_a_logica(mouse), celda_x, celda_y);
+
+    for (int cx = 0; cx < edificio_a_ubicar->obtener_ancho_celdas(); cx++) {
+        for (int cy = 0; cy < edificio_a_ubicar->obtener_alto_celdas(); cy++) {
+            Posicion visual = camara.traducir_a_visual(
+                terreno.obtener_posicion(celda_x + cx, celda_y + cy));
+            if (terreno.es_construible(celda_x + cx, celda_y + cy)) {
+                Sprite(0).renderizar(ventana, visual.x, visual.y);
+            } else {
+                Sprite(1).renderizar(ventana, visual.x, visual.y);
+            }
+        }
+    }
+}
+
+void AreaJuego::renderizar_cursor(Ventana& ventana) {
+    if (!mouse_en_ventana || !sprite_mouse) {
+        ventana.mostrar_mouse();
+    } else {
+        ventana.ocultar_mouse();
+        sprite_mouse->renderizar(ventana, mouse.x, mouse.y);
+        if (sprite_mouse->finalizado())
+            sprite_mouse = nullptr;   
+    }
+}
+
+void AreaJuego::renderizar_rectangulo_seleccion(Ventana& ventana) {
+    if (!esta_draggeando)
+        return;
+    
+    ventana.dibujar_rectangulo(drag_start.x, drag_start.y,
+        drag_end.x, drag_end.y, COLOR_AZUL);
+}
+
+int AreaJuego::obtener_alto() const {
+    return alto;
+}
+
+int AreaJuego::obtener_ancho() const {
+    return ancho;
 }
 
 } // namespace cliente

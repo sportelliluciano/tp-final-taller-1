@@ -14,14 +14,19 @@
 #include "modelo/infraestructura.h"
 #include "modelo/ejercito.h"
 #include "modelo/terreno.h"
-#include "conexion/i_jugador.h"
-#include "conexion/i_modelo.h"
+#include "comun/i_jugador.h"
+#include "comun/i_modelo.h"
 #include "modelo/broadcaster.h"
 
 namespace modelo {
-
+/**
+ * \brief Juego. 
+ * Implementa la interfaz IModelo usada para comunicar al
+ * modelo con la conexion.
+ */
 class Juego : public IModelo {
     private:
+    const nlohmann::json *json_mapa, *json_edificios, *json_ejercitos;
     Broadcaster comunicacion_jugadores;
     Terreno terreno;
     Infraestructura inf;
@@ -33,6 +38,7 @@ class Juego : public IModelo {
     bool empezo = false;
     void actualizar_construcciones(int dt);
     void actualizar_tropas(int dt);
+    std::vector<std::string> tropas_a_construir;
 
 public:
     /**** Métodos de interacción con el servidor. ****/
@@ -44,6 +50,8 @@ public:
     void crear_jugador(IJugador* jugador) override;
     
     void iniciar_partida() override;
+
+    bool esperar_sincronizacion_inicial() override;
 
     void actualizar(int dt_ms);
     
@@ -65,7 +73,7 @@ public:
     void ubicar_edificio(IJugador* jugador, int celda_x, int celda_y,
         const std::string& clase);
 
-    void vender_edificio(IJugador* jugador, int id_edificio); //sin implementar
+    void vender_edificio(IJugador* jugador, int id_edificio);
     
     void iniciar_entrenamiento_tropa(IJugador* jugador,
         const std::string& clase);
@@ -77,16 +85,22 @@ public:
         int x, int y);
 
     void atacar(IJugador* jugador, 
-        const std::unordered_set<int>& ids_atacantes, int id_atacado); //le falta
+        const std::unordered_set<int>& ids_atacantes, int id_atacado);
     
     void indicar_especia_cosechadora(IJugador* jugador,
-        const std::unordered_set<int>& ids, int celda_x, int celda_y) override; //sin implementa
+        const std::unordered_set<int>& ids, int celda_x,
+        int celda_y) override;
 
     /*** Otros métodos ****/
     void destruir_unidad(int id_jugador,int id);
+
     void atacar_unidad(int id_jugador,int id_victima,int id_atacante);
+
     void atacar_edificio(int id_jugador,int id_edificio,int id_atacante);
+    
     Unidad& get_unidad(int id);
 };
-}
-#endif
+
+} // namespace modelo
+
+#endif // _JUEGO_H_

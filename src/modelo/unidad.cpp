@@ -1,6 +1,9 @@
 #include "modelo/unidad.h"
 
 #include <iostream>
+#include <utility>
+#include <vector>
+#include <string>
 
 #include "libs/json.hpp"
 
@@ -23,7 +26,6 @@ Unidad::Unidad(int id_, int x, int y, UnidadBase& unidad_base_):
     //se le asigna un id unico
 }
 Unidad::~Unidad() {
-
 }
 //false = muerto ,true= vivo
 int Unidad::recibir_dano(unsigned int dano){
@@ -32,21 +34,28 @@ int Unidad::recibir_dano(unsigned int dano){
 }
 
 int Unidad::atacar(Atacable* victima_){
+    if (posicion.distancia_celda_a(victima_->get_posicion(),
+            victima_->get_dimensiones())>unidad_base.get_rango())
+        throw std::runtime_error("Fuera de rango");
     return unidad_base.atacar_a(victima_);
 }
 
 int Unidad::get_id(){
     return id;
 }
+
 unsigned int Unidad::get_vida(){
     return vida;
 }
+
 std::pair<int,int>& Unidad::get_dimensiones() {
     return unidad_base.get_dimensiones();
 }
+
 Posicion& Unidad::get_posicion(){
     return posicion;
 }
+
 void Unidad::configurar_camino(const std::vector<Posicion>& nuevo_camino) {
     camino = nuevo_camino;
     paso_actual = 0;
@@ -60,12 +69,10 @@ bool Unidad::en_movimiento() const {
 bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
     if (!esta_en_camino)
         return false;
-    
     bool resincronizar = false;
     if (posicion == camino[paso_actual]) {
         resincronizar = true;
         paso_actual++;
-
         if (paso_actual >= camino.size()) {
             esta_en_camino = false;
             paso_actual = 0;
@@ -112,18 +119,20 @@ bool Unidad::actualizar_posicion(int dt, Terreno* terreno) {
     posicion.actualizar_px_x(fx_actual);
     posicion.actualizar_px_y(fy_actual);
     terreno->agregar_tropa(posicion,unidad_base.get_dimensiones());
-    
     return resincronizar;
 }
 
-void Unidad::configurar_ataque(Atacable* victima_){
+bool Unidad::configurar_ataque(Atacable* victima_){
+    if (posicion.distancia_celda_a(victima_->get_posicion(),
+            victima_->get_dimensiones())>unidad_base.get_rango())
+        return false;
     victima = victima_;
     atacando = true;
     tiempo_para_atacar = 0;
     id_victima_ = victima->get_id();
+    return true;
 }
 
-//NOTA: aca se puede chequear el rango
 int Unidad::actualizar_ataque(int dt, Terreno* terreno) {
     tiempo_para_atacar+=dt;
     if (!victima) return 0;//esta muerta
@@ -136,17 +145,19 @@ int Unidad::actualizar_ataque(int dt, Terreno* terreno) {
 std::string& Unidad::get_clase() const {
     return unidad_base.get_clase();
 }
+
 bool Unidad::esta_atacando(){
     return atacando;
 }
+
 void Unidad::parar_ataque(){
     atacando = false;
     victima = nullptr;
     tiempo_para_atacar=0;
     id_victima_ = -1;
 }
+
 int Unidad::id_victima(){
-    return id_victima_ ;
+    return id_victima_;
 }
 }  // namespace modelo
-

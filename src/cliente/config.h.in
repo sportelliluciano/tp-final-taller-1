@@ -1,0 +1,27 @@
+#ifndef _CLIENTE_CONFIG_H_
+#define _CLIENTE_CONFIG_H_
+/**
+ * Este archivo define distintas configuraciones que dependen de la ruta
+ * de instalación y son completadas por CMake automágicamente.
+ */
+
+/**
+ * Ruta completa a la carpeta donde están los assets.
+ */
+#define RUTA_BASE_ASSETS "@ASSETS_DIR@"
+
+/**
+ * Rutas completas a las carpetas donde se encuentran los distintos tipos
+ * de assets: sonidos, imágenes del HUD, terrenos y sprites
+ */
+#define RUTA_SONIDOS  RUTA_BASE_ASSETS "/sonidos"
+#define RUTA_IMAGENES RUTA_BASE_ASSETS "/imagenes"
+#define RUTA_TERRENOS RUTA_BASE_ASSETS "/terrenos"
+#define RUTA_SPRITES  RUTA_BASE_ASSETS "/sprites"
+
+/**
+ * Ruta completa a la fuente que utilizará el cliente.
+ */
+#define RUTA_FUENTE   RUTA_BASE_ASSETS "/fuente.ttf"
+
+#endif // _CLIENTE_CONFIG_H_

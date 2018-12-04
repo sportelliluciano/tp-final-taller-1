@@ -22,11 +22,24 @@ public:
      * 
      * id_jugador_actual es el identificador del servidor del jugador actual.
      */
-    Juego(int id_jugador_actual_, 
-        const std::string& casa_jugador_actual,
-        const nlohmann::json& mapa,
-        const nlohmann::json& edificios,
-        const nlohmann::json& ejercito);
+    Juego(const std::string& casa_jugador_actual);
+
+    void inicializar(int id_jugador, const nlohmann::json& edificios, 
+       const nlohmann::json& ejercitos, const nlohmann::json& mapa);
+
+    void crear_jugador(int id_jugador, const std::string& nombre, 
+        const std::string& casa);
+    
+    void indicar_jugador_listo(int id_jugador);
+
+    void sincronizar_inicio();
+
+    /**
+     * \brief Devuelve true si el juego terminó correctamente 
+     */
+    bool termino_correctamente() const;
+
+    const std::string& obtener_ganador() const;
 
     /**
      * \brief Devuelve true si el juego terminó.
@@ -89,6 +102,17 @@ public:
      */
     Ejercito& obtener_ejercito();
 
+    /**
+     * \brief Devuelve true si el servidor ya indicó que se sincronizó el
+     *        inicio.
+     */
+    bool inicio_sincronizado() const;
+
+    /**
+     * \brief Devuelve true si ya se recibió el comando de inicialización del
+     *        servidor.
+     */
+    bool inicializacion_completa() const;
 
     /***** Eventos recibidos desde el servidor *****/
 
@@ -108,19 +132,26 @@ public:
     void mostrar_gusano(int x, int y);
 
     /**
+     * \brief Indica que terminó el juego
+     */
+    void terminar(const std::string& nombre_ganador);
+
+    /**
      * \brief Destructor.
      */
     ~Juego();
 
 private:
-    Terreno terreno;
-    GusanoArena gusano;
-    Infraestructura infraestructura;
-    Ejercito ejercito;
+    Terreno* terreno;
+    GusanoArena* gusano;
+    Infraestructura* infraestructura;
+    Ejercito* ejercito;
     bool esta_jugando;
+    bool termino_ok = false;
     int dinero = 0, energia = 0;
-    int id_jugador_actual;
     std::string casa;
+    bool sincronizado = false, inicializado = false;
+    std::string ganador = "-";
 };
 
 } // namespace cliente

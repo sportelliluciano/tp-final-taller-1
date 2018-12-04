@@ -6,8 +6,10 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include "servidor/admin_mapas.h"
 #include "servidor/cliente.h"
 #include "servidor/sala.h"
+#include "servidor/procesador_configuracion.h"
 
 namespace servidor {
 
@@ -17,7 +19,7 @@ namespace servidor {
  */
 class Lobby {
 public:
-    Lobby() = default;
+    Lobby(const ProcesadorConfiguracion& configuracion);
 
     /**
      * \brief Agrega un nuevo cliente al lobby.
@@ -44,6 +46,10 @@ public:
     void detener_todo();
 
 private:
+    AdminMapas administrador_mapas;
+    const nlohmann::json& data_edificios;
+    const nlohmann::json& data_ejercitos;
+
     /**
      * \brief Indica si se llamó al método detener_todo.
      */
@@ -76,6 +82,46 @@ private:
      * de cualquier cliente.
      */
     void procesar_evento(Cliente& cliente, const nlohmann::json& dato);
+
+    /**
+     * Los siguientes métodos responden a los distintos mensajes de los 
+     * clientes.
+     */
+
+    /**
+     * \brief Lista las salas disponibles en el servidor.
+     */
+    void listar_salas(Cliente& cliente);
+
+    /**
+     * \brief Lista los mapas disponibles para crear una sala.
+     */
+    void listar_mapas(Cliente& cliente);
+
+    /**
+     * \brief Une al cliente a la sala indicada.
+     */
+    bool unirse(Cliente& cliente, const std::string& nombre_sala);
+
+    /**
+     * \brief Deja la sala.
+     */
+    bool dejar_sala(Cliente& cliente);
+
+    /**
+     * \brief Crea una nueva sala con el nombre y mapa indicado.
+     */
+    bool crear_sala(Cliente& cliente, const std::string& nombre, 
+        const std::string& mapa);
+    
+    /**
+     * \brief Inicia el juego.
+     */
+    bool iniciar_juego(Cliente& cliente);
+
+    bool set_casa(Cliente& cliente, const std::string& casa);
+    bool set_nombre(Cliente& cliente, const std::string& nombre);
+    void listar_jugadores(Cliente& cliente);
 };
 
 } // namespace servidor

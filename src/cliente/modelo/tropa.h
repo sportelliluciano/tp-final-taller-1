@@ -8,7 +8,7 @@
 
 #include "libs/json.hpp"
 
-#include "cliente/modelo/disparo.h"
+#include "cliente/modelo/disparo_proyectil.h"
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/modelo/hud/barra_vida.h"
 #include "cliente/video/camara.h"
@@ -94,9 +94,7 @@ public:
     /**
      * \brief Muestra la animación de ataque en dirección a la posición.
      * 
-     * La posición de destino no se modificará pero se utilizará para seguir
-     * el objetivo en caso de ser necesaria por lo cual debe permanecer válida
-     * luego de haberse llamado el método.
+     * La posición de destino se utiliza para que los misiles sigan al objetivo.
      */
     void atacar(int id_victima, int x_victima, int y_victima);
 
@@ -188,6 +186,8 @@ public:
      */
     float obtener_tiempo_entrenamiento() const;
 
+    ~Tropa();
+
 private:
     Posicion pos_actual;
     Posicion pos_destino;
@@ -215,7 +215,7 @@ private:
     SpriteAnimado sprite_disparo;
     SpriteAnimado sprite_descarga;
 
-    Disparo* disparo = nullptr;
+    DisparoProyectil* disparo = nullptr;
     
     /**
      * \brief Orientación de la tropa según hacia donde mire la tropa.
@@ -253,6 +253,8 @@ private:
     void cargar_sprites_tropa(int sprite_base);
     void cargar_sprites_vehiculo(int sprite_base);
     SpriteAnimado& obtener_sprite();
+
+    std::string id_disparo;
 };
 
 } // namespace cliente

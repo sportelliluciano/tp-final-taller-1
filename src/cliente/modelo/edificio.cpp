@@ -7,6 +7,7 @@
 
 #include "libs/json.hpp"
 
+#include "cliente/config.h"
 #include "cliente/modelo/celda.h"
 #include "cliente/video/ventana.h"
 
@@ -55,6 +56,15 @@ Edificio::Edificio(const nlohmann::json& data_edificio) {
     }
 }
 
+void Edificio::actualizar(int dt_ms) {
+    if (esta_destruido) {
+        sprite_destruccion.actualizar(dt_ms);
+    } else if (!esta_construido) {
+        sprite_construccion.actualizar(dt_ms);
+        esta_construido = sprite_construccion.finalizado();
+    }
+}
+
 void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
     if (!esta_vivo())
         return;
@@ -74,7 +84,7 @@ void Edificio::renderizar(Ventana& ventana, int x_px, int y_px) {
         if (marcado) {
             ventana
                 .obtener_administrador_texturas()
-                .cargar_imagen("./assets/nuevos/seleccion-edificio.png")
+                .cargar_imagen(RUTA_IMAGENES "/seleccion-edificio.png")
                 .renderizar(x_px + sprite.obtener_ancho(ventana) / 2, y_px);
         }
         barra_vida.set_ancho(ANCHO_BARRA_VIDA);

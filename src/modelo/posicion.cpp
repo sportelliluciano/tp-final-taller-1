@@ -1,6 +1,8 @@
 #include "modelo/posicion.h"
 
 #include <cmath>
+#include <limits>
+#include <utility>
 
 namespace modelo {
 
@@ -26,8 +28,37 @@ bool Posicion::operator!=(const Posicion& otro) const {
     return !operator==(otro);
 }
 
-float Posicion::distancia_a(const Posicion& otro) const {
+int Posicion::distancia_celda_a(const Posicion& otro,
+                                std::pair<int,int>& dimension) const {
     float delta_x, delta_y;
+    float distancia_minima = std::numeric_limits<float>::infinity();
+    int alto = dimension.first;
+    int ancho = dimension.second;
+    for (int j = otro.y(); j< otro.y()+alto; j++){
+        if (j == otro.y()||j==otro.y()+(alto-1)){
+            for (int i = otro.x(); i<otro.x()+ancho; i++){
+                delta_x = this->x() - i;
+                delta_y = this->y() - j;
+                float distancia = sqrt((delta_x*delta_x)+(delta_y*delta_y));
+                if (distancia < distancia_minima)
+                    distancia_minima = distancia;        
+            }
+        }
+        delta_x = this->x() - otro.x();
+        delta_y = this->y() - j;
+        float distancia = sqrt((delta_x * delta_x) + (delta_y * delta_y));
+        if (distancia < distancia_minima)
+            distancia_minima = distancia;
+        delta_x = this->x() - (otro.x()+(ancho-1));
+        delta_y = this->y() - j;
+        distancia = sqrt((delta_x * delta_x) + (delta_y * delta_y));
+        if (distancia < distancia_minima)
+            distancia_minima = distancia;
+    }
+    return distancia_minima;
+}
+float Posicion::distancia_a(const Posicion& otro) const{
+    int delta_x, delta_y;
     delta_x = x_ - otro.x_;
     delta_y = y_ - otro.y_;
     return sqrt((delta_x * delta_x) + (delta_y * delta_y));

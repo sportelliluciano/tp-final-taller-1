@@ -1,7 +1,5 @@
 #include "cliente/modelo/hud/boton.h"
 
-#include <iostream>
-
 #include "cliente/modelo/sprite.h"
 #include "cliente/video/ventana.h"
 
@@ -11,89 +9,28 @@
 namespace cliente {
 
 Boton::Boton()
-    : imagen(nullptr), sprite(0), boton(0, 0, ANCHO_DEF, ALTO_DEF)
+: imagen(nullptr), boton(0, 0, ANCHO_DEF, ALTO_DEF)
 { }
-
-Boton::Boton(int sprite_id)
-    : sprite(sprite_id), boton(0, 0, ANCHO_DEF, ALTO_DEF)
-{ }
-
-void Boton::set_sprite(int sprite_id) {
-    sprite = sprite_id;
-    imagen = nullptr;
-}
 
 void Boton::set_imagen(const char *img) {
-    sprite = -1;
     imagen = img;
-}
-
-void Boton::registrar_click(std::function<void(void)> callback) {
-    cb_click = callback;
 }
 
 void Boton::set_tamanio(int ancho, int alto) {
     boton = Rectangulo(0, 0, ancho, alto);
 }
 
-void Boton::autoresize(bool activar) {
-    autoresize_activo = activar;
-}
-
-void Boton::renderizar(Ventana& ventana, const Posicion& punto) {
-    if (sprite != -1) {
-        const Textura& t = Sprite(sprite).obtener_textura(ventana);
-        if (autoresize_activo)
-            boton = t.obtener_rect();
-        t.renderizar(punto.x, punto.y, boton, t.obtener_rect());
-    } else if (imagen != nullptr) {
-        const Textura& t = 
-            ventana.obtener_administrador_texturas().cargar_imagen(imagen);
-        if (autoresize_activo)
-            boton = t.obtener_rect();
-        
-        Rectangulo seccion(0, 0, t.obtener_ancho(), t.obtener_alto());
-        Rectangulo destino = boton;
-
-        int h_boton = boton.alto();
-        int w_boton = boton.ancho();
-        float relacion_boton = h_boton / (1.0f * w_boton);
-        int h_img = t.obtener_alto();
-        int w_img = t.obtener_ancho();
-        float relacion_img = h_img / (1.0f * w_img);
-
-        if (relacion_boton < relacion_img) {
-            // 2x1 < 1x2
-            //  __   _
-            // |__| | |
-            //      |_|
-            w_img = w_img * (h_boton / (1.0f * h_img));
-            h_img = h_boton;
-        } else {
-            h_img = h_img * (w_boton / (1.0f * w_img));
-            w_img = w_boton;
-        }
-
-        destino.ancho(w_img);
-        destino.alto(h_img);
-
-        if (autopadding) {
-            padding_x = (boton.ancho() - w_img) / 2;
-            padding_y = (boton.alto() - h_img) / 2;
-        }
-
-        t.renderizar(punto.x + padding_x, punto.y + padding_y, 
-            seccion, destino);
-    }
-}
-
-void Boton::set_autopadding(bool activar) {
-    autopadding = activar;
-}
-
 void Boton::set_padding(int x, int y) {
     padding_x = x;
     padding_y = y;
+}
+
+void Boton::centrar_imagen(bool activar) {
+    autopadding = activar;
+}
+
+void Boton::registrar_click(std::function<void(void)> callback) {
+    cb_click = callback;
 }
 
 int Boton::obtener_alto() const {
@@ -102,6 +39,48 @@ int Boton::obtener_alto() const {
 
 int Boton::obtener_ancho() const {
     return boton.ancho();
+}
+
+static Rectangulo escalar_rectangulo(const Rectangulo& original, 
+    const Rectangulo& destino) 
+{
+    Rectangulo escalado = destino;
+
+    float relacion_original = original.alto() / (float)original.ancho();
+    float relacion_destino = destino.alto() / (float)destino.ancho();
+    
+    if (relacion_destino < relacion_original) {
+        // 2x1 < 1x2
+        //  __   _
+        // |__| | |
+        //      |_|
+        escalado.ancho(original.ancho() * (destino.alto() / 
+            (float)original.alto()));
+    } else {
+        escalado.alto(original.alto() * (destino.ancho() / 
+            (float)original.ancho()));
+    }
+
+    return escalado;
+}
+
+void Boton::renderizar(Ventana& ventana, const Posicion& punto) {
+    if (!imagen)
+        return;
+    
+    const Textura& textura_imagen = 
+        ventana.obtener_administrador_texturas().cargar_imagen(imagen);
+
+    Rectangulo destino = escalar_rectangulo(textura_imagen.obtener_rect(), 
+        boton);
+
+    if (autopadding) {
+        padding_x = (boton.ancho() - destino.ancho()) / 2;
+        padding_y = (boton.alto() - destino.alto()) / 2;
+    }
+
+    textura_imagen.renderizar(punto.x + padding_x, punto.y + padding_y, 
+        textura_imagen.obtener_rect(), destino);
 }
 
 bool Boton::mouse_click_izquierdo(const Posicion&) {

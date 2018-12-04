@@ -1,7 +1,7 @@
 #ifndef _CLIENTE_JUEGO_H_
 #define _CLIENTE_JUEGO_H_
 
-#include "cliente/partida.h"
+#include "cliente/red/partida.h"
 
 namespace cliente {
 
@@ -35,6 +35,7 @@ public:
 private:
     Partida partida;
     bool corriendo = false;
+    std::string ganador = "-";
 
     /**
      * \brief Ejecuta el lanzador del juego para realizar las configuraciones
@@ -56,6 +57,11 @@ private:
      * true en caso de haber terminado el juego sin errores.
      */
     bool ejecutar_juego();
+
+    /**
+     * \brief Muestra la ventana con el ganador del juego.
+     */
+    bool mostrar_ganador(int argc, char *argv[]);
 };
 
 } // namespace cliente

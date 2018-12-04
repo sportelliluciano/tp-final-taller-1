@@ -9,13 +9,13 @@ Este informe está hecho a partir del commit 777099a7
 * **Informe**: El informe (el del trabajo, no esta devolución) tiene que estar divido en 3: *informe técnico*, *informe general del proyecto* y *manual de usuario*.
 El informe entregado corresponde más al informe general, faltaría uno con una descripción más técnica, donde explique, por ejemplo, las clases desarrolladas, la relación entre ellas, como interactúan los distintos objetos entre sí, cómo se sincronizan, etc. El manual de usuario es para el usuario que quiera jugar al juego. Debería explicar cómo se instala, cómo se inicia, cómo crear partidas, cómo se juega, etc.
 
-* **Instalador**: falta script de instalación. Utilizar algún mecanismo que me permita instalar el juego en el sistema o en alguna carpeta de preferencia del usuario. Puede ser propio, o puede ser utilizando la directiva `install` de CMake (en este caso se recomienda hacer uso de la variable `CMAKE_INSTALL_PREFIX`).
+* [Corregido] ~~**Instalador**: falta script de instalación. Utilizar algún mecanismo que me permita instalar el juego en el sistema o en alguna carpeta de preferencia del usuario. Puede ser propio, o puede ser utilizando la directiva `install` de CMake (en este caso se recomienda hacer uso de la variable `CMAKE_INSTALL_PREFIX`).~~
 
-* **Repositorio**: Limpiar archivos no usados (carpeta draft, mock-sv, data)
+* [Corregido] ~~**Repositorio**: Limpiar archivos no usados (carpeta draft, mock-sv, data)~~
 
 ### Carpetas compartidas
 
-* Clases/interfaces como `IModelo`, `IJugador`, `Lock` están en la carpeta `conexión` ¿No deberían ir a otra carpeta más general?
+* [Corregido] ~~Clases/interfaces como `IModelo`, `IJugador`, `Lock` están en la carpeta `conexión` ¿No deberían ir a otra carpeta más general?~~
 
 ### Servidor + modelo
 
@@ -29,7 +29,7 @@ El informe entregado corresponde más al informe general, faltaría uno con una 
 
 * Hay strings pasados por copia en varias clases de `modelo`
 
-* Limpiar `mati-unit-tests.cpp`, `mock_modelo.h`
+* [Corregido] ~~Limpiar `mati-unit-tests.cpp`, `mock_modelo.h`~~
 
 ### Cliente
 
@@ -37,7 +37,7 @@ El informe entregado corresponde más al informe general, faltaría uno con una 
 
 * Quitar rutas hardcodeadas de la clase `sonido.cpp`. Mover a un header con constantes o a un "archivo de configuración"
 
-* La clase `Log` se encuentra en `video`, pero clases referidas a sprites se encuentran fuera. Revisar cómo están agrupando los archivos fuente.
+* [Corregido] ~~La clase `Log` se encuentra en `video`, pero clases referidas a sprites se encuentran fuera. Revisar cómo están agrupando los archivos fuente.~~
 
 ### Editor
 

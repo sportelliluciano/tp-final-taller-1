@@ -18,18 +18,16 @@
 namespace modelo {
 
 Infraestructura::Infraestructura(Broadcaster& broadcaster,Id& id) 
-: comunicacion_jugadores(broadcaster),id_(id) 
-{
-
+: comunicacion_jugadores(broadcaster),id_(id){
 }
 
-void Infraestructura::inicializar(Terreno* mapa,const nlohmann::json& edificios_){
+void Infraestructura::inicializar(Terreno* mapa,
+        const nlohmann::json& edificios_){
     terreno = mapa;
     prototipos.inicializar(edificios_);
 }
 
 void Infraestructura::actualizar_edificios(int dt_ms) {
-
 }
 
 int Infraestructura::crear_centro_construccion(int x, int y, int id_propietario)
@@ -37,25 +35,23 @@ int Infraestructura::crear_centro_construccion(int x, int y, int id_propietario)
     int nuevo_id = id_.nuevo_id();                                           
     edificios.emplace(nuevo_id, 
         prototipos.clonar(TIPO_CENTRO_CONSTRUCCION, nuevo_id, x, y));
-    
     terreno->agregar_edificio(x, y,
         prototipos.get_dimensiones(TIPO_CENTRO_CONSTRUCCION));
-    
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->crear_edificio(
             nuevo_id,
             TIPO_CENTRO_CONSTRUCCION,
             x, y,
-            id_propietario
-        );
+            id_propietario);
     });
     return nuevo_id;   
 }
 
 int Infraestructura::crear(const std::string& id_tipo, int x, int y, 
-    int id_propietario) 
-{
-    //if (!terreno->puede_construir_edificio(x,y,prototipos.get_dimensiones(id_tipo)))return 0;//raise error;
+    int id_propietario) {
+    if (!terreno->puede_construir_edificio(x,y,
+            prototipos.get_dimensiones(id_tipo)))
+        return -1;//raise error;
     int nuevo_id = id_.nuevo_id();                                           
     edificios.emplace(nuevo_id,prototipos.clonar(id_tipo,nuevo_id,x,y));
     terreno->agregar_edificio(x,y,prototipos.get_dimensiones(id_tipo));
@@ -64,13 +60,12 @@ int Infraestructura::crear(const std::string& id_tipo, int x, int y,
             nuevo_id,
             id_tipo,
             x, y,
-            id_propietario
-        );
+            id_propietario);
     });
     return nuevo_id;
 }
+
 unsigned int Infraestructura::reciclar(int id,int id_jugador){
-    //revisar
     unsigned int energia_retorno = (edificios.at(id).get_costo())*FACTOR;
     destruir(id,id_jugador);
     return energia_retorno;
@@ -78,12 +73,19 @@ unsigned int Infraestructura::reciclar(int id,int id_jugador){
 
 void Infraestructura::destruir(int id,int id_jugador){
     Edificio& edificio = edificios.at(id);
-    terreno->eliminar_edificio(edificio.get_posicion(),edificio.get_dimensiones());
+    terreno->eliminar_edificio(edificio.get_posicion(),
+                                edificio.get_dimensiones());
     if (edificio.get_tipo()=="refineria"){
-        std::cout<< "entre al destruir de infraestructura"<<std::endl;
         terreno->eliminar_refineria(edificio.get_posicion(),id_jugador);
+    } else if (edificio.get_tipo()==TIPO_CENTRO_CONSTRUCCION){
+        if (terreno->eliminar_centro(id_jugador)==1){
+            IJugador* jugador = comunicacion_jugadores.obtener_jugador(id_jugador); 
+            comunicacion_jugadores.broadcast([&] (IJugador* j) {
+                j->juego_terminado(jugador->obtener_nombre());
+            });
+        }
     }
-    edificios.erase (id);
+    edificios.erase(id);
     comunicacion_jugadores.broadcast([&] (IJugador* j) {
         j->eliminar_edificio(id);
     });
@@ -114,11 +116,12 @@ unsigned int Infraestructura::get_tiempo(int id){
 }
 
 Posicion& Infraestructura::get_posicion(const std::string& clase) {
-    for (auto it = edificios.begin();it!=edificios.end();++it){
-        if (it-> second.get_tipo()==clase)return it->second.get_posicion();
+    for (auto it = edificios.begin(); it!=edificios.end(); ++it){
+        if (it-> second.get_tipo()==clase)
+            return it->second.get_posicion();
     }
 }
 bool Infraestructura::pertenece(int id){
     return edificios.count(id)!= 0;
 }
-}
+} // namespace modelo

@@ -1,5 +1,8 @@
 #include "modelo/edificio_base.h"
 
+#include <string>
+#include <utility>
+
 #include "libs/json.hpp"
 
 #define ID "id" 
@@ -9,11 +12,16 @@
 #define X 0
 #define Y 1
 #define PTOS_ESTRUCUTURA "puntos_estructura"
+#define TIEMPO_DE_CONSTRUCCION 5000
 
 namespace modelo {
 
-EdificioBase::EdificioBase(){}
-EdificioBase::~EdificioBase(){}
+EdificioBase::EdificioBase(){
+}
+
+EdificioBase::~EdificioBase(){
+}
+
 EdificioBase::EdificioBase(const nlohmann::json& data_edificio):
                                 dimensiones(std::pair<int,int>
                                 (data_edificio[DIM][X],
@@ -35,13 +43,17 @@ unsigned int EdificioBase::get_costo() const {
 unsigned int EdificioBase::get_ptos_est() {
     return puntos_de_estructura;
 }
+
 std::pair<int,int>& EdificioBase::get_dimensiones(){
     return dimensiones;
 }
+
  unsigned int EdificioBase::get_tiempo(){
-     return 5000;
+     return TIEMPO_DE_CONSTRUCCION;
  }
+
  std::string& EdificioBase::get_tipo(){
      return tipo;
  }
+
 } // namespace modelo
