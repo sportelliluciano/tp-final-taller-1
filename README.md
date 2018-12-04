@@ -11,6 +11,7 @@ Link al manual de usuario: https://www.overleaf.com/read/ymgsrcqhpgjg
 - `libsdl2-dev`
 - `libsdl2-image-dev`
 - `libsdl2-mixer-dev`
+- `libsdl2-ttf-dev`
 - `qt5-default`
 
 #### Utilidades requeridas
