@@ -100,6 +100,16 @@ Basándonos en el enunciado del trabajo práctico nos dividimos las tareas de la
 \subsection{Cliente}
 El principal inconveniente encontrado en el cliente fue la dependencia de las texturas con el contexto de renderizado, que terminaron provocando dificultades a la hora de realizar un diseño adaptable. Este inconveniente está explicado con mayor detalle en el informe técnico.
 
+\subsection{Servidor}
+\subsubsection{Modelo}
+Al intentar modelizar el juego y todos sus componenntes nos encontramos con algunos problemas que nos condicionaban mucho a la hora de querer implementarlo. Entre los mas destacados se pueden mencionar:
+\begin{itemize}
+\item El hecho de que teniamos que cargar la información referente tanto de las unidades como de los edificios desde un archivo externo.
+\item La complejidad del juego y la cantidad de elementos que lo componen hace que sea muy sencillo caer en referencias cruzadas.
+\item La elección de tratar de que cada objeto se tenga que instanciar lo menos posible(por ejemplo, en el caso de las armas) y que los mismos no se puedan acceder desde lugares incorrectos.
+\item La correcta comunicacion enter el modelo-servidor-cliente. 
+\end{itemize}
+
 \subsection{Editor}
 
 Un inconveniente encontrado a la hora de programar el Editor fue la manera en que tenía que ser almacenado un mapa en memoria para que el Editor mismo lo pueda cargar y también lo puedan leer el Cliente y el Servidor. La dificultad en este caso era conseguir almacenar el mapa de manera que ocupe la menor cantidad de espacio en memoria posible, lo que aumentaría la velocidad de lectura de éste, y que además sea fácil leerlo. La solución que encontramos fue almacenarlos con el formato JSON al ser un formato ampliamente conocido y sencillo de usar. Dentro del JSON se almacenan 2 arrays: uno representa la posición de cada jugador en el mapa y el otro representa al mapa en si mismo. El array de jugadores es de largo n siendo n la cantidad de jugadores. Cada elemento del array de jugadores a su vez es un array de largo 2 que representa la posición en el mapa del jugador, [X, Y]. El array que representa al mapa también es una array de arrays. En este caso los arrays que se encuentran dentro del array principal son de largo k siendo k la cantidad de columnas del mapa y el array principal tiene un largo de h siendo h la cantidad de filas del mapa. Dentro de los arrays secundarios se ubican strings que representas los diferentes terrenos ubicables en el mapa.

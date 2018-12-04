@@ -279,6 +279,12 @@ Para poder disociar el servidor y todo lo que implique conectividad y concurrenc
 La primera es la interfaz que el servidor espera encontrar y que el modelo de juego debe implementar. La misma consiste en unos pocos métodos que permiten interactuar con el servidor, como iniciar la partida o saber si terminó; y métodos que significan mensajes provenientes desde un jugador. El modelo de juego sólo debe implementar estos métodos para poder escuchar a los jugadores y puede asegurarse de que los métodos se ejecutarán de forma sincrónica, protegidos por el servidor.
 
 La segunda es la interfaz que el modelo espera encontrar y que el servidor debe implementar. Esta permite que el modelo le \textit{hable} a los jugadores y se compone principalmente de todos los mensajes que el modelo le puede enviar a un determinado jugador, más un par de métodos misceláneos que permiten conocer el nombre del jugador, la casa a la que pertenece o un ID numérico.
+\subsection{Modelo}
+A la hora de diseñarlo siempre se tuvo en mente la versatilidad del modelo, de forma tal que el modelo no limite las capacidades del juego, sino que por lo contrario ayude y sea transparente a la hora de querer modificar/agregar funcionalidades.
+Para ello se trato de dividir las responsabilidades correctamente encampuslando la informacion necesaria de forma tal que el codigo quede lo mas desacoplado posible.\\
+Para el modelado del juego se usaron varios patrones de diseño entre los que se destacan, Type Object y Prototype.\\
+El primero fue de gran ayuda a la hora de incorporar la información sobre las tropas y edificios desde archivos externos. Haciendo uso de este patron tenemos clases, por ejemplo, "Edificio" que tiene como atributo "EdificioBase", esta ultima es la que encapsula y carga los datos correspondientes desde los archivos externos.\\
+Al hacer uso del patron Prototype junto a Type Object pudimos lograr que las clases "bases" o "genericas" solo se creen una vez. Esa única instancia se almacenan en clases cuyas responsabilidad es crear nuevas instancias a partir de los prototipos originales, es decir, las instancias guardadas saben como "clonarse" y almacenan la informacion común a todas las instancias. 
 
 \subsection{Clases, interfaces y estructuras}
 
@@ -294,15 +300,12 @@ A continuación describiremos en profundidad las clases, las interfaces y las es
 
 \item Servidor: dentro de la clase Servidor, el método correr es prácticamente un ciclo while en el que el socket aceptador acepta conexiones con nuevos clientes, una vez concretada dicha conexión se agrega e inicializa un objeto Cliente cuyo constructor tiene como parámetro el socket conexión asociado al cliente (el socket que es devuelto por el accept del socket aceptador del servidor). También se agrega el nuevo cliente al Lobby. El ciclo puede ser detenido desde el main por el usuario mediante el método de centinela.
 
-<<<<<<< HEAD
 \item Cliente:
 
 \item Sala:
-=======
 \item Cliente: Encapsula la conexión del cliente y los hilos de transmisión y recepción.
 
 \item Sala: Gestiona el modelo de juego para una partida y los jugadores que están conectados a la misma.
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Lobby: el lobby es el lugar en el que están los clientes que se conectaron al Servidor pero todavía no se unieron a ninguna Sala. Recibe en el constructor la data de la configuración (mapas, edificios y ejércitos) ya que desde esta clase se crean las Salas (completar).
 
@@ -317,14 +320,31 @@ A continuación describiremos en profundidad las clases, las interfaces y las es
 \end{itemize}
 
 \subsection{Diagramas UML}
+\begin{itemize}
 
-<<<<<<< HEAD
-\subsection{Descripción de archivos}
-=======
+\item Modelo del juego\\
+
+En el siguiente diagrama de clases intenta dar una idea general de las relaciones entre clases y como se comunican para llevar a cabo las operaciones basicas dentro del juego.\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../imagenes/modelo_clases.png}
+	\caption{\label{fig:seq_uml_agregar_terreno} Diagrama de clases UML: modelo.}
+\end{figure}
+
+\item Secuencia de ataque\\
+En el siguiente diagrama de secuencia se muestra como se realiza un ataque dentro del modelo, queda claro como se hace uso de polimorfismo y como se van delegando las tareas hasta llegar a la clase correspondiente.\\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../imagenes/secuencia_ataque.png}
+	\caption{\label{fig:seq_uml_agregar_terreno} Diagrama de secuencia UML: atacar.}
+\end{figure}
+
+\end{itemize}
+
 \subsection{Formato de los archivos de configuración}
 
 Todos los archivos de configuración deben estar en formato JSON. A continuación se describe el contenido de los mismos
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \begin{itemize}
 
@@ -338,15 +358,13 @@ El archivo de edificios contiene la información relativa a los edificios que se
 
 \begin{itemize}
 
-<<<<<<< HEAD
 \item ID:  este es el identificador del *tipo* de edificio. Debe ser único por cada clase de edificio distinto.
 
 \item Nombre: el nombre *legible por humanos* del edificio, para mostrar en la interfaz gráfica.
-=======
+
 \item ID:  este es el identificador del \textit{tipo} de edificio. Debe ser único por cada clase de edificio distinto.
 
 \item Nombre: el nombre \textit{legible por humanos} del edificio, para mostrar en la interfaz gráfica.
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Descripción: descripción del edificio para mostrar en la interfaz gráfica. No debe superar los 100 caracteres.
 
@@ -364,11 +382,9 @@ El archivo de edificios contiene la información relativa a los edificios que se
 
 \item Capacidad de almacenamiento de especia: si el edificio puede almacenar especia, debe indicarse la cantidad en este campo.
 
-<<<<<<< HEAD
 \item Sprite base, construido y destruido : estos sprites definen cómo se dibujará el edificio en la pantalla de los clientes. El sprite *construido* representa el número de imagen a mostrar por el cliente cuando el edificio está construido y con más del 20\% de la vida. El sprite *destruido* representa el edificio cuando tiene menos del 20\% de la vida. El sprite *base* se utiliza cuando un edificio requiere componer su imagen a partir de dos sprites. Los parámetros `x` e `y` en los tres casos permiten desplazar el sprite para hacerlo coincidir con el sprite base.
-=======
+
 \item Sprite base, construido y destruido : estos sprites definen cómo se dibujará el edificio en la pantalla de los clientes. El sprite \textit{construido} representa el número de imagen a mostrar por el cliente cuando el edificio está construido y con más del 20\% de la vida. El sprite \textit{destruido} representa el edificio cuando tiene menos del 20\% de la vida. El sprite \textit{base} se utiliza cuando un edificio requiere componer su imagen a partir de dos sprites. Los parámetros `x` e `y` en los tres casos permiten desplazar el sprite para hacerlo coincidir con el sprite base.
->>>>>>> 8cce5ac0bb1a3f067882a86c1d5b3a1d01c6e723
 
 \item Sprite del botón de construcción: indica cual es el número de imagen correspondiente al botón de construir.
 
