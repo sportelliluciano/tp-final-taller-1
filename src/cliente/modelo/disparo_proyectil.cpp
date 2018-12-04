@@ -1,6 +1,5 @@
 #include "cliente/modelo/disparo_proyectil.h"
 
-#include "cliente/modelo/disparo.h"
 #include "cliente/video/camara.h"
 #include "cliente/video/posicion.h"
 #include "cliente/video/ventana.h"

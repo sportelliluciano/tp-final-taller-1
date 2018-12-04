@@ -1,7 +1,6 @@
 #ifndef _DISPARO_PROYECTIL_H_
 #define _DISPARO_PROYECTIL_H_
 
-#include "cliente/modelo/disparo.h"
 #include "cliente/video/camara.h"
 #include "cliente/video/posicion.h"
 #include "cliente/video/ventana.h"
@@ -12,7 +11,7 @@ namespace cliente {
  * \brief Proyectil que sigue al destino actualizando la velocidad según
  *        corresponda.
  */
-class DisparoProyectil : public Disparo {
+class DisparoProyectil {
 public:
     DisparoProyectil(float frecuencia_disparo);
 
@@ -20,14 +19,14 @@ public:
      * \brief Inicia el disparo desde la posición inicial.
      */
     virtual void iniciar(int x_origen, int y_origen, int x_destino, 
-        int y_destino) override;
+        int y_destino);
 
     /**
      * \brief Actualiza el destino de los disparos. 
      * 
      * Esencialmente este método hace que el disparo siga al objetivo.
      */
-    virtual void actualizar_destino(int x_destino, int y_destino) override;
+    virtual void actualizar_destino(int x_destino, int y_destino);
 
     /**
      * \brief Detiene los disparos.
@@ -35,12 +34,12 @@ public:
      * Este método espera a que el disparo en curso colisione con el objetivo
      * y luego detiene los disparos.
      */
-    virtual void detener() override;
+    virtual void detener();
 
     /**
      * \brief Actualiza la posición del disparo.
      */
-    virtual void actualizar(int dt_ms) override;
+    virtual void actualizar(int dt_ms);
 
     /**
      * \brief Renderiza el disparo en la ventana.

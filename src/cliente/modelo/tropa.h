@@ -8,7 +8,7 @@
 
 #include "libs/json.hpp"
 
-#include "cliente/modelo/disparo.h"
+#include "cliente/modelo/disparo_proyectil.h"
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/modelo/hud/barra_vida.h"
 #include "cliente/video/camara.h"
@@ -215,7 +215,7 @@ private:
     SpriteAnimado sprite_disparo;
     SpriteAnimado sprite_descarga;
 
-    Disparo* disparo = nullptr;
+    DisparoProyectil* disparo = nullptr;
     
     /**
      * \brief Orientación de la tropa según hacia donde mire la tropa.

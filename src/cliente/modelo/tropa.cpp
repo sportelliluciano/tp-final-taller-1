@@ -80,7 +80,6 @@ namespace cliente {
 Tropa::Tropa(const nlohmann::json& data) {
     clase = data.at(JSON_CLAVE_CLASE);
     sprite_boton = data.at(JSON_CLAVE_SPRITE_BOTON);
-    int sprite_base = data.at(JSON_CLAVE_SPRITE_BASE);
     es_vehiculo = (data.at(JSON_CLAVE_TIPO) == JSON_VALOR_TIPO_VEHICULO);
     velocidad = data.at(JSON_CLAVE_VELOCIDAD);
     requerimientos = 
@@ -91,6 +90,8 @@ Tropa::Tropa(const nlohmann::json& data) {
     costo = data.at(JSON_CLAVE_COSTO);
     tiempo_entrenamiento = data.at(JSON_CLAVE_T_ENTRENAMIENTO);
     vida = vida_maxima = data.at(JSON_CLAVE_VIDA_MAXIMA);
+    
+    int sprite_base = data.at(JSON_CLAVE_SPRITE_BASE);
     
     orientacion_sprite = nueva_orientacion_sprite = 0;
     fx_actual = pos_destino.x = pos_actual.x = 0;
@@ -397,14 +398,13 @@ void Tropa::seguir_camino(const std::vector<std::pair<int, int>>& camino) {
 
 void Tropa::sync_camino(int x, int y) {
     /*** Chequear posiciones -- dbg ***/
-    float mse = ((pos_actual.x - x) * (pos_actual.x - x)) + (pos_actual.y - y) * (pos_actual.y - y);
+    float mse = ((pos_actual.x - x) * (pos_actual.x - x)) +     
+        (pos_actual.y - y) * (pos_actual.y - y);
     if (mse > THRESHOLD_SYNC_CAMINO) {
         log_advertencia("El MSE entre posiciones es >%d [%.2f]", mse,
             THRESHOLD_SYNC_CAMINO);
     }
     
-    /******* TODO: Eliminar esto ******/
-    log_depuracion("(%d, %d) <> (%d, %d)", pos_actual.x, pos_actual.y, x, y);
     fx_actual = pos_actual.x = x;
     fy_actual = pos_actual.y = y;
 

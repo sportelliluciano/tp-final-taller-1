@@ -1,6 +1,6 @@
 #include "cliente/modelo/disparo_ondas.h"
 
-#include "cliente/modelo/disparo.h"
+#include "cliente/modelo/disparo_proyectil.h"
 #include "cliente/modelo/sprite_animado.h"
 #include "cliente/video/camara.h"
 #include "cliente/video/posicion.h"
