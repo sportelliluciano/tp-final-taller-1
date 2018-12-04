@@ -9,6 +9,9 @@ option(DEPURAR_RED "Activar la depuración de mensajes de red" OFF)
 # Carpeta donde se encuentra la configuración del servidor
 set(SV_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}/etc/dune-remake")
 
+#Carpeta donde se encuentran los datos del editor
+set(EDITOR_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}/etc/dune-remake")
+
 # Carpetas donde se encuentran los datos del cliente
 set(ASSETS_INSTALL_DIR share/dune-remake)
 set(ASSETS_DIR ${CMAKE_INSTALL_PREFIX}/${ASSETS_INSTALL_DIR})
