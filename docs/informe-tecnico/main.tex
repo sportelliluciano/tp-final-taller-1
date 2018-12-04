@@ -215,8 +215,11 @@ Una vez que se procesaron todos los eventos, se realiza la actualización tempor
 
 \newpage
 \section{Servidor}
-Para toda la comunicación cliente-servidor se utilizó el formato JSON. La elección del mismo es que es un formato ampliamente conocido, sencillo de usar, y por sobre todas las cosas, al serializarse como texto plano simplificó mucho la depuración de problemas de conexión.
 
+\subsection{Requerimientos de software}
+Para compilar, desarrollar, probar y depurar el programa es necesario contar con un SO Linux, compilador GCC 7.3.0, biblioteca Json para c++ modernos y cmake.
+
+\subsection{Descripción general}
 El servidor modela a los clientes con dos hilos y una cola: un hilo y una cola para enviar los mensajes, y un hilo y callbacks para recibir los mensajes. 
 
 Para el envío de mensajes se utiliza una cola para poder ofrecer al modelo de juego una latencia mínima. Esto permite que si un cliente por algún motivo es lento para recibir, el mismo quede esperando en un hilo separado hasta que la red se descongestione y el modelo pueda seguir con su procesamiento. 
@@ -231,13 +234,42 @@ $$ n_{hilos} = 2 + 2 \cdot n_{clientes} + n_{partidas_activas}$$
 Es decir, el hilo principal, el hilo que acepta conexiones, dos hilos por cliente y un hilo por partida activa.
 La etapa de lobby/sala no requiere hilos ya que se aprovechan los hilos de recepción de los clientes.
 
-\subsection{Interacción con el modelo de juego}
+Para toda la comunicación cliente-servidor se utilizó el formato JSON. La elección del mismo es que es un formato ampliamente conocido, sencillo de usar, y por sobre todas las cosas, al serializarse como texto plano simplificó mucho la depuración de problemas de conexión.
+
+\subsubsection{Interacción con el modelo de juego}
 Para poder disociar el servidor y todo lo que implique conectividad y concurrencia del modelo de juego, se diseñaron dos interfaces: \texttt{IModelo} e \texttt{IJugador}.
 
 La primera es la interfaz que el servidor espera encontrar y que el modelo de juego debe implementar. La misma consiste en unos pocos métodos que permiten interactuar con el servidor, como iniciar la partida o saber si terminó; y métodos que significan mensajes provenientes desde un jugador. El modelo de juego sólo debe implementar estos métodos para poder escuchar a los jugadores y puede asegurarse de que los métodos se ejecutarán de forma sincrónica, protegidos por el servidor.
 
 La segunda es la interfaz que el modelo espera encontrar y que el servidor debe implementar. Esta permite que el modelo le \textit{hable} a los jugadores y se compone principalmente de todos los mensajes que el modelo le puede enviar a un determinado jugador, más un par de métodos misceláneos que permiten conocer el nombre del jugador, la casa a la que pertenece o un ID numérico.
 
+\subsection{Clases, interfaces y estructuras}
+
+A continuación describiremos en profundidad las clases, las interfaces y las estructuras utilizadas por el Servidor.
+
+\begin{itemize}
+
+\item main:
+
+\item ProcesadorConfiguracion:
+
+\item AdminMapas:
+
+\item Cliente:
+
+\item ConexionJugador:
+
+\item ErrorConfiguracion:
+
+\item Lobby:
+
+\item Sala:
+
+\item Servidor:
+
+\item SocketAceptador:
+
+\end{itemize}
 
 \newpage
 \section{Editor}
@@ -253,9 +285,11 @@ Se utilizo Qt 5 para diseñar la interfaz gráfica y para atrapar los eventos qu
 
 \subsection{Clases, interfaces y estructuras}
 
-A continuación describiremos en profundidad las clases utilizadas por el Editor.
+A continuación describiremos en profundidad las clases, las interfaces y las estructuras utilizadas por el Editor.
 
 \begin{itemize}
+
+\item main: función de entrada de la aplicación. Muestra el dialogo de bienvenida e inicializa el loop de la ui.
 
 \item DialogoBienvenida: clase que hereda de QDialog, por lo tanto representa a una ventana de diálogo. Contiene 2 QPushButton, uno para crear un mapa y el otro para cargar un mapa. Como layout utiliza un QFormLayout aunque podrían usar otros sin cambiar la funcionalidad. Los eventos de click de los botones generan la ejecución de los métodos DialogoBienvenida::mostrar\_dialogo\_crear\_mapa y DialogoBienvenida::mostrar\_dialogo\_cargar\_mapa. El primer método muestra otro diálogo conformado por QSpinBox para poder elegir la cantidad de jugadores y el tamaño del mapa y el segundo muestra un QFileDialog para elegir el archivo del mapa guardado. Al final de ambos métodos se iniciliza el objeto Editor.
 
