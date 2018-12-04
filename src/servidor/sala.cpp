@@ -27,14 +27,6 @@
 // Dejar un 20% del tiempo de actualización como margen.
 #define DELAY_EV ((TICK_MS * 20) / 100)
 
-
-#if DEPURAR_TIEMPOS
- #define DEPURAR_TIEMPO_EVENTO(ev, expr) \
-    log_tiempo(ev, medir_tiempo_ms([&] () { expr }))
-#else
- #define DEPURAR_TIEMPO_EVENTO(ev, expr) { expr }
-#endif
-
 namespace servidor {
 
 Sala::Sala(const std::string& nombre_, size_t capacidad_maxima, IModelo* juego) 
@@ -170,17 +162,7 @@ void Sala::jugar() {
         }
 
         auto base = steady_clock::now();
-#if DEPURAR_TIEMPOS
-        auto un_seg = base + seconds(1);
-        double promedio_eventos = 0;
-        double promedio_actualizaciones = 0;
-        double promedio_iteracion = 0;
-        int cantidad_promedio = 0;
-#endif
         while (!terminar && !modelo->partida_terminada()) {
-#if DEPURAR_TIEMPOS
-            promedio_iteracion += medir_tiempo_ms([&] () {
-#endif
             auto timeout = base + milliseconds(TICK_MS);
             auto ms_eventos = medir_tiempo_ms([&] () {
                 auto timeout_eventos = base + milliseconds(TICK_MS - DELAY_EV);
@@ -210,26 +192,6 @@ void Sala::jugar() {
             }
 
             base = timeout;
-
-#if DEPURAR_TIEMPOS
-                promedio_actualizaciones += ms_actualizacion;
-                promedio_eventos += ms_eventos;
-                cantidad_promedio++;
-
-                if (steady_clock::now() > un_seg) {
-                    promedio_actualizaciones /= cantidad_promedio;
-                    promedio_eventos /= cantidad_promedio;
-                    promedio_iteracion /= cantidad_promedio;
-                    log_tiempo("actualizacion", promedio_actualizaciones);
-                    log_tiempo("eventos", promedio_eventos);
-                    log_tiempo("iter", promedio_iteracion);
-                    promedio_iteracion = promedio_actualizaciones 
-                        = promedio_eventos = 0;
-                    cantidad_promedio = 0;
-                    un_seg = steady_clock::now() + seconds(1);
-                }
-            });
-#endif
         }
     } catch(const std::exception& e) {
         log_error("Explotó la partida en la sala %s\n --> %s", nombre, 
@@ -240,8 +202,8 @@ void Sala::jugar() {
 }
 
 bool Sala::puede_unirse() const {
-    return sala_abierta;
-    return (jugadores.size() >= capacidad) || !partida_iniciada;
+    return sala_abierta &&
+        (jugadores.size() < capacidad) && !partida_iniciada;
 }
 
 void Sala::terminar_partida() {
@@ -262,7 +224,6 @@ int Sala::cantidad_jugadores_conectados() {
 
 Sala::~Sala() { }
 
-// TODO: Chequear excepciones // refactorizar esto
 void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {    
     Lock l(lock_modelo);
     
@@ -271,97 +232,77 @@ void Sala::actualizar_modelo(IJugador* jugador, const nlohmann::json& evento) {
     try {
         switch(id) {
             case EVS_INICIAR_CONSTRUCCION:
-                DEPURAR_TIEMPO_EVENTO("iniciar_construccion_edificio", {
                     modelo->iniciar_construccion_edificio(
                         jugador, 
                         evento.at("clase")
                     );
-                });
                 break;
             
             case EVS_CANCELAR_CONSTRUCCION:
-                DEPURAR_TIEMPO_EVENTO("cancelar_construccion_edificio", {
                     modelo->cancelar_construccion_edificio(
                         jugador, 
                         evento.at("clase")
                     );
-                });
                 break;
             
             case EVS_UBICAR_EDIFICIO: 
-                DEPURAR_TIEMPO_EVENTO("ubicar_edificio", {
                     modelo->ubicar_edificio(
                         jugador, 
                         evento.at("celda").get<std::vector<int>>().at(0),
                         evento.at("celda").get<std::vector<int>>().at(1),
                         evento.at("clase")
                     );
-                });
                 break;
             
             case EVS_VENDER_EDIFICIO:
-                DEPURAR_TIEMPO_EVENTO("vender_edificio", {
                     modelo->vender_edificio(
                         jugador,
                         evento.at("id_edificio")
                     );
-                });
                 break;
 
             case EVS_INICIAR_ENTRENAMIENTO:
-                DEPURAR_TIEMPO_EVENTO("iniciar_entrenamiento_tropa", {
                     modelo->iniciar_entrenamiento_tropa(
                         jugador, 
                         evento.at("clase")
                     );
-                });
                 break;
             
             case EVS_CANCELAR_ENTRENAMIENTO:
-                DEPURAR_TIEMPO_EVENTO("cancelar_entrenamiento_tropa", {
                     modelo->cancelar_entrenamiento_tropa(
                         jugador, 
                         evento.at("clase")
                     );
-                });
                 break;
             
             case EVS_MOVER_TROPAS: 
-                DEPURAR_TIEMPO_EVENTO("mover_tropas", {
                     modelo->mover_tropas(
                         jugador,
                         evento.at("ids_tropa").get<std::unordered_set<int>>(),
                         evento.at("posicion").get<std::vector<int>>().at(0),
                         evento.at("posicion").get<std::vector<int>>().at(1)
                     );
-                });
                 break;
 
             case EVS_ATACAR_TROPA:
-                DEPURAR_TIEMPO_EVENTO("atacar", {
                     modelo->atacar(
                         jugador,
                         evento.at("ids_tropa").get<std::unordered_set<int>>(),
                         evento.at("id_atacado")
                     );
-                });
                 break;
             
             case EVS_COSECHADORA_INDICAR_ESPECIA:
-                DEPURAR_TIEMPO_EVENTO("indicar_especia_cosechadora", {
                     modelo->indicar_especia_cosechadora(
                         jugador,
                         evento.at("ids_tropa").get<std::unordered_set<int>>(),
                         evento.at("celda").get<std::vector<int>>().at(0),
                         evento.at("celda").get<std::vector<int>>().at(1)
                     );
-                });
                 break;
             
             case EVS_JUGADOR_LISTO:
-                DEPURAR_TIEMPO_EVENTO("jugador_listo", {
                     modelo->jugador_listo(jugador);
-                });
                 break;
 
             default:

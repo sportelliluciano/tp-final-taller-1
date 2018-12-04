@@ -38,7 +38,7 @@ public:
         Lock l(m_cola);
         bool cola_estaba_vacia = cola.empty();
         cola.push_back(data);
-        if (cola_estaba_vacia)
+        if (!desbloqueada && cola_estaba_vacia)
             m_hay_datos.unlock();
     }
 
@@ -52,16 +52,16 @@ public:
      * Este método es thread-safe.
      */
     T pull(bool bloquear = true) {
-        if (!bloquear && cola.empty())
-            throw std::runtime_error("La cola está vacía");
-        
-        m_hay_datos.lock();
+        if (!desbloqueada && bloquear)
+            m_hay_datos.lock();
 
         Lock l(m_cola);
+        if (cola.empty())
+            throw std::runtime_error("La cola está vacía");
         T data = cola.front();
         cola.pop_front();
         
-        if (!cola.empty())
+        if (!desbloqueada && bloquear && !cola.empty())
             m_hay_datos.unlock();
         
         return data;
@@ -82,14 +82,17 @@ public:
      * Este método es thread-safe.
      */
     bool pull(std::chrono::steady_clock::time_point timeout, T& dato) {
-        if (!m_hay_datos.try_lock_until(timeout))
+        if (desbloqueada && cola.empty())
+            return false;
+        
+        if (!desbloqueada && !m_hay_datos.try_lock_until(timeout))
             return false;
 
         Lock l(m_cola);
         dato = cola.front();
         cola.pop_front();
         
-        if (!cola.empty())
+        if (!desbloqueada && !cola.empty())
             m_hay_datos.unlock();
         
         return true;
@@ -104,10 +107,26 @@ public:
         return cola.empty();
     }
 
+    /**
+     * \brief Desbloquea la cola provocando que los métodos pull lancen
+     *        una excepción o devuelvan false.
+     *
+     * Desbloquear una cola ya desbloqueada no tiene ningún efecto.
+     */
+    void desbloquear() {
+        Lock l(m_cola);
+        if (desbloqueada)
+            return;
+        desbloqueada = true;
+        m_hay_datos.unlock();
+    }
+
 private:
     std::mutex m_cola;
     std::timed_mutex m_hay_datos;
     std::list<T> cola;
+
+    bool desbloqueada = false;
 };
 
 } // namespace servidor

@@ -77,6 +77,7 @@ void Cliente::main_hilo_receptor() {
     }
 
     log_depuracion("Hilo cliente (R) terminado");
+    cola_salida.desbloquear();
 }
 
 void Cliente::iniciar_async() {
@@ -91,7 +92,7 @@ void Cliente::iniciar_async() {
 void Cliente::detener_async() {
     detencion_solicitada = true;
     conexion.cerrar(true);
-    cola_salida.push({}); // Desbloquear la cola
+    cola_salida.desbloquear();
     if (hilo_emisor.joinable())
         hilo_emisor.join();
     if (hilo_receptor.joinable())
