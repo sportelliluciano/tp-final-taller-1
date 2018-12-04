@@ -1,4 +1,4 @@
-#include "cliente/modelo/hud/fps.h"
+#include "cliente/modelo/hud/barra_superior/fps.h"
 
 #include <sstream>
 #include <string>

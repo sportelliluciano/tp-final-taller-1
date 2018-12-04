@@ -1,4 +1,4 @@
-#include "cliente/modelo/hud/dinero.h"
+#include "cliente/modelo/hud/barra_superior/dinero.h"
 
 #include <cmath>
 

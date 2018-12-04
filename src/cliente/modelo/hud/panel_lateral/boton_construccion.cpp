@@ -1,9 +1,8 @@
-#include "cliente/modelo/hud/boton_construccion.h"
+#include "cliente/modelo/hud/panel_lateral/boton_construccion.h"
 
 #include <string>
 #include <sstream>
 
-#include "cliente/modelo/hud/boton_temporizado.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/red/servidor.h"

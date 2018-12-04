@@ -5,8 +5,12 @@
 
 #include <string>
 
-#define COLOR_NEGRO Color(0, 0, 0, 255)
-#define COLOR_BLANCO Color(255, 255, 255, 255)
+#define COLOR_NEGRO   Color(  0,   0,   0, 255)
+#define COLOR_BLANCO  Color(255, 255, 255, 255)
+#define COLOR_MAGENTA Color(255,   0, 255, 255)
+#define COLOR_ROJO    Color(255,   0,   0, 255)
+#define COLOR_VERDE   Color(  0, 255,   0, 255)
+#define COLOR_AZUL    Color(  0,   0, 255, 255)
 
 namespace cliente {
 

@@ -1,4 +1,4 @@
-#include "cliente/modelo/hud/tooltip.h"
+#include "cliente/modelo/hud/panel_lateral/tooltip.h"
 
 #include <string>
 #include <sstream>

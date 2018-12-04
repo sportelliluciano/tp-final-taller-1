@@ -1,6 +1,4 @@
-#include "cliente/modelo/hud/botonera.h"
-
-#include "cliente/modelo/hud/boton_construccion.h"
+#include "cliente/modelo/hud/panel_lateral/botonera.h"
 
 #define PADDING_PX 10
 #define SPACING_PX 4

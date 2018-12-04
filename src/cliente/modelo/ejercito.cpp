@@ -5,10 +5,9 @@
 #include "cliente/modelo/infraestructura.h"
 #include "cliente/modelo/terreno.h"
 #include "cliente/sonido/sonido.h"
+#include "cliente/video/color.h"
 
 #define MIN_TIEMPO_ENTRENAMIENTO 1
-
-#define COLOR_ROJO 1
 
 #define CLASE_COSECHADORA "cosechadora"
 
@@ -40,17 +39,6 @@ Ejercito::Ejercito(const nlohmann::json& ejercitos, Infraestructura& inf,
 
 void Ejercito::renderizar(Ventana& ventana, Camara& camara) {
     for (Tropa* tropa : terreno.obtener_tropas_en(camara.obtener_vista())) {
-#ifdef DEPURACION_DIBUJO
-        /*** Pintar celda ***/
-        int celda_x, celda_y;
-        terreno.obtener_celda(terreno.obtener_posicion(tropa), 
-            celda_x, celda_y);
-        
-        Posicion grilla = camara.traducir_a_visual(
-            terreno.obtener_posicion(celda_x, celda_y));
-        Sprite(1).renderizar(ventana, grilla.x, grilla.y);
-        /*** Fin pintar celda ***/
-#endif
         tropa->renderizar(ventana, camara);
 
         Posicion visual = camara.traducir_a_visual(tropa->obtener_posicion());

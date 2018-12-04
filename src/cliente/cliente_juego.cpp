@@ -134,6 +134,8 @@ bool ClienteJuego::ejecutar_juego() {
     // Crear el controlador del juego
     Controlador controlador(ventana, *servidor, juego);
     
+    controlador.inicializar_juego();
+    
     // Ciclo principal del juego
     while (!juego.esta_terminado()) {
         // Renderizar el juego

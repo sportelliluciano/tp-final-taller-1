@@ -3,7 +3,6 @@
 
 #include <list>
 
-#include "cliente/modelo/hud/boton_construccion.h"
 #include "cliente/video/rectangulo.h"
 #include "cliente/video/ventana.h"
 #include "cliente/video/widgets/contenedor.h"

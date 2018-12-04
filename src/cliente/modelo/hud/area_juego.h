@@ -12,81 +12,52 @@
 
 namespace cliente {
 
+/**
+ * \brief Área de juego.
+ * 
+ * El área de juego es el controlador principal del juego. El mismo se encarga
+ * de comunicar al servidor toda la interacción del usuario.
+ */
 class AreaJuego : public Widget {
 public:
+    /**
+     * \brief Crea un nuevo área de juego.
+     */
     AreaJuego(Juego& juego_, Servidor& servidor_, Tostador& tostador_);
 
-    void set_tamanio(int ancho_, int alto_);
-
-    virtual int obtener_alto() const override;
+    /**
+     * \brief Centra la cámara en el centro de construcciones del jugador.
+     */
+    void centrar_camara();
 
     /**
-     * \brief Devuelve el ancho del widget, en píxeles.
+     * \brief Activa el modo de venta de edificios.
      */
-    virtual int obtener_ancho() const override;
-
-    /**
-     * \brief Renderiza el widget en la posición (x, y).
-     * 
-     * Renderiza el widget en la posición (x, y) dada en píxeles, relativa a
-     * la ventana (global).
-     */
-    virtual void renderizar(Ventana& ventana, const Posicion& punto) override;
-
-    /**
-     * \brief Se ejecuta cuando el usuario hace clic con el botón izquierdo.
-     */
-    virtual bool mouse_click_izquierdo(const Posicion& punto) override;
-
-    /**
-     * \brief Se ejecuta cuando el usuario hace clic con el botón derecho.
-     */
-    virtual bool mouse_click_derecho(const Posicion& punto) override;
-
-    /**
-     * \brief Se ejecuta cuando el usuario arrastra el mouse mientras hace
-     *        clic con el boton izquierdo del mismo.
-     * 
-     * Este evento se ejecuta si el usuario creó un rectángulo arrastrando
-     * con el mouse de al menos 4px x 4px. Un rectángulo menor a este se 
-     * considera un clic normal.
-     * 
-     * (x, y) coordenadas de la primer esquina del rectángulo de selección
-     * 
-     * Devuelve false si el evento debe dejar de propagarse.
-     */
-    virtual bool mouse_inicio_arrastre(const Posicion& punto) override;
-
-    /**
-     * \brief Se ejecuta cuando el usuario mueve el mouse sobre la ventana.
-     * 
-     * (x, y) coordenadas del mouse.
-     */
-    virtual bool mouse_movimiento(const Posicion& punto) override;
-
-    /**
-     * \brief Se ejecuta cuando el usuario suelta el mouse luego de haber 
-     *        arrastrado hasta formar un rectángulo con el botón izquierdo.
-     * 
-     * Este evento se ejecuta si el usuario creó un rectángulo arrastrando
-     * con el mouse de al menos 4px x 4px. Un rectángulo menor a este se 
-     * considera un clic normal.
-     * 
-     * (x, y) coordenadas de la segunda esquina del rectángulo de selección
-     * 
-     * Devuelve false si el evento debe dejar de propagarse.
-     */
-    virtual bool mouse_fin_arrastre(const Posicion& punto) override;
-
-    virtual bool mouse_entra(const Posicion& punto) override;
-    virtual bool mouse_sale(const Posicion& punto) override;
-
-    virtual bool teclado_presionado(tecla_t tecla) override;
-    virtual bool teclado_suelto(tecla_t tecla) override;
-
     void set_modo_vender(bool habilitado);
 
+    /**
+     * \brief Configura el tamaño del área de juego.
+     */
+    void set_tamanio(int ancho_, int alto_);
+
+    /**
+     * \brief Indica que hay un edificio a ser ubicado.
+     */
     void ubicar_edificio(const Edificio* edificio);
+
+    /** Interfaz widget **/
+    virtual int obtener_alto() const override;
+    virtual int obtener_ancho() const override;
+    virtual void renderizar(Ventana& ventana, const Posicion& punto) override;
+    virtual bool mouse_click_izquierdo(const Posicion& punto) override;
+    virtual bool mouse_click_derecho(const Posicion& punto) override;
+    virtual bool mouse_inicio_arrastre(const Posicion& punto) override;
+    virtual bool mouse_movimiento(const Posicion& punto) override;
+    virtual bool mouse_fin_arrastre(const Posicion& punto) override;
+    virtual bool mouse_entra(const Posicion& punto) override;
+    virtual bool mouse_sale(const Posicion& punto) override;
+    virtual bool teclado_presionado(tecla_t tecla) override;
+    virtual bool teclado_suelto(tecla_t tecla) override;
 
 private:
     int ancho = 0, alto = 0;
@@ -109,9 +80,6 @@ private:
 
     bool mouse_en_ventana = false;
 
-    /**
-     * \brief Setear a true para habilitar el modo venta de edificios.
-     */
     bool en_modo_vender = false;
 
     Posicion mouse;
@@ -125,14 +93,17 @@ private:
     bool hay_edificio_seleccionado = false;
     std::unordered_set<int> unidades_seleccionadas;
 
+    const Edificio* edificio_a_ubicar = nullptr;
+
     bool seleccionar_edificio(const Posicion& punto);
     void deseleccionar_edificio();
     bool seleccionar_tropas(int x0, int y0, int x1, int y1);
     void deseleccionar_tropas();
     void seleccionar(const Rectangulo& area);
-    void centrar_camara();
 
-    const Edificio* edificio_a_ubicar = nullptr;
+    void renderizar_edificio_ubicando(Ventana& ventana);
+    void renderizar_cursor(Ventana& ventana);
+    void renderizar_rectangulo_seleccion(Ventana& ventana);
 };
 
 } // namespace cliente

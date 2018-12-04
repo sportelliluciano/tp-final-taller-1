@@ -1,8 +1,7 @@
-#include "cliente/modelo/hud/boton_entrenamiento.h"
+#include "cliente/modelo/hud/panel_lateral/boton_entrenamiento.h"
 
 #include <string>
 
-#include "cliente/modelo/hud/boton_temporizado.h"
 #include "cliente/modelo/ejercito.h"
 #include "cliente/modelo/hud/tostador.h"
 #include "cliente/red/servidor.h"

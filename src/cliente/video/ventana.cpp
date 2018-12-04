@@ -293,18 +293,14 @@ AdministradorTexturas& Ventana::obtener_administrador_texturas() {
     return *admin_texturas;
 }
 
-// TODO: Sacar esto
-void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
-    Uint8 r, g, b, a;
-    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
-    if (color == 0)
-        SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
-    else if (color == 1)
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    else if (color == 2)
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    else if (color == 3)
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, 
+    const Color& color) 
+{
+    SDL_Color anterior;
+    const SDL_Color *nuevo = color.obtener_color();
+    SDL_GetRenderDrawColor(renderer, &anterior.r, &anterior.g, 
+        &anterior.b, &anterior.a);
+    SDL_SetRenderDrawColor(renderer, nuevo->r, nuevo->g, nuevo->b, nuevo->a);
 
     SDL_Rect rc;
     rc.x = x0; rc.y = y0;
@@ -312,36 +308,9 @@ void Ventana::dibujar_rectangulo(int x0, int y0, int x1, int y1, int color) {
     SDL_RenderDrawRect(renderer, &rc);
     rc.x += 1; rc.y += 1; rc.w -= 2; rc.h -= 2;
     SDL_RenderDrawRect(renderer, &rc);
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
-}
-
-void Ventana::dibujar_grilla(int x_offset, int y_offset) {
-    if (x_offset > 0)
-        x_offset = (x_offset % 32);
-    else
-        x_offset = -((-x_offset) % 32);
     
-    if (y_offset > 0)
-        y_offset = (y_offset % 32);
-    else
-        y_offset = -((-y_offset) % 32);
-
-    Uint8 r, g, b, a;
-    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    /******** GRILLA DEPURACION *********/
-    for (int i=0; i<=ancho() / 32; i++) {
-        SDL_RenderDrawLine(renderer, 
-            x_offset + i*32, y_offset, 
-            x_offset + i*32, alto() + y_offset);
-        for (int j=0; j<= alto() / 32; j++) {
-            SDL_RenderDrawLine(renderer, 
-                x_offset, j * 32 + y_offset, 
-                ancho() + x_offset, j * 32 + y_offset);
-        }
-    }
-    /************************************/
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    SDL_SetRenderDrawColor(renderer, anterior.r, anterior.g, 
+        anterior.b, anterior.a);
 }
 
 void Ventana::dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
@@ -350,7 +319,6 @@ void Ventana::dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
     Uint8 r, g, b, a;
     SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
     SDL_SetRenderDrawColor(renderer, 0x22, 0x22, 0x22, 255);
-    /******** GRILLA DEPURACION *********/
     for (size_t i=0;i<linea.size();i++) {
         if (i+1 >= linea.size())
             break;
@@ -358,7 +326,6 @@ void Ventana::dibujar_poligonal(const std::vector<std::pair<int, int>> linea,
             linea[i].first - trasladar_x, linea[i].second - trasladar_y, 
             linea[i+1].first - trasladar_x, linea[i+1].second - trasladar_y);
     }
-    /************************************/
     SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
 

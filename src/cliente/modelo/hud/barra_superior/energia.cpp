@@ -1,4 +1,4 @@
-#include "cliente/modelo/hud/energia.h"
+#include "cliente/modelo/hud/barra_superior/energia.h"
 
 #include <sstream>
 #include <string>

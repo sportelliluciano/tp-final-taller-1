@@ -1,7 +1,7 @@
 #ifndef _BOTON_TEMPORIZADO_H_
 #define _BOTON_TEMPORIZADO_H_
 
-#include "cliente/modelo/hud/tooltip.h"
+#include "cliente/modelo/hud/panel_lateral/tooltip.h"
 #include "cliente/video/color.h"
 #include "cliente/video/ventana.h"
 #include "cliente/video/widgets/widget.h"

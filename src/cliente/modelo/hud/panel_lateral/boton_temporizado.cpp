@@ -1,4 +1,4 @@
-#include "cliente/modelo/hud/boton_temporizado.h"
+#include "cliente/modelo/hud/panel_lateral/boton_temporizado.h"
 
 #include <sstream>
 #include <string>

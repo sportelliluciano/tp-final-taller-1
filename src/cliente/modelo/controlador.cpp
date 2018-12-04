@@ -32,6 +32,7 @@ void Controlador::procesar_entrada() {
 }
 
 void Controlador::inicializar_juego() {
+    hud.inicializar_juego();
 }
 
 void Controlador::renderizar() {
