@@ -37,11 +37,11 @@ Terreno::Terreno(const nlohmann::json& mapa) {
      *  Parseo terrenos.json -> tiene los vectores de 16 ints
      * 
     
-    map<string, DataTerreno> terrenos_posibles;
+    std::map<std::string, DataTerreno> terrenos_posibles;
 
     std::ifstream entrada(RUTA_TERRENOS_JSON);
 
-    json terrenos_json;
+    nlohmann::json terrenos_json;
 
     entrada >> terrenos_json;
 
@@ -50,7 +50,7 @@ Terreno::Terreno(const nlohmann::json& mapa) {
     ++it;
     for (; it != terrenos_json.end(); ++it) {
         // Mergear valores por defecto con el elemento actual
-        json elem = valores_por_defecto;
+        nlohmann::json elem = valores_por_defecto;
         elem.update(*it);
 
         auto it_sprites = elem["sprites"].begin();
@@ -60,8 +60,8 @@ Terreno::Terreno(const nlohmann::json& mapa) {
             DataTerreno data_terreno;
             data_terreno.tipo = elem["tipo"];
             data_terreno.pos_tiles = tile["sprites"][i]["pos_tiles"];
-            data_terreno.id = tile["sprites"][i]["id"];
-
+            
+            std::string id = tile["sprites"][i]["id"];
             terrenos_posibles.emplace(id, data_terreno);
         }
     }
@@ -88,8 +88,7 @@ Terreno::Terreno(const nlohmann::json& mapa) {
 
                 // DataTerreno terreno = terrenos_posibles.find(id)->second;
 
-                // data terreno tiene el vector de pos_tiles, el tipo (es un int),
-                // y un id (enumera sprites).
+                // data terreno tiene el vector de pos_tiles y el tipo (int).
                 Celda((tipo_celda_t)tipos[y][x]) //, sprites, x, y)
             );
         }
